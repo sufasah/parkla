@@ -5,5 +5,12 @@ import { Component } from '@angular/core';
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  title = 'app';
+    options: any;
+
+    ngOnInit() {
+      this.options = {
+          center: {lat: 36.890257, lng: 30.707417},
+          zoom: 12
+      };
+    }
 }
