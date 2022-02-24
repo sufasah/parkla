@@ -10,9 +10,16 @@ import { LoginComponent } from '@core/components/login/login.component';
 import { RegisterComponent } from '@core/components/register/register.component';
 
 import { InputTextModule } from 'primeng/inputtext'
+import { InputNumberModule } from 'primeng/inputnumber'
 import { ButtonModule } from 'primeng/button'
 import { RippleModule } from 'primeng/ripple';
-import { FormsModule } from '@angular/forms';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { PasswordModule } from 'primeng/password';
+import { InputMaskModule } from 'primeng/inputmask';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CalendarModule } from 'primeng/calendar';
+import { DividerModule } from 'primeng/divider';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
@@ -22,13 +29,21 @@ import { FormsModule } from '@angular/forms';
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
+    ReactiveFormsModule,
     FormsModule,
     AppRoutingModule,
     CoreModule,
     SharedModule,
     InputTextModule,
+    InputNumberModule,
     ButtonModule,
     RippleModule,
+    AutoCompleteModule,
+    PasswordModule,
+    DividerModule,
+    InputMaskModule,
+    SelectButtonModule,
+    CalendarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
