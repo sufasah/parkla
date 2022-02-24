@@ -1,16 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent {
-    options: any;
+export class AppComponent implements OnInit {
 
-    ngOnInit() {
-      this.options = {
-          center: {lat: 36.890257, lng: 30.707417},
-          zoom: 12
-      };
-    }
+  constructor(private primengConfig:PrimeNGConfig) {}
+
+  ngOnInit(): void {
+    this.primengConfig.ripple = true;
+  }
+
 }

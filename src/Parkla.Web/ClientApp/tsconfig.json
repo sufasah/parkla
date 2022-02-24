@@ -18,12 +18,19 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@app/*":["src/app/*"],
+      "@shared/*":["src/shared/*"],
+      "@core/*":["src/core/*"],
+      "@styles/*":["src/styles/*"],
+      "@assets/*":["src/assets/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
 }

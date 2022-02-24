@@ -1,0 +1,14 @@
+<form (ngSubmit)="login()">
+  <div class="p-inputgroup">
+    <label for="email" class="p-inputgroup-addon"><i class="pi pi-user"></i></label>
+    <input type="text" name="email" required email="true" [(ngModel)]="email" pInputText placeholder="Enter your email">
+  </div>
+  <div class="p-inputgroup">
+    <label for="password" class="p-inputgroup-addon"><i class="pi pi-user"></i></label>
+    <input type="password" name="password" required minlength="6" maxlength="20" [(ngModel)]="password" pInputText placeholder="Enter your password">
+  </div>
+  <div>
+    <button type="submit" pButton pRipple>Login</button>
+    <button type="button" pButton pRipple [routerLink]="['/register']">Register</button>
+  </div>
+</form>
