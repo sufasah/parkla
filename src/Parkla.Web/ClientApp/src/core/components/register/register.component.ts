@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
   gender = new FormControl("");
   genderOptions = ['Male','Female'];
   countryCode = {flag:"",code:90};
-  phone = null;
+  phone:string | null = null;
   address = "";
   city = {name:"Turkey",code:"TR"};
   district = "";
@@ -26,6 +26,7 @@ export class RegisterComponent implements OnInit {
   citySuggestions = [];
   districtSuggestions = [];
   countryCodeSuggestions = [];
+  submitted = false;
 
   get birthDay(){
     return this.birthDate?.getDay();
@@ -57,9 +58,16 @@ export class RegisterComponent implements OnInit {
 
   }
 
-  register() {
-    console.log("register clicked");
+  register(form:NgForm) {
+    console.log(form);
 
+    if(form.invalid){
+      var keys = Object.keys(form.controls);
+      keys.forEach(e => {
+        form.controls[e].markAsDirty()
+      });
+      return;
+    }
   }
 
   searchCity() {
@@ -77,5 +85,9 @@ export class RegisterComponent implements OnInit {
     if(event.option === this.gender.value){
       this.gender.setValue("");
     }
+  }
+
+  setModel(pvm:any){
+    return pvm;
   }
 }

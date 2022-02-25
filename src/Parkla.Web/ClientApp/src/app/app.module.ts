@@ -20,11 +20,13 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { CalendarModule } from 'primeng/calendar';
 import { DividerModule } from 'primeng/divider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ValuesMatchValidator } from '@core/validators/values-match-validator.directive';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ValuesMatchValidator
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -43,7 +45,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DividerModule,
     InputMaskModule,
     SelectButtonModule,
-    CalendarModule
+    CalendarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

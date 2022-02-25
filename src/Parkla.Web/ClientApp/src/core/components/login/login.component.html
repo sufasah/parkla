@@ -1,14 +1,13 @@
-<form (ngSubmit)="login()">
+<form #loginForm="ngForm" (ngSubmit)="login()">
   <div class="p-inputgroup">
     <label for="email" class="p-inputgroup-addon"><i class="pi pi-user"></i></label>
-    <input type="text" name="email" required email="true" [(ngModel)]="email" pInputText placeholder="Enter your email">
-  </div>
-  <div class="p-inputgroup">
-    <label for="password" class="p-inputgroup-addon"><i class="pi pi-user"></i></label>
-    <input type="password" name="password" required minlength="6" maxlength="20" [(ngModel)]="password" pInputText placeholder="Enter your password">
+    <input #model="ngModel" type="text" name="email" required email="true" [(ngModel)]="email" pInputText placeholder="Enter your email">
   </div>
   <div>
-    <button type="submit" pButton pRipple>Login</button>
-    <button type="button" pButton pRipple [routerLink]="['/register']">Register</button>
+    <p-password name="password" [(ngModel)]="password" minlength="6"  [feedback]="false" [placeholder]="'Enter your password'" [toggleMask]="true" styleClass="p-password p-component p-inputwrapper p-input-icon-right"></p-password>
+  </div>
+  <div class="p-buttonset">
+    <button type="submit" class="p-button-raised" pButton pRipple>Login</button>
+    <button type="button" class="p-button-raised p-button-text" pButton pRipple [routerLink]="['/register']">Register</button>
   </div>
 </form>
