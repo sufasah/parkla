@@ -36,10 +36,10 @@ export class AuthService {
   }
 
   login(
-    username:string,
+    email:string,
     password:string){
 
-    this.store.dispatch(login({username,password}));
+    this.store.dispatch(login({email,password}));
   }
 
   isLogged() {
