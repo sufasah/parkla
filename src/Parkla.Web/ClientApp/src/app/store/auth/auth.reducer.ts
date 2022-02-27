@@ -1,3 +1,4 @@
+import { accessTokenKey, refreshTokenKey } from '@app/core/constants/storage.const';
 import { createReducer, on } from '@ngrx/store';
 import { login, loginFailure, loginSuccess } from './auth.actions';
 
@@ -13,8 +14,8 @@ export interface AuthState {
 }
 
 export const initAuthState: AuthState = {
-  accessToken: localStorage.getItem("parkla_access_token"),
-  refreshToken: localStorage.getItem("parkla_refresh_token"),
+  accessToken: localStorage.getItem(accessTokenKey),
+  refreshToken: localStorage.getItem(refreshTokenKey),
   tokenLoading: false,
   tokenLoadSuccess: null,
   tokenLoadFail: null,

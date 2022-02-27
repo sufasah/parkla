@@ -52,7 +52,7 @@ export class AuthService {
     return this.accessToken.exp < Date.now();
   }
 
-  hasRole(role:string | [string]){
+  hasRole(role:string | string[]){
     if(!(this.accessToken && this.accessToken.roles)) return false;
 
     return typeof role == "string"
@@ -60,14 +60,17 @@ export class AuthService {
       : this.accessToken.roles.reduce((prev,cur) => prev || role.includes(cur),false);
   }
 
-  hasAllRoles(roles: [string]){
+  hasAllRoles(roles: string[]){
     if(!(this.accessToken && this.accessToken.roles)) return false;
+    let tokenRoles = this.accessToken.roles;
 
-    return this.accessToken.roles
-      .reduce((prev,cur) => prev && roles.includes(cur),true);
+    return roles.reduce(
+      (prev,cur) => prev && tokenRoles.includes(cur),
+      true
+    );
   }
 
-  hasGroup(group:string | [string]){
+  hasGroup(group:string | string[]){
     if(!(this.accessToken && this.accessToken.groups)) return false;
 
     return typeof group == "string"
@@ -75,11 +78,14 @@ export class AuthService {
       : this.accessToken.groups.reduce((prev,cur) => prev || group.includes(cur),false);
   }
 
-  hasAllGroups(groups: [string]){
+  hasAllGroups(groups: string[]){
     if(!(this.accessToken && this.accessToken.groups)) return false;
+    let tokenGroups = this.accessToken.groups;
 
-    return this.accessToken.groups
-      .reduce((prev,cur) => prev && groups.includes(cur),true);
+    return groups.reduce(
+      (prev,cur) => prev && tokenGroups.includes(cur),
+      true
+    );
   }
 
 }

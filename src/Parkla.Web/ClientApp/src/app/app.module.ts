@@ -30,6 +30,7 @@ import { selectAuthState } from './store/auth/auth.selectors';
 import { firstValueFrom } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthEffects } from './store/auth/auth.effects';
+import { EffectsModule } from '@ngrx/effects';
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,6 +57,9 @@ import { AuthEffects } from './store/auth/auth.effects';
     SelectButtonModule,
     CalendarModule,
     HttpClientModule,
+    EffectsModule.forRoot([
+      AuthEffects
+    ]),
     StoreModule.forRoot(reducers,{
       initialState: initAppState,
       metaReducers: metaAppReducers
@@ -65,10 +69,12 @@ import { AuthEffects } from './store/auth/auth.effects';
         provide: JWT_OPTIONS,
         useFactory: (store:Store) => {
           return <JwtConfig>{
-            allowedDomains:["https://localhost:7070","http://localhost:5252"],
-            authScheme: "Bearer",
-            tokenGetter: (request) => firstValueFrom(store.select(selectAuthState))
-              .then(state => state.accessToken)
+            allowedDomains:["localhost:7070","localhost:5252"],
+            authScheme: "Bearer ",
+            tokenGetter: (request) => {
+              return firstValueFrom(store.select(selectAuthState))
+                .then(state => state.accessToken)
+            }
           }
         },
         deps: [Store]
@@ -77,8 +83,7 @@ import { AuthEffects } from './store/auth/auth.effects';
   ],
   providers: [
     AuthGuard,
-    AuthService,
-    AuthEffects
+    AuthService
   ],
   bootstrap: [
     AppComponent

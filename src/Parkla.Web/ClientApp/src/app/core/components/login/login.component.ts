@@ -18,8 +18,6 @@ export class LoginComponent implements OnInit {
     private authService: AuthService) { }
 
   ngOnInit(): void {
-    console.log(this.authService);
-    this.authService.login("deneme","123");
 
   }
 

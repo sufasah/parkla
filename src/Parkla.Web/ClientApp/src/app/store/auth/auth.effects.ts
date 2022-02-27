@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { apiUrl } from '@app/core/constants/http.const';
+import { apiLoginUrl } from '@app/core/constants/http.const';
+import { accessTokenKey, refreshTokenKey } from '@app/core/constants/storage.const';
 import { AuthService } from '@app/core/services/auth.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
@@ -11,30 +12,36 @@ import { login, loginFailure, loginSuccess } from './auth.actions';
 export class AuthEffects {
 
   login$ = createEffect(() => this.actions$.pipe(
-    tap(console.log),
     ofType(login),
     map(action => {
+      localStorage.setItem(accessTokenKey,AuthService.exampleToken);
+      localStorage.setItem(refreshTokenKey, "examplerefreshtoken");
+
       return loginSuccess({
         accessToken: AuthService.exampleToken,
         refreshToken: "examplerefreshtoken"}
       );
 
       /*return this.httpClient.post<{accessToken: string; refreshToken:string;}>(
-        `${apiUrl}/login`,
+        apiLoginUrl,
         {
           username: action.username,
           password: action.password
         }
-      ).pipe(map((tokens) => loginSuccess({
+      ).pipe(map((tokens) => {
+        localStorage.setItem(accessTokenKey,tokens.accessToken);
+        localStorage.setItem(refreshTokenKey, tokens.refreshToken);
+
+        return loginSuccess({
           accessToken: tokens.accessToken,
           refreshToken: tokens.refreshToken
-      })));*/
+        });
+      }));*/
     }),
     //switchMap(x => x),
     catchError((err) => of(loginFailure(err)))
   ));
 
-  de = createEffect(()=>this.actions$.pipe(tap(console.log)))
   constructor(
     private actions$: Actions,
     private httpClient: HttpClient) {}
