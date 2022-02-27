@@ -138,5 +138,8 @@
       }
     }
   },
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  },
   "defaultProject": "Parkla.Web"
 }

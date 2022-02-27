@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from '@core/components/login/login.component';
-import { RegisterComponent } from '@core/components/register/register.component';
-import { UsersRoutingModule } from '@app/users/users-routing.module'
-import { ManagersRoutingModule } from './managers/managers-routing.module';
+import { LoginComponent } from '@app/core/components/login/login.component';
+import { RegisterComponent } from '@app/core/components/register/register.component';
+import { UsersRoutingModule } from '@app/pages/users/users-routing.module'
+import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
 
 const routes: Routes = [
   {
@@ -29,8 +29,6 @@ const routes: Routes = [
     RouterModule.forRoot(routes,{
         anchorScrolling: "enabled"
     }),
-    UsersRoutingModule,
-    ManagersRoutingModule
   ],
   exports: [
     RouterModule
