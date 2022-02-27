@@ -5,7 +5,7 @@ import { login, loginFailure, loginSuccess } from '@app/store/auth/auth.actions'
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +24,14 @@ export class AuthService {
     return this._refreshToken;
   }
 
+  private authStateSubscription?:Subscription;
+
   constructor(
     private store:Store,
     private httpClient: HttpClient,
     private jwtHelper: JwtHelperService) {
 
-    store.select(selectAuthState).subscribe(state => {
+    this.authStateSubscription =  store.select(selectAuthState).subscribe(state => {
       this._accessToken = state.accessToken ? jwtHelper.decodeToken<AccessToken>(state.accessToken) : null;
       this._refreshToken = state.refreshToken;
     });

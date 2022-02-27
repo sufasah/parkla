@@ -1,0 +1,23 @@
+<p-progressSpinner
+  *ngIf="!blockSpinner"
+  styleClass="custom-spinner"
+  strokeWidth="2"
+  animationDuration="1s"
+></p-progressSpinner>
+
+<p-blockUI *ngIf="blockSpinner" [blocked]="blocked" [target]="target">
+  <div class="d-flex flex-column align-items-center">
+    <p-progressSpinner
+      styleClass="custom-spinner"
+      strokeWidth="4"
+      animationDuration="1s"
+    ></p-progressSpinner>
+
+    <p-button
+      type="button"
+      [styleClass]="'p-button-info p-button-sm p-button-rounded mt-2'"
+      label="Cancel"
+      (onClick)="cancelClick()"
+      ></p-button>
+  </div>
+</p-blockUI>

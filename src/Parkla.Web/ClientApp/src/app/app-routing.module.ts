@@ -4,6 +4,7 @@ import { LoginComponent } from '@app/core/components/login/login.component';
 import { RegisterComponent } from '@app/core/components/register/register.component';
 import { UsersRoutingModule } from '@app/pages/users/users-routing.module'
 import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
+import { TestComponent } from './pages/users/test/test.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,14 @@ const routes: Routes = [
     path: "register",
     component: RegisterComponent,
     pathMatch: "full"
+  },
+  {
+    path: "test",
+    component: TestComponent,
+    pathMatch: "full",
+    data:{
+      allowedRoles: ["test1"],
+    }
   },
   {
     path: "**",

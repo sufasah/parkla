@@ -4,7 +4,7 @@ import { apiLoginUrl } from '@app/core/constants/http.const';
 import { accessTokenKey, refreshTokenKey } from '@app/core/constants/storage.const';
 import { AuthService } from '@app/core/services/auth.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, delay, map, of, switchMap, tap } from 'rxjs';
 import { login, loginFailure, loginSuccess } from './auth.actions';
 
 
@@ -13,6 +13,7 @@ export class AuthEffects {
 
   login$ = createEffect(() => this.actions$.pipe(
     ofType(login),
+    delay(1000), // -
     map(action => {
       localStorage.setItem(accessTokenKey,AuthService.exampleToken);
       localStorage.setItem(refreshTokenKey, "examplerefreshtoken");
@@ -22,7 +23,8 @@ export class AuthEffects {
         refreshToken: "examplerefreshtoken"}
       );
 
-      /*return this.httpClient.post<{accessToken: string; refreshToken:string;}>(
+      /* +
+      return this.httpClient.post<{accessToken: string; refreshToken:string;}>(
         apiLoginUrl,
         {
           username: action.username,
@@ -38,7 +40,7 @@ export class AuthEffects {
         });
       }));*/
     }),
-    //switchMap(x => x),
+    // + switchMap(x => x),
     catchError((err) => of(loginFailure(err)))
   ));
 

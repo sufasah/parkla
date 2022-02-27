@@ -45,8 +45,9 @@
       class="p-button-raised"
       pButton
       pRipple
+      [loading]="tokenLoading"
+      label="Login"
       >
-      Login
     </button>
 
     <button
@@ -55,8 +56,9 @@
       pButton
       pRipple
       [routerLink]="['/register']"
+      label="Register"
       >
-      Register
     </button>
   </div>
 </form>
+<p-toast  (onClose)="messageClose($event.message)"></p-toast>
