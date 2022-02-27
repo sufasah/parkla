@@ -1,11 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AccessToken } from '@app/models/access-token';
+import { AppUser } from '@app/models/user';
 import { login, loginFailure, loginSuccess } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
-import { Subscription, take } from 'rxjs';
+import { delay, of, Subscription, take } from 'rxjs';
+import { apiUrl } from '../constants/http.const';
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +46,17 @@ export class AuthService {
     this.store.dispatch(login({email,password}));
   }
 
-  isLogged() {
+  register(
+    user:AppUser,
+    password:string){
+    return of(false).pipe(delay(2000));
+    return this.httpClient.post(`${apiUrl}/register`,{
+      ...user,
+      password
+    });
+  }
+
+  isLoggedIn() {
     return !!this.accessToken;
   }
 

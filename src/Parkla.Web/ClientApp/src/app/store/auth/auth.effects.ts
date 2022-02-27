@@ -18,10 +18,15 @@ export class AuthEffects {
       localStorage.setItem(accessTokenKey,AuthService.exampleToken);
       localStorage.setItem(refreshTokenKey, "examplerefreshtoken");
 
-      return loginSuccess({
-        accessToken: AuthService.exampleToken,
-        refreshToken: "examplerefreshtoken"}
-      );
+      if(false){
+        return loginSuccess({
+          accessToken: AuthService.exampleToken,
+          refreshToken: "examplerefreshtoken"}
+        );
+      }
+      else {
+        return loginFailure({error: "Login failed"});
+      }
 
       /* +
       return this.httpClient.post<{accessToken: string; refreshToken:string;}>(

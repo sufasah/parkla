@@ -36,18 +36,27 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.tokenLoadFail = state.tokenLoadFail;
       this.loginError = state.loginError;
 
-      if(this.tokenLoadSuccess || this.tokenLoadFail) {
+      if(this.tokenLoadSuccess) {
         this.messageService.add({
           life:1500,
-          severity:'success',
+          severity:'login',
           summary: 'Login',
-          detail: 'Logged in successfully.',
+          detail: 'Logged in successfully',
           icon:"pi-lock-open",
           data: {
             navigate: true,
             navigateTo: "/test"
           }
         });
+      }
+      else if(this.tokenLoadFail) {
+        this.messageService.add({
+          life:1500,
+          severity:"error",
+          summary: "Login",
+          detail: this.loginError!,
+          icon: "pi-lock",
+        })
       }
     });
 

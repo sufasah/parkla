@@ -267,6 +267,7 @@
       pRipple
       class="p-button-raised p-button-primary"
       label="Register"
+      [loading]="registering"
       >
     </button>
 
@@ -281,3 +282,4 @@
     </button>
   </div>
 </form>
+<p-toast (onClose)="messageClose($event.message)"></p-toast>

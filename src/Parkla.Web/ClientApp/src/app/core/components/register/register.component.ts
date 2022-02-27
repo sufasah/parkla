@@ -1,12 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Message } from 'primeng/api';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
+import { AuthService } from '@app/core/services/auth.service';
+import { AppUser } from '@app/models/user';
+import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
   isManager = false;
   email = "";
@@ -27,6 +33,9 @@ export class RegisterComponent implements OnInit {
   districtSuggestions = [];
   countryCodeSuggestions = [];
   submitted = false;
+
+  registering = false;
+  registerSubscription?:Subscription;
 
   get birthDay(){
     return this.birthDate?.getDay();
@@ -50,7 +59,26 @@ export class RegisterComponent implements OnInit {
     return new Date(0);
   }
 
-  constructor() {
+  get getUser() {
+    return new AppUser(
+      this.isManager,
+      this.email,
+      this.name,
+      this.surname,
+      this.phone!,
+      this.city.name,
+      this.district,
+      this.gender.value,
+      this.address,
+      this.zip,
+      this.birthDate
+    );
+  }
+
+  constructor(
+    private authService: AuthService,
+    private messageService: MessageService,
+    private router: Router) {
 
   }
 
@@ -60,6 +88,37 @@ export class RegisterComponent implements OnInit {
 
   register(form:NgForm) {
     console.log(form);
+    this.registering = true;
+
+    this.registerSubscription = this.authService
+      .register(this.getUser,this.password)
+      .subscribe(success => {
+        if(success){
+          this.messageService.add({
+            life:1500,
+            severity:'register',
+            summary: 'Register',
+            detail: 'User registered successfully',
+            icon:"pi-user-plus",
+            data: {
+              navigate: true,
+              navigateTo: "/test"
+            }
+          })
+        }
+        else {
+          this.messageService.add({
+            life:1500,
+            severity:"register-error",
+            summary: "Register",
+            detail: "User not Registered",
+            icon: "pi-lock",
+          })
+        }
+        this.registering = false;
+      });
+
+    return;
 
     if(form.invalid){
       var keys = Object.keys(form.controls);
@@ -68,6 +127,16 @@ export class RegisterComponent implements OnInit {
       });
       return;
     }
+
+    this.registerSubscription = this.authService
+      .register(this.getUser,this.password)
+      .subscribe(success => {
+        if(success){
+          this.messageService.add({
+
+          })
+        }
+      });
   }
 
   searchCity() {
@@ -89,5 +158,15 @@ export class RegisterComponent implements OnInit {
 
   setModel(pvm:any){
     return pvm;
+  }
+
+  messageClose(message: Message) {
+    if(message.data?.navigate){
+      this.router.navigate([message.data.navigateTo]);
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.registerSubscription?.unsubscribe();
   }
 }

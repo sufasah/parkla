@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@app/core/components/login/login.component';
 import { RegisterComponent } from '@app/core/components/register/register.component';
 import { UsersRoutingModule } from '@app/pages/users/users-routing.module'
+import { AuthGuard } from './core/guards/auth.guard';
+import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
 import { TestComponent } from './pages/users/test/test.component';
 
@@ -11,6 +13,7 @@ const routes: Routes = [
     path: "",
     component: LoginComponent,
     pathMatch: "full",
+    canActivate: [/*NoAuthGuard*/]
   },
   {
     path: "register",
@@ -23,7 +26,8 @@ const routes: Routes = [
     pathMatch: "full",
     data:{
       allowedRoles: ["test1"],
-    }
+    },
+    canActivate: [AuthGuard]
   },
   {
     path: "**",
