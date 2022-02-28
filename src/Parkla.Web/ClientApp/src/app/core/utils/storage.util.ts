@@ -5,3 +5,9 @@ export const setStorageTokens = (accessToken: string, refreshToken: string, expi
   localStorage.setItem(refreshTokenKey, refreshToken);
   localStorage.setItem(expiresKey, expires.toString());
 }
+
+export const clearStorageTokens = () => {
+  localStorage.removeItem(accessTokenKey);
+  localStorage.removeItem(refreshTokenKey);
+  localStorage.removeItem(expiresKey);
+}

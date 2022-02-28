@@ -19,3 +19,7 @@ export const refreshAccessToken = createAction(
   '[Auth] Refresh Access Token',
   props<{ accessToken: string; refreshToken: string; expires: number; }>()
 );
+
+export const refreshTokenExpired = createAction(
+  '[Auth] Refresh Token Expired'
+);
