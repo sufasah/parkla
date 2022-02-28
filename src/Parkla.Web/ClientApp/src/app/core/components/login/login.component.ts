@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           icon:"pi-lock-open",
           data: {
             navigate: true,
-            navigateTo: "/test"
+            navigateTo: "/parkmap"
           }
         });
       }

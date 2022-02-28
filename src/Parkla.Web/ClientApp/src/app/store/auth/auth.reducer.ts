@@ -1,12 +1,13 @@
-import { accessTokenKey, refreshTokenKey } from '@app/core/constants/storage.const';
+import { accessTokenKey, expiresKey, refreshTokenKey } from '@app/core/constants/storage.const';
 import { createReducer, on } from '@ngrx/store';
-import { login, loginFailure, loginSuccess } from './auth.actions';
+import { login, loginFailure, loginSuccess, refreshAccessToken } from './auth.actions';
 
 export const authStateKey = "auth";
 
 export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  expires: number | null;
   tokenLoading: boolean;
   tokenLoadSuccess: boolean | null;
   tokenLoadFail: boolean | null;
@@ -16,6 +17,10 @@ export interface AuthState {
 export const initAuthState: AuthState = {
   accessToken: localStorage.getItem(accessTokenKey),
   refreshToken: localStorage.getItem(refreshTokenKey),
+  expires: (() => {
+    let expires = localStorage.getItem(expiresKey);
+    return expires != null ? parseInt(expires) : null;
+  })(),
   tokenLoading: false,
   tokenLoadSuccess: null,
   tokenLoadFail: null,
@@ -38,14 +43,21 @@ export const authReducer = createReducer(
     tokenLoadFail: false,
     loginError: null,
     accessToken: action.accessToken,
-    refreshToken: action.refreshToken
+    refreshToken: action.refreshToken,
+    expiresKey: action.expires
   })),
-  on(loginFailure, (state, action) =>({
+  on(loginFailure, (state, action) => ({
     ...state,
     tokenLoading: false,
     tokenLoadSuccess: false,
     tokenLoadFail: true,
     loginError: action.error
   })),
+  on(refreshAccessToken, (state, action) => ({
+    ...state,
+    accessToken: action.accessToken,
+    refreshToken: action.refreshToken,
+    expires: action.expires
+  }))
 
 );

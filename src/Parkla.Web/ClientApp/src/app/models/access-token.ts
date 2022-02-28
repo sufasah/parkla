@@ -8,14 +8,10 @@ export interface AccessToken {
   jti?: string;
   sid?: string;
   name?: string;
-  preferred_username?: string;
   email?: string;
   email_verified?: boolean;
   gender?: string;
-  birthdate?: string;
-  phone_number?: string;
   phone_number_verified?: boolean;
-  address?: string;
   roles?: [string];
   groups?: [string];
 }

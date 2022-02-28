@@ -30,12 +30,15 @@ import { AuthGuard } from '@app/core/guards/auth.guard';
 import { AuthService } from '@app/core/services/auth.service';
 import { selectAuthState } from './store/auth/auth.selectors';
 import { firstValueFrom } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthEffects } from './store/auth/auth.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
 import { TestComponent } from './pages/users/test/test.component';
 import { MessageService } from 'primeng/api';
+import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
+import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
+import { apiAuthScheme } from './core/constants/http.const';
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,7 +46,8 @@ import { MessageService } from 'primeng/api';
     RegisterComponent,
     ValuesMatchValidator,
     SpinnerComponent,
-    TestComponent
+    TestComponent,
+    ParkMapComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -79,7 +83,7 @@ import { MessageService } from 'primeng/api';
         useFactory: (store:Store) => {
           return <JwtConfig>{
             allowedDomains:["localhost:7070","localhost:5252"],
-            authScheme: "Bearer ",
+            authScheme: apiAuthScheme,
             tokenGetter: (request) => {
               return firstValueFrom(store.select(selectAuthState))
                 .then(state => state.accessToken)
@@ -93,7 +97,12 @@ import { MessageService } from 'primeng/api';
   providers: [
     AuthGuard,
     AuthService,
-    MessageService
+    MessageService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenRefreshInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [
     AppComponent

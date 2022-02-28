@@ -6,7 +6,7 @@ import { UsersRoutingModule } from '@app/pages/users/users-routing.module'
 import { AuthGuard } from './core/guards/auth.guard';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
-import { TestComponent } from './pages/users/test/test.component';
+import { ParkMapComponent } from './pages/users/park-map/park-map.component';
 
 const routes: Routes = [
   {
@@ -21,8 +21,8 @@ const routes: Routes = [
     pathMatch: "full"
   },
   {
-    path: "test",
-    component: TestComponent,
+    path: "parkmap",
+    component: ParkMapComponent,
     pathMatch: "full",
     data:{
       allowedRoles: ["test1"],

@@ -1,63 +1,26 @@
-<form
-  #loginForm="ngForm"
-  (ngSubmit)="login(loginForm)"
-  >
-  <div
-    class="p-inputgroup"
-    >
-    <label
-      for="email"
-      class="p-inputgroup-addon"
-      >
-        <i class="pi pi-user"></i>
+<form #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+  <div class="p-inputgroup">
+    <label for="username" class="p-inputgroup-addon">
+      <i class="pi pi-user"></i>
     </label>
 
-    <input
-      #model="ngModel"
-      type="text"
-      name="email"
-      required
-      email="true"
-      [(ngModel)]="email"
-      pInputText
-      placeholder="Enter your email">
+    <input #model="ngModel" type="text" name="username" required [(ngModel)]="email" pInputText
+      placeholder="Enter your username">
   </div>
 
   <div>
-    <p-password
-      name="password"
-      [(ngModel)]="password"
-      required
-      minlength="6"
-      maxlength="20"
-      [feedback]="false"
-      [placeholder]="'Enter your password'"
-      [toggleMask]="true"
+    <p-password name="password" [(ngModel)]="password" required minlength="6" maxlength="20" [feedback]="false"
+      [placeholder]="'Enter your password'" [toggleMask]="true"
       styleClass="p-password p-component p-inputwrapper p-input-icon-right">
     </p-password>
   </div>
 
-  <div
-    class="p-buttonset"
-    >
-    <button
-      type="submit"
-      class="p-button-raised"
-      pButton
-      pRipple
-      [loading]="tokenLoading"
-      label="Login"
-      >
+  <div class="p-buttonset">
+    <button type="submit" class="p-button-raised" pButton pRipple [loading]="tokenLoading" label="Login">
     </button>
 
-    <button
-      type="button"
-      class="p-button-raised p-button-text"
-      pButton
-      pRipple
-      [routerLink]="['/register']"
-      label="Register"
-      >
+    <button type="button" class="p-button-raised p-button-text" pButton pRipple [routerLink]="['/register']"
+      label="Register">
     </button>
   </div>
 </form>

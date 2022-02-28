@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AccessToken } from '@app/models/access-token';
-import { AppUser } from '@app/models/user';
-import { login, loginFailure, loginSuccess } from '@app/store/auth/auth.actions';
+import { AppUser } from '@app/models/app-user';
+import { login, loginFailure, loginSuccess, refreshAccessToken } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
-import { delay, of, Subscription, take } from 'rxjs';
+import { catchError, delay, EMPTY, of, Subscription, take, tap } from 'rxjs';
 import { apiUrl } from '../constants/http.const';
+import { RefreshTokenResp } from '@app/models/refresh-token.resp';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,7 @@ export class AuthService {
     private jwtHelper: JwtHelperService) {
 
     this.authStateSubscription =  store.select(selectAuthState).subscribe(state => {
-      this._accessToken = state.accessToken ? jwtHelper.decodeToken<AccessToken>(state.accessToken) : null;
+      this._accessToken = state.accessToken ? this.jwtHelper.decodeToken<AccessToken>(state.accessToken) : null;
       this._refreshToken = state.refreshToken;
     });
   }
@@ -46,14 +47,32 @@ export class AuthService {
     this.store.dispatch(login({email,password}));
   }
 
+
   register(
     user:AppUser,
-    password:string){
-    return of(false).pipe(delay(2000));
+    password: string) {
+
+      return of(true).pipe(delay(2000));
     return this.httpClient.post(`${apiUrl}/register`,{
       ...user,
       password
     });
+  }
+
+  refreshAccessToken() {
+    return this.httpClient.post<RefreshTokenResp>(`http://localhost:5252/refreshToken`, {
+      refreshToken: this.refreshToken
+    });
+
+    return this.httpClient.post<RefreshTokenResp>(`${apiUrl}/refreshToken`, {
+      refreshToken: this.refreshToken
+    }).pipe(tap(resp => {
+      this.store.dispatch(refreshAccessToken({
+        accessToken: resp.accessToken,
+        refreshToken: resp.refreshToken,
+        expires: resp.expires
+      }))
+    }));
   }
 
   isLoggedIn() {
@@ -80,24 +99,6 @@ export class AuthService {
 
     return roles.reduce(
       (prev,cur) => prev && tokenRoles.includes(cur),
-      true
-    );
-  }
-
-  hasGroup(group:string | string[]){
-    if(!(this.accessToken && this.accessToken.groups)) return false;
-
-    return typeof group == "string"
-      ? this.accessToken.groups.includes(group)
-      : this.accessToken.groups.reduce((prev,cur) => prev || group.includes(cur),false);
-  }
-
-  hasAllGroups(groups: string[]){
-    if(!(this.accessToken && this.accessToken.groups)) return false;
-    let tokenGroups = this.accessToken.groups;
-
-    return groups.reduce(
-      (prev,cur) => prev && tokenGroups.includes(cur),
       true
     );
   }

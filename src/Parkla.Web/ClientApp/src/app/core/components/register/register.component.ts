@@ -2,7 +2,7 @@ import { Message } from 'primeng/api';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { AuthService } from '@app/core/services/auth.service';
-import { AppUser } from '@app/models/user';
+import { AppUser } from '@app/models/app-user';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 export class RegisterComponent implements OnInit, OnDestroy {
 
   isManager = false;
+  username = "";
   email = "";
   password = "";
   passwordAgain = "";
@@ -35,7 +36,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   submitted = false;
 
   registering = false;
-  registerSubscription?:Subscription;
 
   get birthDay(){
     return this.birthDate?.getDay();
@@ -62,6 +62,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   get getUser() {
     return new AppUser(
       this.isManager,
+      this.username,
       this.email,
       this.name,
       this.surname,
@@ -90,7 +91,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     console.log(form);
     this.registering = true;
 
-    this.registerSubscription = this.authService
+    this.authService
       .register(this.getUser,this.password)
       .subscribe(success => {
         if(success){
@@ -102,7 +103,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             icon:"pi-user-plus",
             data: {
               navigate: true,
-              navigateTo: "/test"
+              navigateTo: "/parkmap"
             }
           })
         }
@@ -128,14 +129,32 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.registerSubscription = this.authService
+    this.authService
       .register(this.getUser,this.password)
       .subscribe(success => {
         if(success){
           this.messageService.add({
-
+            life:1500,
+            severity:'register',
+            summary: 'Register',
+            detail: 'User registered successfully',
+            icon:"pi-user-plus",
+            data: {
+              navigate: true,
+              navigateTo: "/parkmap"
+            }
           })
         }
+        else {
+          this.messageService.add({
+            life:1500,
+            severity:"register-error",
+            summary: "Register",
+            detail: "User not Registered",
+            icon: "pi-lock",
+          })
+        }
+        this.registering = false;
       });
   }
 
@@ -167,6 +186,5 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.registerSubscription?.unsubscribe();
   }
 }

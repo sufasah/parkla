@@ -3,6 +3,25 @@
   (ngSubmit)="register(registerForm)"
   novalidate
   >
+
+  <div class="p-inputgroup">
+    <label
+      for="username"
+      class="p-inputgroup-addon"
+      >
+      <i class="pi pi-user"></i>
+    </label>
+
+    <input
+      type="text"
+      name="username"
+      required
+      [(ngModel)]="username"
+      pInputText
+      placeholder="Enter your username"
+      />
+  </div>
+
   <div class="p-inputgroup">
     <label
       for="email"

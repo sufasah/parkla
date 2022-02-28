@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { apiLoginUrl } from '@app/core/constants/http.const';
-import { accessTokenKey, refreshTokenKey } from '@app/core/constants/storage.const';
+import { accessTokenKey, expiresKey, refreshTokenKey } from '@app/core/constants/storage.const';
 import { AuthService } from '@app/core/services/auth.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, delay, map, of, switchMap, tap } from 'rxjs';
@@ -17,12 +17,14 @@ export class AuthEffects {
     map(action => {
       localStorage.setItem(accessTokenKey,AuthService.exampleToken);
       localStorage.setItem(refreshTokenKey, "examplerefreshtoken");
+      localStorage.setItem(expiresKey, "3600000");
 
-      if(false){
+      if(true){
         return loginSuccess({
           accessToken: AuthService.exampleToken,
-          refreshToken: "examplerefreshtoken"}
-        );
+          refreshToken: "examplerefreshtoken",
+          expires: Date.now()+ 3600*1000 // 3600 seconds
+        });
       }
       else {
         return loginFailure({error: "Login failed"});
