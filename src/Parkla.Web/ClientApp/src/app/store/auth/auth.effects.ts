@@ -15,10 +15,6 @@ export class AuthEffects {
     ofType(login),
     delay(1000), // -
     map(action => {
-      localStorage.setItem(accessTokenKey,AuthService.exampleToken);
-      localStorage.setItem(refreshTokenKey, "examplerefreshtoken");
-      localStorage.setItem(expiresKey, "3600000");
-
       if(true){
         return loginSuccess({
           accessToken: AuthService.exampleToken,
@@ -38,12 +34,11 @@ export class AuthEffects {
           password: action.password
         }
       ).pipe(map((tokens) => {
-        localStorage.setItem(accessTokenKey,tokens.accessToken);
-        localStorage.setItem(refreshTokenKey, tokens.refreshToken);
 
         return loginSuccess({
           accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken
+          refreshToken: tokens.refreshToken,
+          expires: tokens.expires
         });
       }));*/
     }),
