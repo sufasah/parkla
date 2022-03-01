@@ -42,3 +42,5 @@ Thumbs.db
 .angular
 
 .vscode
+
+src/app/core/constants/private.const.ts
