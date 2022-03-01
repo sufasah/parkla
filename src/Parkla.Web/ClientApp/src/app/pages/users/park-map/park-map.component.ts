@@ -1,7 +1,7 @@
-import { AfterContentInit, AfterViewInit, Component, ContentChild, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Map, map } from "@tomtom-international/web-sdk-maps";
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FullscreenControl, Map, map, NavigationControl } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
-import SearchBox, {  } from "@tomtom-international/web-sdk-plugin-searchbox";
+import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
 import { ttkey } from '@app/core/constants/private.const';
 @Component({
   selector: 'app-park-map',
@@ -10,7 +10,7 @@ import { ttkey } from '@app/core/constants/private.const';
 })
 export class ParkMapComponent implements OnInit, AfterViewInit {
 
-  @ViewChild("appSearchBox", {static:true})
+  @ViewChild("appSearchBox")
   appSearchBoxRef!: ElementRef<HTMLElement>;
 
   appMap?: Map;
@@ -20,6 +20,16 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   constructor() { }
 
   ngOnInit(): void {
+
+  }
+
+  ngAfterViewInit(): void {
+    this.loadMap();
+    this.appSearchBoxRef.nativeElement
+      .appendChild(this.appSearchBox!.getSearchBoxHTML());
+  }
+
+  loadMap() {
     this.appMap = map({
       key: ttkey,
       container: "appMap",
@@ -29,9 +39,11 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
         lat:41.015137,
         lng:28.979530,
       },
-      attributionControlPosition:"none",
-
     });
+
+    this.appMap.addControl(new NavigationControl());
+    this.appMap.addControl(new FullscreenControl());
+    this.appMap.showTrafficFlow();
 
     this.appSearchBox = new SearchBox(services, {
       searchOptions: {
@@ -41,13 +53,9 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       },
       autocompleteOptions: {
         key: ttkey,
-        language:"tr-TR"
+        language: "tr-TR"
       }
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.appSearchBoxRef.nativeElement.appendChild(this.appSearchBox!.getSearchBoxHTML());
+    })
   }
 
 }
