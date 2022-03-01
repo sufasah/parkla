@@ -2,7 +2,7 @@ import { Message } from 'primeng/api';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { AuthService } from '@app/core/services/auth.service';
-import { AppUser } from '@app/models/app-user';
+import { AppUser } from '@app/core/models/app-user';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';

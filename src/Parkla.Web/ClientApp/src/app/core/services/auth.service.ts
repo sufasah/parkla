@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AccessToken } from '@app/models/access-token';
-import { AppUser } from '@app/models/app-user';
+import { AccessToken } from '@app/core/models/access-token';
+import { AppUser } from '@app/core/models/app-user';
 import { login, loginFailure, loginSuccess, refreshAccessToken } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
 import { catchError, delay, EMPTY, of, Subscription, take, tap } from 'rxjs';
 import { apiUrl } from '../constants/http.const';
-import { RefreshTokenResp } from '@app/models/refresh-token.resp';
+import { RefreshTokenResp } from '@app/core/models/refresh-token.resp';
 
 @Injectable({
   providedIn: 'root'
