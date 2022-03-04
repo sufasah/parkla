@@ -34,3 +34,16 @@ export interface ParkSpanPerTime {
   timeAmount: number;
   price: Price;
 }
+
+export type Point = [number,number];
+export type SpacePath = [Point,Point,Point,Point];
+
+export interface ParkSpace {
+  id: string;
+  status: "free" | "occupied";
+  templatePath: SpacePath
+  reservations: [{
+    startTime: Date,
+    endTime: Date
+  }]
+}

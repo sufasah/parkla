@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ParkSpace, SpacePath } from '@app/core/models/parking-lot';
 import { select } from 'd3-selection';
 import { zoom, zoomIdentity, ZoomTransform } from "d3-zoom";
 
@@ -20,7 +21,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
 
   selectedArea = null;
 
-  timeRange = new Date();
+  timeRange:[Date?,Date?] = [];
 
   minDate = new Date();
   maxDate = new Date(Date.now()+1000*60*60*24*3);
@@ -40,6 +41,78 @@ export class ParkComponent implements OnInit, AfterViewInit {
 
   parkingLotImage: HTMLImageElement = new Image();
 
+  parkSpaces: ParkSpace[] = [
+    {
+      id:"178",
+      status: "free",
+      templatePath: [
+        [165,21],
+        [165,83],
+        [197,83],
+        [197,21]
+      ],
+      reservations: [{
+        startTime: new Date(),
+        endTime: new Date(Date.now()+1000*60*60)
+      }]
+    },
+    {
+      id:"177",
+      status: "occupied",
+      templatePath: [
+        [133,21],
+        [133,83],
+        [165,83],
+        [165,21]
+      ],
+      reservations: [{
+        startTime: new Date(),
+        endTime: new Date(Date.now()+1000*60*60)
+      }]
+    },
+    {
+      id:"181",
+      status: "free",
+      templatePath: [
+        [261,21],
+        [261,84],
+        [293,83],
+        [294,21]
+      ],
+      reservations: [{
+        startTime: new Date(),
+        endTime: new Date(Date.now()+1000*60*60)
+      }]
+    },
+    {
+      id:"184",
+      status: "occupied",
+      templatePath: [
+        [358,22],
+        [358,84],
+        [391,84],
+        [391,21]
+      ],
+      reservations: [{
+        startTime: new Date(),
+        endTime: new Date(Date.now()+1000*60*60)
+      }]
+    },
+    {
+      id:"183",
+      status: "free",
+      templatePath: [
+        [326,21],
+        [326,82],
+        [358,83],
+        [358,22]
+      ],
+      reservations: [{
+        startTime: new Date(),
+        endTime: new Date(Date.now()+1000*60*60)
+      }]
+    }
+  ]
 
   constructor() { }
 
@@ -49,8 +122,6 @@ export class ParkComponent implements OnInit, AfterViewInit {
       "b",
       "c"
     ];
-
-
   }
 
   ngAfterViewInit(): void {
@@ -65,26 +136,11 @@ export class ParkComponent implements OnInit, AfterViewInit {
         this.canvas.style.transformOrigin = "0 0";
       });
 
-    var selection = select(".park-body").call(zom);
-
-    /*this.canvas.style.height = window.screen.availHeight -
-      this.headerRef.nativeElement.scrollTop -
-      this.headerRef.nativeElement.scrollHeight + "px";
-    this.canvas.width = this.canvas.offsetWidth;
-    this.canvas.height = this.canvas.offsetHeight;*/
-
-    console.log(window.screen);
-
-
-
-    console.log(this.canvas.parentElement!.style.height);
-
+    let selection = select(".park-body").call(zom);
 
     this.parkingLotImage.src = "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg";
 
-
     this.parkingLotImage.onload = () => {
-
       this.canvas.style.width = this.parkingLotImage.width+"px";
       this.canvas.style.height = this.parkingLotImage.height+"px";
       this.canvas.width = this.parkingLotImage.width;
@@ -119,7 +175,14 @@ export class ParkComponent implements OnInit, AfterViewInit {
       ));
 
       this.canvas.onclick = (e) => {
-        console.log(e.offsetX,e.offsetY);
+        let selectedSpace = this.parkSpaces.find(space => this.isPointInSpace(
+          space.templatePath,
+          [e.offsetX, e.offsetY]
+        ));
+
+        if(selectedSpace){
+          console.log("space id: "+selectedSpace.id);
+        }
       }
 
       this.drawCanvas();
@@ -139,36 +202,12 @@ export class ParkComponent implements OnInit, AfterViewInit {
       this.parkingLotImage.width,
       this.parkingLotImage.height);
 
-    this.drawFreeSpace([
-      [133,21],
-      [133,83],
-      [165,83],
-      [165,21]
-    ]);
-
-    this.drawOccupiedSpace([
-      [165,21],
-      [165,83],
-      [197,83],
-      [197,21]
-    ]);
-
-    this.canvas.onclick = (e) => {
-      if(this.isPointInSpace([e.offsetX,e.offsetY])){
-        console.log("yess");
-        // for specific polygon it is yes so the polygon is known at this point.
-        let polygon:Point[] = [
-          [165,21],
-          [165,83],
-          [197,83],
-          [197,21]
-        ];
-
-        (<any>polygon).showReservationOrNavigateIt()
-
-      }
-    }
-
+    this.parkSpaces.forEach(space => {
+      if(space.status == "free")
+        this.drawFreeSpace(space.templatePath);
+      else
+        this.drawOccupiedSpace(space.templatePath);
+    });
   }
 
   drawFreeSpace(path:  [[number,number],[number,number],[number,number],[number,number]]){
@@ -197,14 +236,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
     this.ctx.stroke();
   }
 
-  isPointInSpace(p: Point, start?:number, end?:number): boolean {
-    let polygon:Point[] = [
-      [165,21],
-      [165,83],
-      [197,83],
-      [197,21]
-    ]
-
+  isPointInSpace(polygon: SpacePath, p: Point): boolean {
     let x = p[0], y = p[1];
     let inside = false;
     let len = polygon.length
@@ -217,6 +249,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
     }
     return inside;
   }
+
+
 }
 
 type Point = [number,number];

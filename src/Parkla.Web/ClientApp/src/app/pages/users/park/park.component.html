@@ -14,10 +14,27 @@
     [maxDate]="maxDate"
     selectionMode="range"
     [showTime]="true"
-    [showSeconds]="true"
     inputId="time"
     >
   </p-calendar>
+
+  from
+  <input
+    type="text"
+    pInputText
+    [ngModel]="timeRange[0]?.toLocaleString()"
+    [disabled]="true"
+    style="opacity: 1;"
+    />
+
+  to
+  <input
+    type="text"
+    pInputText
+    [ngModel]="timeRange[1]?.toLocaleString()"
+    [disabled]="true"
+    style="opacity: 1;"
+    />
 
 </div>
 
