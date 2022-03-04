@@ -1,6 +1,39 @@
 <div #appSearchBox>
 
 </div>
+
 <div id="appMap">
 
 </div>
+
+<p-dialog #cd [modal]="true"  [closeOnEscape]="true" [closable]="true" [(visible)]="dialogVisible" [style]="{width: '75vw',height: '80vh'}">
+  <ng-template pTemplate="header">
+    <div>
+      <h3>xxxxxxxxxx yyyyyyyyyy Parking</h3>
+      <h4>516 street cityarea/district city/town/village country postalcode countryyyyyyyyyyyyyyy</h4>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="body">
+    <p-tabView [scrollable]="true">
+      <p-tabPanel header="Header 1">
+          Content 1
+      </p-tabPanel>
+      <p-tabPanel header="Header 2">
+          Content 2
+      </p-tabPanel>
+      <p-tabPanel header="Header 3">
+          Content 3
+      </p-tabPanel>
+    </p-tabView>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-button type="button" icon="pi pi-check" label="Yes" (onClick)="navigateToPark()" ></p-button>
+    <p-button type="button" icon="pi pi-times" label="No" (onClick)="dialogVisible = false"></p-button>
+
+    <p-button styleClass="px-3" (onClick)="navigateGoogleMaps(41,29)">
+      <ng-template pTemplate="content">
+          <img alt="logo" src="https://www.hasanbiri.com/wp-content/uploads/2021/04/maps-icon-16.png" style="width: 1.5rem"/>
+      </ng-template>
+    </p-button>
+  </ng-template>
+</p-dialog>

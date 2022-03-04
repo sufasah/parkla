@@ -1,12 +1,12 @@
 export interface ParkingLot {
   id: string;
   name: string;
-  longitude: number;
-  latitude: number;
+  lat: number;
+  lng: number;
   location: string;
   status: ParkingLotStatus;
-  extras: [string];
-  pricing: [ParkSpan | ParkSpanPerTime];
+  extras?: [string];
+  pricing?: [ParkSpan | ParkSpanPerTime];
 }
 
 export interface ParkingLotStatus {
@@ -17,19 +17,20 @@ export interface ParkingLotStatus {
 }
 
 export interface Price {
-  type: string;
+  moneyUnit: string;
   amount: number;
 }
 
 export interface ParkSpan {
-  beginning: string;
-  end: string;
   type: string;
+  beginningTime: string;
+  endTime: string;
   price: Price;
 }
 
 export interface ParkSpanPerTime {
+  type: string;
   timeUnit: "minutes" | "hours" | "days" | "months";
-  amount: number;
+  timeAmount: number;
   price: Price;
 }

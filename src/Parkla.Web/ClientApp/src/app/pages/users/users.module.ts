@@ -1,11 +1,8 @@
 import { NgModule } from '@angular/core';
-import { TestComponent } from './test/test.component';
+import { ParkComponent } from './park/park.component';
 
 @NgModule({
   declarations: [
-
-  
-    TestComponent
   ],
   imports: [
 

@@ -1,8 +1,11 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { FullscreenControl, GeolocateControl, LngLat, Map, map, Marker, NavigationControl, PointLike, Popup } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
 import { ttkey } from '@app/core/constants/private.const';
+import { ConfirmationService } from 'primeng/api';
+import { ParkingLot } from '@app/core/models/parking-lot';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -16,20 +19,138 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   appMap?: Map;
   appSearchBox?: SearchBox;
   key = ""
-  parkingLots = [
-
+  parkingLots = <ParkingLot[]>[
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.01293504282219,
+      lng: 28.95420994690147,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    },
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.01293504282219,
+      lng: 28.95420994690147,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    },
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.01746840384831,
+      lng: 28.933095597536038,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
+    ,
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.024850638335835,
+      lng: 29.01257481506545,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
+    ,
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 40.99648279881782,
+      lng:  29.05291523864898,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
+    ,
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 40.97536090806648,
+      lng:  28.978757523805115,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
+    ,
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.00490375179632,
+      lng:  28.93652882507385,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
+    ,
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.04738076198703,
+      lng: 29.02115788391214,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
+    ,
+    {
+      id: "123Ade3",
+      name: "xotopar",
+      lat: 41.02446212030708,
+      lng: 29.072312974243374,
+      status: {
+        timestamp: Date.now(),
+        freeSpace: 20,
+        occupiedSpace: 5,
+        reservedSpace: 4,
+      }
+    }
   ]
 
-  constructor() { }
+  dialogVisible = false;
+  constructor(
+    private renderer: Renderer2,
+    private changeDetector: ChangeDetectorRef,
+    private router: Router) {
+
+  }
 
   ngOnInit(): void {
-
   }
 
   ngAfterViewInit(): void {
     this.loadMap();
-    this.appSearchBoxRef.nativeElement
-      .appendChild(this.appSearchBox!.getSearchBoxHTML());
+
+    this.appMap?.on("click", (e) => console.log(e.lngLat));
   }
 
   loadMap() {
@@ -61,9 +182,23 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       labels: {
         noResultsMessage: "Where are you looking for is not found."
       },
+    });
 
+    this.appSearchBox.on("tomtom.searchbox.resultselected",(e)=> {
+      let result:any = e.data.result;
+      this.appMap?.easeTo({
+        center: {
+          lat:result.position.lat,
+          lng:result.position.lng,
+        },
+        animate: true,
+        duration: 1500,
+        zoom: 12
+      })
     })
 
+    this.appSearchBoxRef.nativeElement
+      .appendChild(this.appSearchBox!.getSearchBoxHTML());
     let apmp = this.appMap;
 
     apmp.addControl(new GeolocateControl({
@@ -73,85 +208,62 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
         enableHighAccuracy: true,
       },
       showAccuracyCircle: true
-    }))
-    function makePopup(lat:number,lon:number){
+    }));
 
-      var markerHeight = 50, markerRadius = 10, linearOffset = 25;
-      var popupOffsets: {[key:string]:PointLike} = {
-        'top': [0, 0],
-        'top-left': [0,0],
-        'top-right': [0,0],
-        'bottom': [0, -markerHeight],
-        'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
-        'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
-        'left': [markerRadius, (markerHeight - markerRadius) * -1],
-        'right': [-markerRadius, (markerHeight - markerRadius) * -1]
-      };
-      return new Popup({offset: popupOffsets, className: 'my-class'})
-      .setLngLat(new LngLat(lat,lon))
-      .setHTML("<h1>Hello I'm a Popup!</h1>")
-      .addTo(apmp);
-    };
-
-    var customelem: HTMLElement = document.createElement("div");
-    customelem.style.width= "10px";
-    customelem.style.height= "200px";
-    customelem.style.backgroundColor= "green";
-    customelem.style.cursor= "pointer";
-
-    let markers = [
-      new Marker(customelem)
-      .setLngLat({lat: 41, lng: 29})
-      .setPopup(makePopup(41,29))
-      .addTo(this.appMap),
-      new Marker()
-      .setLngLat({lat: 41.001, lng: 28.999})
-      .setPopup(makePopup(41.001,28.999))
-      .addTo(this.appMap),
-      new Marker()
-      .setLngLat({lat: 41.014, lng: 28.990})
-      .setPopup(makePopup(41.014,28.990))
-      .addTo(this.appMap),
-      new Marker()
-      .setLngLat({lat: 41.020, lng: 28.985})
-      .addTo(this.appMap),
-      new Marker()
-      .setLngLat({lat: 41.030, lng: 28.980})
-      .addTo(this.appMap)
-    ];
-
+    this.parkingLots.forEach(el =>{
+      this.makeMarker(el.lat,el.lng);
+    });
   }
 
-  makeMarkerElement() {
+  makeMarkerElement(lat: number, lng: number): HTMLElement {
+    let result:HTMLDivElement = this.renderer.createElement("div");
+    this.renderer.addClass(result,"marker");
+    this.renderer.listen(result,"click",()=>this.markerOnClick());
 
+    let info: HTMLDivElement = this.renderer.createElement("div");
+    this.renderer.addClass(info,"marker-info");
+
+    this.renderer.appendChild(result,info);
+
+    return result;
   }
 
-  makePopupElement() {
-
-  }
-
-  makeMarker() {
-
+  makeMarker(lat: number, lng: number) {
+    return new Marker(this.makeMarkerElement(lat,lng))
+      .setLngLat({lat: lat, lng: lng})
+      .addTo(this.appMap!);
   }
 
   markerOnClick() {
-
+    this.dialogVisible = true;
   }
 
-  makePopup() {
-
+  navigateGoogleMaps(lat: number, lng: number) {
+    window.location.href = `https://www.google.com/maps/place/${lat.toFixed(20)}+${lng.toFixed(20)}/@${lat.toFixed(20)},${lng.toFixed(20)},12z`;
   }
 
-  navigateGoogleMaps() {
-
-  }
-
-  routeParkSelection() {
-
+  async routeParkSelection(fromLat: number, fromLng: number, toLat: number, toLng: number) {
+    return await services.calculateRoute({
+      key: ttkey,
+      computeBestOrder: true,
+      routeRepresentation: "polyline",
+      routeType:"fastest",
+      traffic: true,
+      travelMode:"car",
+      locations:[
+        [fromLat,fromLng],
+        [toLat,toLng]
+      ]
+    });
   }
 
   zoomMarkerHandler() {
 
+  }
+
+  navigateToPark() {
+
+    this.router.navigate(["park/parkingLotId"]);
   }
 
 }

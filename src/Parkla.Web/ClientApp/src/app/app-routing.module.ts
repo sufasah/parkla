@@ -7,6 +7,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
 import { ParkMapComponent } from './pages/users/park-map/park-map.component';
+import { ParkComponent } from './pages/users/park/park.component';
 
 const routes: Routes = [
   {
@@ -30,10 +31,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: "**",
+    path: "park/:id",
+    component: ParkComponent,
     pathMatch: "full",
-    redirectTo: "/"
-  },
+    canActivate: [AuthGuard]
+  }
 ];
 
 @NgModule({

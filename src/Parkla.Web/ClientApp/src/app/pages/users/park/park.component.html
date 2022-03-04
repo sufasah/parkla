@@ -1,0 +1,18 @@
+<div #header>
+  Areas
+  <p-autoComplete
+    [(ngModel)]="selectedArea"
+    [suggestions]="areaSuggestions"
+    (completeMethod)="searchArea($event)"
+    [dropdown]="true"
+    >
+  </p-autoComplete>
+
+  <p-calendar [(ngModel)]="timeRange" [minDate]="minDate" [maxDate]="maxDate" selectionMode="range"  [showTime]="true" [showSeconds]="true" inputId="time"></p-calendar>
+
+</div>
+
+<div id="body">
+  <canvas id="canvas" #parkCanvas class="canvas"></canvas>
+</div>
+<img id="theimg" src="https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg" alt="">

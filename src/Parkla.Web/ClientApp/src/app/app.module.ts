@@ -12,9 +12,13 @@ import { BlockUIModule } from 'primeng/blockui'
 import { InputNumberModule } from 'primeng/inputnumber'
 import { ButtonModule } from 'primeng/button'
 import { RippleModule } from 'primeng/ripple';
+import { ConfirmationService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PasswordModule } from 'primeng/password';
 import { InputMaskModule } from 'primeng/inputmask';
+import { TabViewModule } from 'primeng/tabview';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { MessageModule } from 'primeng/message';
 import { CalendarModule } from 'primeng/calendar';
@@ -34,9 +38,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthEffects } from './store/auth/auth.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
-import { TestComponent } from './pages/users/test/test.component';
 import { MessageService } from 'primeng/api';
+import { KeyFilterModule } from 'primeng/keyfilter';
 import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
+import { ParkComponent } from '@app/pages/users/park/park.component';
 import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
 import { apiAuthScheme } from './core/constants/http.const';
 @NgModule({
@@ -46,17 +51,21 @@ import { apiAuthScheme } from './core/constants/http.const';
     RegisterComponent,
     ValuesMatchValidator,
     SpinnerComponent,
-    TestComponent,
-    ParkMapComponent
+    ParkMapComponent,
+    ParkComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
+    TabViewModule,
     AppRoutingModule,
     InputTextModule,
+    DialogModule,
     InputNumberModule,
+    KeyFilterModule,
+    ConfirmDialogModule,
     ButtonModule,
     RippleModule,
     AutoCompleteModule,
@@ -102,7 +111,8 @@ import { apiAuthScheme } from './core/constants/http.const';
       provide: HTTP_INTERCEPTORS,
       useClass: TokenRefreshInterceptor,
       multi: true
-    }
+    },
+    ConfirmationService
   ],
   bootstrap: [
     AppComponent

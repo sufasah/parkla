@@ -85,7 +85,7 @@ export class AuthService {
     return this.accessToken.exp < Date.now();
   }
 
-  hasRole(role:string | string[]){
+  hasRoles(role:string | string[]){
     if(!(this.accessToken && this.accessToken.roles)) return false;
 
     return typeof role == "string"
