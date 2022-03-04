@@ -28,8 +28,11 @@ export class ParkComponent implements OnInit, AfterViewInit {
   @ViewChild("parkCanvas")
   canvasRef!:ElementRef<HTMLCanvasElement>;
 
-  @ViewChild("header")
+  @ViewChild("parkHeader")
   headerRef!:ElementRef<HTMLDivElement>;
+
+  @ViewChild("parkBody")
+  bodyRef!: ElementRef<HTMLDivElement>;
 
   canvas!:HTMLCanvasElement;
 
@@ -51,19 +54,18 @@ export class ParkComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+
     this.canvas = this.canvasRef.nativeElement;
     this.ctx = this.canvas.getContext('2d')!;
 
     const zom:any = zoom()
       .on("zoom",(e) => {
         let transform = e.transform;
-        console.log(e);
-
         this.canvas.style.transform = "translate(" + transform.x + "px," + transform.y + "px) scale(" + transform.k + ")";
         this.canvas.style.transformOrigin = "0 0";
       });
 
-    var selection = select("#body").call(zom);
+    var selection = select(".park-body").call(zom);
 
     /*this.canvas.style.height = window.screen.availHeight -
       this.headerRef.nativeElement.scrollTop -
@@ -71,15 +73,17 @@ export class ParkComponent implements OnInit, AfterViewInit {
     this.canvas.width = this.canvas.offsetWidth;
     this.canvas.height = this.canvas.offsetHeight;*/
 
-    this.canvas.parentElement!.style.height = window.screen.availHeight -
-      this.headerRef.nativeElement.scrollTop -
-      this.headerRef.nativeElement.scrollHeight + "px";
+    console.log(window.screen);
+
+
+
+    console.log(this.canvas.parentElement!.style.height);
+
 
     this.parkingLotImage.src = "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg";
 
 
     this.parkingLotImage.onload = () => {
-      this.parkingLotImage.onload = null;
 
       this.canvas.style.width = this.parkingLotImage.width+"px";
       this.canvas.style.height = this.parkingLotImage.height+"px";
@@ -100,8 +104,6 @@ export class ParkComponent implements OnInit, AfterViewInit {
         ? pHeight/2 - this.canvas.height*ratio/2
         : 0;
 
-        console.log(translateTop);
-
       zom.scaleExtent([ratio, 20])
         .translateExtent([
           [-translateLeft/ratio, -translateTop/ratio],
@@ -115,6 +117,10 @@ export class ParkComponent implements OnInit, AfterViewInit {
           translateLeft,
           translateTop
       ));
+
+      this.canvas.onclick = (e) => {
+        console.log(e.offsetX,e.offsetY);
+      }
 
       this.drawCanvas();
     };
@@ -132,6 +138,85 @@ export class ParkComponent implements OnInit, AfterViewInit {
       this.parkingLotImage, 0, 0,
       this.parkingLotImage.width,
       this.parkingLotImage.height);
+
+    this.drawFreeSpace([
+      [133,21],
+      [133,83],
+      [165,83],
+      [165,21]
+    ]);
+
+    this.drawOccupiedSpace([
+      [165,21],
+      [165,83],
+      [197,83],
+      [197,21]
+    ]);
+
+    this.canvas.onclick = (e) => {
+      if(this.isPointInSpace([e.offsetX,e.offsetY])){
+        console.log("yess");
+        // for specific polygon it is yes so the polygon is known at this point.
+        let polygon:Point[] = [
+          [165,21],
+          [165,83],
+          [197,83],
+          [197,21]
+        ];
+
+        (<any>polygon).showReservationOrNavigateIt()
+
+      }
+    }
+
   }
 
+  drawFreeSpace(path:  [[number,number],[number,number],[number,number],[number,number]]){
+    this.ctx.fillStyle = "rgba(0,255,0,0.25)";
+    this.ctx.strokeStyle = "rgba(0,255,0,0.75)";
+    this.ctx.beginPath();
+    this.ctx.moveTo(path[0][0],path[0][1]);
+    this.ctx.lineTo(path[1][0],path[1][1]);
+    this.ctx.lineTo(path[2][0],path[2][1]);
+    this.ctx.lineTo(path[3][0],path[3][1]);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+  }
+
+  drawOccupiedSpace(path:  [[number,number],[number,number],[number,number],[number,number]]){
+    this.ctx.fillStyle = "rgba(255,0,0,0.25)";
+    this.ctx.strokeStyle = "rgba(255,0,0,0.75)";
+    this.ctx.beginPath();
+    this.ctx.moveTo(path[0][0],path[0][1]);
+    this.ctx.lineTo(path[1][0],path[1][1]);
+    this.ctx.lineTo(path[2][0],path[2][1]);
+    this.ctx.lineTo(path[3][0],path[3][1]);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+  }
+
+  isPointInSpace(p: Point, start?:number, end?:number): boolean {
+    let polygon:Point[] = [
+      [165,21],
+      [165,83],
+      [197,83],
+      [197,21]
+    ]
+
+    let x = p[0], y = p[1];
+    let inside = false;
+    let len = polygon.length
+    for (let i = 0, j = len - 1; i < len; j = i++) {
+        let xi = polygon[i][0], yi = polygon[i][1];
+        let xj = polygon[j][0], yj = polygon[j][1];
+        let intersect = ((yi > y) !== (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+  }
 }
+
+type Point = [number,number];
