@@ -14,6 +14,7 @@ export interface ParkArea {
   name: string;
   templateImg: string;
   reservationsEnabled: boolean;
+  notReservedOccupiable: boolean;
   spaces: ParkSpace[];
 }
 

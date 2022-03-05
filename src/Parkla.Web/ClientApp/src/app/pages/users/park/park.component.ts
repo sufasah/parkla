@@ -40,6 +40,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
     areas: [{
       name: "basement5",
       reservationsEnabled: true,
+      notReservedOccupiable: true,
       spaces: [
         {
           id:"178",
@@ -116,6 +117,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
     },{
       name: "heyyo",
       reservationsEnabled: false,
+      notReservedOccupiable: false,
       spaces: [],
       templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg"
     }],

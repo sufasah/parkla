@@ -141,11 +141,14 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
             (reservation.endTime > this.selectedTimeRange[0]! &&
             reservation.endTime <= this.selectedTimeRange[1]!)
 
-          if(isSpaceReserved) {
+          if(isSpaceReserved || (space.status == "occupied" && !this.parkArea.notReservedOccupiable)) {
+            (<any>space).isDrawnReserved = true
+
             if(space.status == "empty")
               this.drawEmptyReservedSpace(space.templatePath);
             else
               this.drawOccupiedReservedSpace(space.templatePath);
+
             return;
           }
         }
@@ -171,14 +174,14 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   }
 
   drawEmptyReservedSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(255, 255, 0, 0.40)";
-    this.ctx.strokeStyle = "rgba(255, 255, 0, 0.80)";
+    this.ctx.fillStyle = "rgba(255, 255, 102, 0.40)";
+    this.ctx.strokeStyle = "rgba(255, 255, 102, 0.80)";
     this.drawSpace(path);
   }
 
   drawOccupiedReservedSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(255, 120, 60, 0.25)";
-    this.ctx.strokeStyle = "rgba(255, 120, 60, 0.75)";
+    this.ctx.fillStyle = "rgba(255, 153, 51, 0.40)";
+    this.ctx.strokeStyle = "rgba(255, 153, 51, 0.80)";
     this.drawSpace(path);
   }
 
@@ -215,26 +218,29 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
     if(!selectedSpace) return;
 
-    if(selectedSpace.status == "occupied") {
-      if(this.parkArea.reservationsEnabled) {
-        window.alert("cant reserve occupied (if defined: 'until that date')"+selectedSpace.id);
-      }
-      else {
-        window.alert("(if defined: 'occupied until that date')"+selectedSpace.id);
-      }
-      // do nothing for now
-    }
-    else {
-      if(this.parkArea.reservationsEnabled){
-        window.confirm("Are you sure to reserve "+selectedSpace.id);
+    if(this.parkArea.reservationsEnabled) {
+      if(selectedSpace.status == "empty") {
+        this.showReserveModal();
         //show time interval selected
         //show pricig table
         //show reservation intervals and available intervals between them
         //if reserved show reserved user's username
-        //if user wallet is not enough it must be not possible to confirm
+        //if user wallet is not enough it must not be possible to confirm
       }
-      //show pricig table
+      else {
+        if((<any>selectedSpace).isDrawnReserved) {
+          this.showReserveModal();
+        }
+        else {
+          window.alert("Occupied space without reservation cant be reserved");
+        }
+      }
     }
+  }
+
+  showReserveModal() {
+    console.log("reserveModal");
+
   }
 
   selectedTimeRangeChanges(value: [Date?, Date?]) {
