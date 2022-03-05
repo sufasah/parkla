@@ -23,9 +23,14 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   @Input()
   set selectedTimeRange(value) {
+    value[0]?.setSeconds(0);
+    value[1]?.setSeconds(0);
     this._selectedTimeRange = value;
     this.selectedTimeRangeChanges(value);
   }
+
+  //@Input()
+  //editMode: boolean = false;
 
   get selectedTimeRange() {
     return this._selectedTimeRange;
@@ -52,6 +57,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       this.canvas.style.transformOrigin = "0 0";
     });
 
+    this.parkingLotImage.src = "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg";
+
     this.parkingLotImage.onload = () => {
       this.initCanvas();
 
@@ -70,7 +77,6 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     this.selection = select(".park-body");
     this.selection.call(this.zoomBehavior);
 
-    this.parkingLotImage.src = "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg";
   }
 
   initCanvas() {
@@ -121,9 +127,13 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
         for(let i = 0; i < space.reservations!.length; i++){
           let reservation = space.reservations![i];
 
-          if(reservation.startTime < this.selectedTimeRange[1]! ||
-             reservation.endTime > this.selectedTimeRange[0]!
-          ) {
+          let isSpaceReserved =
+            (reservation.startTime < this.selectedTimeRange[1]! &&
+            reservation.startTime >= this.selectedTimeRange[0]!) ||
+            (reservation.endTime > this.selectedTimeRange[0]! &&
+            reservation.endTime <= this.selectedTimeRange[1]!)
+
+          if(isSpaceReserved) {
             if(space.status == "empty")
               this.drawEmptyReservedSpace(space.templatePath);
             else
@@ -153,8 +163,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   }
 
   drawEmptyReservedSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(255, 255, 0, 0.25)";
-    this.ctx.strokeStyle = "rgba(255, 255, 0, 0.75)";
+    this.ctx.fillStyle = "rgba(255, 255, 0, 0.40)";
+    this.ctx.strokeStyle = "rgba(255, 255, 0, 0.80)";
     this.drawSpace(path);
   }
 
@@ -220,7 +230,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   }
 
   selectedTimeRangeChanges(value: [Date?, Date?]) {
-    if(this.viewInitialized && value[0] && value[1]) this.drawCanvas();
+    if(this.viewInitialized && value[0] && value[1]) {
+      this.drawCanvas();
+    }
   }
 
 }

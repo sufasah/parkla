@@ -23,7 +23,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
 
   timeRange:[Date? ,Date?] = [
     new Date(),
-    new Date(Date.now()+60000*60)
+    new Date(Date.now()+60000*15)
   ];
 
   minDate = new Date();
@@ -47,8 +47,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
           [197,21]
         ],
         reservations: [{
-          startTime: new Date(),
-          endTime: new Date(Date.now()+1000*60*60)
+          startTime: new Date(Date.now()+1000*60*60),
+          endTime: new Date(Date.now()+1000*60*60*2)
         }]
       },
       {
@@ -61,8 +61,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
           [165,21]
         ],
         reservations: [{
-          startTime: new Date(),
-          endTime: new Date(Date.now()+1000*60*60)
+          startTime: new Date(Date.now()+1000*60*60),
+          endTime: new Date(Date.now()+1000*60*60*2)
         }]
       },
       {
@@ -75,8 +75,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
           [294,21]
         ],
         reservations: [{
-          startTime: new Date(),
-          endTime: new Date(Date.now()+1000*60*60)
+          startTime: new Date(Date.now()+1000*60*60),
+          endTime: new Date(Date.now()+1000*60*60*2)
         }]
       },
       {
@@ -89,8 +89,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
           [391,21]
         ],
         reservations: [{
-          startTime: new Date(),
-          endTime: new Date(Date.now()+1000*60*60)
+          startTime: new Date(Date.now()+1000*60*60),
+          endTime: new Date(Date.now()+1000*60*60*2)
         }]
       },
       {
@@ -103,8 +103,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
           [358,22]
         ],
         reservations: [{
-          startTime: new Date(),
-          endTime: new Date(Date.now()+1000*60*60)
+          startTime: new Date(Date.now()+1000*60*60),
+          endTime: new Date(Date.now()+1000*60*60*2)
         }]
       }
     ],
