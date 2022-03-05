@@ -5,13 +5,15 @@ export interface ParkingLot {
   lng: number;
   location: string;
   status: ParkingLotStatus;
+  reservationsEnabled: boolean;
+  spaces: ParkSpace[];
   extras?: [string];
   pricing?: [ParkSpan | ParkSpanPerTime];
 }
 
 export interface ParkingLotStatus {
   timestamp: number;
-  freeSpace: number;
+  emptySpace: number;
   reservedSpace: number;
   occupiedSpace: number;
 }
@@ -40,10 +42,10 @@ export type SpacePath = [Point,Point,Point,Point];
 
 export interface ParkSpace {
   id: string;
-  status: "free" | "occupied";
+  status: "empty" | "occupied";
   templatePath: SpacePath
-  reservations: [{
+  reservations?: [{
     startTime: Date,
     endTime: Date
-  }]
+  }] | [];
 }

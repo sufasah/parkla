@@ -27,7 +27,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng: 28.95420994690147,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -39,7 +39,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng: 28.95420994690147,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -51,7 +51,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng: 28.933095597536038,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -64,7 +64,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng: 29.01257481506545,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -77,7 +77,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng:  29.05291523864898,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -90,7 +90,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng:  28.978757523805115,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -103,7 +103,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng:  28.93652882507385,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -116,7 +116,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng: 29.02115788391214,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }
@@ -129,7 +129,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       lng: 29.072312974243374,
       status: {
         timestamp: Date.now(),
-        freeSpace: 20,
+        emptySpace: 20,
         occupiedSpace: 5,
         reservedSpace: 4,
       }

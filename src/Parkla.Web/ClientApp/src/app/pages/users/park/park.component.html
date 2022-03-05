@@ -9,6 +9,7 @@
   </p-autoComplete>
 
   <p-calendar
+    *ngIf="parkingLot.reservationsEnabled"
     [(ngModel)]="timeRange"
     [minDate]="minDate"
     [maxDate]="maxDate"
@@ -20,6 +21,7 @@
 
   from
   <input
+    *ngIf="parkingLot.reservationsEnabled"
     type="text"
     pInputText
     [ngModel]="timeRange[0]?.toLocaleString()"
@@ -29,6 +31,7 @@
 
   to
   <input
+    *ngIf="parkingLot.reservationsEnabled"
     type="text"
     pInputText
     [ngModel]="timeRange[1]?.toLocaleString()"
@@ -39,5 +42,6 @@
 </div>
 
 <app-park-template
-  [parkSpaces]="parkSpaces"
+  [park]="parkingLot"
+  [selectedTimeRange]="timeRange"
 ></app-park-template>
