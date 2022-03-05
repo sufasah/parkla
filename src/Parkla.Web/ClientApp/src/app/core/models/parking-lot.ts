@@ -5,10 +5,16 @@ export interface ParkingLot {
   lng: number;
   location: string;
   status: ParkingLotStatus;
-  reservationsEnabled: boolean;
-  spaces: ParkSpace[];
+  areas: ParkArea[];
   extras?: [string];
   pricing?: [ParkSpan | ParkSpanPerTime];
+}
+
+export interface ParkArea {
+  name: string;
+  templateImg: string;
+  reservationsEnabled: boolean;
+  spaces: ParkSpace[];
 }
 
 export interface ParkingLotStatus {

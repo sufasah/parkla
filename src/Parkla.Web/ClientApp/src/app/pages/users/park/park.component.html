@@ -5,11 +5,15 @@
     [suggestions]="areaSuggestions"
     (completeMethod)="searchArea($event)"
     [dropdown]="true"
+    field="name"
+    [required]="true"
+    [forceSelection]="true"
+    [unique]="true"
     >
   </p-autoComplete>
 
   <p-calendar
-    *ngIf="parkingLot.reservationsEnabled"
+    *ngIf="selectedArea.reservationsEnabled"
     [(ngModel)]="timeRange"
     [minDate]="minDate"
     [maxDate]="maxDate"
@@ -21,7 +25,7 @@
 
   from
   <input
-    *ngIf="parkingLot.reservationsEnabled"
+    *ngIf="selectedArea.reservationsEnabled"
     type="text"
     pInputText
     [ngModel]="timeRange[0]?.toLocaleString()"
@@ -31,7 +35,7 @@
 
   to
   <input
-    *ngIf="parkingLot.reservationsEnabled"
+    *ngIf="selectedArea.reservationsEnabled"
     type="text"
     pInputText
     [ngModel]="timeRange[1]?.toLocaleString()"
@@ -42,6 +46,6 @@
 </div>
 
 <app-park-template
-  [park]="parkingLot"
+  [parkArea]="selectedArea"
   [selectedTimeRange]="timeRange"
 ></app-park-template>

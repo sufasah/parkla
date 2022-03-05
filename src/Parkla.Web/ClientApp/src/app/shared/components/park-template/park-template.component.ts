@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { ParkingLot, ParkSpace, Point, SpacePath } from '@app/core/models/parking-lot';
+import { ParkArea, ParkingLot, ParkSpace, Point, SpacePath } from '@app/core/models/parking-lot';
 import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
 
@@ -16,8 +16,17 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   @ViewChild("canvas")
   canvasRef!:ElementRef<HTMLCanvasElement>;
 
+  private _parkArea!: ParkArea;
+
   @Input()
-  park!: ParkingLot
+  set parkArea(value: ParkArea) {
+    this._parkArea = value;
+    this.parkAreaChanges(value);
+  }
+
+  get parkArea() {
+    return this._parkArea;
+  }
 
   private _selectedTimeRange: [Date?, Date?] = [];
 
@@ -49,6 +58,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   private viewInitialized = false;
 
+  imageLoading = true;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -57,13 +68,10 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       this.canvas.style.transformOrigin = "0 0";
     });
 
-    this.parkingLotImage.src = "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg";
-
     this.parkingLotImage.onload = () => {
+      this.imageLoading = false;
       this.initCanvas();
-
       this.canvas.onclick = (e) => this.canvasOnClick(e);
-
       this.drawCanvas();
     };
   }
@@ -122,8 +130,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       this.parkingLotImage.width,
       this.parkingLotImage.height);
 
-    this.park.spaces.forEach(space => {
-      if(this.park.reservationsEnabled){
+    this.parkArea.spaces.forEach(space => {
+      if(this.parkArea.reservationsEnabled){
         for(let i = 0; i < space.reservations!.length; i++){
           let reservation = space.reservations![i];
 
@@ -200,7 +208,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   }
 
   canvasOnClick(e:any) {
-    let selectedSpace = this.park.spaces.find(space => this.isPointInSpace(
+    let selectedSpace = this.parkArea.spaces.find(space => this.isPointInSpace(
       space.templatePath,
       [e.offsetX, e.offsetY]
     ));
@@ -208,7 +216,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     if(!selectedSpace) return;
 
     if(selectedSpace.status == "occupied") {
-      if(this.park.reservationsEnabled) {
+      if(this.parkArea.reservationsEnabled) {
         window.alert("cant reserve occupied (if defined: 'until that date')"+selectedSpace.id);
       }
       else {
@@ -217,7 +225,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       // do nothing for now
     }
     else {
-      if(this.park.reservationsEnabled){
+      if(this.parkArea.reservationsEnabled){
         window.confirm("Are you sure to reserve "+selectedSpace.id);
         //show time interval selected
         //show pricig table
@@ -233,6 +241,11 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     if(this.viewInitialized && value[0] && value[1]) {
       this.drawCanvas();
     }
+  }
+
+  parkAreaChanges(value: ParkArea) {
+    this.imageLoading = true;
+    this.parkingLotImage.src = value.templateImg;
   }
 
 }
