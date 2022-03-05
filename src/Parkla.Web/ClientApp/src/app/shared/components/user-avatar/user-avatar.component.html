@@ -1,0 +1,21 @@
+<p-slideMenu
+  #menu
+  [showTransitionOptions]="'200ms'"
+  [hideTransitionOptions]="'200ms'"
+  [model]="items"
+  [popup]="true"
+  [viewportHeight]="250"
+  [menuWidth]="200"
+  >
+</p-slideMenu>
+<div (click)="menu.toggle($event)">
+  <p-avatar
+  class="avatar"
+  pBadge
+  value="4"
+  styleClass="mt-2"
+  size="large"
+  [label]="label | titlecase"
+  >
+  </p-avatar>
+</div>

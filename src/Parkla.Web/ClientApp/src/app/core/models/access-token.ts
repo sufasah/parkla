@@ -7,6 +7,7 @@ export interface AccessToken {
   iat?: number;
   jti?: string;
   sid?: string;
+  preferred_username?: string;
   name?: string;
   email?: string;
   email_verified?: boolean;
