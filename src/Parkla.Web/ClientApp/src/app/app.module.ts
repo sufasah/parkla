@@ -44,6 +44,7 @@ import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
 import { ParkComponent } from '@app/pages/users/park/park.component';
 import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
 import { apiAuthScheme } from './core/constants/http.const';
+import { ParkTemplateComponent } from './shared/components/park-template/park-template.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,7 +53,8 @@ import { apiAuthScheme } from './core/constants/http.const';
     ValuesMatchValidator,
     SpinnerComponent,
     ParkMapComponent,
-    ParkComponent
+    ParkComponent,
+    ParkTemplateComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

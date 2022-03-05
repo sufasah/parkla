@@ -38,11 +38,6 @@
 
 </div>
 
-<div #parkBody class="park-body">
-  <canvas
-    id="canvas"
-    #parkCanvas
-    class="canvas"
-    >
-  </canvas>
-</div>
+<app-park-template
+  [parkSpaces]="parkSpaces"
+></app-park-template>
