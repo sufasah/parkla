@@ -1,8 +1,29 @@
-
+<p-toolbar>
+  <div
+    class="wallet p-toolbar-group-left"
+    >
+    <span class="me-3">
+      {{wallet}}
+    </span>
+    <button
+      type="button"
+      pButton
+      pRipple
+      class="p-button-raised p-button-primary"
+      label="Load Money"
+      [loading]="updating"
+      >
+    </button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
 
 <form
-  #registerForm="ngForm"
-  (ngSubmit)="register(registerForm)"
+  #updateForm="ngForm"
+  (ngSubmit)="save(updateForm)"
   novalidate
   >
 
@@ -28,7 +49,7 @@
   </div>
 
   <div>
-    {{registerForm.errors?.valuesNotMatch}}
+    {{updateForm.errors?.valuesNotMatch}}
     <p-password
       #pwm="ngModel"
       required
@@ -39,7 +60,7 @@
       [placeholder]="'Enter your password'"
       [toggleMask]="true"
       styleClass="p-password p-component p-inputwrapper p-input-icon-right"
-      [ngClass]="registerForm.errors?.valuesNotMatch ? {'ng-invalid':true} : ''"
+      [ngClass]="updateForm.errors?.valuesNotMatch ? {'ng-invalid':true} : ''"
       valuesMatch="logpwmatch"
       [valuesMatchControl]="pwm.control"
       >

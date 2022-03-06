@@ -15,6 +15,7 @@ import { catchError, throwError } from 'rxjs';
 export class ProfileComponent implements OnInit {
 
   id!: number;
+  wallet!: number;
   username = "";
   email = "";
   password = "";
@@ -97,6 +98,7 @@ export class ProfileComponent implements OnInit {
 
     this.userService.getUserDetail().subscribe((userDetail:any) => {
       this.id = userDetail.id;
+      this.wallet = userDetail.wallet;
       this.birthdate = userDetail.birthdate;
       this.countryCode = userDetail.countryCode;
       this.phone = userDetail.phone;
@@ -107,7 +109,7 @@ export class ProfileComponent implements OnInit {
     })
   }
 
-  register(form:NgForm) {
+  save(form:NgForm) {
     console.log(form);
     this.updating = true;
 

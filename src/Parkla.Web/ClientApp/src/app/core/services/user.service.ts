@@ -13,6 +13,7 @@ export class UserService {
   getUserDetail() {
     return of({
       id: 1,
+      wallet: 25,
       birthdate: new Date(),
       countryCode: 90,
       phone: "555 555 55 55",
