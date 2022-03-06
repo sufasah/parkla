@@ -21,7 +21,9 @@ import { AvatarModule } from 'primeng/avatar';
 import { TabViewModule } from 'primeng/tabview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { ToolbarModule } from 'primeng/toolbar';
 import { MessageModule } from 'primeng/message';
 import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
@@ -49,6 +51,8 @@ import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.inter
 import { apiAuthScheme } from './core/constants/http.const';
 import { ParkTemplateComponent } from './shared/components/park-template/park-template.component';
 import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar.component';
+import { ProfileComponent } from './shared/profile/profile.component';
+import { UserService } from './core/services/user.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -57,6 +61,7 @@ import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar
     ValuesMatchValidator,
     SpinnerComponent,
     ParkMapComponent,
+    ProfileComponent,
     ParkComponent,
     ParkTemplateComponent,
     UserAvatarComponent
@@ -68,6 +73,7 @@ import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar
     FormsModule,
     BadgeModule,
     SlideMenuModule,
+    ToolbarModule,
     TabViewModule,
     AppRoutingModule,
     AvatarModule,
@@ -85,6 +91,7 @@ import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar
     DividerModule,
     BlockUIModule,
     InputMaskModule,
+    InputSwitchModule,
     SelectButtonModule,
     CalendarModule,
     HttpClientModule,
@@ -122,7 +129,8 @@ import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar
       useClass: TokenRefreshInterceptor,
       multi: true
     },
-    ConfirmationService
+    ConfirmationService,
+    UserService
   ],
   bootstrap: [
     AppComponent

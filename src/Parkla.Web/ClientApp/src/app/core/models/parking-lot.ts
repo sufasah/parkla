@@ -1,5 +1,5 @@
 export interface ParkingLot {
-  id: string;
+  id: number;
   name: string;
   lat: number;
   lng: number;

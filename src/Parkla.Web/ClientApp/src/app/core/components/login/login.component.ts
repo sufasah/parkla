@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
+import { UserService } from '@app/core/services/user.service';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { Store } from '@ngrx/store';
 import { Message, MessageService } from 'primeng/api';
@@ -16,9 +17,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   email = "";
   password = "";
+  asManager = false;
   tokenLoading:boolean = false;
-  tokenLoadSuccess:boolean | null= null;
-  tokenLoadFail:boolean | null= null;
+  tokenLoadSuccess:boolean | null = null;
+  tokenLoadFail:boolean | null = null;
   loginError:string | null = null;
 
   private authStateSubscription?: Subscription;

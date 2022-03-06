@@ -14,7 +14,6 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit, OnDestroy {
 
-  isManager = false;
   username = "";
   email = "";
   password = "";
@@ -61,7 +60,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   get getUser() {
     return new AppUser(
-      this.isManager,
       this.username,
       this.email,
       this.name,

@@ -32,7 +32,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
   maxDate = new Date(Date.now()+1000*60*60*24*3);
 
   parkingLot: ParkingLot = {
-    id: "lot1",
+    id: 1,
     lat: 41,
     lng: 29,
     location: "The Marmara Sea",

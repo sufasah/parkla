@@ -1,7 +1,6 @@
 type Gender = "Male" | "Female";
 
 export class AppUser {
-  isManager: boolean;
   username: string;
   email: string;
   name: string;
@@ -15,7 +14,6 @@ export class AppUser {
   birthDate: Date | null = null;
 
   constructor(
-    isManager: boolean,
     username: string,
     email: string,
     name: string,
@@ -28,7 +26,6 @@ export class AppUser {
     zip: string | null = null,
     birthDate: Date | null = null) {
 
-    this.isManager = isManager;
     this.username = username;
     this.email = email;
     this.name = name;
