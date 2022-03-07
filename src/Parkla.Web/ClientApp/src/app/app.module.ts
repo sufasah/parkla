@@ -53,12 +53,14 @@ import { ParkTemplateComponent } from './shared/components/park-template/park-te
 import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar.component';
 import { ProfileComponent } from './shared/profile/profile.component';
 import { UserService } from './core/services/user.service';
+import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
     ValuesMatchValidator,
+    ReservationsComponent,
     SpinnerComponent,
     ParkMapComponent,
     ProfileComponent,

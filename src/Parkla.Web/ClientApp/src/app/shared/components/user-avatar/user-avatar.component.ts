@@ -28,13 +28,24 @@ export class UserAvatarComponent implements OnInit {
       },
       {
         label: 'Reservations',
-        icon: 'pi pi-fw pi-car'
+        icon: 'pi pi-fw pi-car',
+        routerLink: [
+          "/reservations"
+        ]
       },
       {
         label: 'Logout',
-        icon: 'pi pi-fw pi-sign-out'
+        icon: 'pi pi-fw pi-sign-out',
+        command: this.logout,
+        routerLink: [
+          "/"
+        ]
       }
     ];
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
 }

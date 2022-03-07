@@ -8,6 +8,7 @@ import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
 import { ParkMapComponent } from './pages/users/park-map/park-map.component';
 import { ParkComponent } from './pages/users/park/park.component';
+import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 import { ProfileComponent } from './shared/profile/profile.component';
 
 const routes: Routes = [
@@ -29,6 +30,11 @@ const routes: Routes = [
     data:{
       allowedRoles: ["test1"],
     },
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "reservations",
+    component: ReservationsComponent,
     canActivate: [AuthGuard]
   },
   {

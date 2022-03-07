@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AccessToken } from '@app/core/models/access-token';
 import { AppUser } from '@app/core/models/app-user';
-import { login, loginFailure, loginSuccess, refreshAccessToken } from '@app/store/auth/auth.actions';
+import { login, loginFailure, loginSuccess, logout, refreshAccessToken } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
@@ -45,6 +45,10 @@ export class AuthService {
     password:string){
 
     this.store.dispatch(login({email,password}));
+  }
+
+  logout() {
+    this.store.dispatch(logout());
   }
 
 

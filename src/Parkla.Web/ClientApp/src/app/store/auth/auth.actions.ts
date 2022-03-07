@@ -23,3 +23,7 @@ export const refreshAccessToken = createAction(
 export const refreshTokenExpired = createAction(
   '[Auth] Refresh Token Expired'
 );
+
+export const logout = createAction(
+  "[Auth] Logout"
+);
