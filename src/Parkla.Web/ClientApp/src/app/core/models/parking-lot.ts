@@ -27,7 +27,7 @@ export interface ParkingLotStatus {
 
 export interface Price {
   moneyUnit: string;
-  amount: number;
+  balance: number;
 }
 
 export interface ParkSpan {

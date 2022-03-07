@@ -11,23 +11,25 @@
 </p-toolbar>
 
 <div class="card">
-
   <p-table
     #resTable
     [value]="reservations"
+    responsiveLayout="stack"
+    breakpoint="960px"
     sortField="parkName"
     sortMode="multiple"
-    [scrollable]="true"
-    scrollHeight="800px"
+    scrollHeight="inherit"
     rowGroupMode="subheader"
     groupRowsBy="parkName"
-    responsiveLayout="stack"
+    datakey="parkId"
     [filterDelay]="0"
+    [autoLayout]="true"
     [globalFilterFields]="['parkName','areaName','timeFrom','timeTo','pricing']"
     >
     <ng-template pTemplate="caption">
-      <div class="table-header">
+      <div class="flex">
           List of Reservations
+          <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash" ></button>
           <span class="p-input-icon-left">
               <i class="pi pi-search"></i>
 
@@ -49,7 +51,7 @@
   </ng-template>
     <ng-template pTemplate="header" >
         <tr>
-            <th pSortableCloumn="areaName">
+            <th pSortableColumn="areaName">
               Area Name
               <p-sortIcon field="areaName"></p-sortIcon>
               <p-columnFilter
@@ -61,7 +63,7 @@
                 >
               </p-columnFilter>
             </th>
-            <th pSortableCloumn="timeFrom">
+            <th pSortableColumn="timeFrom">
               Start Time
               <p-sortIcon field="timeFrom"></p-sortIcon>
               <p-columnFilter
@@ -73,7 +75,7 @@
                 >
               </p-columnFilter>
             </th>
-            <th pSortableCloumn="timeTo">
+            <th pSortableColumn="timeTo">
               End Time
               <p-sortIcon field="timeTo"></p-sortIcon>
               <p-columnFilter
@@ -85,7 +87,7 @@
                 >
               </p-columnFilter>
             </th>
-            <th pSortableCloumn="pricing">
+            <th pSortableColumn="pricing">
               Pricing Class
               <p-sortIcon field="pricing"></p-sortIcon>
               <p-columnFilter
@@ -94,6 +96,7 @@
                 display="menu"
                 class="ml-auto"
                 matchMode="in"
+                currency="TL"
                 >
               </p-columnFilter>
             </th>
@@ -127,11 +130,11 @@
               <span class="p-column-title">Pricing</span>
               <span>{{reservation.pricing.type}}</span>
               <span>{{reservation.pricing.timeUnit}}</span>
-              <span>{{reservation.pricing.price.amount + reservation.pricing.price.moneyUnit}}</span>
+              <span>{{reservation.pricing.price.balance | currency: reservation.pricing.price.moneyUnit : 'symbol' : '0.2-2'}}</span>
               <span>{{reservation.pricing.timeAmount}}</span>
             </td>
             <td>
-              <p-button pRipple styleClass="p-button-danger p-button-sm" label="Cancel Reservation"></p-button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" ></button>
             </td>
         </tr>
     </ng-template>

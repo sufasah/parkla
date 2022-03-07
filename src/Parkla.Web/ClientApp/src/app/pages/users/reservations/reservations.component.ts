@@ -18,8 +18,8 @@ export class ReservationsComponent implements OnInit {
       type: "truck",
       timeUnit: "minutes",
       price: {
-        moneyUnit: "TL",
-        amount: 50
+        moneyUnit: "TRY",
+        balance: 50
       },
       timeAmount: 30
     },
