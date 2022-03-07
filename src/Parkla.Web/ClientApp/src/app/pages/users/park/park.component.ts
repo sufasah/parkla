@@ -52,6 +52,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
             [197,21]
           ],
           reservations: [{
+            username:"a",
             startTime: new Date(Date.now()+1000*60*60),
             endTime: new Date(Date.now()+1000*60*60*2)
           }]
@@ -66,6 +67,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
             [165,21]
           ],
           reservations: [{
+            username:"b",
             startTime: new Date(Date.now()+1000*60*60),
             endTime: new Date(Date.now()+1000*60*60*2)
           }]
@@ -80,6 +82,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
             [294,21]
           ],
           reservations: [{
+            username:"c",
             startTime: new Date(Date.now()+1000*60*60),
             endTime: new Date(Date.now()+1000*60*60*2)
           }]
@@ -94,6 +97,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
             [391,21]
           ],
           reservations: [{
+            username:"testuser",
             startTime: new Date(Date.now()+1000*60*60),
             endTime: new Date(Date.now()+1000*60*60*2)
           }]
@@ -108,6 +112,7 @@ export class ParkComponent implements OnInit, AfterViewInit {
             [358,22]
           ],
           reservations: [{
+            username:"e",
             startTime: new Date(Date.now()+1000*60*60),
             endTime: new Date(Date.now()+1000*60*60*2)
           }]
