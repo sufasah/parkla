@@ -1,1 +1,144 @@
-<p>reservations works!</p>
+<p-toolbar>
+  <div
+    #appSearchBox
+    class="p-toolbar-group-left"
+    >
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<div class="card">
+
+  <p-table
+    #resTable
+    [value]="reservations"
+    sortField="parkName"
+    sortMode="multiple"
+    [scrollable]="true"
+    scrollHeight="800px"
+    rowGroupMode="subheader"
+    groupRowsBy="parkName"
+    responsiveLayout="stack"
+    [filterDelay]="0"
+    [globalFilterFields]="['parkName','areaName','timeFrom','timeTo','pricing']"
+    >
+    <ng-template pTemplate="caption">
+      <div class="table-header">
+          List of Reservations
+          <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+
+              <input
+                pInputText
+                type="text"
+                (input)="resTable.filterGlobal($event.target, 'contains')"
+                placeholder="Global Search"
+                />
+          </span>
+      </div>
+  </ng-template>
+  <ng-template pTemplate="groupheader" let-reservation>
+      <tr pRowGroupHeader>
+          <td colspan="5">
+              <span class="font-bold ml-2">{{reservation.parkName}}</span>
+          </td>
+      </tr>
+  </ng-template>
+    <ng-template pTemplate="header" >
+        <tr>
+            <th pSortableCloumn="areaName">
+              Area Name
+              <p-sortIcon field="areaName"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="areaName"
+                display="menu"
+                class="ml-auto"
+                matchMode="in"
+                >
+              </p-columnFilter>
+            </th>
+            <th pSortableCloumn="timeFrom">
+              Start Time
+              <p-sortIcon field="timeFrom"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="timeFrom"
+                display="menu"
+                class="ml-auto"
+                matchMode="in"
+                >
+              </p-columnFilter>
+            </th>
+            <th pSortableCloumn="timeTo">
+              End Time
+              <p-sortIcon field="timeTo"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="timeTo"
+                display="menu"
+                class="ml-auto"
+                matchMode="in"
+                >
+              </p-columnFilter>
+            </th>
+            <th pSortableCloumn="pricing">
+              Pricing Class
+              <p-sortIcon field="pricing"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="pricing"
+                display="menu"
+                class="ml-auto"
+                matchMode="in"
+                >
+              </p-columnFilter>
+            </th>
+            <th>
+            </th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="groupfooter" let-reservation>
+        <tr class="p-rowgroup-footer">
+            <td style="min-width: 80%">
+                <div style="text-align: right; width: 100%">Total Reservations</div>
+            </td>
+            <td style="width: 20%">12</td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-reservation let-rowIndex="rowIndex">
+        <tr>
+            <td>
+              <span class="p-column-title">Area Name</span>
+              {{reservation.areaName}}
+            </td>
+            <td>
+              <span class="p-column-title">Start Time</span>
+              <span class="image-text">{{reservation.timeFrom}}</span>
+            </td>
+            <td>
+              <span class="p-column-title">End Time</span>
+              {{reservation.timeTo}}
+            </td>
+            <td>
+              <span class="p-column-title">Pricing</span>
+              <span>{{reservation.pricing.type}}</span>
+              <span>{{reservation.pricing.timeUnit}}</span>
+              <span>{{reservation.pricing.price.amount + reservation.pricing.price.moneyUnit}}</span>
+              <span>{{reservation.pricing.timeAmount}}</span>
+            </td>
+            <td>
+              <p-button pRipple styleClass="p-button-danger p-button-sm" label="Cancel Reservation"></p-button>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+          <td colspan="5">No reservations found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

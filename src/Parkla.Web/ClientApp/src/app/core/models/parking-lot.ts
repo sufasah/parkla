@@ -7,7 +7,6 @@ export interface ParkingLot {
   status: ParkingLotStatus;
   areas: ParkArea[];
   extras?: [string];
-  pricing?: [ParkSpan | ParkSpanPerTime];
 }
 
 export interface ParkArea {
@@ -16,6 +15,7 @@ export interface ParkArea {
   reservationsEnabled: boolean;
   notReservedOccupiable: boolean;
   spaces: ParkSpace[];
+  pricing?: [ParkSpan | ParkSpanPerTime];
 }
 
 export interface ParkingLotStatus {

@@ -18,6 +18,7 @@ import { PasswordModule } from 'primeng/password';
 import { BadgeModule } from 'primeng/badge';
 import { InputMaskModule } from 'primeng/inputmask';
 import { AvatarModule } from 'primeng/avatar';
+import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
@@ -54,6 +55,7 @@ import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar
 import { ProfileComponent } from './shared/profile/profile.component';
 import { UserService } from './core/services/user.service';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
+import { ReservationService } from './core/services/reservation.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,6 +76,7 @@ import { ReservationsComponent } from './pages/users/reservations/reservations.c
     ReactiveFormsModule,
     FormsModule,
     BadgeModule,
+    TableModule,
     SlideMenuModule,
     ToolbarModule,
     TabViewModule,
@@ -132,7 +135,8 @@ import { ReservationsComponent } from './pages/users/reservations/reservations.c
       multi: true
     },
     ConfirmationService,
-    UserService
+    UserService,
+    ReservationService
   ],
   bootstrap: [
     AppComponent
