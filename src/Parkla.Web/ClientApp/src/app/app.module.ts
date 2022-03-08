@@ -56,6 +56,7 @@ import { ProfileComponent } from './shared/profile/profile.component';
 import { UserService } from './core/services/user.service';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 import { ReservationService } from './core/services/reservation.service';
+import { MapMarkerComponent } from './shared/components/map-marker/map-marker.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,6 +65,7 @@ import { ReservationService } from './core/services/reservation.service';
     ValuesMatchValidator,
     ReservationsComponent,
     SpinnerComponent,
+    MapMarkerComponent,
     ParkMapComponent,
     ProfileComponent,
     ParkComponent,

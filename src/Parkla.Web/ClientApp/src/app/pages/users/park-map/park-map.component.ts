@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, ElementRef, EmbeddedViewRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { FullscreenControl, GeolocateControl, LngLat, Map, map, Marker, NavigationControl, PointLike, Popup } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
@@ -7,6 +7,7 @@ import { ConfirmationService } from 'primeng/api';
 import { ParkingLot } from '@app/core/models/parking-lot';
 import { Router } from '@angular/router';
 import { mockParkingLots } from '@app/mock-data/parking-lots';
+import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -17,15 +18,17 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   @ViewChild("appSearchBox")
   appSearchBoxRef!: ElementRef<HTMLElement>;
 
-  appMap?: Map;
-  appSearchBox?: SearchBox;
-  key = ""
+  appMap!: Map;
+
+  appSearchBox!: SearchBox;
+
   parkingLots = mockParkingLots;
 
   dialogVisible = false;
+
   constructor(
     private renderer: Renderer2,
-    private changeDetector: ChangeDetectorRef,
+    private viewRef: ViewContainerRef,
     private router: Router) {
 
   }
@@ -35,8 +38,6 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.loadMap();
-
-    this.appMap?.on("click", (e) => console.log(e.lngLat));
   }
 
   loadMap() {
@@ -63,8 +64,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       autocompleteOptions: {
         key: ttkey,
         language: "tr-TR",
-
-      },
+},
       labels: {
         noResultsMessage: "Where are you looking for is not found."
       },
@@ -84,10 +84,9 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     })
 
     this.appSearchBoxRef.nativeElement
-      .appendChild(this.appSearchBox!.getSearchBoxHTML());
-    let apmp = this.appMap;
+      .appendChild(this.appSearchBox.getSearchBoxHTML());
 
-    apmp.addControl(new GeolocateControl({
+    this.appMap.addControl(new GeolocateControl({
       trackUserLocation: true,
       showUserLocation: true,
       positionOptions: {
@@ -101,17 +100,13 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     });
   }
 
-  makeMarkerElement(lat: number, lng: number): HTMLElement {
-    let result:HTMLDivElement = this.renderer.createElement("div");
-    this.renderer.addClass(result,"marker");
-    this.renderer.listen(result,"click",()=>this.markerOnClick());
+  makeMarkerElement(lat: number, lng: number) {
+    let componentRef = this.viewRef.createComponent(MapMarkerComponent);
 
-    let info: HTMLDivElement = this.renderer.createElement("div");
-    this.renderer.addClass(info,"marker-info");
+    componentRef.instance.onClick.subscribe((event:any) => this.markerOnClick());
 
-    this.renderer.appendChild(result,info);
-
-    return result;
+    return (componentRef.hostView as EmbeddedViewRef<any>)
+      .rootNodes[0] as HTMLElement;
   }
 
   makeMarker(lat: number, lng: number) {

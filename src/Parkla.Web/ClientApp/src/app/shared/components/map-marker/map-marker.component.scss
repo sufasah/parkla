@@ -1,0 +1,20 @@
+@use "sass:math";
+
+$markerSize: 20px;
+
+.marker {
+  border: 1px solid red;
+  width: $markerSize;
+  height: $markerSize;
+}
+
+.marker .marker-info {
+  $infoWidth: 80px;
+  $infoHeight: 60px;
+  border: 1px solid blue;
+  width: $infoWidth;
+  height: $infoHeight;
+  position: relative;
+  top: -$infoHeight - 5px;
+  left: math.div(-$infoWidth, 2) + math.div($markerSize, 2) - 1px;
+}
