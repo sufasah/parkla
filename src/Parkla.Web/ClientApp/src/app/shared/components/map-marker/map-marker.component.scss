@@ -1,20 +1,33 @@
 @use "sass:math";
 
-$markerSize: 20px;
+$markerSize: 10px;
+$infoWidth: 80px;
+$infoHeight: 60px;
 
 .marker {
   border: 1px solid red;
   width: $markerSize;
   height: $markerSize;
+  position: relative;
+  bottom: - math.div($markerSize, 2);
+  border-radius: 50%;
 }
 
-.marker .marker-info {
-  $infoWidth: 80px;
-  $infoHeight: 60px;
+.marker-info {
   border: 1px solid blue;
   width: $infoWidth;
   height: $infoHeight;
-  position: relative;
-  top: -$infoHeight - 5px;
-  left: math.div(-$infoWidth, 2) + math.div($markerSize, 2) - 1px;
+}
+
+.floating {
+  animation-name: floating;
+  animation-duration: 6s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes floating {
+  0% { transform: translate(0,  0px); }
+  50%  { transform: translate(0, -10px); }
+  100%   { transform: translate(0, -0px); }
 }

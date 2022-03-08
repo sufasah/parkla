@@ -25,8 +25,6 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
   dialogVisible = false;
 
-  markers = [];
-
   markersOnTheMap: {[key:number]:Marker} = {};
 
   constructor(
@@ -70,9 +68,9 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
     this.addMarkerClusterToMap();
 
-    /*this.parkingLots.forEach(el =>{
-      this.makeMarker(el.lat,el.lng);
-    });*/
+    this.parkingLots.forEach(el => {
+      this.markersOnTheMap[el.id] = this.makeMarker(el.lat,el.lng);
+    });
   }
   addMarkerClusterToMap() {
     this.appMap.on("load", (e:any) => {
@@ -144,7 +142,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
     this.appMap.on("data", (e:any) => {
       if(e.sourceId !== "point-source" || !(<any>this.appMap.getSource("point-source")).loaded()) return;
-      //this.refreshMarkers();
+      this.refreshMarkers();
     });
 
     this.appMap.on('click', 'clusters', (e) => {
@@ -227,25 +225,6 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     window.location.href = `https://www.google.com/maps/place/${lat.toFixed(20)}+${lng.toFixed(20)}/@${lat.toFixed(20)},${lng.toFixed(20)},12z`;
   }
 
-  async routeParkSelection(fromLat: number, fromLng: number, toLat: number, toLng: number) {
-    return await services.calculateRoute({
-      key: ttkey,
-      computeBestOrder: true,
-      routeRepresentation: "polyline",
-      routeType:"fastest",
-      traffic: true,
-      travelMode:"car",
-      locations:[
-        [fromLat,fromLng],
-        [toLat,toLng]
-      ]
-    });
-  }
-
-  zoomMarkerHandler() {
-
-  }
-
   navigateToPark() {
     this.router.navigate(["park/parkingLotId"]);
   }
@@ -259,14 +238,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       if (feature.properties && !feature.properties.cluster) {
         let id = parseInt(feature.properties.id, 10);
         let marker = this.markersOnTheMap[id];
-
-        if (marker)
-          marker.addTo(this.appMap);
-        else
-          this.markersOnTheMap[id] = this.makeMarker(
-              feature.properties.lat,
-              feature.properties.lng
-          );
+        marker.addTo(this.appMap);
       }
     });
   }
