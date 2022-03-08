@@ -17,10 +17,10 @@ export const mockParkingLots: ParkingLot[] = [
     }
   },
   {
-    id: 1,
+    id: 2,
     name: "xotopar",
-    lat: 41.01293504282219,
-    lng: 28.95420994690147,
+    lat: 41.03293504282219,
+    lng: 28.93420994690147,
     location: "xotopar location ------------------- ------------------------ ----- ---------------- -----------",
     areas: mockAreas,
     status: {
@@ -31,7 +31,7 @@ export const mockParkingLots: ParkingLot[] = [
     }
   },
   {
-    id: 1,
+    id: 3,
     name: "xotopar",
     lat: 41.01746840384831,
     lng: 28.933095597536038,
@@ -46,7 +46,7 @@ export const mockParkingLots: ParkingLot[] = [
   }
   ,
   {
-    id: 1,
+    id: 4,
     name: "xotopar",
     lat: 41.024850638335835,
     lng: 29.01257481506545,
@@ -61,7 +61,7 @@ export const mockParkingLots: ParkingLot[] = [
   }
   ,
   {
-    id: 1,
+    id: 5,
     name: "xotopar",
     lat: 40.99648279881782,
     lng:  29.05291523864898,
@@ -76,7 +76,7 @@ export const mockParkingLots: ParkingLot[] = [
   }
   ,
   {
-    id: 1,
+    id: 6,
     name: "xotopar",
     lat: 40.97536090806648,
     lng:  28.978757523805115,
@@ -91,7 +91,7 @@ export const mockParkingLots: ParkingLot[] = [
   }
   ,
   {
-    id: 1,
+    id: 7,
     name: "xotopar",
     lat: 41.00490375179632,
     lng:  28.93652882507385,
@@ -106,7 +106,7 @@ export const mockParkingLots: ParkingLot[] = [
   }
   ,
   {
-    id: 1,
+    id: 8,
     name: "xotopar",
     lat: 41.04738076198703,
     lng: 29.02115788391214,
@@ -121,7 +121,7 @@ export const mockParkingLots: ParkingLot[] = [
   }
   ,
   {
-    id: 1,
+    id: 9,
     name: "xotopar",
     lat: 41.02446212030708,
     lng: 29.072312974243374,
