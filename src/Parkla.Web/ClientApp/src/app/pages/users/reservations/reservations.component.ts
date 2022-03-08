@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ParkSpanPerTime } from '@app/core/models/parking-lot';
 import { Reservation } from '@app/core/models/reservation';
 import { ReservationService } from '@app/core/services/reservation.service';
+import { mockReservations } from '@app/mock-data/reservations';
 
 @Component({
   selector: 'app-reservations',
@@ -10,22 +11,7 @@ import { ReservationService } from '@app/core/services/reservation.service';
 })
 export class ReservationsComponent implements OnInit {
 
-  reservations: Reservation[] = [{
-    parkId: 1,
-    parkName: "seapark",
-    areaName: "basement5",
-    pricing: <ParkSpanPerTime>{
-      type: "truck",
-      timeUnit: "minutes",
-      price: {
-        moneyUnit: "TRY",
-        balance: 50
-      },
-      timeAmount: 30
-    },
-    timeFrom: new Date(),
-    timeTo: new Date(Date.now()+1000*60*30)
-  }];
+  reservations = mockReservations;
 
   constructor(reservationService: ReservationService) { }
 

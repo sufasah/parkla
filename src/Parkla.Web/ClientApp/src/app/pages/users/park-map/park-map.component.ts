@@ -6,6 +6,7 @@ import { ttkey } from '@app/core/constants/private.const';
 import { ConfirmationService } from 'primeng/api';
 import { ParkingLot } from '@app/core/models/parking-lot';
 import { Router } from '@angular/router';
+import { mockParkingLots } from '@app/mock-data/parking-lots';
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -19,122 +20,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   appMap?: Map;
   appSearchBox?: SearchBox;
   key = ""
-  parkingLots = <ParkingLot[]>[
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.01293504282219,
-      lng: 28.95420994690147,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    },
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.01293504282219,
-      lng: 28.95420994690147,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    },
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.01746840384831,
-      lng: 28.933095597536038,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-    ,
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.024850638335835,
-      lng: 29.01257481506545,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-    ,
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 40.99648279881782,
-      lng:  29.05291523864898,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-    ,
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 40.97536090806648,
-      lng:  28.978757523805115,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-    ,
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.00490375179632,
-      lng:  28.93652882507385,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-    ,
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.04738076198703,
-      lng: 29.02115788391214,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-    ,
-    {
-      id: 1,
-      name: "xotopar",
-      lat: 41.02446212030708,
-      lng: 29.072312974243374,
-      status: {
-        timestamp: Date.now(),
-        emptySpace: 20,
-        occupiedSpace: 5,
-        reservedSpace: 4,
-      }
-    }
-  ]
+  parkingLots = mockParkingLots;
 
   dialogVisible = false;
   constructor(
