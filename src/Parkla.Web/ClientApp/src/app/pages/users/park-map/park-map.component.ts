@@ -93,7 +93,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
         },
         cluster: true,
         clusterMaxZoom: 14,
-        clusterRadius: 100,
+        clusterRadius: 200,
       });
 
       this.appMap.addLayer(<CircleLayer>{

@@ -14,6 +14,12 @@ export class MapMarkerComponent implements OnInit {
   @Input()
   park!:ParkingLot;
 
+  get spaceCount() {
+    return this.park.status.emptySpace +
+      this.park.status.reservedSpace +
+      this.park.status.occupiedSpace
+  }
+
   constructor() { }
 
   ngOnInit(): void {

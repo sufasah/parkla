@@ -6,6 +6,7 @@ $infoHeight: 100px;
 
 .marker {
   border: 1px solid red;
+  background-color:red;
   width: $markerSize;
   height: $markerSize;
   position: relative;
@@ -15,12 +16,12 @@ $infoHeight: 100px;
 }
 
 .marker-info {
-  border: 1px solid silver;
-  width: $infoWidth;
-  height: $infoHeight;
+  border: 1px solid rgba(110,110,109,0.3);
+  width: 200px;
+  height: 100px;
   box-shadow: 0px 0px 16px rgb(0 0 0 / 25%);
-  background-color: rgba(255,255,255,0.75);
-  padding: 10px;
+  background-color: rgba(220, 220, 220, 0.9);
+  padding: 5px 10px;
 }
 
 .floating {
@@ -33,7 +34,7 @@ $infoHeight: 100px;
 @keyframes floating {
   0% { transform: translate(0,  0px); }
   50%  { transform: translate(0, -10px); }
-  100%   { transform: translate(0, -0px); }
+  100%   { transform: translate(0, 0px); }
 }
 
 ::ng-deep {
@@ -45,20 +46,23 @@ $infoHeight: 100px;
   .empty {
     .p-knob-text {
       fill: #0f0;
-      stroke-width: 10px;
+      font-weight: bold;
     }
   }
 
   .reserved {
     .p-knob-text {
       fill: #df923a;
+      font-weight: bold;
     }
   }
 
   .occupied {
     .p-knob-text {
       fill: #f00;
+      font-weight: bold;
     }
+
   }
 
 

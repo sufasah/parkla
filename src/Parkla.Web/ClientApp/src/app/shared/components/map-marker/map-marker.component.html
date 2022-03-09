@@ -1,15 +1,15 @@
 <div class="d-flex align-items-center flex-column" (click)="markerClick($event)">
   <div class="marker-info floating">
-    <div>a</div>
+    <div class="text-dark text-center mb-1 fw-bolder">{{park.status.timestamp | date : "dd-MM-yyyy hh:mm"}}</div>
     <div class="d-flex justify-content-evenly align-items-center">
       <div>
-        <p-knob styleClass="empty" valueColor="#0f0" [size]="50"></p-knob>
+        <p-knob [ngModel]="park.status.emptySpace" styleClass="empty" valueColor="#0f0" rangeColor="#aaa" [max]="spaceCount" [size]="50" [readonly]="true"></p-knob>
       </div>
       <div>
-        <p-knob styleClass="reserved" [size]="50"></p-knob>
+        <p-knob [ngModel]="park.status.reservedSpace" styleClass="reserved" valueColor="#df923a" rangeColor="#aaa" [max]="spaceCount" [size]="50" [readonly]="true"></p-knob>
       </div>
       <div>
-        <p-knob styleClass="occupied" [size]="50"></p-knob>
+        <p-knob [ngModel]="park.status.occupiedSpace" styleClass="occupied" valueColor="#f00" rangeColor="#aaa" [max]="spaceCount" [size]="50" [readonly]="true"></p-knob>
       </div>
     </div>
   </div>
