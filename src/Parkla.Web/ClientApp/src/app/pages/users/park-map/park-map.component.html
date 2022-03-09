@@ -14,34 +14,96 @@
 
 </div>
 
-<p-dialog #cd [modal]="true"  [closeOnEscape]="true" [closable]="true" [(visible)]="dialogVisible" [style]="{width: '75vw',height: '80vh'}">
+<p-dialog
+  #cd
+  [modal]="true"
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+  [closeOnEscape]="true"
+  [closable]="true"
+  [(visible)]="dialogVisible"
+  [style]="{width: '60vw',height: '100vh'}"
+  >
   <ng-template pTemplate="header">
     <div>
-      <h3>xxxxxxxxxx yyyyyyyyyy Parking</h3>
-      <h4>516 street cityarea/district city/town/village country postalcode countryyyyyyyyyyyyyyy</h4>
+      <h3 class="m-0">{{selectedPark?.name}}</h3>
+      <h4 class="m-0">{{selectedPark?.location}}</h4>
     </div>
   </ng-template>
-  <ng-template pTemplate="body">
-    <p-tabView [scrollable]="true">
-      <p-tabPanel header="Header 1">
-          Content 1
-      </p-tabPanel>
-      <p-tabPanel header="Header 2">
-          Content 2
-      </p-tabPanel>
-      <p-tabPanel header="Header 3">
-          Content 3
-      </p-tabPanel>
-    </p-tabView>
-  </ng-template>
-  <ng-template pTemplate="footer">
-    <p-button type="button" icon="pi pi-check" label="Yes" (onClick)="navigateToPark()" ></p-button>
-    <p-button type="button" icon="pi pi-times" label="No" (onClick)="dialogVisible = false"></p-button>
 
-    <p-button styleClass="px-3" (onClick)="navigateGoogleMaps(41,29)">
-      <ng-template pTemplate="content">
+  <ng-template pTemplate="body">
+    <h4>Price</h4>
+    <div class="d-flex align-items-center justify-content-evenly fw-bold" style="font-size:12px;">
+      <span class="min-price">
+        {{selectedPark!.minPrice.balance | currency : selectedPark!.minPrice.moneyUnit : "symbol" : "0.2-2"}}
+      </span> -
+      <span class="avg-price">
+        {{selectedPark!.avgPrice.balance | currency : selectedPark!.avgPrice.moneyUnit : "symbol" : "0.2-2"}}
+      </span> -
+      <span class="max-price">
+        {{selectedPark!.maxPrice.balance | currency : selectedPark!.maxPrice.moneyUnit : "symbol" : "0.2-2"}}
+      </span>
+    </div>
+    <h4>Park status</h4>
+    <div
+      class="d-flex
+        justify-content-center
+        align-items-center"
+      >
+      <div>
+        <p-knob
+          [ngModel]="selectedPark!.status.emptySpace"
+          styleClass="empty"
+          valueColor="#0f0"
+          rangeColor="#777"
+          [max]="spaceCount"
+          [size]="150"
+          [readonly]="true"
+          >
+        </p-knob>
+      </div>
+      <div>
+        <p-knob
+          [ngModel]="selectedPark!.status.reservedSpace"
+          styleClass="reserved"
+          valueColor="#f7b060"
+          rangeColor="#777"
+          [max]="spaceCount"
+          [size]="150"
+          [readonly]="true"
+          >
+        </p-knob>
+      </div>
+      <div>
+        <p-knob
+          [ngModel]="selectedPark!.status.occupiedSpace"
+          styleClass="occupied"
+          valueColor="#f00"
+          rangeColor="#777"
+          [max]="spaceCount"
+          [size]="150"
+          [readonly]="true"
+          >
+        </p-knob>
+      </div>
+    </div>
+    <div>
+      Extras:
+      <span *ngFor="let extra of selectedPark?.extras">
+        {{extra}}
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer" >
+    <div class="mt-3">
+      <p-button type="button" icon="pi pi-car" label="Go Park" (onClick)="navigateToPark()" ></p-button>
+      <p-button type="button" icon="pi pi-times" label="Close" [styleClass]="'pi-button-error'" (onClick)="dialogVisible = false"></p-button>
+
+      <p-button styleClass="px-3" (onClick)="navigateGoogleMaps(41,29)">
+        <ng-template pTemplate="content">
           <img alt="logo" src="https://www.hasanbiri.com/wp-content/uploads/2021/04/maps-icon-16.png" style="width: 1.5rem"/>
-      </ng-template>
-    </p-button>
+        </ng-template>
+      </p-button>
+    </div>
   </ng-template>
 </p-dialog>

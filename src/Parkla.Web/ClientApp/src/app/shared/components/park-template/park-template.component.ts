@@ -1,7 +1,9 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ParkArea, ParkingLot, ParkSpace, Point, SpacePath } from '@app/core/models/parking-lot';
+import { ParkTemplateClickEvent } from '@app/core/types/types';
 import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-park-template',
@@ -38,6 +40,11 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     this.selectedTimeRangeChanges(value);
   }
 
+  @Output()
+  spaceClicked = new EventEmitter<ParkTemplateClickEvent>();
+
+  selectedSpace!: ParkSpace;
+
   //@Input()
   //editMode: boolean = false;
 
@@ -60,7 +67,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   imageLoading = true;
 
-  constructor() { }
+  dialogVisible = false;
+
+  constructor(private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.zoomBehavior.on("zoom",(e) => {
@@ -220,6 +229,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
     if(this.parkArea.reservationsEnabled) {
       if(selectedSpace.status == "empty") {
+        this.selectedSpace = selectedSpace;
         this.showReserveModal();
         //show time interval selected
         //show pricig table
@@ -229,17 +239,23 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       }
       else {
         if((<any>selectedSpace).isDrawnReserved) {
-          this.showReserveModal();
+        this.selectedSpace = selectedSpace;
+        this.showReserveModal();
         }
         else {
-          window.alert("Occupied space without reservation cant be reserved");
+          this.messageService.add({
+            life:1500,
+            severity:'error',
+            summary: 'Occupied Reservation',
+            detail: 'It is not possible to reserve occupied space.',
+          });
         }
       }
     }
   }
 
   showReserveModal() {
-    console.log("reserveModal");
+    this.dialogVisible = true;
 
   }
 
@@ -252,6 +268,10 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   parkAreaChanges(value: ParkArea) {
     this.imageLoading = true;
     this.parkingLotImage.src = value.templateImg;
+  }
+
+  reserveSpace() {
+    console.log("reserve space");
   }
 
 }

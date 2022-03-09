@@ -1,4 +1,4 @@
-import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, ElementRef, EmbeddedViewRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ApplicationRef, ChangeDetectorRef, Component, ComponentRef, ElementRef, EmbeddedViewRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { CircleLayer, FullscreenControl, GeoJSONSource, GeolocateControl, LngLat, Map, map, Marker, NavigationControl, PointLike, Popup, SymbolLayer,  } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
@@ -29,6 +29,14 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
   markersOnTheMap: {[key:number]:Marker} = {};
 
+  selectedPark: ParkingLot | null = null;
+
+  get spaceCount() {
+    return this.selectedPark!.status.emptySpace +
+      this.selectedPark!.status.reservedSpace +
+      this.selectedPark!.status.occupiedSpace
+  }
+
   constructor(
     private viewRef: ViewContainerRef,
     private router: Router) {
@@ -36,6 +44,9 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.parkingLots.forEach(el => {
+      this.markersOnTheMap[el.id] = this.makeMarker(el);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -69,11 +80,8 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     this.addSearchBoxToMap();
 
     this.addMarkerClusterToMap();
-
-    this.parkingLots.forEach(el => {
-      this.markersOnTheMap[el.id] = this.makeMarker(el);
-    });
   }
+
   addMarkerClusterToMap() {
     this.appMap.on("load", (e:any) => {
       this.appMap.addSource(clusterSourceId,{
@@ -169,7 +177,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     let componentRef = this.viewRef.createComponent(MapMarkerComponent);
 
     componentRef.instance.onClick
-      .subscribe((event:any) => this.markerOnClick());
+      .subscribe((event:any) => this.markerOnClick(event, componentRef.instance));
 
     componentRef.instance.park = park;
 
@@ -180,10 +188,10 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   makeMarker(park: ParkingLot) {
     return new Marker(this.makeMarkerElement(park))
       .setLngLat({lat: park.lat, lng: park.lng})
-      .addTo(this.appMap);
   }
 
-  markerOnClick() {
+  markerOnClick(event:any, element: MapMarkerComponent) {
+    this.selectedPark = element.park;
     this.dialogVisible = true;
   }
 

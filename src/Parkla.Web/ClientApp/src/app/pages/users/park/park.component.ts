@@ -16,6 +16,8 @@ export class ParkComponent implements OnInit, AfterViewInit {
 
   _selectedArea!: ParkArea;
 
+  dialogVisible = false;
+
   set selectedArea(value: ParkArea) {
     if(!value) return;
     this._selectedArea = value;
@@ -55,5 +57,9 @@ export class ParkComponent implements OnInit, AfterViewInit {
     ));
 
     this.areaSuggestions = result;
+  }
+
+  reserveSpace() {
+
   }
 }

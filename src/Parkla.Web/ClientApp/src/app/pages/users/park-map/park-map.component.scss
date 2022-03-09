@@ -2,3 +2,38 @@
   width: 100%;
   height: 800px;
 }
+
+::ng-deep {
+
+  p-knob .p-knob-text {
+    font-size: 1.6rem;
+  }
+  p-knob .p-knob-range {
+    stroke-width: 3;
+  }
+  p-knob .p-knob-value {
+    stroke-width: 10;
+  }
+
+  .empty {
+    .p-knob-text {
+      fill: #0f0;
+      font-weight: bold;
+    }
+  }
+
+  .reserved {
+    .p-knob-text {
+      fill: #f7b060;
+      font-weight: bold;
+    }
+  }
+
+  .occupied {
+    .p-knob-text {
+      fill: #f00;
+      font-weight: bold;
+    }
+
+  }
+}

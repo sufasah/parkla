@@ -14,7 +14,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   },
   {
     id: 2,
@@ -28,7 +46,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   },
   {
     id: 3,
@@ -42,7 +78,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   }
   ,
   {
@@ -57,7 +111,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   }
   ,
   {
@@ -72,7 +144,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   }
   ,
   {
@@ -87,7 +177,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   }
   ,
   {
@@ -102,9 +210,26 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
-  }
-  ,
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
+  },
   {
     id: 8,
     name: "xotopar",
@@ -117,7 +242,25 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   }
   ,
   {
@@ -132,6 +275,24 @@ export const mockParkingLots: ParkingLot[] = [
       emptySpace: 20,
       occupiedSpace: 5,
       reservedSpace: 4,
-    }
+    },
+    minPrice: {
+      moneyUnit: "TL",
+      balance: 10
+    },
+    maxPrice: {
+      moneyUnit: "TL",
+      balance: 50
+    },
+    avgPrice: {
+      moneyUnit: "TL",
+      balance: 20
+    },
+    extras: [
+      "extra1",
+      "extra2",
+      "extra3",
+      "extraaaaaaaaaaaaaaaaaaaaa4",
+    ]
   }
 ];
