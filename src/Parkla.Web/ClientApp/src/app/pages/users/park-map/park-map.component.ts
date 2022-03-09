@@ -8,6 +8,7 @@ import { mockParkingLots } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Feature, FeatureCollection } from 'geojson';
 import { ParkingLot } from '@app/core/models/parking-lot';
+import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map.const';
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -75,7 +76,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   }
   addMarkerClusterToMap() {
     this.appMap.on("load", (e:any) => {
-      this.appMap.addSource("point-source",{
+      this.appMap.addSource(clusterSourceId,{
         type:'geojson',
         data: <FeatureCollection>{
           type: "FeatureCollection",
@@ -96,60 +97,21 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
         clusterRadius: 200,
       });
 
-      this.appMap.addLayer(<CircleLayer>{
-        id: "clusters",
-        type: "circle",
-        source: "point-source",
-        filter: ["has", "point_count"],
-        paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            '#EC619F',
-            4,
-            '#008D8D',
-            7,
-            '#004B7F'
-          ],
-          'circle-radius': [
-              'step',
-              ['get', 'point_count'],
-              15,
-              4,
-              20,
-              7,
-              25
-          ],
-          'circle-stroke-width': 1,
-          'circle-stroke-color': 'white',
-          'circle-stroke-opacity': 1
-        }
-      });
+      this.appMap.addLayer(clusterCircleLayer);
 
-      this.appMap.addLayer(<SymbolLayer>{
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'point-source',
-        filter: ['has', 'point_count'],
-        layout: {
-            'text-field': '{point_count_abbreviated}',
-            'text-size': 16
-        },
-        paint: {
-            'text-color': 'white'
-        }
-      });
+      this.appMap.addLayer(clusterSymbolLayer);
     });
 
     this.appMap.on("data", (e:any) => {
-      if(e.sourceId !== "point-source" || !(<any>this.appMap.getSource("point-source")).loaded()) return;
+      if(e.sourceId !== clusterSourceId || !(<any>this.appMap.getSource(clusterSourceId)).loaded()) return;
       this.refreshMarkers();
     });
 
-    this.appMap.on('click', 'clusters', (e) => {
-      var features:any = this.appMap.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+    this.appMap.on('click', clusterCircleLayerId, (e) => {
+      var features:any = this.appMap.queryRenderedFeatures(e.point, { layers: [clusterCircleLayerId] });
       var clusterId = features[0].properties.cluster_id;
-      (<any>this.appMap.getSource('point-source')).getClusterExpansionZoom(clusterId, (err:any, zoom:any) => {
+
+      (<any>this.appMap.getSource(clusterSourceId)).getClusterExpansionZoom(clusterId, (err:any, zoom:any) => {
         if (err) return;
         this.appMap.easeTo({
             center: features[0].geometry.coordinates,
@@ -158,11 +120,11 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       });
     });
 
-    this.appMap.on('mouseenter', 'clusters', () => {
+    this.appMap.on('mouseenter', clusterCircleLayerId, () => {
       this.appMap.getCanvas().style.cursor = 'pointer';
     });
 
-    this.appMap.on('mouseleave', 'clusters', () => {
+    this.appMap.on('mouseleave', clusterCircleLayerId, () => {
       this.appMap.getCanvas().style.cursor = '';
     });
 
@@ -238,7 +200,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       this.markersOnTheMap[id].remove();
     });
 
-    this.appMap.querySourceFeatures('point-source').forEach((feature:any) => {
+    this.appMap.querySourceFeatures(clusterSourceId).forEach((feature:any) => {
       if (feature.properties && !feature.properties.cluster) {
         let id = parseInt(feature.properties.id, 10);
         let marker = this.markersOnTheMap[id];
