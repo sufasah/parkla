@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { mockParkingLots } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Feature, FeatureCollection } from 'geojson';
+import { ParkingLot } from '@app/core/models/parking-lot';
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -69,7 +70,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     this.addMarkerClusterToMap();
 
     this.parkingLots.forEach(el => {
-      this.markersOnTheMap[el.id] = this.makeMarker(el.lat,el.lng);
+      this.markersOnTheMap[el.id] = this.makeMarker(el);
     });
   }
   addMarkerClusterToMap() {
@@ -202,18 +203,21 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
       .appendChild(this.appSearchBox.getSearchBoxHTML());
   }
 
-  makeMarkerElement(lat: number, lng: number) {
+  makeMarkerElement(park: ParkingLot) {
     let componentRef = this.viewRef.createComponent(MapMarkerComponent);
 
-    componentRef.instance.onClick.subscribe((event:any) => this.markerOnClick());
+    componentRef.instance.onClick
+      .subscribe((event:any) => this.markerOnClick());
+
+    componentRef.instance.park = park;
 
     return (componentRef.hostView as EmbeddedViewRef<any>)
       .rootNodes[0] as HTMLElement;
   }
 
-  makeMarker(lat: number, lng: number) {
-    return new Marker(this.makeMarkerElement(lat,lng))
-      .setLngLat({lat: lat, lng: lng})
+  makeMarker(park: ParkingLot) {
+    return new Marker(this.makeMarkerElement(park))
+      .setLngLat({lat: park.lat, lng: park.lng})
       .addTo(this.appMap);
   }
 

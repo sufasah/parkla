@@ -25,6 +25,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToolbarModule } from 'primeng/toolbar';
+import { KnobModule } from 'primeng/knob';
 import { MessageModule } from 'primeng/message';
 import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
@@ -77,6 +78,7 @@ import { MapMarkerComponent } from './shared/components/map-marker/map-marker.co
     BrowserAnimationsModule,
     ReactiveFormsModule,
     FormsModule,
+    KnobModule,
     BadgeModule,
     TableModule,
     SlideMenuModule,

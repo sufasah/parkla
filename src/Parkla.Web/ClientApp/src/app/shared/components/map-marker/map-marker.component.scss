@@ -1,8 +1,8 @@
 @use "sass:math";
 
 $markerSize: 10px;
-$infoWidth: 120px;
-$infoHeight: 80px;
+$infoWidth: 200px;
+$infoHeight: 100px;
 
 .marker {
   border: 1px solid red;
@@ -15,10 +15,12 @@ $infoHeight: 80px;
 }
 
 .marker-info {
-  border: 1px solid blue;
+  border: 1px solid silver;
   width: $infoWidth;
   height: $infoHeight;
   box-shadow: 0px 0px 16px rgb(0 0 0 / 25%);
+  background-color: rgba(255,255,255,0.75);
+  padding: 10px;
 }
 
 .floating {
@@ -32,4 +34,33 @@ $infoHeight: 80px;
   0% { transform: translate(0,  0px); }
   50%  { transform: translate(0, -10px); }
   100%   { transform: translate(0, -0px); }
+}
+
+::ng-deep {
+
+  p-knob .p-knob-text {
+    font-size: 1.6rem;
+  }
+
+  .empty {
+    .p-knob-text {
+      fill: #0f0;
+      stroke-width: 10px;
+    }
+  }
+
+  .reserved {
+    .p-knob-text {
+      fill: #df923a;
+    }
+  }
+
+  .occupied {
+    .p-knob-text {
+      fill: #f00;
+    }
+  }
+
+
+
 }

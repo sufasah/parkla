@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ParkingLot } from '@app/core/models/parking-lot';
 
 @Component({
   selector: 'app-map-marker',
@@ -9,6 +10,9 @@ export class MapMarkerComponent implements OnInit {
 
   @Output()
   public onClick = new EventEmitter<any>();
+
+  @Input()
+  park!:ParkingLot;
 
   constructor() { }
 
