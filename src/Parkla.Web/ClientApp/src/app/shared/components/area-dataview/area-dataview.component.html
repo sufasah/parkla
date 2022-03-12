@@ -1,0 +1,88 @@
+<p-dataView
+  #dv [value]="areas"
+  [paginator]="true"
+  [rows]="10"
+  filterBy="name"
+  [sortField]="sortField"
+  [sortOrder]="sortOrder"
+  layout="grid"
+  >
+  <ng-template pTemplate="header">
+    <div class="d-flex flex-column flex-md-row justify-content-between">
+        <p-dropdown
+          [options]="sortOptions"
+          placeholder="Sort By Price"
+          (onChange)="onSortChange($event)"
+          styleClass="mb-2 md:mb-0"
+          >
+        </p-dropdown>
+        <span class="p-input-icon-left mb-2 md:mb-0">
+            <i class="pi pi-search"></i>
+
+            <input
+              type="search"
+              pInputText
+              placeholder="Search by Name"
+              (input)="onSearchInput($event)"
+              />
+        </span>
+        <p-dataViewLayoutOptions class="d-inline-flex"></p-dataViewLayoutOptions>
+    </div>
+  </ng-template>
+
+  <ng-template let-area pTemplate="listItem">
+    <div class="col-12">
+      <div class="area-list-item">
+          <p-image [src]="area.templateImg" [preview]="true"></p-image>
+          <div class="area-list-detail">
+              <div class="area-name">{{area.name}}</div>
+              <div class="area-description">{{area.description}}</div>
+              <div class="area-reservable">{{area.reservationsEnabled}}</div>
+              <i class="pi pi-tag area-category-icon"></i><span class="area-category">{{area.status.timestamp}}-{{area.status.emptySpace}}-{{area.status.reservedSpace}}-{{area.status.occupiedSpace}}</span>
+          </div>
+          <div class="area-list-action">
+              <span class="area-price">{{area.minPrice.balance}}-{{area.avgPrice.balance}}-{{area.maxPrice.balance}}</span>
+              <p-button icon="pi pi-car" label="Go Area" (click)="goArea(area)"></p-button>
+              <span class="area-badge">{{area.notReservedOccupiable}}</span>
+          </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template let-area pTemplate="gridItem">
+    <div class="col-12 col-md-6 col-lg-4 d-inline-block">
+      <div class="area-grid-item card">
+          <div class="area-grid-item-top">
+              <div>
+                  <i class="pi pi-tag area-category-icon"></i>
+                  <span class="area-category">{{area.status.timestamp}}-{{area.status.emptySpace}}-{{area.status.reservedSpace}}-{{area.status.occupiedSpace}}</span>
+              </div>
+              <span class="area-price">{{area.minPrice.balance}}-{{area.avgPrice.balance}}-{{area.maxPrice.balance}}</span>
+          </div>
+          <div class="area-grid-item-content">
+              <p-image [src]="area.templateImg" [preview]="true"></p-image>
+              <div class="area-name">{{area.name}}</div>
+              <div class="area-description">{{area.description}}</div>
+              <div class="area-reservable">{{area.reservationsEnabled}}</div>
+          </div>
+          <div class="area-grid-item-bottom">
+            <span class="area-badge">{{area.notReservedOccupiable}}</span>
+            <p-button icon="pi pi-car" label="Go Area" (click)="goArea(area)"></p-button>
+          </div>
+      </div>
+   </div>
+  </ng-template>
+
+  <ng-template pTemplate="paginatorleft" let-state>
+    state.first
+    <button type="button" pButton icon="pi-refresh">refresh</button>
+  </ng-template>
+
+  <ng-template pTemplate="paginatorright">
+    <button type="button" pButton icon="pi-cloud-upload">upload</button>
+  </ng-template>
+
+  <ng-template let-item pTemplate="paginatordropdownitem">
+    item.value - per page
+  </ng-template>
+</p-dataView>

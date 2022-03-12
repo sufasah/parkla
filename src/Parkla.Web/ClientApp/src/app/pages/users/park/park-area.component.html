@@ -1,0 +1,45 @@
+<p-toolbar>
+  <div #parkHeader class="park-header">
+    <button pButton pRipple (click)="goAreas()" label="Go Areas"></button>
+    <p-calendar
+      *ngIf="selectedArea.reservationsEnabled"
+      [(ngModel)]="timeRange"
+      [minDate]="minDate"
+      [maxDate]="maxDate"
+      selectionMode="range"
+      [showTime]="true"
+      inputId="time"
+      >
+    </p-calendar>
+
+    from
+    <input
+      *ngIf="selectedArea.reservationsEnabled"
+      type="text"
+      pInputText
+      [ngModel]="timeRange[0]?.toLocaleString()"
+      [disabled]="true"
+      style="opacity: 1;"
+      />
+
+    to
+    <input
+      *ngIf="selectedArea.reservationsEnabled"
+      type="text"
+      pInputText
+      [ngModel]="timeRange[1]?.toLocaleString()"
+      [disabled]="true"
+      style="opacity: 1;"
+      />
+
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<app-park-template
+  [parkArea]="selectedArea"
+  [selectedTimeRange]="timeRange"
+></app-park-template>

@@ -2,12 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@app/core/components/login/login.component';
 import { RegisterComponent } from '@app/core/components/register/register.component';
-import { UsersRoutingModule } from '@app/pages/users/users-routing.module'
 import { AuthGuard } from './core/guards/auth.guard';
-import { NoAuthGuard } from './core/guards/no-auth.guard';
-import { ManagersRoutingModule } from './pages/managers/managers-routing.module';
+import { ParkAreasComponent } from './pages/users/areas/park-areas.component';
 import { ParkMapComponent } from './pages/users/park-map/park-map.component';
-import { ParkComponent } from './pages/users/park/park.component';
+import { ParkAreaComponent } from './pages/users/park/park-area.component';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 import { ProfileComponent } from './shared/profile/profile.component';
 
@@ -44,8 +42,14 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: "park/:id",
-    component: ParkComponent,
+    path: "park/:parkid/area/:areaid",
+    component: ParkAreaComponent,
+    pathMatch: "full",
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "park/:parkid/areas",
+    component: ParkAreasComponent,
     pathMatch: "full",
     canActivate: [AuthGuard]
   }

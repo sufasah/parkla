@@ -9,6 +9,9 @@ import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker
 import { Feature, FeatureCollection } from 'geojson';
 import { ParkingLot } from '@app/core/models/parking-lot';
 import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map.const';
+import { RefSharingService } from '@app/core/services/ref-sharing.service';
+import { RSRoute } from '@app/core/constants/ref-sharing.const';
+import { RouteUrl } from '@app/core/utils/route.util';
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -39,7 +42,8 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
   constructor(
     private viewRef: ViewContainerRef,
-    private router: Router) {
+    private router: Router,
+    private refSharingService: RefSharingService) {
 
   }
 
@@ -188,6 +192,7 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   makeMarker(park: ParkingLot) {
     return new Marker(this.makeMarkerElement(park))
       .setLngLat({lat: park.lat, lng: park.lng})
+      .remove()
   }
 
   markerOnClick(event:any, element: MapMarkerComponent) {
@@ -199,8 +204,9 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
     window.location.href = `https://www.google.com/maps/place/${lat.toFixed(20)}+${lng.toFixed(20)}/@${lat.toFixed(20)},${lng.toFixed(20)},12z`;
   }
 
-  navigateToPark() {
-    this.router.navigate(["park/parkingLotId"]);
+  navigateToParkAreas(park:ParkingLot) {
+    this.refSharingService.setData(RSRoute.mapSelectedPark,park);
+    this.router.navigate([RouteUrl.parkAreas(park.id)]);
   }
 
   refreshMarkers() {

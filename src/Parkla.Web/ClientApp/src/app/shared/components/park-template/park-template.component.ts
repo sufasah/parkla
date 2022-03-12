@@ -151,7 +151,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
             reservation.endTime <= this.selectedTimeRange[1]!)
 
           if(isSpaceReserved || (space.status == "occupied" && !this.parkArea.notReservedOccupiable)) {
-            (<any>space).isDrawnReserved = true
+            (<any>space).isDrawnReserved = true;
 
             if(space.status == "empty")
               this.drawEmptyReservedSpace(space.templatePath);
@@ -159,6 +159,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
               this.drawOccupiedReservedSpace(space.templatePath);
 
             return;
+          }
+          else {
+            (<any>space).isDrawnReserved = false;
           }
         }
       }
