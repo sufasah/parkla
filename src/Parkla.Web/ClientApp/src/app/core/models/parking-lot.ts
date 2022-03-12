@@ -59,7 +59,7 @@ export type SpacePath = [Point,Point,Point,Point];
 export interface ParkSpace {
   id: string;
   status: "empty" | "occupied";
-  templatePath: SpacePath
+  templatePath: SpacePath;
   reservations?: [{
     username: string;
     startTime: Date,

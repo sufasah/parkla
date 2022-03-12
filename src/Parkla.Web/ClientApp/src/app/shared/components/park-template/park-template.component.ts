@@ -1,9 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ParkArea, ParkingLot, ParkSpace, Point, SpacePath } from '@app/core/models/parking-lot';
-import { ParkTemplateClickEvent } from '@app/core/types/types';
+import { ParkArea, ParkSpace, Point, SpacePath } from '@app/core/models/parking-lot';
 import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
-import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-park-template',
@@ -19,39 +17,17 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   canvasRef!:ElementRef<HTMLCanvasElement>;
 
   private _parkArea!: ParkArea;
-
   @Input()
   set parkArea(value: ParkArea) {
     this._parkArea = value;
     this.parkAreaChanges(value);
   }
-
   get parkArea() {
     return this._parkArea;
   }
 
-  private _selectedTimeRange: [Date?, Date?] = [];
-
-  @Input()
-  set selectedTimeRange(value) {
-    value[0]?.setSeconds(0);
-    value[1]?.setSeconds(0);
-    this._selectedTimeRange = value;
-    this.selectedTimeRangeChanges(value);
-  }
-
   @Output()
-  spaceClicked = new EventEmitter<ParkTemplateClickEvent>();
-
-  selectedSpace!: ParkSpace;
-
-  //@Input()
-  //editMode: boolean = false;
-
-  get selectedTimeRange() {
-    return this._selectedTimeRange;
-  }
-
+  spaceClicked = new EventEmitter<ParkSpace>();
 
   canvas!:HTMLCanvasElement;
 
@@ -63,13 +39,11 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   private selection!: Selection<BaseType, unknown, HTMLElement, any>;
 
-  private viewInitialized = false;
-
   imageLoading = true;
 
   dialogVisible = false;
 
-  constructor(private messageService: MessageService) { }
+  constructor() { }
 
   ngOnInit(): void {
     this.zoomBehavior.on("zoom",(e) => {
@@ -86,14 +60,11 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.viewInitialized = true;
-
     this.canvas = this.canvasRef.nativeElement;
     this.ctx = this.canvas.getContext('2d')!;
 
     this.selection = select(".park-body");
     this.selection.call(this.zoomBehavior);
-
   }
 
   initCanvas() {
@@ -137,31 +108,22 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     this.ctx.drawImage(
       this.parkingLotImage, 0, 0,
       this.parkingLotImage.width,
-      this.parkingLotImage.height);
+      this.parkingLotImage.height
+    );
 
     this.parkArea.spaces.forEach(space => {
-      if(this.parkArea.reservationsEnabled){
-        for(let i = 0; i < space.reservations!.length; i++){
-          let reservation = space.reservations![i];
-
-          let isSpaceReserved =
-            (reservation.startTime < this.selectedTimeRange[1]! &&
-            reservation.startTime >= this.selectedTimeRange[0]!) ||
-            (reservation.endTime > this.selectedTimeRange[0]! &&
-            reservation.endTime <= this.selectedTimeRange[1]!)
-
-          if(isSpaceReserved || (space.status == "occupied" && !this.parkArea.notReservedOccupiable)) {
-            (<any>space).isDrawnReserved = true;
-
+      if(this.parkArea.reservationsEnabled && space.reservations){
+        for(let i = 0; i < space.reservations.length; i++){
+          if(
+            (<any>space).isReserved ||
+            (space.status == "occupied" &&
+             !this.parkArea.notReservedOccupiable)
+          ) {
             if(space.status == "empty")
               this.drawEmptyReservedSpace(space.templatePath);
             else
               this.drawOccupiedReservedSpace(space.templatePath);
-
             return;
-          }
-          else {
-            (<any>space).isDrawnReserved = false;
           }
         }
       }
@@ -230,51 +192,12 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
     if(!selectedSpace) return;
 
-    if(this.parkArea.reservationsEnabled) {
-      if(selectedSpace.status == "empty") {
-        this.selectedSpace = selectedSpace;
-        this.showReserveModal();
-        //show time interval selected
-        //show pricig table
-        //show reservation intervals and available intervals between them
-        //if reserved show reserved user's username
-        //if user wallet is not enough it must not be possible to confirm
-      }
-      else {
-        if((<any>selectedSpace).isDrawnReserved) {
-        this.selectedSpace = selectedSpace;
-        this.showReserveModal();
-        }
-        else {
-          this.messageService.add({
-            life:1500,
-            severity:'error',
-            summary: 'Occupied Reservation',
-            detail: 'It is not possible to reserve occupied space.',
-          });
-        }
-      }
-    }
-  }
-
-  showReserveModal() {
-    this.dialogVisible = true;
-
-  }
-
-  selectedTimeRangeChanges(value: [Date?, Date?]) {
-    if(this.viewInitialized && value[0] && value[1]) {
-      this.drawCanvas();
-    }
+    this.spaceClicked.emit(selectedSpace);
   }
 
   parkAreaChanges(value: ParkArea) {
     this.imageLoading = true;
     this.parkingLotImage.src = value.templateImg;
-  }
-
-  reserveSpace() {
-    console.log("reserve space");
   }
 
 }
