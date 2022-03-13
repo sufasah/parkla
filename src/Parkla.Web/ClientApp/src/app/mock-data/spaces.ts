@@ -1,4 +1,5 @@
 import { ParkSpace } from "@app/core/models/parking-lot";
+import { mockSpaceReservations } from "./spaceReservations";
 
 export const mockSpaces: ParkSpace[] = [
   {
@@ -10,11 +11,8 @@ export const mockSpaces: ParkSpace[] = [
       [197,83],
       [197,21]
     ],
-    reservations: [{
-      username:"a",
-      startTime: new Date(Date.now()+1000*60*60),
-      endTime: new Date(Date.now()+1000*60*60*2)
-    }]
+    isReserved: false,
+    reservations: mockSpaceReservations
   },
   {
     id:"177",
@@ -25,11 +23,8 @@ export const mockSpaces: ParkSpace[] = [
       [165,83],
       [165,21]
     ],
-    reservations: [{
-      username:"b",
-      startTime: new Date(Date.now()+1000*60*60),
-      endTime: new Date(Date.now()+1000*60*60*2)
-    }]
+    isReserved: false,
+    reservations: mockSpaceReservations
   },
   {
     id:"181",
@@ -40,11 +35,8 @@ export const mockSpaces: ParkSpace[] = [
       [293,83],
       [294,21]
     ],
-    reservations: [{
-      username:"c",
-      startTime: new Date(Date.now()+1000*60*60),
-      endTime: new Date(Date.now()+1000*60*60*2)
-    }]
+    isReserved: false,
+    reservations: mockSpaceReservations
   },
   {
     id:"184",
@@ -55,11 +47,8 @@ export const mockSpaces: ParkSpace[] = [
       [391,84],
       [391,21]
     ],
-    reservations: [{
-      username:"testuser",
-      startTime: new Date(Date.now()+1000*60*60),
-      endTime: new Date(Date.now()+1000*60*60*2)
-    }]
+    isReserved: false,
+    reservations: mockSpaceReservations
   },
   {
     id:"183",
@@ -70,10 +59,7 @@ export const mockSpaces: ParkSpace[] = [
       [358,83],
       [358,22]
     ],
-    reservations: [{
-      username:"e",
-      startTime: new Date(Date.now()+1000*60*60),
-      endTime: new Date(Date.now()+1000*60*60*2)
-    }]
+    isReserved: false,
+    reservations: mockSpaceReservations
   }
 ];

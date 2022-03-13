@@ -31,6 +31,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { SlideMenuModule } from 'primeng/slidemenu';
+import { TabMenuModule } from 'primeng/tabmenu';
 import { DropdownModule } from 'primeng/dropdown';
 import { DividerModule } from 'primeng/divider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -88,6 +89,7 @@ import { RefSharingService } from './core/services/ref-sharing.service';
     ReactiveFormsModule,
     FormsModule,
     DropdownModule,
+    TabMenuModule,
     KnobModule,
     BadgeModule,
     TableModule,

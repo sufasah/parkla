@@ -16,15 +16,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -48,15 +48,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -80,15 +80,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -113,15 +113,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -146,15 +146,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -179,15 +179,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -212,15 +212,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -244,15 +244,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [
@@ -277,15 +277,15 @@ export const mockParkingLots: ParkingLot[] = [
       reservedSpace: 4,
     },
     minPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 10
     },
     maxPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 50
     },
     avgPrice: {
-      moneyUnit: "TL",
+      moneyUnit: "TRY",
       balance: 20
     },
     extras: [

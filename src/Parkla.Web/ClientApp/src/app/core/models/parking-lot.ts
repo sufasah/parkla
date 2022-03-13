@@ -60,9 +60,11 @@ export interface ParkSpace {
   id: string;
   status: "empty" | "occupied";
   templatePath: SpacePath;
-  reservations?: [{
-    username: string;
-    startTime: Date,
-    endTime: Date
-  }] | [];
+  isReserved: boolean;
+  reservations: SpaceReservation[];
+}
+export interface SpaceReservation {
+  username: string;
+  startTime: Date,
+  endTime: Date
 }
