@@ -108,7 +108,7 @@
           pTemplate="body"
           let-reservation
           let-rowIndex="rowIndex">
-          <tr>
+          <tr [ngStyle]="{'background-color': reservation.isReserved ? 'rgba(255, 153, 51, 0.25)' : 'rgba(0, 255, 0, 0.25)'}">
             <td>
               <span class="p-column-title">Username</span>
               {{reservation.username}}
@@ -116,15 +116,15 @@
             <td>
               <span class="p-column-title">Start Time</span>
               {{reservation.startTime | date :
-                rowIndex == 0 || rowIndex == selectedSpace.reservations.length-1
-                ? "dd-MM-yyyy HH:mm"
+                rowIndex == 0 || rowIndex == reservationsOfDay.length-1
+                ? "HH:mm dd-MM-yyyy"
                 : "HH:mm"}}
             </td>
             <td>
               <span class="p-column-title">End Time</span>
               {{reservation.endTime | date :
-                rowIndex == 0 || rowIndex == selectedSpace.reservations.length-1
-                ? "dd-MM-yyyy HH:mm"
+                rowIndex == 0 || rowIndex == reservationsOfDay.length-1
+                ? "HH:mm dd-MM-yyyy"
                 : "HH:mm"}}
             </td>
           </tr>

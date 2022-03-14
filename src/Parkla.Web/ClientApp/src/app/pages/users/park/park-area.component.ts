@@ -131,6 +131,7 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
   }
 
   showReserveModal() {
+    this.genereateReservationsOfDay(this.weekDays[0])
     this.dialogVisible = true;
   }
 
@@ -157,7 +158,6 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
 
   dayTabSelected(event:any){
     let item: MenuItem = event.item;
-
     this.genereateReservationsOfDay(item);
   }
 

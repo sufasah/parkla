@@ -74,7 +74,7 @@
     <div class="card mt-3">
       <p-table responsiveLayout="stack" [value]="[selectedPark!]">
         <ng-template pTemplate="caption">
-            <h5>Park Status <span style="color:red">{{selectedPark!.status.timestamp | date : "dd-MM-yyyy HH:mm"}}</span></h5>
+            <h5>Park Status <span style="color:red">{{selectedPark!.status.timestamp | date : "HH:mm dd-MM-yyyy"}}</span></h5>
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>

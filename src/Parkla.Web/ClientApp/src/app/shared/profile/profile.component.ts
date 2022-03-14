@@ -93,9 +93,6 @@ export class ProfileComponent implements OnInit {
     this.surname = token?.name?.substring(lastSpace+1)!;
     this.gender = new FormControl(token?.gender);
 
-    console.log(token);
-
-
     this.userService.getUserDetail().subscribe((userDetail:any) => {
       this.id = userDetail.id;
       this.wallet = userDetail.wallet;
