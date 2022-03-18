@@ -53,12 +53,12 @@ import { ImageModule } from 'primeng/image';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { DataViewModule } from 'primeng/dataview';
 import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
-import { ParkAreaComponent } from '@app/pages/users/park/park-area.component';
+import { ParkAreaComponent } from '@app/pages/users/park-area/park-area.component';
 import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
 import { apiAuthScheme } from './core/constants/http.const';
 import { ParkTemplateComponent } from './shared/components/park-template/park-template.component';
 import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar.component';
-import { ProfileComponent } from './shared/profile/profile.component';
+import { ProfileComponent } from './pages/users/profile/profile.component';
 import { UserService } from './core/services/user.service';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 import { ReservationService } from './core/services/reservation.service';
@@ -69,6 +69,16 @@ import { RefSharingService } from './core/services/ref-sharing.service';
 import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';
 import { MapComponent } from './shared/components/map/map.component';
 import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.component';
+import { MProfileComponent } from './pages/managers/m-profile/m-profile.component';
+import { MParkAreasComponent } from './pages/managers/m-park-areas/m-park-areas.component';
+import { MParkAreaComponent } from './pages/managers/m-park-area/m-park-area.component';
+import { MParkAreaQRComponent } from './pages/managers/m-park-area-qr/m-park-area-qr.component';
+import { MNewParkAreaComponent } from './pages/managers/m-new-park-area/m-new-park-area.component';
+import { MNewParkComponent } from './pages/managers/m-new-park/m-new-park.component';
+import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit-park-area.component';
+import { MEditParkComponent } from './pages/managers/m-edit-park/m-edit-park.component';
+import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
+import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +97,16 @@ import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.compon
     ParkTemplateComponent,
     LoadMoneyComponent,
     UserAvatarComponent,
+    MProfileComponent,
+    MParkAreasComponent,
+    MParkAreaComponent,
+    MParkAreaQRComponent,
+    MNewParkAreaComponent,
+    MNewParkComponent,
+    MEditParkAreaComponent,
+    MEditParkComponent,
+    MEditTemplateComponent,
+    MDashboardComponent,
     ParkAreasComponent,
     AreaDataViewComponent
   ],

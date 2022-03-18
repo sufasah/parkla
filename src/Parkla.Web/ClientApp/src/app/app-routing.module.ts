@@ -7,9 +7,9 @@ import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.compon
 import { ParkAreasComponent } from './pages/users/areas/park-areas.component';
 import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';
 import { ParkMapComponent } from './pages/users/park-map/park-map.component';
-import { ParkAreaComponent } from './pages/users/park/park-area.component';
+import { ParkAreaComponent } from './pages/users/park-area/park-area.component';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
-import { ProfileComponent } from './shared/profile/profile.component';
+import { ProfileComponent } from './pages/users/profile/profile.component';
 
 const routes: Routes = [
   {

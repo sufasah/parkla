@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { mockParkingLots } from '@app/mock-data/parking-lots';
 
 import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
 
@@ -9,6 +10,7 @@ import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
 })
 export class ParkMapComponent implements OnInit, AfterViewInit {
 
+  parks = mockParkingLots;
 
   constructor() {
 

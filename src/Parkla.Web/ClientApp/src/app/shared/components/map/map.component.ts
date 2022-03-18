@@ -27,7 +27,20 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   appMap!: Map;
 
-  parkingLots = mockParkingLots;
+  private _parks: ParkingLot[] = [];
+
+  @Input()
+  set parks(value: ParkingLot[]) {
+    this._parks = value;
+
+    this._parks.forEach(el => {
+      this.markersOnTheMap[el.id] = this.makeMarker(el);
+    });
+  }
+
+  get parks() {
+    return this._parks;
+  }
 
   dialogVisible = false;
 
@@ -49,9 +62,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     private viewRef: ViewContainerRef) { }
 
   ngOnInit(): void {
-    this.parkingLots.forEach(el => {
-      this.markersOnTheMap[el.id] = this.makeMarker(el);
-    });
+
   }
 
   ngAfterViewInit(): void {
@@ -95,7 +106,7 @@ export class MapComponent implements OnInit, AfterViewInit{
         type:'geojson',
         data: <FeatureCollection>{
           type: "FeatureCollection",
-          features: this.parkingLots.map(park => (<Feature>{
+          features: this.parks.map(park => (<Feature>{
             id: park.id,
             type: "Feature",
             geometry: {

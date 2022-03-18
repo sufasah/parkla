@@ -22,6 +22,13 @@ export class UserAvatarComponent implements OnInit {
   ngOnInit(): void {
     this.label = this.authService.accessToken?.preferred_username![0]!;
 
+    if(this.authService.asManager)
+      this.initAsManager();
+    else
+      this.init();
+  }
+
+  init() {
     this.items = [
       {
         label: 'Profile',
@@ -33,11 +40,7 @@ export class UserAvatarComponent implements OnInit {
         icon: 'pi pi-fw pi-car',
         routerLink: ["/reservations"]
       },
-      this.authService.asManager ? {
-        label: "User Mode",
-        icon: "pi pi-fw pi-user",
-        routerLink: ["/parkmap"]
-      } : {
+      {
         label: "Manager Mode",
         icon: "pi pi-fw pi-user",
         routerLink: ["/manager/parkmap"]
@@ -49,6 +52,27 @@ export class UserAvatarComponent implements OnInit {
         routerLink: ["/"]
       },
     ];
+  }
+
+  initAsManager() {
+    this.items = [
+      {
+        label: 'Profile',
+        icon: 'pi pi-fw pi-user',
+        routerLink: ["/manager/profile"]
+      },
+      {
+        label: "User Mode",
+        icon: "pi pi-fw pi-user",
+        routerLink: ["/parkmap"]
+      },
+      {
+        label: 'Logout',
+        icon: 'pi pi-fw pi-sign-out',
+        command: () => this.logout(),
+        routerLink: ["/"]
+      },
+    ]
   }
 
   logout() {
