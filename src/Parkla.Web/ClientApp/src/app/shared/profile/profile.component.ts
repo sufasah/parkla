@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AppUser } from '@app/core/models/app-user';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
+import { RouteUrl } from '@app/core/utils/route.util';
 import { Message, MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 
@@ -225,6 +226,10 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+  }
+
+  loadMoney() {
+    this.router.navigate([RouteUrl.loadMoney()]);
   }
 
 }

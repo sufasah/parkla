@@ -1,0 +1,78 @@
+<p-toolbar>
+  <div>
+    <button pButton pRipple (click)="goBack()">Go Back</button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<form
+  #payForm="ngForm"
+  (ngSubmit)="pay(payForm)"
+  >
+  <div>
+    <label for="cardNumber">Credit Card Number</label>
+    <p-inputMask
+      name="cardNumber"
+      [(ngModel)]="cardNumber"
+      mask="9999 9999 9999 9999"
+      slotChar="•"
+      [autoClear]="false"
+      [required]="true"
+      >
+    </p-inputMask>
+  </div>
+
+  <div>
+    <label for="expireMonth">Expires Month</label>
+    <p-inputNumber
+      name="expireMonth"
+      [(ngModel)]="expireMonth"
+      mode="decimal"
+      placeholder="MM"
+      [min]="1"
+      [max]="12"
+      [maxlength]="2"
+      [required]="true"
+      >
+    </p-inputNumber>
+  </div>
+
+  <div>
+    <label for="expireYear">Expires Year</label>
+    <p-inputNumber
+      name="expireYear"
+      [(ngModel)]="expireYear"
+      mode="decimal"
+      placeholder="YY"
+      [min]="0"
+      [max]="99"
+      [maxlength]="2"
+      [required]="true"
+      >
+    </p-inputNumber>
+  </div>
+
+  <div>
+    <label for="cvc">CVC</label>
+    <p-inputMask
+      name="cvc"
+      [(ngModel)]="cvc"
+      mask="999"
+      slotChar=" "
+      [autoClear]="false"
+      [required]="true"
+      >
+    </p-inputMask>
+  </div>
+
+  <button
+    type="submit"
+    pButton
+    pRipple
+    label="Pay"
+    >
+  </button>
+</form>

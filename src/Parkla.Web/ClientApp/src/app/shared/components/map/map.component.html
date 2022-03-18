@@ -1,0 +1,139 @@
+<div id="appMap">
+
+</div>
+
+<p-dialog
+  #cd
+  [modal]="true"
+  [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+  [closeOnEscape]="true"
+  [closable]="true"
+  [(visible)]="dialogVisible"
+  [maximizable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{width: '60vw',height: '100vh'}"
+  >
+  <ng-template pTemplate="header">
+    <div>
+      <h3 class="m-0">{{selectedPark?.name}}</h3>
+      <h4 class="m-0">{{selectedPark?.location}}</h4>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="body">
+    <div class="card">
+      <p-table responsiveLayout="stack" [value]="[selectedPark!]">
+        <ng-template pTemplate="caption">
+            <h5>Price</h5>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th>Minimum Price</th>
+              <th>Avarage Price</th>
+              <th>Maximum Price</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-park>
+            <tr>
+              <td>
+                <span class="p-column-title">Minimum Price</span>
+                <span class="min-price">
+                  {{park.minPrice.balance | currency : park.minPrice.moneyUnit : "symbol" : "0.2-2"}}
+                </span>
+              </td>
+              <td>
+                <span class="p-column-title">Avarage Price</span>
+                <span class="avg-price">
+                  {{park.avgPrice.balance | currency : park.avgPrice.moneyUnit : "symbol" : "0.2-2"}}
+                </span>
+              </td>
+              <td>
+                <span class="p-column-title">Maximum Price</span>
+                <span class="max-price">
+                  {{park.maxPrice.balance | currency : park.maxPrice.moneyUnit : "symbol" : "0.2-2"}}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+      </p-table>
+    </div>
+
+    <div class="card mt-3">
+      <p-table responsiveLayout="stack" [value]="[selectedPark!]">
+        <ng-template pTemplate="caption">
+            <h5>Park Status <span style="color:red">{{selectedPark!.status.timestamp | date : "HH:mm dd-MM-yyyy"}}</span></h5>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <th>Empty Spaces</th>
+              <th>Reserved Spaces</th>
+              <th>Occupied Spaces</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-park>
+            <tr>
+              <td>
+                <span class="p-column-title">Empty Spaces</span>
+                <p-knob
+                  [ngModel]="park.status.emptySpace"
+                  styleClass="empty"
+                  valueColor="#0f0"
+                  rangeColor="#777"
+                  [max]="spaceCount"
+                  [size]="50"
+                  [readonly]="true"
+                  >
+                </p-knob>
+              </td>
+              <td>
+                <span class="p-column-title">Reserved Spaces</span>
+                <p-knob
+                  [ngModel]="park.status.reservedSpace"
+                  styleClass="reserved"
+                  valueColor="#f7b060"
+                  rangeColor="#777"
+                  [max]="spaceCount"
+                  [size]="50"
+                  [readonly]="true"
+                  >
+                </p-knob>
+              </td>
+              <td>
+                <span class="p-column-title">Occupied Spaces</span>
+                <p-knob
+                  [ngModel]="park.status.occupiedSpace"
+                  styleClass="occupied"
+                  valueColor="#f00"
+                  rangeColor="#777"
+                  [max]="spaceCount"
+                  [size]="50"
+                  [readonly]="true"
+                  >
+                  </p-knob>
+              </td>
+            </tr>
+          </ng-template>
+      </p-table>
+    </div>
+    <div>
+      Extras:
+      <span *ngFor="let extra of selectedPark?.extras">
+        {{extra}}
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="mt-3">
+      <p-button type="button" icon="pi pi-car" label="Go Park" (onClick)="navigateToParkAreas(selectedPark!)" ></p-button>
+      <p-button type="button" icon="pi pi-times" label="Close" [styleClass]="'pi-button-error'" (onClick)="dialogVisible = false"></p-button>
+
+      <p-button styleClass="px-3" (onClick)="navigateGoogleMaps(41,29)">
+        <ng-template pTemplate="content">
+          <img alt="logo" src="https://www.hasanbiri.com/wp-content/uploads/2021/04/maps-icon-16.png" style="width: 1.5rem"/>
+        </ng-template>
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>

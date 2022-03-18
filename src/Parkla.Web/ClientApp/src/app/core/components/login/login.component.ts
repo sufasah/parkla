@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
+import { login } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { Store } from '@ngrx/store';
 import { Message, MessageService } from 'primeng/api';
@@ -47,7 +48,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           icon:"pi-lock-open",
           data: {
             navigate: true,
-            navigateTo: "/parkmap"
+            navigateTo: this.asManager
+              ? "manager/parkmap"
+              : "/parkmap"
           }
         });
       }
@@ -67,7 +70,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   login(form:NgForm) {
     console.log(form);
 
-    this.authService.login(this.email,this.password);
+    this.authService.asManager = this.asManager;
+
+    this.store.dispatch(login({
+      email: this.email,
+      password: this.password
+    }));
+
+
     return;
 
     if(form.invalid){
@@ -78,7 +88,12 @@ export class LoginComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.authService.login(this.email,this.password);
+    this.authService.asManager = this.asManager;
+
+    this.store.dispatch(login({
+      email:this.email,
+      password: this.password
+    }));
   }
 
   messageClose(message: Message) {

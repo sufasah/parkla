@@ -114,10 +114,10 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     this.parkArea.spaces.forEach(space => {
       if(this.parkArea.reservationsEnabled && space.reservations){
         for(let i = 0; i < space.reservations.length; i++){
-          if(
-            space.isReserved ||
-            (space.status == "occupied" &&
-             !this.parkArea.notReservedOccupiable)
+
+          if(space.isReserved
+            || (space.status == "occupied"
+              && !this.parkArea.notReservedOccupiable)
           ) {
             if(space.status == "empty")
               this.drawEmptyReservedSpace(space.templatePath);

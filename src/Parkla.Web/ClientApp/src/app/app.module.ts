@@ -18,6 +18,7 @@ import { PasswordModule } from 'primeng/password';
 import { BadgeModule } from 'primeng/badge';
 import { InputMaskModule } from 'primeng/inputmask';
 import { AvatarModule } from 'primeng/avatar';
+import { StepsModule } from 'primeng/steps';
 import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -65,6 +66,9 @@ import { MapMarkerComponent } from './shared/components/map-marker/map-marker.co
 import { ParkAreasComponent } from './pages/users/areas/park-areas.component';
 import { AreaDataViewComponent } from './shared/components/area-dataview/area-dataview.component';
 import { RefSharingService } from './core/services/ref-sharing.service';
+import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';
+import { MapComponent } from './shared/components/map/map.component';
+import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.component';
 
 @NgModule({
   declarations: [
@@ -77,8 +81,11 @@ import { RefSharingService } from './core/services/ref-sharing.service';
     MapMarkerComponent,
     ParkMapComponent,
     ProfileComponent,
+    MapComponent,
+    MParkMapComponent,
     ParkAreaComponent,
     ParkTemplateComponent,
+    LoadMoneyComponent,
     UserAvatarComponent,
     ParkAreasComponent,
     AreaDataViewComponent
@@ -87,6 +94,7 @@ import { RefSharingService } from './core/services/ref-sharing.service';
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
     ReactiveFormsModule,
+    StepsModule,
     FormsModule,
     DropdownModule,
     TabMenuModule,

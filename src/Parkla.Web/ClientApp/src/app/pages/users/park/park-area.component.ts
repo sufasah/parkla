@@ -7,7 +7,7 @@ import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/park-template/park-template.component';
-import { MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-park',
@@ -72,7 +72,8 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     private refSharingService: RefSharingService,
     private router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService) { }
 
   ngOnInit(): void {
     let area = this.refSharingService.getData<ParkArea>(RSRoute.areasSelectedArea);
@@ -121,7 +122,18 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
   }
 
   reserveSpace() {
-    console.log("reserve space");
+    this.confirmationService.confirm({
+      message: 'Are you sure to reserve xxx number park space for xxx TL money from 19:00 12-12-1920 to 14:14 12-12-1921 ?',
+      accept: () => {
+        this.messageService.add({
+          summary: "Reservation",
+          closable: true,
+          severity: "success",
+          life:1500,
+          detail: "The xxx number park reserved"
+        })
+      }
+    });
   }
 
   goAreas() {
@@ -141,15 +153,19 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     if(!this.timeRange[0] || !this.timeRange[1]) return;
 
     this.selectedArea.spaces.forEach(space => {
-      if(this.selectedArea.reservationsEnabled) {
-        space.reservations?.forEach(reservation => {
+      if(this.selectedArea.reservationsEnabled && space.reservations) {
+        for(let i=0; i<space.reservations.length; i++) {
+          let reservation = space.reservations[i];
+
           space.isReserved = this.isTimeRangesIntercept(
             reservation.startTime,
             reservation.endTime,
             this.timeRange[0]!,
             this.timeRange[1]!
           );
-        })
+
+          if(space.isReserved) break;
+        }
       }
     })
 

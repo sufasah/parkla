@@ -3,7 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@app/core/components/login/login.component';
 import { RegisterComponent } from '@app/core/components/register/register.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.component';
 import { ParkAreasComponent } from './pages/users/areas/park-areas.component';
+import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';
 import { ParkMapComponent } from './pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from './pages/users/park/park-area.component';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
@@ -31,6 +33,16 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: "manager",
+    children: [
+      {
+        path: "parkmap",
+        component: MParkMapComponent,
+        pathMatch: "full",
+      }
+    ]
+  },
+  {
     path: "reservations",
     component: ReservationsComponent,
     canActivate: [AuthGuard]
@@ -50,6 +62,12 @@ const routes: Routes = [
   {
     path: "park/:parkid/areas",
     component: ParkAreasComponent,
+    pathMatch: "full",
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "load-money",
+    component: LoadMoneyComponent,
     pathMatch: "full",
     canActivate: [AuthGuard]
   }

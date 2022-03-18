@@ -26,4 +26,8 @@ export namespace RouteUrl {
   export const parkAreas = (parkid: number) => {
     return `park/${parkid}/areas`;
   }
+
+  export const loadMoney = () => {
+    return `load-money`;
+  }
 }
