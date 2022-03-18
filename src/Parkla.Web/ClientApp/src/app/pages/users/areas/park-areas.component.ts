@@ -32,6 +32,6 @@ export class ParkAreasComponent implements OnInit {
 
   goMap() {
     this.refSharingService.removeData(RSRoute.mapSelectedPark);
-    this.router.navigate([RouteUrl.parkMap()]);
+    this.router.navigate([".."]);
   }
 }

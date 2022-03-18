@@ -221,7 +221,7 @@ export class ProfileComponent implements OnInit {
 
   messageClose(message: Message) {
     if(message.data?.navigate){
-      this.router.navigate([message.data.navigateTo]);
+      this.router.navigateByUrl(message.data.navigateTo);
     }
   }
 
@@ -229,7 +229,7 @@ export class ProfileComponent implements OnInit {
   }
 
   loadMoney() {
-    this.router.navigate([RouteUrl.loadMoney()]);
+    this.router.navigateByUrl(RouteUrl.loadMoney());
   }
 
 }

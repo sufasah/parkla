@@ -1,4 +1,6 @@
 export namespace RouteUrl {
+
+
   export const login = () => {
     return ``;
   };
@@ -7,27 +9,77 @@ export namespace RouteUrl {
     return `register`;
   };
 
+  // USER ROUTES
+
   export const parkMap = () => {
-    return `parkmap`;
+    return `user/parkmap`;
   };
 
   export const reservations = () => {
-    return `reservations`;
+    return `user/reservations`;
   };
 
   export const profile = () => {
-    return `profile`;
+    return `user/profile`;
   };
 
   export const parkArea = (parkid: number, areaid:number) => {
-    return `park/${parkid}/area/${areaid}`;
+    return `user/park/${parkid}/area/${areaid}`;
   };
 
   export const parkAreas = (parkid: number) => {
-    return `park/${parkid}/areas`;
+    return `user/park/${parkid}/areas`;
   }
 
   export const loadMoney = () => {
-    return `load-money`;
+    return `user/load-money`;
   }
+
+  // MANAGER ROUTES
+
+  export const mParkMap = () => {
+    return `manager/parkmap`;
+  };
+
+  export const mDashboard = () => {
+    return `manager/dashboard`;
+  };
+
+  export const mProfile = () => {
+    return `manager/profile`;
+  };
+
+  export const mParkArea = (parkid: number, areaid:number) => {
+    return `manager/park/${parkid}/area/${areaid}`;
+  };
+
+  export const mNewParkArea = (parkid: number) => {
+    return `manager/park/${parkid}/area/add`;
+  };
+
+  export const mEditParkArea = (parkid: number, areaid:number) => {
+    return `manager/park/${parkid}/area/${areaid}/edit`;
+  };
+
+  export const mEditParkAreaTemplate = (parkid: number, areaid:number) => {
+    return `manager/park/${parkid}/area/${areaid}/edit/template`;
+  };
+
+  export const mParkAreaQR = (parkid: number, areaid:number) => {
+    return `manager/park/${parkid}/area/${areaid}`;
+  };
+
+  export const mParkAreas = (parkid: number) => {
+    return `manager/park/${parkid}/areas`;
+  }
+
+  export const mEditPark = (parkid: number) => {
+    return `manager/park/${parkid}/edit`;
+  }
+
+  export const mNewPark = () => {
+    return `manager/park/add`;
+  }
+
+
 }

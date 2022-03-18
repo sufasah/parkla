@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing.const';
 import { ParkArea } from '@app/core/models/parking-lot';
+import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { mockAreas } from '@app/mock-data/areas';
@@ -31,7 +32,8 @@ export class AreaDataViewComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private refSharingService: RefSharingService) {
+    private refSharingService: RefSharingService,
+    private authService: AuthService) {
 
     this.sortOptions = [
       {
@@ -87,6 +89,10 @@ export class AreaDataViewComponent implements OnInit {
   goArea(area:ParkArea) {
     this.refSharingService.setData(RSRoute.areasSelectedArea,area);
     let parkid = this.route.snapshot.params["parkid"];
-    this.router.navigate([RouteUrl.parkArea(parkid,area.id)])
+
+    this.router.navigateByUrl( this.authService.asManager
+      ? RouteUrl.mParkArea(parkid, area.id)
+      : RouteUrl.parkArea(parkid,area.id)
+    );
   }
 }

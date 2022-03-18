@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
+import { RouteUrl } from '@app/core/utils/route.util';
 import { login } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { Store } from '@ngrx/store';
@@ -49,8 +50,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           data: {
             navigate: true,
             navigateTo: this.asManager
-              ? "manager/parkmap"
-              : "/parkmap"
+              ? RouteUrl.mParkMap()
+              : RouteUrl.parkMap()
           }
         });
       }
@@ -98,7 +99,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   messageClose(message: Message) {
     if(message.data?.navigate){
-      this.router.navigate([message.data.navigateTo]);
+      this.router.navigateByUrl(message.data.navigateTo);
     }
   }
 

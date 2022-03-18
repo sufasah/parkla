@@ -10,27 +10,28 @@ import { ParkMapComponent } from './pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from './pages/users/park-area/park-area.component';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 import { ProfileComponent } from './pages/users/profile/profile.component';
+import { MProfileComponent } from './pages/managers/m-profile/m-profile.component';
+import { MParkAreaComponent } from './pages/managers/m-park-area/m-park-area.component';
+import { MParkAreasComponent } from './pages/managers/m-park-areas/m-park-areas.component';
+import { MParkAreaQRComponent } from './pages/managers/m-park-area-qr/m-park-area-qr.component';
+import { MEditParkComponent } from './pages/managers/m-edit-park/m-edit-park.component';
+import { MNewParkAreaComponent } from './pages/managers/m-new-park-area/m-new-park-area.component';
+import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit-park-area.component';
+import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
+import { NoAuthGuard } from './core/guards/no-auth.guard';
+import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
 
 const routes: Routes = [
   {
     path: "",
     component: LoginComponent,
     pathMatch: "full",
-    canActivate: [/*NoAuthGuard*/]
+    canActivate: [NoAuthGuard]
   },
   {
     path: "register",
     component: RegisterComponent,
     pathMatch: "full"
-  },
-  {
-    path: "parkmap",
-    component: ParkMapComponent,
-    pathMatch: "full",
-    data:{
-      allowedRoles: ["test1"],
-    },
-    canActivate: [AuthGuard]
   },
   {
     path: "manager",
@@ -39,37 +40,125 @@ const routes: Routes = [
         path: "parkmap",
         component: MParkMapComponent,
         pathMatch: "full",
-      }
+      },
+      {
+        path: "profile",
+        component: MProfileComponent,
+        pathMatch: "full",
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "dashboard",
+        component: MDashboardComponent,
+        pathMatch: "full",
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "park",
+        children: [
+          {
+            path: ":parkid",
+            children: [
+              {
+                path: "area",
+                children: [
+                  {
+                    path: ":areaid",
+                    component: MParkAreaComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                  {
+                    path: ":areaid/QR",
+                    component: MParkAreaQRComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                  {
+                    path: "add",
+                    component: MNewParkAreaComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                  {
+                    path: ":areaid/edit",
+                    component: MEditParkAreaComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                  {
+                    path: ":areaid/edit/template",
+                    component: MEditTemplateComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                ]
+              },
+              {
+                path: "areas",
+                component: MParkAreasComponent,
+                pathMatch: "full",
+                canActivate: [AuthGuard]
+              },
+              {
+                path: "edit",
+                component: MEditParkComponent
+              }
+            ]
+          },
+          {
+            path: "add",
+            component: MParkAreasComponent,
+            pathMatch: "full",
+            canActivate: [AuthGuard]
+          },
+        ]
+      },
+
     ]
   },
   {
-    path: "reservations",
-    component: ReservationsComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: "profile",
-    component: ProfileComponent,
-    pathMatch: "full",
-    canActivate: [AuthGuard]
-  },
-  {
-    path: "park/:parkid/area/:areaid",
-    component: ParkAreaComponent,
-    pathMatch: "full",
-    canActivate: [AuthGuard]
-  },
-  {
-    path: "park/:parkid/areas",
-    component: ParkAreasComponent,
-    pathMatch: "full",
-    canActivate: [AuthGuard]
-  },
-  {
-    path: "load-money",
-    component: LoadMoneyComponent,
-    pathMatch: "full",
-    canActivate: [AuthGuard]
+    path: "user",
+    children: [
+      {
+        path: "parkmap",
+        component: ParkMapComponent,
+        pathMatch: "full",
+        data:{
+          allowedRoles: ["test1"],
+        },
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "reservations",
+        component: ReservationsComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "profile",
+        component: ProfileComponent,
+        pathMatch: "full",
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "park/:parkid/area/:areaid",
+        component: ParkAreaComponent,
+        pathMatch: "full",
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "park/:parkid/areas",
+        component: ParkAreasComponent,
+        pathMatch: "full",
+        canActivate: [AuthGuard]
+      },
+      {
+        path: "load-money",
+        component: LoadMoneyComponent,
+        pathMatch: "full",
+        canActivate: [AuthGuard]
+      }
+    ]
   }
 ];
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@app/core/services/auth.service';
+import { RouteUrl } from '@app/core/utils/route.util';
 import { logout } from '@app/store/auth/auth.actions';
 import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
@@ -33,17 +34,17 @@ export class UserAvatarComponent implements OnInit {
       {
         label: 'Profile',
         icon: 'pi pi-fw pi-user',
-        routerLink: ["/profile"]
+        routerLink: ["/" + RouteUrl.profile()]
       },
       {
         label: 'Reservations',
         icon: 'pi pi-fw pi-car',
-        routerLink: ["/reservations"]
+        routerLink: ["/" + RouteUrl.reservations()]
       },
       {
         label: "Manager Mode",
         icon: "pi pi-fw pi-user",
-        routerLink: ["/manager/parkmap"]
+        routerLink: ["/" + RouteUrl.mParkMap()]
       },
       {
         label: 'Logout',
@@ -59,12 +60,12 @@ export class UserAvatarComponent implements OnInit {
       {
         label: 'Profile',
         icon: 'pi pi-fw pi-user',
-        routerLink: ["/manager/profile"]
+        routerLink: ["/" + RouteUrl.mProfile()]
       },
       {
         label: "User Mode",
         icon: "pi pi-fw pi-user",
-        routerLink: ["/parkmap"]
+        routerLink: ["/" + RouteUrl.parkMap()]
       },
       {
         label: 'Logout',

@@ -12,6 +12,7 @@ import { services } from "@tomtom-international/web-sdk-services";
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { Router } from '@angular/router';
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
+import { AuthService } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-map',
@@ -59,7 +60,8 @@ export class MapComponent implements OnInit, AfterViewInit{
   constructor(
     private refSharingService: RefSharingService,
     private router: Router,
-    private viewRef: ViewContainerRef) { }
+    private viewRef: ViewContainerRef,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
 
@@ -229,7 +231,11 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   navigateToParkAreas(park:ParkingLot) {
     this.refSharingService.setData(RSRoute.mapSelectedPark,park);
-    this.router.navigate([RouteUrl.parkAreas(park.id)]);
+
+    this.router.navigateByUrl(this.authService.asManager
+      ? RouteUrl.mParkAreas(park.id)
+      : RouteUrl.parkAreas(park.id)
+    );
   }
 
   refreshMarkers() {

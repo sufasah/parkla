@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing.const';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time.const';
 import { ParkArea, ParkingLot, ParkSpace, SpaceReservation } from '@app/core/models/parking-lot';
+import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { mockAreas } from '@app/mock-data/areas';
@@ -73,7 +74,8 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService) { }
+    private confirmationService: ConfirmationService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
     let area = this.refSharingService.getData<ParkArea>(RSRoute.areasSelectedArea);
@@ -139,7 +141,11 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
   goAreas() {
     let parkid = this.route.snapshot.params["parkid"];
     this.refSharingService.removeData(RSRoute.areasSelectedArea);
-    this.router.navigate([RouteUrl.parkAreas(parkid)]);
+
+    this.router.navigateByUrl(this.authService.asManager
+      ? RouteUrl.mParkAreas(parkid)
+      : RouteUrl.parkAreas(parkid)
+    );
   }
 
   showReserveModal() {

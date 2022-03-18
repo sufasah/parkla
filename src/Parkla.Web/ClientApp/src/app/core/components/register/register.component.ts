@@ -6,6 +6,7 @@ import { AppUser } from '@app/core/models/app-user';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { RouteUrl } from '@app/core/utils/route.util';
 
 @Component({
   selector: 'app-register',
@@ -101,7 +102,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             icon:"pi-user-plus",
             data: {
               navigate: true,
-              navigateTo: "/parkmap"
+              navigateTo: RouteUrl.parkMap()
             }
           })
         }
@@ -139,7 +140,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             icon:"pi-user-plus",
             data: {
               navigate: true,
-              navigateTo: "/parkmap"
+              navigateTo: RouteUrl.parkMap()
             }
           })
         }
@@ -179,7 +180,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   messageClose(message: Message) {
     if(message.data?.navigate){
-      this.router.navigate([message.data.navigateTo]);
+      this.router.navigateByUrl(message.data.navigateTo);
     }
   }
 

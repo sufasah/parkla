@@ -24,7 +24,7 @@ export class ReservationsComponent implements OnInit {
   }
 
   goMap() {
-    this.router.navigate([RouteUrl.parkMap()]);
+    this.router.navigate([".."]);
   }
 
 }

@@ -22,7 +22,7 @@ export class LoadMoneyComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigateByUrl(RouteUrl.parkMap())
+    this.router.navigate([".."]);
   }
 
   pay(form: NgForm) {
