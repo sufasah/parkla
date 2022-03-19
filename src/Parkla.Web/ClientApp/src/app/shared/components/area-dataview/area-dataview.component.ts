@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ContentChild, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing.const';
 import { ParkArea } from '@app/core/models/parking-lot';
@@ -28,6 +28,9 @@ export class AreaDataViewComponent implements OnInit {
 
   @ViewChild("dv")
   dataView!: DataView;
+
+  @ContentChild(TemplateRef,{static:false})
+  testTemplateRef!: TemplateRef<any>;
 
   constructor(
     private router: Router,

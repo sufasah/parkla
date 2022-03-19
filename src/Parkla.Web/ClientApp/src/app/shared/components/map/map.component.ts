@@ -1,18 +1,12 @@
-import { AfterViewInit, Component, EmbeddedViewRef, Input, OnInit, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, EmbeddedViewRef, EventEmitter, Input, OnInit, Output, ViewContainerRef } from '@angular/core';
 import { ttkey } from '@app/core/constants/private.const';
 import { ParkingLot } from '@app/core/models/parking-lot';
-import { mockParkingLots } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Feature, FeatureCollection } from 'geojson';
 import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map.const';
-import { RSRoute } from '@app/core/constants/ref-sharing.const';
-import { RouteUrl } from '@app/core/utils/route.util';
 import { FullscreenControl, GeolocateControl, Map, map, Marker, NavigationControl,  } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
-import { Router } from '@angular/router';
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
-import { AuthService } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-map',
@@ -43,25 +37,14 @@ export class MapComponent implements OnInit, AfterViewInit{
     return this._parks;
   }
 
-  dialogVisible = false;
+  @Output()
+  markerOnClick = new EventEmitter<{event:any; element:MapMarkerComponent}>();
 
   markersOnTheMap: {[key:number]:Marker} = {};
 
-  selectedPark: ParkingLot | null = null;
-
   searchMarker?: Marker;
 
-  get spaceCount() {
-    return this.selectedPark!.status.emptySpace +
-      this.selectedPark!.status.reservedSpace +
-      this.selectedPark!.status.occupiedSpace
-  }
-
-  constructor(
-    private refSharingService: RefSharingService,
-    private router: Router,
-    private viewRef: ViewContainerRef,
-    private authService: AuthService) { }
+  constructor(private viewRef: ViewContainerRef) { }
 
   ngOnInit(): void {
 
@@ -206,7 +189,12 @@ export class MapComponent implements OnInit, AfterViewInit{
     let componentRef = this.viewRef.createComponent(MapMarkerComponent);
 
     componentRef.instance.onClick
-      .subscribe((event:any) => this.markerOnClick(event, componentRef.instance));
+      .subscribe((event:any) => {
+        this.markerOnClick.emit({
+          event: event,
+          element: componentRef.instance
+        });
+      });
 
     componentRef.instance.park = park;
 
@@ -218,24 +206,6 @@ export class MapComponent implements OnInit, AfterViewInit{
     return new Marker(this.makeMarkerElement(park))
       .setLngLat({lat: park.lat, lng: park.lng})
       .remove()
-  }
-
-  markerOnClick(event:any, element: MapMarkerComponent) {
-    this.selectedPark = element.park;
-    this.dialogVisible = true;
-  }
-
-  navigateGoogleMaps(lat: number, lng: number) {
-    window.location.href = `https://www.google.com/maps/place/${lat.toFixed(20)}+${lng.toFixed(20)}/@${lat.toFixed(20)},${lng.toFixed(20)},12z`;
-  }
-
-  navigateToParkAreas(park:ParkingLot) {
-    this.refSharingService.setData(RSRoute.mapSelectedPark,park);
-
-    this.router.navigateByUrl(this.authService.asManager
-      ? RouteUrl.mParkAreas(park.id)
-      : RouteUrl.parkAreas(park.id)
-    );
   }
 
   refreshMarkers() {

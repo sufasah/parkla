@@ -63,8 +63,14 @@ const routes: Routes = [
                 path: "area",
                 children: [
                   {
-                    path: ":areaid",
-                    component: MParkAreaComponent,
+                    path: "add",
+                    component: MNewParkAreaComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                  {
+                    path: ":areaid/edit/template",
+                    component: MEditTemplateComponent,
                     pathMatch: "full",
                     canActivate: [AuthGuard]
                   },
@@ -75,20 +81,14 @@ const routes: Routes = [
                     canActivate: [AuthGuard]
                   },
                   {
-                    path: "add",
-                    component: MNewParkAreaComponent,
-                    pathMatch: "full",
-                    canActivate: [AuthGuard]
-                  },
-                  {
                     path: ":areaid/edit",
                     component: MEditParkAreaComponent,
                     pathMatch: "full",
                     canActivate: [AuthGuard]
                   },
                   {
-                    path: ":areaid/edit/template",
-                    component: MEditTemplateComponent,
+                    path: ":areaid",
+                    component: MParkAreaComponent,
                     pathMatch: "full",
                     canActivate: [AuthGuard]
                   },

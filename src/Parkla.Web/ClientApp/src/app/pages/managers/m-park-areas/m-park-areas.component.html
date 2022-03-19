@@ -1,1 +1,32 @@
-<p>m-park-areas works!</p>
+<p-toolbar>
+  <div>
+    <button pButton pRipple (click)="goMap()">Go Map</button>
+  </div>
+  <div>
+    <button
+      pButton
+      pRipple
+      label="New Area"
+      (click)="newArea()"
+      >
+
+    </button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+<app-area-dataView [areas]="areas">
+  <ng-template let-area>
+    <p-button icon="pi pi-car" label="Edit Area" (click)="editArea(area)"></p-button>
+    <p-button icon="pi pi-car" label="Delete Area" (click)="deleteArea(area)"></p-button>
+
+  </ng-template>
+</app-area-dataView>
+
+<p-toast></p-toast>
+
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
+  Content
+</p-confirmDialog>
