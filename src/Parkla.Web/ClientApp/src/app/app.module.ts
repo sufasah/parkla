@@ -79,6 +79,7 @@ import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit
 import { MEditParkComponent } from './pages/managers/m-edit-park/m-edit-park.component';
 import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
+import { QRCodeModule } from 'angularx-qrcode';
 
 @NgModule({
   declarations: [
@@ -115,6 +116,7 @@ import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.co
     BrowserAnimationsModule,
     ReactiveFormsModule,
     StepsModule,
+    QRCodeModule,
     FormsModule,
     DropdownModule,
     TabMenuModule,
