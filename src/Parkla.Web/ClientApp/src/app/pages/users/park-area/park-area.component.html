@@ -1,49 +1,15 @@
 <p-toolbar>
   <div #parkHeader class="park-header">
     <button pButton pRipple (click)="goAreas()" label="Go Areas"></button>
-    <p-calendar
-      *ngIf="selectedArea.reservationsEnabled"
-      [ngModel]="timeRange"
-      (ngModelChange)="timeRangeChange($event)"
+
+    <app-time-range
+      (onChange)="timeRangeChange($event)"
+      [enabled]="selectedArea.reservationsEnabled"
       [minDate]="minDate"
       [maxDate]="maxDate"
-      selectionMode="range"
-      [showTime]="true"
-      inputId="time"
       >
-    </p-calendar>
+    </app-time-range>
 
-    from
-    <input
-      *ngIf="selectedArea.reservationsEnabled"
-      type="text"
-      pInputText
-      [ngModel]="timeRange[0]?.toLocaleString()"
-      [disabled]="true"
-      style="opacity: 1;"
-      />
-
-    to
-    <input
-      *ngIf="selectedArea.reservationsEnabled"
-      type="text"
-      pInputText
-      [ngModel]="timeRange[1]?.toLocaleString()"
-      [disabled]="true"
-      style="opacity: 1;"
-      />
-
-  </div>
-
-  <div>
-    <button
-      pButton
-      pRipple
-      label="Show Reservations"
-      (click)="showClosestReservations()"
-      >
-
-    </button>
   </div>
 
   <app-user-avatar

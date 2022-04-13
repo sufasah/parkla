@@ -80,6 +80,7 @@ import { MEditParkComponent } from './pages/managers/m-edit-park/m-edit-park.com
 import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 import { QRCodeModule } from 'angularx-qrcode';
+import { TimeRangeComponent } from './shared/components/time-range/time-range.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { QRCodeModule } from 'angularx-qrcode';
     RegisterComponent,
     ValuesMatchValidator,
     ReservationsComponent,
+    TimeRangeComponent,
     SpinnerComponent,
     MapMarkerComponent,
     ParkMapComponent,

@@ -65,6 +65,8 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
 
     this.selectedPark = element.park;
     this.dialogVisible = true;
+
+    $("#appMap div.mapboxgl-ctrl-top-right button.mapboxgl-ctrl-shrink").trigger("click");
   }
 
 }

@@ -20,10 +20,16 @@ import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
+import { MNewParkComponent } from './pages/managers/m-new-park/m-new-park.component';
 
 const routes: Routes = [
   {
     path: "",
+    pathMatch: "full",
+    redirectTo: "/user/parkmap"
+  },
+  {
+    path: "login",
     component: LoginComponent,
     pathMatch: "full",
     canActivate: [NoAuthGuard]
@@ -56,6 +62,12 @@ const routes: Routes = [
       {
         path: "park",
         children: [
+          {
+            path: "add",
+            component: MNewParkComponent,
+            pathMatch: "full",
+            canActivate: [AuthGuard]
+          },
           {
             path: ":parkid",
             children: [
@@ -105,12 +117,6 @@ const routes: Routes = [
                 component: MEditParkComponent
               }
             ]
-          },
-          {
-            path: "add",
-            component: MParkAreasComponent,
-            pathMatch: "full",
-            canActivate: [AuthGuard]
           },
         ]
       },

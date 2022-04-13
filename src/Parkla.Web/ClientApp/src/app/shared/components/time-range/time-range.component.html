@@ -1,0 +1,31 @@
+<p-calendar
+  *ngIf="enabled"
+  [ngModel]="timeRange"
+  (ngModelChange)="timeRangeChange($event)"
+  [minDate]="minDate!"
+  [maxDate]="maxDate!"
+  selectionMode="range"
+  [showTime]="true"
+  inputId="time"
+  >
+</p-calendar>
+
+from
+<input
+  *ngIf="enabled"
+  type="text"
+  pInputText
+  [ngModel]="timeRange[0]?.toLocaleString()"
+  [disabled]="true"
+  style="opacity: 1;"
+  />
+
+to
+<input
+  *ngIf="enabled"
+  type="text"
+  pInputText
+  [ngModel]="timeRange[1]?.toLocaleString()"
+  [disabled]="true"
+  style="opacity: 1;"
+  />

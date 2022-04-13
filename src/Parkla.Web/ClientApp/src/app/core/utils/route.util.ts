@@ -2,7 +2,7 @@ export namespace RouteUrl {
 
 
   export const login = () => {
-    return ``;
+    return `login`;
   };
 
   export const register = () => {

@@ -28,11 +28,6 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
 
   dialogVisible: "closest" | "space" | null = null;
 
-  timeRange:[Date?, Date?] = [
-    new Date(),
-    new Date(Date.now()+60000*15)
-  ];
-
   minDate = new Date();
 
   maxDate = new Date(Date.now()+1000*60*60*24*6);
@@ -90,6 +85,27 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
 
+  }
+
+  timeRangeChange(timeRange: [Date?, Date?]) {
+    this.selectedArea.spaces.forEach(space => {
+      if(this.selectedArea.reservationsEnabled && space.reservations) {
+        for(let i=0; i<space.reservations.length; i++) {
+          let reservation = space.reservations[i];
+
+          space.isReserved = this.isTimeRangesIntercept(
+            reservation.startTime,
+            reservation.endTime,
+            timeRange[0]!,
+            timeRange[1]!
+          );
+
+          if(space.isReserved) break;
+        }
+      }
+    })
+
+    this.parkTemlate?.drawCanvas();
   }
 
   spaceClicked(space: ParkSpace) {
@@ -153,38 +169,9 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     this.dialogVisible = "space";
   }
 
-  timeRangeChange(timeRange:any) {
-    this.timeRange = timeRange;
-
-    if(!this.timeRange[0] || !this.timeRange[1]) return;
-
-    this.selectedArea.spaces.forEach(space => {
-      if(this.selectedArea.reservationsEnabled && space.reservations) {
-        for(let i=0; i<space.reservations.length; i++) {
-          let reservation = space.reservations[i];
-
-          space.isReserved = this.isTimeRangesIntercept(
-            reservation.startTime,
-            reservation.endTime,
-            this.timeRange[0]!,
-            this.timeRange[1]!
-          );
-
-          if(space.isReserved) break;
-        }
-      }
-    })
-
-    this.parkTemlate?.drawCanvas();
-  }
-
   dayTabSelected(event:any){
     let item: MenuItem = event.item;
-
-    if(this.dialogVisible == "closest")
-      this.generateClosestReservationTable(item);
-    else
-      this.generateSpaceReservationTable(item);
+    this.generateSpaceReservationTable(item);
   }
 
   generateSpaceReservationTable(item: MenuItem) {
@@ -267,9 +254,6 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     this.reservationsOfDay = resOfDay;
   }
 
-  generateClosestReservationTable(item: MenuItem) {
-  }
-
   isTimeRangesIntercept(
     start1: Date,
     end1: Date,
@@ -279,10 +263,5 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     return (start1 >= start2 && start1 <= end2) ||
       (end1 >= start2 && end1 <= end2) ||
       (start1 <= start2 && end1 >= end2);
-  }
-
-  showClosestReservations() {
-    this.dialogVisible = "closest";
-    this.generateClosestReservationTable(this.weekDays[0]);
   }
 }

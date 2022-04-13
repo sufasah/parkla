@@ -71,7 +71,7 @@ export class UserAvatarComponent implements OnInit {
         label: 'Logout',
         icon: 'pi pi-fw pi-sign-out',
         command: () => this.logout(),
-        routerLink: ["/"]
+        routerLink: ["/" + RouteUrl.login()]
       },
     ]
   }

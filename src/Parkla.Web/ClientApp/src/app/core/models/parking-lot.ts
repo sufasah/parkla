@@ -9,7 +9,7 @@ export interface ParkingLot {
   minPrice: Price;
   maxPrice: Price;
   avgPrice: Price;
-  extras?: string[];
+  extras: string[];
 }
 
 export interface ParkArea {
