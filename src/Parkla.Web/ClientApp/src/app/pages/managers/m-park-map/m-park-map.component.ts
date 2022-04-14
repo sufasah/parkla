@@ -76,7 +76,7 @@ export class MParkMapComponent implements OnInit {
         this.messageService.add({
           summary: "Park Deletion",
           closable: true,
-          severity: "error",
+          severity: "success",
           life:1500,
           detail: "The xxx id park with xx name is deleted."
         })

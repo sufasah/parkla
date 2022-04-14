@@ -1,10 +1,10 @@
-import { ParkArea, ParkSpan, ParkSpanPerTime} from "@core/models/parking-lot";
+import { Pricing } from "./pricing";
 
 export interface Reservation {
   parkId: number;
   parkName: string;
   areaName: string;
-  pricing: ParkSpan | ParkSpanPerTime //name and pricing
+  pricing: Pricing //name and pricing
   timeFrom: Date;
   timeTo: Date;
 }

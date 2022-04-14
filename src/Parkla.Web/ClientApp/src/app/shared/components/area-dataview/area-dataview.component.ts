@@ -1,7 +1,7 @@
 import { Component, ContentChild, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing.const';
-import { ParkArea } from '@app/core/models/parking-lot';
+import { ParkArea } from '@app/core/models/park-area';
 import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';

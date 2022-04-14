@@ -1,1 +1,156 @@
-<p>m-new-park-area works!</p>
+<p-toolbar>
+  <div>
+    <button pButton pRipple (click)="goAreas()">Go Areas</button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<form
+  #addAreaForm="ngForm"
+  (ngSubmit)="addArea(addAreaForm)"
+  >
+
+  <div class="p-inputgroup">
+    <label
+      for="name"
+      class="p-inputgroup-addon"
+      >
+      <i class="pi pi-user"></i>
+    </label>
+
+    <input
+      type="text"
+      name="name"
+      required
+      [(ngModel)]="area.name"
+      pInputText
+      placeholder="Enter area name"
+      pattern="[a-zA-Z0-9 ]+"
+      minlength="3"
+      maxlength="50"
+      />
+  </div>
+
+  <div class="p-inputgroup">
+    <label
+      for="location"
+      class="p-inputgroup-addon"
+      >
+      <i class="pi pi-user"></i>
+    </label>
+
+    <input
+      type="text"
+      name="description"
+      maxlength="200"
+      [(ngModel)]="area.description"
+      pInputText
+      placeholder="Enter area description"
+      pattern="[a-zA-Z0-9 ]+"
+      />
+  </div>
+
+  <div>
+    <img
+      #imgRef
+      [src]="area.templateImg"
+      />
+    <p-skeleton
+      shape="square"
+      size="300px"
+      styleClass="d-inline-block m-1"
+      >
+    </p-skeleton>
+
+    <button
+      type="button"
+      pButton
+      pRipple
+      label="Edit Template"
+      (click)="showTemplateModal()"
+      ></button>
+  </div>
+
+  <div *ngFor="let pricing of area.pricings; let i=index" class="p-inputgroup" >
+    <input
+      [name]='"pricing"+i'
+      type="text"
+      pInputText
+      placeholder="Enter pricing type"
+      required
+      maxlength="30"
+      [(ngModel)]="pricing.type"
+      />
+
+    <p-inputNumber
+      [name]="'pricing'+i+'-timeamount'"
+      [(ngModel)]="pricing.timeAmount"
+      [max]="999"
+      [required]="true"
+      placeholder="Enter Time Amount"
+      >
+    </p-inputNumber>
+
+    <p-dropdown
+      [name]="'pricing'+i+'-timeunit'"
+      [options]="timeUnitOptions"
+      [(ngModel)]="pricing.timeUnit"
+      [required]="true"
+      >
+    </p-dropdown>
+
+    <p-inputNumber
+      [name]="'pricing'+i+'-price'"
+      [(ngModel)]="pricing.price.balance"
+      [max]="1000000"
+      [required]="true"
+      placeholder="Enter Price"
+      >
+    </p-inputNumber>
+
+
+    <button
+      pButton
+      pRipple
+      type="button"
+      class="p-inputgroup-addon remove-pricing"
+      (click)="removePricing(i)"
+      >
+      <i class="pi pi-minus" style="line-height: 1.25;color:white"></i>
+    </button>
+  </div>
+  <div class="d-flex justify-content-end mt-1 mb-2">
+    <button
+      pButton
+      pRipple
+      type="button"
+      class="add-pricing"
+      (click)="addPricing()"
+      icon="pi pi-plus"
+      [style]="area.pricings?.length == 0 ? '' : 'width: 63px;'"
+      [label]="area.pricings?.length == 0 ? 'Add Pricing' : ''"
+      >
+    </button>
+  </div>
+
+  <div>
+    <button
+      type="submit"
+      pButton
+      pRipple
+      class="p-button-raised p-button-primary"
+      label="Edit"
+      [loading]="adding"
+      >
+    </button>
+  </div>
+</form>
+
+<p-toast (onClose)="messageClose()"></p-toast>
+
+<div [ngClass]="templateModalVisible ? 'd-absolute' : 'd-none'" class="fullscreen-modal">
+
+</div>

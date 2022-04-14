@@ -1,4 +1,4 @@
-import { ParkSpace } from "@app/core/models/parking-lot";
+import { ParkSpace } from "@app/core/models/park-space";
 import { mockSpaceReservations } from "./spaceReservations";
 
 export const mockSpaces: ParkSpace[] = [

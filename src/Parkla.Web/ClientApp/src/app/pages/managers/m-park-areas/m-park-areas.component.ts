@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing.const';
-import { ParkArea, ParkingLot } from '@app/core/models/parking-lot';
+import { ParkArea } from '@app/core/models/park-area';
+import { ParkingLot } from '@app/core/models/parking-lot';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { mockAreas } from '@app/mock-data/areas';
@@ -35,8 +36,7 @@ export class MParkAreasComponent implements OnInit {
   }
 
   goMap() {
-    this.refSharingService.removeData(RSRoute.mapSelectedPark);
-    this.router.navigate([".."]);
+    this.router.navigate([RouteUrl.mParkMap()]);
   }
 
   newArea() {

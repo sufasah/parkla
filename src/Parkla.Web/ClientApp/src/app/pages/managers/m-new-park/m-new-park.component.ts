@@ -6,6 +6,7 @@ import { RSRoute } from '@app/core/constants/ref-sharing.const';
 import { ParkingLot } from '@app/core/models/parking-lot';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
+import { makeTomTomMap } from '@app/core/utils/tomtom.util';
 import { FullscreenControl, GeolocateControl, map, Map, Marker, NavigationControl } from '@tomtom-international/web-sdk-maps';
 import { MessageService } from 'primeng/api';
 import { delay, of } from 'rxjs';
@@ -39,7 +40,6 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private refSharingService: RefSharingService,
     private router: Router,
     private messageService: MessageService) { }
 
@@ -52,7 +52,6 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   }
 
   goMap() {
-    this.refSharingService.removeData(RSRoute.mapSelectedPark);
     this.router.navigateByUrl(RouteUrl.mParkMap());
   }
 
@@ -72,7 +71,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
 
     this.adding = true;
     //add opeartion to the server and result
-    of(false).pipe(delay(2000)).subscribe(success => {
+    of(true).pipe(delay(2000)).subscribe(success => {
       if(success){
         this.messageService.add({
           life:1500,
@@ -106,31 +105,10 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
     this.mapModalVisible = true;
     if(!this.selectLatLngMap) {
       setTimeout(() => {
-        this.selectLatLngMap = map({
-          key: ttkey,
-          container: "selectLatLngMap",
-          zoom: 12,
-          language: "tr-TR",
-          center: {
-            lat: 41.015137,
-            lng: 28.979530,
-          },
-        });
-
-        this.selectLatLngMap.addControl(new NavigationControl());
-        this.selectLatLngMap.addControl(new FullscreenControl());
-        this.selectLatLngMap.addControl(new GeolocateControl({
-          trackUserLocation: true,
-          showUserLocation: true,
-          positionOptions: {
-            enableHighAccuracy: true,
-          },
-          showAccuracyCircle: true
-        }));
-
+        this.selectLatLngMap = makeTomTomMap();
         this.selectLatLngMap.on("click",(event) => {
           this.setLatLng(event.lngLat.lat,event.lngLat.lng);
-        })
+        });
       }, 0);
     }
   }

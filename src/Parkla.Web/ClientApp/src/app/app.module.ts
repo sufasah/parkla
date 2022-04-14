@@ -51,6 +51,7 @@ import { SpinnerComponent } from './shared/components/spinner/spinner.component'
 import { MessageService } from 'primeng/api';
 import { ImageModule } from 'primeng/image';
 import { KeyFilterModule } from 'primeng/keyfilter';
+import { SkeletonModule } from 'primeng/skeleton';
 import { DataViewModule } from 'primeng/dataview';
 import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from '@app/pages/users/park-area/park-area.component';
@@ -77,7 +78,6 @@ import { MNewParkAreaComponent } from './pages/managers/m-new-park-area/m-new-pa
 import { MNewParkComponent } from './pages/managers/m-new-park/m-new-park.component';
 import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit-park-area.component';
 import { MEditParkComponent } from './pages/managers/m-edit-park/m-edit-park.component';
-import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 import { QRCodeModule } from 'angularx-qrcode';
 import { TimeRangeComponent } from './shared/components/time-range/time-range.component';
@@ -108,7 +108,6 @@ import { TimeRangeComponent } from './shared/components/time-range/time-range.co
     MNewParkComponent,
     MEditParkAreaComponent,
     MEditParkComponent,
-    MEditTemplateComponent,
     MDashboardComponent,
     ParkAreasComponent,
     AreaDataViewComponent
@@ -126,6 +125,7 @@ import { TimeRangeComponent } from './shared/components/time-range/time-range.co
     BadgeModule,
     TableModule,
     SlideMenuModule,
+    SkeletonModule,
     DataViewModule,
     ToolbarModule,
     TabViewModule,

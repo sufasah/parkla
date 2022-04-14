@@ -1,4 +1,4 @@
-import { SpaceReservation } from "@app/core/models/parking-lot";
+import { SpaceReservation } from "@app/core/models/space-reservation";
 
 const SECOND = 1000;
 const MINUTE = 60*SECOND;

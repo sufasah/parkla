@@ -19,7 +19,6 @@ import { MNewParkAreaComponent } from './pages/managers/m-new-park-area/m-new-pa
 import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit-park-area.component';
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
-import { MEditTemplateComponent } from './pages/managers/m-edit-template/m-edit-template.component';
 import { MNewParkComponent } from './pages/managers/m-new-park/m-new-park.component';
 
 const routes: Routes = [
@@ -77,12 +76,6 @@ const routes: Routes = [
                   {
                     path: "add",
                     component: MNewParkAreaComponent,
-                    pathMatch: "full",
-                    canActivate: [AuthGuard]
-                  },
-                  {
-                    path: ":areaid/edit/template",
-                    component: MEditTemplateComponent,
                     pathMatch: "full",
                     canActivate: [AuthGuard]
                   },

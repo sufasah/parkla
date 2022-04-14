@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ParkArea, ParkSpace, Point, SpacePath } from '@app/core/models/parking-lot';
+import { ParkArea } from '@app/core/models/park-area';
+import { ParkSpace, SpacePath } from '@app/core/models/park-space';
+import { Point } from '@app/core/models/parking-lot';
 import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
 

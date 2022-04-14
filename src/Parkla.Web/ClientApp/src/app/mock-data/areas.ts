@@ -1,4 +1,4 @@
-import { ParkArea } from "@app/core/models/parking-lot";
+import { ParkArea } from "@app/core/models/park-area";
 import { mockSpaces } from "./spaces";
 
 export const mockAreas: ParkArea[] = [{
