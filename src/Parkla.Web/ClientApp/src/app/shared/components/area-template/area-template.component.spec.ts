@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ParkTemplateComponent } from './park-template.component';
+import { ParkTemplateComponent } from './area-template.component';
 
 describe('ParkTemplateComponent', () => {
   let component: ParkTemplateComponent;

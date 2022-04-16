@@ -1,9 +1,11 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, ElementRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
+import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { RouteUrl } from '@app/core/utils/route.util';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { delay, of } from 'rxjs';
 
 @Component({
@@ -13,43 +15,45 @@ import { delay, of } from 'rxjs';
 })
 export class MNewParkAreaComponent implements OnInit, AfterViewInit {
 
-  @ContentChild("imgRef")
-  templateImage: HTMLImageElement
+  @ViewChild("templateImageRef")
+  templateImage!: ElementRef<HTMLImageElement>
 
   parkId: number;
   area: ParkArea = <any>{
-    pricings: []
+    pricings:[],
+    spaces: []
   };
   adding = false;
   templateModalVisible = false;
   timeUnitOptions = ["minutes", "hours", "days", "months"]
+  imageLoading = true;
+  spaceAdding = false;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService)
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer,
+    private confirmationService: ConfirmationService)
   {
     this.parkId = route.snapshot.params.parkid;
-
-    this.templateImage = document.createElement("img");
-  }
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-
-      console.log(this.templateImage);
-    }, 3000);
-
   }
 
   ngOnInit(): void {
-    this.templateImage.onload = () => {
+  }
 
+  ngAfterViewInit(): void {
+    this.templateImage.nativeElement.onload = (event) => {
+      this.imageLoading = false;
     };
 
-    this.templateImage.onerror = () => {
+    this.templateImage.nativeElement.onerror = (event) => {
+      this.templateImage.nativeElement.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
     }
 
-    this.templateImage.src = this.area.templateImg;
+    this.templateImage.nativeElement.src = this.area.templateImg;
+
+
   }
 
   goAreas() {
@@ -95,7 +99,7 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
 
   addPricing() {
     this.area.pricings?.push(<any>{
-      price: {}
+      price: {},
     });
   }
 
@@ -107,8 +111,51 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
     this.templateModalVisible = true;
   }
 
-  templateModalSelect() {
+  editTemplateDone() {
+    this.spaceAdding = false;
     this.templateModalVisible = false;
+  }
+
+  addTemplateSpace() {
+    this.spaceAdding = !this.spaceAdding;
+  }
+
+  addTemplateSpaceDone(spacePath: SpacePath) {
+    this.area.spaces.push(<any>{
+      templatePath: [...spacePath],
+    });
+  }
+
+  setTemplateImageButton(event: Event) {
+    this.spaceAdding = false;
+
+    const btn = <HTMLButtonElement>event.target;
+    const input = <HTMLInputElement>btn.nextElementSibling;
+
+    input.click()
+  }
+
+  setTemplateImage(event: Event) {
+    const input = <HTMLInputElement>event.target;
+    const fr = new FileReader();
+    fr.readAsDataURL(input.files![0]);
+    fr.onload = (event) => {
+      this.area = {...this.area, templateImg: <string>fr.result};
+    }
+  }
+
+  clearTemplateSpace() {
+    this.spaceAdding = false;
+    this.confirmationService.confirm({
+      message: "Are you sure to clear all spaces on park area?",
+      accept: () => {
+        this.area = {...this.area, spaces: []};
+      }
+    })
+  }
+
+  spaceClicked(space: ParkSpace) {
+    window.alert(space.id)
   }
 
   messageClose() {
@@ -121,4 +168,21 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
   isPerTime(val: any) {
     return 'timeUnit' in val && 'timeAmount' in val;
   }
+
+  dataURItoBlob(dataURI:string) {
+    const split = dataURI.split(',');
+    const value = split[1];
+    const mime = split[0].split(";")[0].split(":")[1]
+
+    const byteString = window.atob(value);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++)
+        ia[i] = byteString.charCodeAt(i);
+
+    var blob = new Blob([ab], {type: mime});
+    return blob;
+  }
+
 }

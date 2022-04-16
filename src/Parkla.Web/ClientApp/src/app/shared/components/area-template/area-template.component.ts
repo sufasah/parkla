@@ -6,9 +6,9 @@ import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
 
 @Component({
-  selector: 'app-park-template',
-  templateUrl: './park-template.component.html',
-  styleUrls: ['./park-template.component.scss']
+  selector: 'app-area-template',
+  templateUrl: './area-template.component.html',
+  styleUrls: ['./area-template.component.scss']
 })
 export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
@@ -59,6 +59,10 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       this.canvas.onclick = (e) => this.canvasOnClick(e);
       this.drawCanvas();
     };
+
+    this.parkingLotImage.onerror = () => {
+      this.parkingLotImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
+    }
   }
 
   ngAfterViewInit(): void {

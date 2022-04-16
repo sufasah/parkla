@@ -55,10 +55,14 @@
 
   <div>
     <img
-      #imgRef
+      #templateImageRef
+      [hidden]="imageLoading"
       [src]="area.templateImg"
+      width="300"
+      height="300"
       />
     <p-skeleton
+      *ngIf="imageLoading"
       shape="square"
       size="300px"
       styleClass="d-inline-block m-1"
@@ -142,15 +146,67 @@
       pButton
       pRipple
       class="p-button-raised p-button-primary"
-      label="Edit"
+      label="Save"
       [loading]="adding"
       >
     </button>
   </div>
 </form>
 
-<p-toast (onClose)="messageClose()"></p-toast>
+<div *ngIf="templateModalVisible" class="fullscreen-modal">
+  <div class="d-flex justify-content-between p-3">
+    <button
+      pButton
+      pRipple
+      label="Done"
+      (click)="editTemplateDone()"
+      >
+    </button>
+    <div class="p-buttonset d-inline-block">
+      <button
+        pButton
+        pRipple
+        icon="pi pi-plus"
+        class="p-button p-button-success"
+        (click)="addTemplateSpace()"
+        >
+      </button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-image"
+        (click)="setTemplateImageButton($event)"
+        >
+      </button>
 
-<div [ngClass]="templateModalVisible ? 'd-absolute' : 'd-none'" class="fullscreen-modal">
+      <input
+        type="file"
+        hidden="true"
+        accept="image/*"
+        (change)="setTemplateImage($event)"
+        class="d-none"
+        />
 
+      <button
+        pButton
+        pRipple
+        icon="pi pi-trash"
+        class="p-button p-button-danger"
+        (click)="clearTemplateSpace()"
+        >
+      </button>
+    </div>
+  </div>
+
+  <app-edit-area-template
+    [parkArea]="area"
+    (spaceClicked)="spaceClicked($event)"
+    [(selectingSpacePath)]="spaceAdding"
+    (spacePathSelected)="addTemplateSpaceDone($event)"
+    >
+  </app-edit-area-template>
 </div>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-question"></p-confirmDialog>
+
+<p-toast (onClose)="messageClose()"></p-toast>

@@ -9,7 +9,7 @@ import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { mockAreas } from '@app/mock-data/areas';
-import { ParkTemplateComponent } from '@app/shared/components/park-template/park-template.component';
+import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 
 @Component({

@@ -1,0 +1,10 @@
+<div #canvasParent class="park-body">
+  <app-spinner *ngIf="imageLoading">
+
+  </app-spinner>
+  <canvas [hidden]="imageLoading"
+    #canvas
+    class="canvas"
+    >
+  </canvas>
+</div>

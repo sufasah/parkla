@@ -19,6 +19,7 @@ import { BadgeModule } from 'primeng/badge';
 import { InputMaskModule } from 'primeng/inputmask';
 import { AvatarModule } from 'primeng/avatar';
 import { StepsModule } from 'primeng/steps';
+import { FileUploadModule } from 'primeng/fileupload';
 import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -57,7 +58,7 @@ import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from '@app/pages/users/park-area/park-area.component';
 import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
 import { apiAuthScheme } from './core/constants/http.const';
-import { ParkTemplateComponent } from './shared/components/park-template/park-template.component';
+import { ParkTemplateComponent } from './shared/components/area-template/area-template.component';
 import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar.component';
 import { ProfileComponent } from './pages/users/profile/profile.component';
 import { UserService } from './core/services/user.service';
@@ -81,6 +82,7 @@ import { MEditParkComponent } from './pages/managers/m-edit-park/m-edit-park.com
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 import { QRCodeModule } from 'angularx-qrcode';
 import { TimeRangeComponent } from './shared/components/time-range/time-range.component';
+import { EditAreaTemplateComponent } from './shared/components/edit-area-template/edit-area-template.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +109,7 @@ import { TimeRangeComponent } from './shared/components/time-range/time-range.co
     MNewParkAreaComponent,
     MNewParkComponent,
     MEditParkAreaComponent,
+    EditAreaTemplateComponent,
     MEditParkComponent,
     MDashboardComponent,
     ParkAreasComponent,
@@ -135,6 +138,7 @@ import { TimeRangeComponent } from './shared/components/time-range/time-range.co
     DialogModule,
     InputNumberModule,
     KeyFilterModule,
+    FileUploadModule,
     ConfirmDialogModule,
     ButtonModule,
     RippleModule,
