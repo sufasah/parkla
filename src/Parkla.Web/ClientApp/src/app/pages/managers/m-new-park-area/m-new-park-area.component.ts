@@ -7,6 +7,7 @@ import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Table } from 'primeng/table';
 import { delay, of } from 'rxjs';
 
 @Component({
@@ -210,6 +211,11 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
     this.spaceModalVisible = true;
     this.spaceAdding = false;
     this.editingSpace = space;
+  }
+
+  clearTable(table: Table, searchInput: HTMLInputElement) {
+    table.clear();
+    searchInput.value = "";
   }
 
   messageClose() {
