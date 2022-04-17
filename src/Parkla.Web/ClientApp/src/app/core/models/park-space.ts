@@ -3,7 +3,8 @@ import { Point } from "./parking-lot";
 import { SpaceReservation } from "./space-reservation";
 
 export interface ParkSpace {
-  id: string;
+  id: number;
+  name: string;
   realSpace?: ParkSpaceReal;
   status: "empty" | "occupied";
   templatePath: SpacePath;

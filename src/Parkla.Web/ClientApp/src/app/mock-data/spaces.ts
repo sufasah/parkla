@@ -3,7 +3,8 @@ import { mockSpaceReservations } from "./spaceReservations";
 
 export const mockSpaces: ParkSpace[] = [
   {
-    id:"178",
+    id: 1,
+    name: "178",
     status: "empty",
     templatePath: [
       [165,21],
@@ -15,7 +16,8 @@ export const mockSpaces: ParkSpace[] = [
     reservations: mockSpaceReservations
   },
   {
-    id:"177",
+    id: 2,
+    name: "177",
     status: "occupied",
     templatePath: [
       [133,21],
@@ -27,7 +29,8 @@ export const mockSpaces: ParkSpace[] = [
     reservations: mockSpaceReservations
   },
   {
-    id:"181",
+    id: 3,
+    name: "181",
     status: "empty",
     templatePath: [
       [261,21],
@@ -39,7 +42,8 @@ export const mockSpaces: ParkSpace[] = [
     reservations: mockSpaceReservations
   },
   {
-    id:"184",
+    id: 4,
+    name: "184",
     status: "occupied",
     templatePath: [
       [358,22],
@@ -51,7 +55,8 @@ export const mockSpaces: ParkSpace[] = [
     reservations: mockSpaceReservations
   },
   {
-    id:"183",
+    id: 5,
+    name: "183",
     status: "empty",
     templatePath: [
       [326,21],

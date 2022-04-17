@@ -143,7 +143,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     );
 
     this.parkArea.spaces.forEach(space => {
-      if(space.id && space.realSpace && space.id.length > 0 && space.id.length < 50)
+      if(space.name && space.realSpace && space.name.length > 0 && space.name.length <= 30)
         this.drawValidSpace(space.templatePath);
       else
         this.drawInvalidSpace(space.templatePath);

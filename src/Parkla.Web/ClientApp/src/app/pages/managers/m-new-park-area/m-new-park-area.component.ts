@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
+import { ParkSpaceReal } from '@app/core/models/park-space-real';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { delay, of } from 'rxjs';
@@ -25,15 +26,53 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
   };
   adding = false;
   templateModalVisible = false;
+  spaceModalVisible = false;
   timeUnitOptions = ["minutes", "hours", "days", "months"]
   imageLoading = true;
   spaceAdding = false;
+  editingSpace: ParkSpace = <any>{};
+  realSpaces: ParkSpaceReal[] = <any>[{
+    id: 1,
+    name: "realspace"
+  }, {
+    id: 2,
+    name: "x park y area space"
+  }, {
+    id: 3,
+    name: "wireless spacecode2512"
+  },{
+    id: 4,
+    name: "realspace"
+  }, {
+    id: 5,
+    name: "x park y area space"
+  }, {
+    id: 6,
+    name: "wireless spacecode2512"
+  },{
+    id: 7,
+    name: "realspace"
+  }, {
+    id: 8,
+    name: "x park y area space"
+  }, {
+    id: 9,
+    name: "wireless spacecode2512"
+  }];
+
+  _selectedRealSpace?: ParkSpaceReal;
+  set selectedRealSpace(value: ParkSpaceReal | undefined) {
+    this._selectedRealSpace = value;
+    this.editingSpace.realSpace = value ? {...value} : undefined;
+  }
+  get selectedRealSpace() {
+    return this._selectedRealSpace;
+  }
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
-    private sanitizer: DomSanitizer,
     private confirmationService: ConfirmationService)
   {
     this.parkId = route.snapshot.params.parkid;
@@ -71,6 +110,13 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
         form.controls[e].markAsDirty()
       });
       return;
+    }
+
+    for(let i=0; i < this.area.spaces.length; i++) {
+      let space = this.area.spaces[i];
+      if(!space.name || !space.realSpace || space.name.length == 0 || space.name.length > 30) {
+        return;
+      }
     }
 
     this.adding = true;
@@ -111,6 +157,10 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
     this.templateModalVisible = true;
   }
 
+  spaceModalDone() {
+    this.spaceModalVisible = false;
+  }
+
   editTemplateDone() {
     this.spaceAdding = false;
     this.templateModalVisible = false;
@@ -147,15 +197,19 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
   clearTemplateSpace() {
     this.spaceAdding = false;
     this.confirmationService.confirm({
+      header: "Clear",
       message: "Are you sure to clear all spaces on park area?",
       accept: () => {
         this.area = {...this.area, spaces: []};
-      }
+      },
+      icon: "pi pi-trash"
     })
   }
 
   spaceClicked(space: ParkSpace) {
-    window.alert(space.id)
+    this.spaceModalVisible = true;
+    this.spaceAdding = false;
+    this.editingSpace = space;
   }
 
   messageClose() {
@@ -184,5 +238,4 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
     var blob = new Blob([ab], {type: mime});
     return blob;
   }
-
 }
