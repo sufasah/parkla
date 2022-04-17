@@ -51,6 +51,9 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
   spaceClicked = new EventEmitter<ParkSpace>();
 
   @Output()
+  spaceRightClicked = new EventEmitter<ParkSpace>();
+
+  @Output()
   spacePathSelected = new EventEmitter<SpacePath>();
 
   canvas!:HTMLCanvasElement;
@@ -82,6 +85,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
       this.imageLoading = false;
       this.initCanvas();
       this.canvas.onclick = (e) => this.canvasOnClick(<PointerEvent>e);
+      this.canvas.oncontextmenu = (e) => this.canvasOnRightClick(<PointerEvent>e);
       this.drawCanvas();
     };
 
@@ -225,6 +229,18 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
       if(selectedSpace)
         this.spaceClicked.emit(selectedSpace);
     }
+  }
+
+  canvasOnRightClick(e: PointerEvent) {
+    e.preventDefault();
+
+    let selectedSpace = this.parkArea.spaces.find(space => this.isPointInSpace(
+      space.templatePath,
+      [e.offsetX, e.offsetY]
+    ));
+
+    if(selectedSpace)
+      this.spaceRightClicked.emit(selectedSpace);
   }
 
   parkAreaChanges(value: ParkArea) {

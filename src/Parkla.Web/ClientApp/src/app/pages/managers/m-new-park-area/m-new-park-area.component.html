@@ -134,8 +134,8 @@
       class="add-pricing"
       (click)="addPricing()"
       icon="pi pi-plus"
-      [style]="area.pricings?.length == 0 ? '' : 'width: 63px;'"
-      [label]="area.pricings?.length == 0 ? 'Add Pricing' : ''"
+      [style]="area.pricings && area.pricings!.length > 0 ? 'width: 63px;':''"
+      [label]="area.pricings && area.pricings!.length > 0 ? '' : 'Add Pricing'"
       >
     </button>
   </div>
@@ -205,8 +205,10 @@
   </div>
 
   <app-edit-area-template
+    #editAreaTemplateRef
     [parkArea]="area"
     (spaceClicked)="spaceClicked($event)"
+    (spaceRightClicked)="spaceRightClicked($event)"
     [(selectingSpacePath)]="spaceAdding"
     (spacePathSelected)="addTemplateSpaceDone($event)"
     >
@@ -223,7 +225,7 @@
       pRipple
       label="Done"
       (click)="spaceModalDone()"
-      class="me-2"
+      class="me-1"
       >
     </button>
     <input

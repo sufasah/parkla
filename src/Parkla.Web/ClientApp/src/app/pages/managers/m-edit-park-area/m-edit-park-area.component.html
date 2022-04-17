@@ -1,1 +1,300 @@
-<p>m-edit-park-area works!</p>
+<p-toolbar>
+  <div>
+    <button pButton pRipple (click)="goAreas()">Go Areas</button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<form
+  #editAreaForm="ngForm"
+  (ngSubmit)="editArea(editAreaForm)"
+  >
+
+  <div class="p-inputgroup">
+    <label
+      for="name"
+      class="p-inputgroup-addon"
+      >
+      <i class="pi pi-user"></i>
+    </label>
+
+    <input
+      type="text"
+      name="name"
+      required
+      [(ngModel)]="area.name"
+      pInputText
+      placeholder="Enter area name"
+      pattern="[a-zA-Z0-9 ]+"
+      minlength="3"
+      maxlength="50"
+      />
+  </div>
+
+  <div class="p-inputgroup">
+    <label
+      for="location"
+      class="p-inputgroup-addon"
+      >
+      <i class="pi pi-user"></i>
+    </label>
+
+    <input
+      type="text"
+      name="description"
+      maxlength="200"
+      [(ngModel)]="area.description"
+      pInputText
+      placeholder="Enter area description"
+      pattern="[a-zA-Z0-9 ]+"
+      />
+  </div>
+
+  <div>
+    <img
+      #templateImageRef
+      [hidden]="imageLoading"
+      [src]="area.templateImg"
+      width="300"
+      height="300"
+      />
+    <p-skeleton
+      *ngIf="imageLoading"
+      shape="square"
+      size="300px"
+      styleClass="d-inline-block m-1"
+      >
+    </p-skeleton>
+
+    <button
+      type="button"
+      pButton
+      pRipple
+      label="Edit Template"
+      (click)="showTemplateModal()"
+      ></button>
+  </div>
+
+  <div *ngFor="let pricing of area.pricings; let i=index" class="p-inputgroup" >
+    <input
+      [name]='"pricing"+i'
+      type="text"
+      pInputText
+      placeholder="Enter pricing type"
+      required
+      maxlength="30"
+      [(ngModel)]="pricing.type"
+      />
+
+    <p-inputNumber
+      [name]="'pricing'+i+'-timeamount'"
+      [(ngModel)]="pricing.timeAmount"
+      [max]="999"
+      [required]="true"
+      placeholder="Enter Time Amount"
+      >
+    </p-inputNumber>
+
+    <p-dropdown
+      [name]="'pricing'+i+'-timeunit'"
+      [options]="timeUnitOptions"
+      [(ngModel)]="pricing.timeUnit"
+      [required]="true"
+      >
+    </p-dropdown>
+
+    <p-inputNumber
+      [name]="'pricing'+i+'-price'"
+      [(ngModel)]="pricing.price.balance"
+      [max]="1000000"
+      [required]="true"
+      placeholder="Enter Price"
+      >
+    </p-inputNumber>
+
+
+    <button
+      pButton
+      pRipple
+      type="button"
+      class="p-inputgroup-addon remove-pricing"
+      (click)="removePricing(i)"
+      >
+      <i class="pi pi-minus" style="line-height: 1.25;color:white"></i>
+    </button>
+  </div>
+  <div class="d-flex justify-content-end mt-1 mb-2">
+    <button
+      pButton
+      pRipple
+      type="button"
+      class="add-pricing"
+      (click)="addPricing()"
+      icon="pi pi-plus"
+      [style]="area.pricings && area.pricings!.length > 0 ? 'width: 63px;':''"
+      [label]="area.pricings && area.pricings!.length > 0 ? '' : 'Add Pricing'"
+      >
+    </button>
+  </div>
+
+  <div>
+    <button
+      type="submit"
+      pButton
+      pRipple
+      class="p-button-raised p-button-primary"
+      label="Save"
+      [loading]="editing"
+      >
+    </button>
+  </div>
+</form>
+
+<div
+  *ngIf="templateModalVisible && !spaceModalVisible"
+  class="fullscreen-modal"
+  >
+  <div class="d-flex justify-content-between p-3">
+    <button
+      pButton
+      pRipple
+      label="Done"
+      [disabled]="spaceAdding"
+      (click)="editTemplateDone()"
+      >
+    </button>
+    <div class="p-buttonset d-inline-block">
+      <button
+        pButton
+        pRipple
+        [icon]="'pi ' + (spaceAdding ? 'pi-times' : 'pi-plus')"
+        [ngClass]="'p-button ' + (spaceAdding ? 'p-button-danger': 'p-button-success')"
+        (click)="addTemplateSpace()"
+        >
+      </button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-image"
+        (click)="setTemplateImageButton($event)"
+        [disabled]="spaceAdding"
+        >
+      </button>
+
+      <input
+        type="file"
+        hidden="true"
+        accept="image/*"
+        (change)="setTemplateImage($event)"
+        class="d-none"
+        />
+
+      <button
+        pButton
+        pRipple
+        icon="pi pi-trash"
+        class="p-button p-button-danger"
+        (click)="clearTemplateSpace()"
+        [disabled]="spaceAdding"
+        >
+      </button>
+    </div>
+  </div>
+
+  <app-edit-area-template
+    #editAreaTemplateRef
+    [parkArea]="area"
+    (spaceClicked)="spaceClicked($event)"
+    (spaceRightClicked)="spaceRightClicked($event)"
+    [(selectingSpacePath)]="spaceAdding"
+    (spacePathSelected)="addTemplateSpaceDone($event)"
+    >
+  </app-edit-area-template>
+</div>
+
+<div
+  *ngIf="spaceModalVisible"
+  class="fullscreen-modal"
+  >
+  <div class="p-2 d-flex" style="height: 80px;">
+    <button
+      pButton
+      pRipple
+      label="Done"
+      (click)="spaceModalDone()"
+      class="me-2"
+      >
+    </button>
+    <input
+      pInputText
+      name="id"
+      type="text"
+      maxlength="30"
+      [(ngModel)]="editingSpace.name"
+      required
+      class="flex-grow-1"
+      placeholder="Enter space name"
+      />
+  </div>
+  <div
+    style="height: calc( 100vh - 80px );"
+    class="overflow-auto"
+    >
+    <p-table
+      #dt
+      [value]="realSpaces"
+      selectionMode="single"
+      [(selection)]="selectedRealSpace"
+      dataKey="id"
+      responsiveLayout="stack"
+      [globalFilterFields]="['id', 'name']"
+      >
+      <ng-template pTemplate="caption">
+        <div class="d-flex justify-content-between">
+            <button
+              pButton
+              label="Clear"
+              class="p-button-outlined"
+              icon="pi pi-filter-slash"
+              (click)="clearTable(dt,searchInput)"
+              >
+            </button>
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input
+                  #searchInput
+                  pInputText
+                  type="text"
+                  (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                  placeholder="Search" />
+            </span>
+        </div>
+    </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-space>
+        <tr [pSelectableRow]="space">
+          <td>
+            <span class="p-column-title">Id</span>
+            {{space.id}}
+          </td>
+          <td>
+            <span class="p-column-title">Name</span>
+            {{space.name}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+
+<p-toast (onClose)="messageClose()"></p-toast>

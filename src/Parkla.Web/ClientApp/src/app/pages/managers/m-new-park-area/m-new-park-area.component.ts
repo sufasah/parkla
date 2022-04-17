@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, ContentChild, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
 import { RouteUrl } from '@app/core/utils/route.util';
+import { EditAreaTemplateComponent } from '@app/shared/components/edit-area-template/edit-area-template.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { delay, of } from 'rxjs';
@@ -19,6 +19,9 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
 
   @ViewChild("templateImageRef")
   templateImage!: ElementRef<HTMLImageElement>
+
+  @ViewChild(EditAreaTemplateComponent)
+  editAreaTemplateRef!: EditAreaTemplateComponent
 
   parkId: number;
   area: ParkArea = <any>{
@@ -145,7 +148,10 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
   }
 
   addPricing() {
-    this.area.pricings?.push(<any>{
+    if(!this.area.pricings)
+      this.area.pricings = [];
+
+    this.area.pricings!.push(<any>{
       price: {},
     });
   }
@@ -211,6 +217,23 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
     this.spaceModalVisible = true;
     this.spaceAdding = false;
     this.editingSpace = space;
+  }
+
+  spaceRightClicked(space: ParkSpace) {
+    this.confirmationService.confirm({
+      header: "Delete Space",
+      icon: "pi pi-trash",
+      message: "Are you sure to delete the selected space?",
+      accept: () => {
+        let index = this.area.spaces.indexOf(space);
+        if(index != -1) {
+          this.area.spaces.splice(index,1);
+          this.editAreaTemplateRef.drawCanvas();
+
+        }
+        this.spaceModalVisible = false;
+      }
+    });
   }
 
   clearTable(table: Table, searchInput: HTMLInputElement) {
