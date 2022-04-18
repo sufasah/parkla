@@ -28,6 +28,7 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { KnobModule } from 'primeng/knob';
+import { ChartModule } from 'primeng/chart';
 import { MessageModule } from 'primeng/message';
 import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
@@ -142,6 +143,7 @@ import { EditAreaTemplateComponent } from './shared/components/edit-area-templat
     ConfirmDialogModule,
     ButtonModule,
     RippleModule,
+    ChartModule,
     ImageModule,
     AutoCompleteModule,
     PasswordModule,

@@ -1,6 +1,5 @@
 import { ParkArea } from "./park-area";
 import { ParkSpaceStatus } from "./park-space-status";
-import { Price } from "./price";
 
 export interface ParkingLot {
   id: number;
@@ -10,9 +9,9 @@ export interface ParkingLot {
   location: string;
   status: ParkSpaceStatus;
   areas: ParkArea[];
-  minPrice: Price;
-  maxPrice: Price;
-  avgPrice: Price;
+  minPrice: number;
+  maxPrice: number;
+  avgPrice: number;
   extras: string[];
 }
 

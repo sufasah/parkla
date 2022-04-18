@@ -1,1 +1,171 @@
-<p>m-dashboard works!</p>
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <button pButton pRipple (click)="goMap()">Go Map</button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<p-chart
+  type="pie"
+  [data]="spacesPieData"
+  [options]="spacesPieOptions"
+  width="300px"
+  >
+</p-chart>
+
+<p-chart
+  type="line"
+  [data]="avgSpaceUsageLineData"
+  [options]="avgSpaceUsageLineOptions"
+  width="600px"
+  >
+</p-chart>
+
+<p-chart
+  type="line"
+  [data]="avgSpaceUsageLineData"
+  [options]="avgSpaceUsageLineOptions"
+  width="600px"
+  >
+</p-chart>
+
+<p-chart
+  type="line"
+  [data]="avgSpaceUsageLineData"
+  [options]="avgSpaceUsageLineOptions"
+  width="600px"
+  >
+</p-chart>
+
+<p-chart
+  type="line"
+  [data]="avgSpaceUsageLineData"
+  [options]="avgSpaceUsageLineOptions"
+  width="600px"
+  >
+</p-chart>
+
+<p-chart
+  type="line"
+  [data]="avgSpaceUsageLineData"
+  [options]="avgSpaceUsageLineOptions"
+  width="600px"
+  >
+</p-chart>
+
+<div style="width: 800px;">
+  <p-table
+    [value]="model.topData"
+    responsiveLayout="scroll"
+    [scrollable]="true"
+    scrollHeight="600px"
+    >
+    <ng-template pTemplate="caption">
+      <h3>Top {{model.topData.length}} Popular Parks</h3>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="max-width:60px"></th>
+        <th style="min-width:200px">Name</th>
+        <th style="min-width:600px">location</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data let-index="rowIndex">
+      <tr>
+        <td style="max-width:60px">{{index+1}}</td>
+        <td style="min-width:200px">{{data.name}}</td>
+        <td style="min-width:600px">{{data.location}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div style="width: 800px;">
+  <p-table
+    [value]="model.weekData"
+    responsiveLayout="scroll"
+    [scrollable]="true"
+    scrollHeight="600px"
+    >
+    <ng-template pTemplate="caption">
+      <h3>Avarage Usage Time For Weekdays</h3>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="min-width:100px;"></th>
+        <th style="min-width:150px;">Monday</th>
+        <th style="min-width:150px;">Tuesday</th>
+        <th style="min-width:150px;">Wednesday</th>
+        <th style="min-width:150px;">Thursday</th>
+        <th style="min-width:150px;">Friday</th>
+        <th style="min-width:150px;">Saturday</th>
+        <th style="min-width:150px;">Sunday</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data let-index="rowIndex">
+      <tr>
+        <td style="min-width:100px">{{(index < 10 ? "0" : "")+index+":00"}}</td>
+        <td style="min-width:150px">{{data[0]+"%"}}</td>
+        <td style="min-width:150px">{{data[1]+"%"}}</td>
+        <td style="min-width:150px">{{data[2]+"%"}}</td>
+        <td style="min-width:150px">{{data[3]+"%"}}</td>
+        <td style="min-width:150px">{{data[4]+"%"}}</td>
+        <td style="min-width:150px">{{data[5]+"%"}}</td>
+        <td style="min-width:150px">{{data[6]+"%"}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div style="width: 800px;">
+  <p-table
+    [value]="model.countryParks"
+    responsiveLayout="scroll"
+    [scrollable]="true"
+    scrollHeight="300px"
+    >
+    <ng-template pTemplate="caption">
+      <h3>Park Count Per Country</h3>
+    </ng-template>
+    <ng-template pTemplate="body" let-data let-index="rowIndex">
+      <tr>
+        <td style="min-width:200px">{{data.name}}</td>
+        <td style="min-width:200px">{{data.count}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-map-marker"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Park Count</h3>
+    <span>{{model.parkCount}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-table" style="background-color: var(--yellow-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Area Count</h3>
+    <span>{{model.areaCount}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Park Space Count</h3>
+    <span>{{model.freeSpace + model.occupiedSpace + model.reservedSpace}}</span>
+  </div>
+</div>

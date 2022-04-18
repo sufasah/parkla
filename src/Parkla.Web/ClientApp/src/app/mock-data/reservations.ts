@@ -9,10 +9,7 @@ export const mockReservations: Reservation[] = [
       type: "truck",
       timeUnit: "minutes",
       timeAmount: 30,
-      price: {
-        moneyUnit: "TRY",
-        balance: 50,
-      },
+      price: 50
     },
     timeFrom: new Date(),
     timeTo: new Date(Date.now()+1000*60*30)

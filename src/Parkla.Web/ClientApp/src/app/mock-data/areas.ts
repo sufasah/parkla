@@ -15,18 +15,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 10
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 20
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 15
-    }
+    minPrice: 10,
+    maxPrice: 20,
+    avgPrice: 15
   },
   {
     id: 2,
@@ -41,18 +32,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 20
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 50
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 25
-    }
+    minPrice: 20,
+    maxPrice: 50,
+    avgPrice: 25
   },
   {
     id: 3,
@@ -68,18 +50,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 23
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 32
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 29
-    }
+    minPrice: 23,
+    maxPrice: 32,
+    avgPrice: 29
   },
   {
     id: 4,
@@ -95,18 +68,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 24
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 31
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 30
-    }
+    minPrice: 24,
+    maxPrice: 31,
+    avgPrice: 30
   },
   {
     id: 5,
@@ -121,18 +85,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 25
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 30
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 28
-    }
+    minPrice: 25,
+    maxPrice: 30,
+    avgPrice: 28
   },
   {
     id: 6,
@@ -147,18 +102,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 41
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 45
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 43
-    }
+    minPrice: 41,
+    maxPrice: 45,
+    avgPrice: 43
   },
   {
     id: 7,
@@ -173,18 +119,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 33
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 35
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 34
-    }
+    minPrice: 33,
+    maxPrice: 35,
+    avgPrice: 34
   },
   {
     id: 8,
@@ -200,18 +137,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 32
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 44
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 43
-    }
+    minPrice: 32,
+    maxPrice: 44,
+    avgPrice: 43
   },
   {
     id: 9,
@@ -226,18 +154,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 21
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 23
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 22
-    }
+    minPrice: 21,
+    maxPrice: 23,
+    avgPrice: 22
   },
   {
     id: 10,
@@ -252,18 +171,9 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 22
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 26
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 24
-    }
+    minPrice: 22,
+    maxPrice: 26,
+    avgPrice: 24
   },
   {
     id: 11,
@@ -278,17 +188,8 @@ export const mockAreas: ParkArea[] = [{
     },
     spaces: mockSpaces,
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
-    minPrice: {
-      moneyUnit: "TRY",
-      balance: 23
-    },
-    maxPrice: {
-      moneyUnit: "TRY",
-      balance: 25
-    },
-    avgPrice: {
-      moneyUnit: "TRY",
-      balance: 24
-    }
+    minPrice: 23,
+    maxPrice: 25,
+    avgPrice: 24
   },
 ];

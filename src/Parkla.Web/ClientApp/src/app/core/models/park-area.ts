@@ -1,6 +1,5 @@
 import { ParkSpace } from "./park-space";
 import { ParkSpaceStatus } from "./park-space-status";
-import { Price } from "./price";
 import { Pricing } from "./pricing";
 
 export interface ParkArea {
@@ -12,8 +11,8 @@ export interface ParkArea {
   notReservedOccupiable: boolean;
   status: ParkSpaceStatus;
   spaces: ParkSpace[];
-  minPrice: Price;
-  maxPrice: Price;
-  avgPrice: Price;
+  minPrice: number;
+  maxPrice: number;
+  avgPrice: number;
   pricings?: Pricing[];
 }

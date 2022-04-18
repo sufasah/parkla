@@ -17,13 +17,13 @@
     </div>
     <div class="d-flex align-items-center justify-content-evenly fw-bold" style="font-size:12px;">
       <span class="min-price">
-        {{park.minPrice.balance | currency : park.minPrice.moneyUnit : "symbol" : "0.2-2"}}
+        {{park.minPrice | currency : "TRY" : "symbol" : "0.2-2"}}
       </span> -
       <span class="avg-price">
-        {{park.avgPrice.balance | currency : park.avgPrice.moneyUnit : "symbol" : "0.2-2"}}
+        {{park.avgPrice | currency : "TRY" : "symbol" : "0.2-2"}}
       </span> -
       <span class="max-price">
-        {{park.maxPrice.balance | currency : park.maxPrice.moneyUnit : "symbol" : "0.2-2"}}
+        {{park.maxPrice | currency : "TRY" : "symbol" : "0.2-2"}}
       </span>
     </div>
     <div
