@@ -232,4 +232,8 @@ export class ProfileComponent implements OnInit {
     this.router.navigateByUrl(RouteUrl.loadMoney());
   }
 
+  goMap() {
+    this.router.navigateByUrl(RouteUrl.mParkMap());
+  }
+
 }

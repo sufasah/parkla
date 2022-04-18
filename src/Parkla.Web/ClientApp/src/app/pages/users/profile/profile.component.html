@@ -1,4 +1,21 @@
 <p-toolbar>
+  <div>
+    <button pButton pRipple (click)="goMap()">Go Map</button>
+  </div>
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<form
+  #updateForm="ngForm"
+  (ngSubmit)="save(updateForm)"
+  novalidate
+  >
+
+  {{username}}
+
   <div
     class="wallet p-toolbar-group-left"
     >
@@ -16,19 +33,6 @@
       >
     </button>
   </div>
-  <app-user-avatar
-    class="p-toolbar-group-right"
-    >
-  </app-user-avatar>
-</p-toolbar>
-
-<form
-  #updateForm="ngForm"
-  (ngSubmit)="save(updateForm)"
-  novalidate
-  >
-
-  {{username}}
 
   <div class="p-inputgroup">
     <label

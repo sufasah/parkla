@@ -63,6 +63,11 @@ export class UserAvatarComponent implements OnInit {
         routerLink: ["/" + RouteUrl.mProfile()]
       },
       {
+        label: "Dashboard",
+        icon: "pi pi-fw pi-chart-bar",
+        routerLink: ["/" + RouteUrl.mDashboard()]
+      },
+      {
         label: "User Mode",
         icon: "pi pi-fw pi-user",
         routerLink: ["/" + RouteUrl.parkMap()]
