@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing.const';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time.const';
@@ -17,7 +17,7 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
   templateUrl: './park-area.component.html',
   styleUrls: ['./park-area.component.scss']
 })
-export class ParkAreaComponent implements OnInit, AfterViewInit {
+export class ParkAreaComponent implements OnInit {
 
   @ViewChild("parkTemplate")
   parkTemlate?: ParkTemplateComponent;
@@ -28,7 +28,7 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
 
   selectedSpace!: ParkSpace;
 
-  dialogVisible: "closest" | "space" | null = null;
+  dialogVisible = false;
 
   minDate = new Date();
 
@@ -36,16 +36,16 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
 
   _weekDays: MenuItem[] = [{label:"x"}];
   get weekDays() {
-    let nowBegin = new Date();
-    let dayCode = nowBegin.getDay();
+    const nowBegin = new Date();
+    const dayCode = nowBegin.getDay();
     nowBegin.setHours(0,0,0)
 
     if(this._weekDays[0].label != this.dayNames[dayCode]) {
       this._weekDays = [];
       for(let i=0; i<7; i++) {
-        let dayIndex = (dayCode+i)%7;
-        let dateBeginTimestamp = nowBegin.getTime() + i*DAY;
-        let dateEndTimestamp = dateBeginTimestamp
+        const dayIndex = (dayCode+i)%7;
+        const dateBeginTimestamp = nowBegin.getTime() + i*DAY;
+        const dateEndTimestamp = dateBeginTimestamp
           + 23*HOUR
           + 59*MINUTE
           + 59*SECOND;
@@ -85,10 +85,6 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-
-  }
-
   timeRangeChange(timeRange: [Date?, Date?]) {
     this.selectedArea.spaces.forEach(space => {
       if(this.selectedArea.reservationsEnabled && space.reservations) {
@@ -113,32 +109,8 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
   spaceClicked(space: ParkSpace) {
     this.selectedSpace = space;
 
-    if(this.selectedArea.reservationsEnabled) {
-      if(space.status == "empty") {
+    if(this.selectedArea.reservationsEnabled)
         this.showReserveModal();
-        //show time interval selected
-        //show pricig table
-        //show reservation intervals and available intervals between them
-        //if reserved show reserved user's username
-        //if user wallet is not enough it must not be possible to confirm
-      }
-      else if((<any>space).isReserved) {
-        this.showReserveModal();
-      }
-      else {
-        if(!this.selectedArea.notReservedOccupiable) {
-          this.showReserveModal();
-        }
-        else {
-          this.messageService.add({
-            life:1500,
-            severity:'error',
-            summary: 'Occupied Reservation',
-            detail: 'It is not possible to reserve occupied space.',
-          });
-        }
-      }
-    }
   }
 
   reserveSpace() {
@@ -168,12 +140,21 @@ export class ParkAreaComponent implements OnInit, AfterViewInit {
 
   showReserveModal() {
     this.generateSpaceReservationTable(this.weekDays[0]);
-    this.dialogVisible = "space";
+
+    const now = new Date();
+    if(this.selectedSpace.status == "occupied" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+      this.reservationsOfDay[0].isReserved = true;
+
+    this.dialogVisible = true;
   }
 
-  dayTabSelected(event:any){
-    let item: MenuItem = event.item;
+  dayTabSelected(event:{item: MenuItem; event: PointerEvent | KeyboardEvent}){
+    let item = event.item;
     this.generateSpaceReservationTable(item);
+
+    const now = new Date();
+    if(this.selectedSpace.status == "occupied" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+      this.reservationsOfDay[0].isReserved = true;
   }
 
   generateSpaceReservationTable(item: MenuItem) {

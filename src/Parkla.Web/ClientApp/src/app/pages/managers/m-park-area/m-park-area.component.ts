@@ -10,7 +10,7 @@ import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route.util';
 import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-m-park-area',
@@ -28,7 +28,7 @@ export class MParkAreaComponent implements OnInit {
 
   selectedSpace!: ParkSpace;
 
-  dialogVisible: "closest" | "space" | null = null;
+  dialogVisible = false;
 
   timeRange:[Date?, Date?] = [
     new Date(),
@@ -41,16 +41,16 @@ export class MParkAreaComponent implements OnInit {
 
   _weekDays: MenuItem[] = [{label:"x"}];
   get weekDays() {
-    let nowBegin = new Date();
-    let dayCode = nowBegin.getDay();
+    const nowBegin = new Date();
+    const dayCode = nowBegin.getDay();
     nowBegin.setHours(0,0,0)
 
     if(this._weekDays[0].label != this.dayNames[dayCode]) {
       this._weekDays = [];
       for(let i=0; i<7; i++) {
-        let dayIndex = (dayCode+i)%7;
-        let dateBeginTimestamp = nowBegin.getTime() + i*DAY;
-        let dateEndTimestamp = dateBeginTimestamp
+        const dayIndex = (dayCode+i)%7;
+        const dateBeginTimestamp = nowBegin.getTime() + i*DAY;
+        const dateEndTimestamp = dateBeginTimestamp
           + 23*HOUR
           + 59*MINUTE
           + 59*SECOND;
@@ -75,8 +75,6 @@ export class MParkAreaComponent implements OnInit {
     private refSharingService: RefSharingService,
     private router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
     private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -90,54 +88,11 @@ export class MParkAreaComponent implements OnInit {
     }
   }
 
-  ngAfterViewInit(): void {
-
-  }
-
   spaceClicked(space: ParkSpace) {
     this.selectedSpace = space;
 
-    if(this.selectedArea.reservationsEnabled) {
-      if(space.status == "empty") {
-        this.showReserveModal();
-        //show time interval selected
-        //show pricig table
-        //show reservation intervals and available intervals between them
-        //if reserved show reserved user's username
-        //if user wallet is not enough it must not be possible to confirm
-      }
-      else if((<any>space).isReserved) {
-        this.showReserveModal();
-      }
-      else {
-        if(!this.selectedArea.notReservedOccupiable) {
-          this.showReserveModal();
-        }
-        else {
-          this.messageService.add({
-            life:1500,
-            severity:'error',
-            summary: 'Occupied Reservation',
-            detail: 'It is not possible to reserve occupied space.',
-          });
-        }
-      }
-    }
-  }
-
-  reserveSpace() {
-    this.confirmationService.confirm({
-      message: 'Are you sure to reserve xxx number park space for xxx TL money from 19:00 12-12-1920 to 14:14 12-12-1921 ?',
-      accept: () => {
-        this.messageService.add({
-          summary: "Reservation",
-          closable: true,
-          severity: "success",
-          life:1500,
-          detail: "The xxx number park reserved"
-        })
-      }
-    });
+    if(this.selectedArea.reservationsEnabled)
+      this.showReserveModal();
   }
 
   goAreas() {
@@ -152,41 +107,21 @@ export class MParkAreaComponent implements OnInit {
 
   showReserveModal() {
     this.generateSpaceReservationTable(this.weekDays[0]);
-    this.dialogVisible = "space";
+
+    const now = new Date();
+    if(this.selectedSpace.status == "occupied" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+      this.reservationsOfDay[0].isReserved = true;
+
+    this.dialogVisible = true;
   }
 
-  timeRangeChange(timeRange:any) {
-    this.timeRange = timeRange;
+  dayTabSelected(event: {item: MenuItem; event: PointerEvent | KeyboardEvent}){
+    let item = event.item;
+    this.generateSpaceReservationTable(item);
 
-    if(!this.timeRange[0] || !this.timeRange[1]) return;
-
-    this.selectedArea.spaces.forEach(space => {
-      if(this.selectedArea.reservationsEnabled && space.reservations) {
-        for(let i=0; i<space.reservations.length; i++) {
-          let reservation = space.reservations[i];
-
-          space.isReserved = this.isTimeRangesIntercept(
-            reservation.startTime,
-            reservation.endTime,
-            this.timeRange[0]!,
-            this.timeRange[1]!
-          );
-
-          if(space.isReserved) break;
-        }
-      }
-    })
-
-    this.parkTemlate?.drawCanvas();
-  }
-
-  dayTabSelected(event:any){
-    let item: MenuItem = event.item;
-
-    if(this.dialogVisible == "closest")
-      this.generateClosestReservationTable(item);
-    else
-      this.generateSpaceReservationTable(item);
+    const now = new Date();
+    if(this.selectedSpace.status == "occupied" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+      this.reservationsOfDay[0].isReserved = true;
   }
 
   generateSpaceReservationTable(item: MenuItem) {
@@ -269,9 +204,6 @@ export class MParkAreaComponent implements OnInit {
     this.reservationsOfDay = resOfDay;
   }
 
-  generateClosestReservationTable(item: MenuItem) {
-  }
-
   isTimeRangesIntercept(
     start1: Date,
     end1: Date,
@@ -282,10 +214,4 @@ export class MParkAreaComponent implements OnInit {
       (end1 >= start2 && end1 <= end2) ||
       (start1 <= start2 && end1 >= end2);
   }
-
-  showClosestReservations() {
-    this.dialogVisible = "closest";
-    this.generateClosestReservationTable(this.weekDays[0]);
-  }
-
 }
