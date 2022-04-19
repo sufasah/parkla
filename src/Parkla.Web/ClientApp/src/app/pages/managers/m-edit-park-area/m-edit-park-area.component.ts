@@ -154,7 +154,6 @@ export class MEditParkAreaComponent implements OnInit {
       this.area.pricings = [];
 
     this.area.pricings?.push(<any>{
-      price: {},
     });
   }
 
