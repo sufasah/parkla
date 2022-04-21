@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@app/core/services/auth.service';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 import { logout } from '@app/store/auth/auth.actions';
 import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
@@ -50,7 +50,7 @@ export class UserAvatarComponent implements OnInit {
         label: 'Logout',
         icon: 'pi pi-fw pi-sign-out',
         command: () => this.logout(),
-        routerLink: ["/"]
+        routerLink: ["/" + RouteUrl.login()]
       },
     ];
   }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 
 @Component({
   selector: 'app-load-money',

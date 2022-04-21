@@ -1,10 +1,10 @@
 import { Component, ContentChild, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing.const';
+import { RSRoute } from '@app/core/constants/ref-sharing';
 import { ParkArea } from '@app/core/models/park-area';
 import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';

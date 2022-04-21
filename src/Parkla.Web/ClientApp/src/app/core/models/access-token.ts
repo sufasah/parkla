@@ -13,6 +13,4 @@ export interface AccessToken {
   email_verified?: boolean;
   gender?: string;
   phone_number_verified?: boolean;
-  roles?: [string];
-  groups?: [string];
 }

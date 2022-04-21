@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ParkingLot } from '@app/core/models/parking-lot';
+import { Park } from '@app/core/models/park';
 
 @Component({
   selector: 'app-map-marker',
@@ -12,7 +12,7 @@ export class MapMarkerComponent implements OnInit {
   public onClick = new EventEmitter<any>();
 
   @Input()
-  park!:ParkingLot;
+  park!:Park;
 
   get spaceCount() {
     return this.park.status.emptySpace +

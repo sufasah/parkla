@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { EditAreaTemplateComponent } from '@app/shared/components/edit-area-template/edit-area-template.component';
 import { ConfirmationService, MessageService } from 'primeng/api';

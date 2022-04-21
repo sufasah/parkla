@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
-import { Point } from '@app/core/models/parking-lot';
+import { Point } from '@app/core/types/parkmap';
 import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
 
@@ -60,7 +60,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   ctx!:any;
 
-  parkingLotImage: HTMLImageElement = new Image();
+  ParkImage: HTMLImageElement = new Image();
 
   private zoomBehavior: ZoomBehavior<any,any> = zoom();
 
@@ -81,7 +81,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
       this.canvas.style.transformOrigin = "0 0";
     });
 
-    this.parkingLotImage.onload = () => {
+    this.ParkImage.onload = () => {
       this.imageLoading = false;
       this.initCanvas();
       this.canvas.onclick = (e) => this.canvasOnClick(<PointerEvent>e);
@@ -89,8 +89,8 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
       this.drawCanvas();
     };
 
-    this.parkingLotImage.onerror = () => {
-      this.parkingLotImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
+    this.ParkImage.onerror = () => {
+      this.ParkImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
     }
   }
 
@@ -103,10 +103,10 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
   }
 
   initCanvas() {
-    this.canvas.style.width = this.parkingLotImage.width+"px";
-    this.canvas.style.height = this.parkingLotImage.height+"px";
-    this.canvas.width = this.parkingLotImage.width;
-    this.canvas.height = this.parkingLotImage.height;
+    this.canvas.style.width = this.ParkImage.width+"px";
+    this.canvas.style.height = this.ParkImage.height+"px";
+    this.canvas.width = this.ParkImage.width;
+    this.canvas.height = this.ParkImage.height;
 
     let pwStr = this.selection.style("width");
     let phStr = this.selection.style("height");
@@ -141,9 +141,9 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
 
     this.ctx.drawImage(
-      this.parkingLotImage, 0, 0,
-      this.parkingLotImage.width,
-      this.parkingLotImage.height
+      this.ParkImage, 0, 0,
+      this.ParkImage.width,
+      this.ParkImage.height
     );
 
     this.parkArea.spaces.forEach(space => {
@@ -245,6 +245,6 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   parkAreaChanges(value: ParkArea) {
     this.imageLoading = true;
-    this.parkingLotImage.src = value.templateImg;
+    this.ParkImage.src = value.templateImg;
   }
 }

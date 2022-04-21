@@ -7,8 +7,8 @@ import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
 import { delay, filter, of, Subscription, tap } from 'rxjs';
-import { apiUrl } from '../constants/http.const';
-import { RefreshTokenResp } from '@app/core/models/refresh-token.resp';
+import { apiUrl } from '../constants/http';
+import { TokenResponse } from '@app/core/server-models/token-response';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Injectable({
@@ -71,11 +71,11 @@ export class AuthService implements OnDestroy{
   }
 
   refreshAccessToken() {
-    return this.httpClient.post<RefreshTokenResp>(`http://localhost:5252/refreshToken`, {
+    return this.httpClient.post<TokenResponse>(`http://localhost:5252/refreshToken`, {
       refreshToken: this.refreshToken
     });
 
-    return this.httpClient.post<RefreshTokenResp>(`${apiUrl}/refreshToken`, {
+    return this.httpClient.post<TokenResponse>(`${apiUrl}/refreshToken`, {
       refreshToken: this.refreshToken
     }).pipe(tap(resp => {
       this.store.dispatch(refreshAccessToken({
@@ -94,24 +94,6 @@ export class AuthService implements OnDestroy{
     if(!(this.accessToken && this.accessToken.exp)) return false;
 
     return this.accessToken.exp < Date.now();
-  }
-
-  hasRoles(role:string | string[]){
-    if(!(this.accessToken && this.accessToken.roles)) return false;
-
-    return typeof role == "string"
-      ? this.accessToken.roles.includes(role)
-      : this.accessToken.roles.reduce((prev,cur) => prev || role.includes(cur),false);
-  }
-
-  hasAllRoles(roles: string[]){
-    if(!(this.accessToken && this.accessToken.roles)) return false;
-    let tokenRoles = this.accessToken.roles;
-
-    return roles.reduce(
-      (prev,cur) => prev && tokenRoles.includes(cur),
-      true
-    );
   }
 
 }

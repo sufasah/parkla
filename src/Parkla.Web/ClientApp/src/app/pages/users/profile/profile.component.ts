@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppUser } from '@app/core/models/app-user';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 import { Message, MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 
@@ -62,19 +62,19 @@ export class ProfileComponent implements OnInit {
   }
 
   get getUser() {
-    return new AppUser(
-      this.username,
-      this.email,
-      this.name,
-      this.surname,
-      this.phone!,
-      this.city,
-      this.district,
-      this.gender.value,
-      this.address,
-      this.zip,
-      this.birthdate
-    );
+    return <AppUser>{
+      username: this.username,
+      email: this.email,
+      name: this.name,
+      surname: this.surname,
+      phone: this.phone!,
+      city: this.city,
+      district: this.district,
+      gender: this.gender.value,
+      address: this.address,
+      zip: this.zip,
+      birthdate: this.birthdate,
+    };
   }
 
   constructor(

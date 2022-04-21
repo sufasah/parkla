@@ -1,13 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing.const';
-import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time.const';
+import { RSRoute } from '@app/core/constants/ref-sharing';
+import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
+import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace } from '@app/core/models/park-space';
 import { SpaceReservation } from '@app/core/models/space-reservation';
 import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -18,6 +19,7 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
   styleUrls: ['./park-area.component.scss']
 })
 export class ParkAreaComponent implements OnInit {
+  SpaceStatusEnum = SpaceStatus;
 
   @ViewChild("parkTemplate")
   parkTemlate?: ParkTemplateComponent;
@@ -142,7 +144,7 @@ export class ParkAreaComponent implements OnInit {
     this.generateSpaceReservationTable(this.weekDays[0]);
 
     const now = new Date();
-    if(this.selectedSpace.status == "occupied" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+    if(this.selectedSpace.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
       this.reservationsOfDay[0].isReserved = true;
 
     this.dialogVisible = true;
@@ -153,7 +155,7 @@ export class ParkAreaComponent implements OnInit {
     this.generateSpaceReservationTable(item);
 
     const now = new Date();
-    if(this.selectedSpace.status == "occupied" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+    if(this.selectedSpace.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
       this.reservationsOfDay[0].isReserved = true;
   }
 

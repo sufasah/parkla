@@ -1,5 +1,5 @@
 import { ParkSpace } from "./park-space";
-import { ParkSpaceStatus } from "./park-space-status";
+import { ParkAreaStatus } from "./park-area-status";
 import { Pricing } from "./pricing";
 
 export interface ParkArea {
@@ -8,11 +8,10 @@ export interface ParkArea {
   description?: string;
   templateImg: string;
   reservationsEnabled: boolean;
-  notReservedOccupiable: boolean;
-  status: ParkSpaceStatus;
+  status: ParkAreaStatus;
   spaces: ParkSpace[];
+  pricings: Pricing[];
   minPrice: number;
   maxPrice: number;
   avgPrice: number;
-  pricings?: Pricing[];
 }

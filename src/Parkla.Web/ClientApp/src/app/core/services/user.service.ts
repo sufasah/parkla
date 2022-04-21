@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, tap } from 'rxjs';
-import { apiUrl } from '../constants/http.const';
+import { apiUrl } from '../constants/http';
 
 @Injectable({
   providedIn: 'root'

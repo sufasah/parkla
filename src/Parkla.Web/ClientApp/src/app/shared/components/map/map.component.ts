@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, EmbeddedViewRef, EventEmitter, Input, OnInit, Output, ViewContainerRef } from '@angular/core';
-import { ttkey } from '@app/core/constants/private.const';
-import { ParkingLot } from '@app/core/models/parking-lot';
+import { ttkey } from '@app/core/constants/private';
+import { Park } from '@app/core/models/park';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Feature, FeatureCollection } from 'geojson';
-import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map.const';
+import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map';
 import { FullscreenControl, GeolocateControl, Map, map, Marker, NavigationControl,  } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
@@ -22,10 +22,10 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   appMap!: Map;
 
-  private _parks: ParkingLot[] = [];
+  private _parks: Park[] = [];
 
   @Input()
-  set parks(value: ParkingLot[]) {
+  set parks(value: Park[]) {
     this._parks = value;
 
     this._parks.forEach(el => {
@@ -185,7 +185,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     this.searchBoxParent?.appendChild(this.searchBox.getSearchBoxHTML());
   }
 
-  makeMarkerElement(park: ParkingLot) {
+  makeMarkerElement(park: Park) {
     let componentRef = this.viewRef.createComponent(MapMarkerComponent);
 
     componentRef.instance.onClick
@@ -202,7 +202,7 @@ export class MapComponent implements OnInit, AfterViewInit{
       .rootNodes[0] as HTMLElement;
   }
 
-  makeMarker(park: ParkingLot) {
+  makeMarker(park: Park) {
     return new Marker(this.makeMarkerElement(park))
       .setLngLat({lat: park.lat, lng: park.lng})
       .remove()

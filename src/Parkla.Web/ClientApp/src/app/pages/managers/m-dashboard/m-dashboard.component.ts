@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ParkingLot } from '@app/core/models/parking-lot';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { Park } from '@app/core/models/park';
+import { RouteUrl } from '@app/core/utils/route';
 import { ChartData, ChartOptions } from 'chart.js';
 import * as moment from 'moment';
 import { UIChart } from 'primeng/chart';
@@ -18,7 +18,7 @@ export class MDashboardComponent implements OnInit {
     reservedSpace: 500,
     parkCount: 63,
     areaCount: 241,
-    topData: <ParkingLot[]>[
+    topData: <Park[]>[
       {name: "name", location: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
       {name: "name2", location: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
       {name: "name3", location: "cccccccccccccccccccccccccccccc"},

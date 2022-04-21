@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing.const';
+import { RSRoute } from '@app/core/constants/ref-sharing';
 import { ParkArea } from '@app/core/models/park-area';
-import { ParkingLot } from '@app/core/models/parking-lot';
+import { Park } from '@app/core/models/park';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -25,7 +25,7 @@ export class MParkAreasComponent implements OnInit {
     private messageService: MessageService) { }
 
   ngOnInit(): void {
-    let park = this.refSharingService.getData<ParkingLot>(RSRoute.mapSelectedPark);
+    let park = this.refSharingService.getData<Park>(RSRoute.mapSelectedPark);
 
     if(!!park)
       this.areas = park.areas;

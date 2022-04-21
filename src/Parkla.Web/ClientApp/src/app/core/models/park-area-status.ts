@@ -1,4 +1,4 @@
-export interface ParkSpaceStatus {
+export interface ParkAreaStatus {
   timestamp: number;
   emptySpace: number;
   reservedSpace: number;

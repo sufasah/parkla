@@ -6,7 +6,7 @@ import { AppUser } from '@app/core/models/app-user';
 import { MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { RouteUrl } from '@app/core/utils/route';
 
 @Component({
   selector: 'app-register',
@@ -29,7 +29,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   city = {name:"Turkey",code:"TR"};
   district = "";
   zip = "";
-  birthDate:Date | null = null;
+  birthdate:Date | null = null;
   citySuggestions = [];
   districtSuggestions = [];
   countryCodeSuggestions = [];
@@ -38,15 +38,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
   registering = false;
 
   get birthDay(){
-    return this.birthDate?.getDay();
+    return this.birthdate?.getDay();
   }
 
   get birthMonth(){
-    return this.birthDate?.getMonth();
+    return this.birthdate?.getMonth();
   }
 
   get birthYear(){
-    return this.birthDate?.getFullYear();
+    return this.birthdate?.getFullYear();
   }
 
   get maxBirthDate(){
@@ -60,19 +60,19 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   get getUser() {
-    return new AppUser(
-      this.username,
-      this.email,
-      this.name,
-      this.surname,
-      this.phone!,
-      this.city.name,
-      this.district,
-      this.gender.value,
-      this.address,
-      this.zip,
-      this.birthDate
-    );
+    return <AppUser>{
+      username: this.username,
+      email: this.email,
+      name: this.name,
+      surname: this.surname,
+      phone: this.phone!,
+      city: this.city.name,
+      district: this.district,
+      gender: this.gender.value,
+      address: this.address,
+      zip: this.zip,
+      birthdate: this.birthdate,
+    }
   }
 
   constructor(

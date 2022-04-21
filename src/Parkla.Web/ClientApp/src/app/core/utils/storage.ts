@@ -1,4 +1,4 @@
-import { accessTokenKey, expiresKey, refreshTokenKey } from "../constants/storage.const";
+import { accessTokenKey, expiresKey, refreshTokenKey } from "../constants/storage";
 
 export const setStorageTokens = (accessToken: string, refreshToken: string, expires: number | string) => {
   localStorage.setItem(accessTokenKey, accessToken);

@@ -1,6 +1,8 @@
+import { TimeUnit } from "../enums/TimeUnit";
+
 export interface Pricing {
   type: string;
-  timeUnit: "minutes" | "hours" | "days" | "months";
+  timeUnit: TimeUnit;
   timeAmount: number;
   price: number;
 }

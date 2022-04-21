@@ -58,7 +58,7 @@ import { DataViewModule } from 'primeng/dataview';
 import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from '@app/pages/users/park-area/park-area.component';
 import { TokenRefreshInterceptor } from './core/interceptors/token-refresh.interceptor';
-import { apiAuthScheme } from './core/constants/http.const';
+import { apiAuthScheme } from './core/constants/http';
 import { ParkTemplateComponent } from './shared/components/area-template/area-template.component';
 import { UserAvatarComponent } from './shared/components/user-avatar/user-avatar.component';
 import { ProfileComponent } from './pages/users/profile/profile.component';

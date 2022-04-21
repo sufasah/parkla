@@ -1,18 +1,16 @@
 import { ParkArea } from "./park-area";
-import { ParkSpaceStatus } from "./park-space-status";
+import { ParkAreaStatus } from "./park-area-status";
 
-export interface ParkingLot {
+export interface Park {
   id: number;
   name: string;
   lat: number;
   lng: number;
   location: string;
-  status: ParkSpaceStatus;
+  status: ParkAreaStatus;
   areas: ParkArea[];
   minPrice: number;
   maxPrice: number;
   avgPrice: number;
   extras: string[];
 }
-
-export type Point = [number,number];

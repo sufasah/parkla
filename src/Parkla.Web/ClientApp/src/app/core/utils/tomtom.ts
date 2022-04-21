@@ -1,5 +1,5 @@
 import { FullscreenControl, GeolocateControl, map, NavigationControl } from "@tomtom-international/web-sdk-maps";
-import { ttkey } from "../constants/private.const";
+import { ttkey } from "../constants/private";
 
 export const makeTomTomMap = () => {
   let rmap = map({

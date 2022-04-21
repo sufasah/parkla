@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing.const';
-import { ParkingLot } from '@app/core/models/parking-lot';
+import { RSRoute } from '@app/core/constants/ref-sharing';
+import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
-import { RouteUrl } from '@app/core/utils/route.util';
-import { mockParkingLots } from '@app/mock-data/parking-lots';
+import { RouteUrl } from '@app/core/utils/route';
+import { mockParks } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -16,11 +16,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class MParkMapComponent implements OnInit {
 
-  parks = mockParkingLots;
+  parks = mockParks;
 
   dialogVisible = false;
 
-  selectedPark: ParkingLot | null = null;
+  selectedPark: Park | null = null;
 
   get spaceCount() {
     return this.selectedPark!.status.emptySpace +
@@ -38,11 +38,11 @@ export class MParkMapComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  newParkingLot() {
+  newPark() {
     this.router.navigateByUrl(RouteUrl.mNewPark());
   }
 
-  navigateToParkAreas(park:ParkingLot) {
+  navigateToParkAreas(park:Park) {
     this.refSharingService.setData(RSRoute.mapSelectedPark,park);
 
     this.router.navigateByUrl(this.authService.asManager
@@ -61,11 +61,11 @@ export class MParkMapComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  editPark(park: ParkingLot) {
+  editPark(park: Park) {
     this.router.navigateByUrl(RouteUrl.mEditPark(park.id));
   }
 
-  deletePark(park: ParkingLot) {
+  deletePark(park: Park) {
     this.confirmService.confirm({
       message: 'Are you sure to delete xxx named park with xxx id?',
       accept: () => {

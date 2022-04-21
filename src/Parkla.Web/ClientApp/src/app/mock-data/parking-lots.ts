@@ -1,7 +1,7 @@
-import { ParkingLot } from "@app/core/models/parking-lot";
+import { Park } from "@app/core/models/park";
 import { mockAreas } from "./areas";
 
-export const mockParkingLots: ParkingLot[] = [
+export const mockParks: Park[] = [
   {
     id: 1,
     name: "xotopar",

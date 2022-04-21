@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ttkey } from '@app/core/constants/private.const';
-import { RSRoute } from '@app/core/constants/ref-sharing.const';
-import { ParkingLot } from '@app/core/models/parking-lot';
+import { ttkey } from '@app/core/constants/private';
+import { RSRoute } from '@app/core/constants/ref-sharing';
+import { Park } from '@app/core/models/park';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
-import { RouteUrl } from '@app/core/utils/route.util';
-import { makeTomTomMap } from '@app/core/utils/tomtom.util';
+import { RouteUrl } from '@app/core/utils/route';
+import { makeTomTomMap } from '@app/core/utils/tomtom';
 import { FullscreenControl, GeolocateControl, map, Map, Marker, NavigationControl } from '@tomtom-international/web-sdk-maps';
 import { MessageService } from 'primeng/api';
 import { delay, of } from 'rxjs';
@@ -20,7 +20,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
 
   selectLatLngMap! : Map;
 
-  park: ParkingLot = <any>{};
+  park: Park = <any>{};
 
   extrasModel: {val:string}[] = []
 

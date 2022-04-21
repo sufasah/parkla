@@ -9,7 +9,7 @@ import {
 } from '@angular/common/http';
 import { catchError, EMPTY, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { apiAuthScheme } from '../constants/http.const';
+import { apiAuthScheme } from '../constants/http';
 import { Store } from '@ngrx/store';
 import { refreshTokenExpired } from '@app/store/auth/auth.actions';
 

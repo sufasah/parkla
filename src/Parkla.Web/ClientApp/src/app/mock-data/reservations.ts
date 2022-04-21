@@ -1,3 +1,4 @@
+import { TimeUnit } from "@app/core/enums/TimeUnit";
 import { Reservation } from "@app/core/models/reservation";
 
 export const mockReservations: Reservation[] = [
@@ -7,7 +8,7 @@ export const mockReservations: Reservation[] = [
     areaName: "basement5",
     pricing: {
       type: "truck",
-      timeUnit: "minutes",
+      timeUnit: TimeUnit.MINUTE,
       timeAmount: 30,
       price: 50
     },

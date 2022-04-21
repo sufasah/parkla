@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ParkingLot } from '@app/core/models/parking-lot';
-import { RouteUrl } from '@app/core/utils/route.util';
+import { Park } from '@app/core/models/park';
+import { RouteUrl } from '@app/core/utils/route';
 import { Map, Marker } from '@tomtom-international/web-sdk-maps';
 import { MessageService } from 'primeng/api';
 import { delay, of } from 'rxjs';
-import { makeTomTomMap } from '@core/utils/tomtom.util';
+import { makeTomTomMap } from '@app/core/utils/tomtom';
 
 @Component({
   selector: 'app-m-edit-park',
@@ -17,7 +17,7 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
 
   selectLatLngMap! : Map;
 
-  park: ParkingLot = <any>{};
+  park: Park = <any>{};
 
   extrasModel: {val:string}[] = []
 
