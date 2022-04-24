@@ -1,5 +1,5 @@
-using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Enums;
+using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Options;
 
 
@@ -27,13 +27,11 @@ var GetExporter = (ConfigurationManager configuration, ExporterType type, string
 
     if(type == ExporterType.HTTP) {
         var httpExporter = configuration.GetSection($"{exporterPath}").Get<HttpExporter>();
-        httpExporter.Handler ??= "default";
         if(httpExporter.Url == null) throw new ArgumentNullException("Url","HttpExporter Url configuration value must be given");
         result = httpExporter;
     }
     else {
         var serialExporter = configuration.GetSection($"{exporterPath}").Get<SerialExporter>();
-        serialExporter.Handler ??= "default";
         if(serialExporter.PortName == null) throw new ArgumentNullException("Url","SerialExporter PortName configuration value must be given");
         result = serialExporter;
     }
@@ -95,24 +93,31 @@ builder.Host.ConfigureServices(services => {
 
         opt.Pipelines = pipelines.ToArray();
     });
+
+    services.AddSingleton<HttpExportManager>();
+    services.AddSingleton<SerialExportManager>();
+    services.AddSingleton<ExportManager>();
 });
 
-builder.Services.AddCors(o => {
-    o.DefaultPolicyName = "allowAll";
-    o.AddDefaultPolicy(b => {
-        b.AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials()
-        .SetIsOriginAllowed(origin => true);
+builder.WebHost.ConfigureServices(services => {
+    services.AddCors(o => {
+        o.DefaultPolicyName = "allowAll";
+        o.AddDefaultPolicy(b => {
+            b.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .SetIsOriginAllowed(origin => true);
+        });
     });
+
+    services.AddAuthentication();
+    services.AddAuthorization();
+
+    services.AddHttpClient();
+
+    services.AddControllers();
 });
 
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
-
-builder.Services.AddHttpClient();
-
-builder.Services.AddControllers();
 
 var app = builder.Build();
 

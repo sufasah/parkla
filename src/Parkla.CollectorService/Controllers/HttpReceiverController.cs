@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Parkla.CollectorService.DTOs;
 using Parkla.CollectorService.Enums;
+using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Handlers;
 using Parkla.CollectorService.Options;
 
@@ -8,30 +10,24 @@ namespace Parkla.Web.Controllers;
 
 public class HttpReceiverController : ControllerBase
 {
-
-    private readonly ILogger<HttpReceiverController> _logger;
     private readonly IOptionsMonitor<CollectorOptions> _options;
     private readonly HttpClient _client;
+    private readonly ExportManager _exportManager;
     
     public HttpReceiverController(
-        ILogger<HttpReceiverController> logger,
         IOptionsMonitor<CollectorOptions> options,
-        IHttpClientFactory httpClientFactory
-    )
+        IHttpClientFactory httpClientFactory,
+        ExportManager exportManager)
     {
-        _logger = logger;
         _options = options;
         _client = httpClientFactory.CreateClient();
+        _exportManager = exportManager;
     }
+
     public async Task Receive () {
-        /*var exportUrls = _options.CurrentValue.Export.Http.Urls;
-        foreach(var url in exportUrls) {
-            var response = await HttpClientJsonExtensions.PostAsJsonAsync(_client, url+"/test", dto);
-            _logger.LogInformation("{0}: ParkSpaceStatus with {1} Parkid is sent. Response status {2}", url, dto.Parkid, response.StatusCode);
-        }*/
         var path = HttpContext.Request.Path.Value;
         var pipelines = _options.CurrentValue.Pipelines;
-        var defaultHttpReceiverHandler = new DefaultHttpReceiverHandler();
+
         foreach(var pipeline in pipelines) {
             var httpReceivers = pipeline.Receivers.Where(x => {
                 var isHttpReceiver = x.Type == ReceiverType.HTTP;
@@ -42,21 +38,35 @@ public class HttpReceiverController : ControllerBase
                     StringComparison.OrdinalIgnoreCase
                 ) == 0;
             }).ToArray();
+            if(httpReceivers.Length == 0) continue;
 
-            List<object> handlerResults;
-            foreach( HttpReceiver httpReceiver in httpReceivers) {
-                object handlerResult;
-                if(string.Compare(httpReceiver.Handler,"default",StringComparison.OrdinalIgnoreCase) == 0) {
-                    handlerResult = defaultHttpReceiverHandler.Handle(new HttpReceiverParams{
-
-                    });
-                }
-                else {
-
-                }
+            var exporters = pipeline.Exporters;
+            var handlerResults = ExecuteHandlers(httpReceivers);
+            foreach(var exporter in exporters) {
+                _exportManager.Export(exporter, handlerResults);
             }
-
         }
+    }
+    
+    private List<ParkSpaceStatusDto> ExecuteHandlers(Receiver[] httpReceivers) {
+        var results = new List<ParkSpaceStatusDto>();
+        
+        foreach(HttpReceiver httpReceiver in httpReceivers) {
+            ParkSpaceStatusDto handlerResult;
+            if(string.Compare(httpReceiver.Handler,"default",StringComparison.OrdinalIgnoreCase) == 0) {
+                handlerResult = HandlerBase.GetInstance<DefaultHttpReceiverHandler>().Handle(new HttpReceiverParams{
+                    httpContext = HttpContext,
+                    httpClient = _client
+                });
+            }
+            else {
+                //TODO
+                handlerResult = new();
+            }
+            results.Add(handlerResult);
+        }
+        
+        return results;
     }
     
 }
