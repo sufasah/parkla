@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService\\Parkla.CollectorService.csproj": {}
+    "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService\\Parkla.CollectorService.csproj": {
+    "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService\\Parkla.CollectorService.csproj",
-        "projectName": "Parkla.CollectorService",
-        "projectPath": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService\\Parkla.CollectorService.csproj",
+        "projectUniqueName": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
+        "projectName": "Parkla.CollectorService.Library",
+        "projectPath": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
         "packagesPath": "C:\\Users\\nihaSWin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService\\obj\\",
+        "outputPath": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\nihaSWin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -41,13 +41,9 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Microsoft.Extensions.Hosting": {
+            "Microsoft.AspNetCore.Mvc": {
               "target": "Package",
-              "version": "[6.0.0, )"
-            },
-            "System.IO.Ports": {
-              "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[2.2.0, )"
             }
           },
           "imports": [
@@ -61,9 +57,6 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
-            "Microsoft.AspNetCore.App": {
-              "privateAssets": "none"
-            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
