@@ -2464,6 +2464,16 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
+      },
+      "Parkla.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/Parkla.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Parkla.Core.dll": {}
+        }
       }
     }
   },
@@ -7611,11 +7621,17 @@
         "system.xml.xpath.xdocument.4.3.0.nupkg.sha512",
         "system.xml.xpath.xdocument.nuspec"
       ]
+    },
+    "Parkla.Core/1.0.0": {
+      "type": "project",
+      "path": "../Parkla.Core/Parkla.Core.csproj",
+      "msbuildProject": "../Parkla.Core/Parkla.Core.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Microsoft.AspNetCore.Mvc >= 2.2.0"
+      "Microsoft.AspNetCore.Mvc >= 2.2.0",
+      "Parkla.Core >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -7624,11 +7640,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
+      "projectUniqueName": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
       "projectName": "Parkla.CollectorService.Library",
-      "projectPath": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
+      "projectPath": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
       "packagesPath": "C:\\Users\\nihaSWin\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\obj\\",
+      "outputPath": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\nihaSWin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -7645,7 +7661,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.Core\\Parkla.Core.csproj": {
+              "projectPath": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.Core\\Parkla.Core.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using Parkla.CollectorService.Enums;
+using Parkla.Core.Enums;
 
-namespace Parkla.CollectorService.DTOs
+namespace Parkla.Core.DTOs
 {
     public class ParkSpaceStatusDto
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Parkla.CollectorService.DTOs;
-using Parkla.CollectorService.Enums;
+using Parkla.Core.DTOs;
+using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Handlers;
 using Parkla.CollectorService.Options;
@@ -52,17 +52,11 @@ public class HttpReceiverController : ControllerBase
         var results = new List<ParkSpaceStatusDto>();
         
         foreach(HttpReceiver httpReceiver in httpReceivers) {
-            ParkSpaceStatusDto handlerResult;
-            if(string.Compare(httpReceiver.Handler,"default",StringComparison.OrdinalIgnoreCase) == 0) {
-                handlerResult = HandlerBase.GetInstance<DefaultHttpReceiverHandler>().Handle(new HttpReceiverParams{
-                    httpContext = HttpContext,
-                    httpClient = _client
-                });
-            }
-            else {
-                //TODO
-                handlerResult = new();
-            }
+           
+            var handler = (HandlerBase)HandlerBase.GetInstance(httpReceiver.Handler);
+            var handlerResult = handler.Handle(new HttpReceiverParams{
+                httpContext = HttpContext,
+            });
             results.Add(handlerResult);
         }
         

@@ -1,5 +1,5 @@
 
-using Parkla.CollectorService.DTOs;
+using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
 public class HttpExportManager

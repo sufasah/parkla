@@ -1,22 +1,48 @@
-using Parkla.CollectorService.Enums;
 using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Options;
+using Parkla.CollectorService.Library;
+using System.Reflection;
+using Parkla.CollectorService.Handlers;
 
+Assembly pluginDll = null;
 
 var GetReceiver = (ConfigurationManager configuration, ReceiverType type, string receiverPath) => {
     Receiver result;
+    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler") ?? "default";
 
     if(type == ReceiverType.HTTP) {
         var httpReciever = configuration.GetRequiredSection($"{receiverPath}").Get<HttpReceiver>();
-        httpReciever.Handler ??= "default";
-        if(httpReciever.Endpoint == null) throw new ArgumentNullException("Endpoint","HttpReceiver Endpoint configuration value must be given"); 
+        
+        if(handlerStr == "default")
+            httpReciever.Handler = typeof(DefaultHttpHandler);
+        
+        if(httpReciever.Endpoint == null) 
+            throw new ArgumentNullException("Endpoint","HttpReceiver Endpoint configuration value must be given"); 
+        
         result = httpReciever;
     }
     else {
         var serialReceiver = configuration.GetSection($"{receiverPath}").Get<SerialReceiver>();
-        serialReceiver.Handler ??= "default";
-        if(serialReceiver.PortName == null) throw new ArgumentNullException("PortName","SerialReceiver PortName configuration value must be given");
+        
+        if(handlerStr == "default")
+            serialReceiver.Handler = typeof(DefaultSerialHandler);
+
+        if(serialReceiver.PortName == null) 
+            throw new ArgumentNullException("PortName","SerialReceiver PortName configuration value must be given");
+        
         result = serialReceiver;
+    }
+
+    if(handlerStr != "default") {
+        if(pluginDll == null)
+            throw new DllNotFoundException($"Plugin library could not found while finding handler '{handlerStr}'");
+        
+        Type? handlerType = pluginDll.ExportedTypes.FirstOrDefault(x => x.Name == handlerStr);
+
+        if(handlerType == null)
+            throw new TypeUnloadedException($"Handler type '{handlerStr}' could not found in loaded plugin library");
+
+        result.Handler = handlerType;
     }
 
     return result;
@@ -81,6 +107,17 @@ builder.Host.ConfigureServices(services => {
 
     services.Configure<CollectorOptions>(opt => {
         ConfigurationManager configuration = builder.Configuration;
+        
+        var pluginLibrary = configuration.GetValue<string>("parkla:pluginLibrary");
+        if(pluginDll == null && pluginLibrary != null) {
+            var dllFile = new FileInfo(
+                pluginLibrary.Contains('/') || pluginLibrary.Contains('\\') 
+                ? pluginLibrary 
+                : Path.Combine(".",pluginLibrary)
+            );
+            pluginDll = Assembly.LoadFile(dllFile.FullName);
+        }
+
         var pipelines = new List<Pipeline>();
         var i = 0;
         while(true) {
@@ -91,6 +128,7 @@ builder.Host.ConfigureServices(services => {
             i++;
         }
 
+        opt.pluginAssembly = pluginDll;
         opt.Pipelines = pipelines.ToArray();
     });
 
@@ -118,8 +156,8 @@ builder.WebHost.ConfigureServices(services => {
     services.AddControllers();
 });
 
-
 var app = builder.Build();
+
 
 if (!app.Environment.IsDevelopment())
 {

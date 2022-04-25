@@ -1,4 +1,4 @@
-using Parkla.CollectorService.Enums;
+using Parkla.CollectorService.Library;
 
 namespace Parkla.CollectorService.Options
 {

@@ -1,4 +1,4 @@
-namespace Parkla.CollectorService.Enums {
+namespace Parkla.CollectorService.Library {
     public enum ExporterType
     {
         HTTP = 0,

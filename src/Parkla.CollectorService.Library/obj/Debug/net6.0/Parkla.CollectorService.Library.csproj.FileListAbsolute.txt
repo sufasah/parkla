@@ -1,0 +1,15 @@
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\bin\Debug\net6.0\Parkla.CollectorService.Library.deps.json
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\bin\Debug\net6.0\Parkla.CollectorService.Library.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\bin\Debug\net6.0\ref\Parkla.CollectorService.Library.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\bin\Debug\net6.0\Parkla.CollectorService.Library.pdb
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\bin\Debug\net6.0\Parkla.Core.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\bin\Debug\net6.0\Parkla.Core.pdb
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.csproj.AssemblyReference.cache
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.AssemblyInfoInputs.cache
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.AssemblyInfo.cs
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.csproj.CoreCompileInputs.cache
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.csproj.CopyComplete
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\ref\Parkla.CollectorService.Library.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.CollectorService.Library\obj\Debug\net6.0\Parkla.CollectorService.Library.pdb

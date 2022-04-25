@@ -1,6 +1,6 @@
 
-using Parkla.CollectorService.DTOs;
-using Parkla.CollectorService.Enums;
+using Parkla.Core.DTOs;
+using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Options;
 
 namespace Parkla.CollectorService.Exporters;

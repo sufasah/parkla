@@ -1,4 +1,4 @@
-namespace Parkla.CollectorService.Enums {
+namespace Parkla.CollectorService.Library {
     public enum ReceiverType
     {
         HTTP = 0,

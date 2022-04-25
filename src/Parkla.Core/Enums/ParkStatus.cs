@@ -1,4 +1,4 @@
-namespace Parkla.CollectorService.Enums {
+namespace Parkla.Core.Enums {
     public enum ParkStatus
     {
         EMPTY = 0,

@@ -1,7 +1,8 @@
-using Parkla.CollectorService.DTOs;
+using Parkla.Core.DTOs;
+using Parkla.CollectorService.Library;
 
 namespace Parkla.CollectorService.Handlers;
-public class DefaultHttpReceiverHandler : HandlerBase
+public class DefaultHttpHandler : HandlerBase
 {
     public override ParkSpaceStatusDto Handle(object paramsFacade)
     {

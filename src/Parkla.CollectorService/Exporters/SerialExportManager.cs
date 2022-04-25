@@ -1,7 +1,7 @@
 
 using System.IO.Ports;
 using System.Text.Json;
-using Parkla.CollectorService.DTOs;
+using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
 public class SerialExportManager
