@@ -18,22 +18,19 @@ public class ExportManager
     }
 
     public void Export(Exporter exporter, IEnumerable<ParkSpaceStatusDto> dtos) {
-        if(exporter.Type == ExporterType.HTTP) {
-            var httpExporter = (HttpExporter) exporter;
-            foreach(var dto in dtos){
-                _httpExportManager.ExportAsync(dto, httpExporter.Url);
-            }
-        }
-        else if(exporter.Type == ExporterType.SERIAL) {
-            var serialExporter = (SerialExporter) exporter;
-            foreach(var dto in dtos) {
-                _serialExportManager.Export(dto, serialExporter.PortName);
-            }
-        }
+        foreach(var dto in dtos)
+            Export(exporter,dto);
     }
 
     public void Export(Exporter exporter, ParkSpaceStatusDto dto) {
-        Export(exporter, new ParkSpaceStatusDto[]{dto});
+        if(exporter.Type == ExporterType.HTTP) {
+            var httpExporter = (HttpExporter) exporter;
+            _httpExportManager.ExportAsync(dto, httpExporter.Url);
+        }
+        else if(exporter.Type == ExporterType.SERIAL) {
+            var serialExporter = (SerialExporter) exporter;
+            _serialExportManager.Export(dto, serialExporter.PortName);
+        }
     }
 
     

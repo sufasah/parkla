@@ -115,7 +115,7 @@ builder.Host.ConfigureServices(services => {
                 ? pluginLibrary 
                 : Path.Combine(".",pluginLibrary)
             );
-            pluginDll = Assembly.LoadFile(dllFile.FullName);
+            pluginDll = Assembly.LoadFrom(dllFile.FullName);
         }
 
         var pipelines = new List<Pipeline>();

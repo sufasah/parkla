@@ -12,6 +12,6 @@ public class HttpExportManager
     }
 
     public async Task ExportAsync(ParkSpaceStatusDto dto, Uri url) {
-        var response = await _client.PostAsync(url,JsonContent.Create(dto));
+        await _client.PostAsync(url,JsonContent.Create(dto));
     }
 }
