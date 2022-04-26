@@ -1,6 +1,6 @@
 namespace Parkla.CollectorService.Options
 {
-    public class HttpExporter : Exporter
+    public class HttpExporterOptions : ExporterOptions
     {
         public Uri Url { get; set; }
     }

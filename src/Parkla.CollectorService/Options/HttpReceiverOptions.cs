@@ -1,6 +1,6 @@
 namespace Parkla.CollectorService.Options
 {
-    public class HttpReceiver : Receiver
+    public class HttpReceiverOptions : ReceiverOptions
     {
         public string Endpoint { get; set; }
     }

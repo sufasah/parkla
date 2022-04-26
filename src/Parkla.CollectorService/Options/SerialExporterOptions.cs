@@ -1,6 +1,6 @@
 namespace Parkla.CollectorService.Options
 {
-    public class SerialReceiver : Receiver
+    public class SerialExporterOptions : ExporterOptions
     {
         public string PortName { get; set; }
     }

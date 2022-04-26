@@ -4,6 +4,7 @@ using Parkla.CollectorService.Library;
 namespace Parkla.CollectorService.Handlers;
 public class DefaultHttpHandler : HandlerBase
 {
+    // THIS HANDLE METHOD WILL BE CALLED WHEN A REQUEST IS SENT
     public override ParkSpaceStatusDto Handle(ReceiverType receiverType, object param)
     {
         if(receiverType != ReceiverType.HTTP)

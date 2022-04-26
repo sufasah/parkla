@@ -7,8 +7,9 @@
   </PropertyGroup>
   
   <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-      <ProjectReference Include="../Parkla.Core/Parkla.Core.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="System.IO.Ports" Version="6.0.0"/>
+    <ProjectReference Include="../Parkla.Core/Parkla.Core.csproj" />
   </ItemGroup>
 
 </Project>
