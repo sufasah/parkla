@@ -24,7 +24,7 @@ public class HttpReceiverController : ControllerBase
         _httpReceiver = httpReceiver;
     }
 
-    public void CatchAllHttpRequest () {
+    public void CatchAllRequests () {
         _httpReceiver.ReceiveAsync(HttpContext);
     }
     

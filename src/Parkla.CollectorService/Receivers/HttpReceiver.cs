@@ -32,6 +32,8 @@ public class HttpReceiver
 
     private void RegisterOptions() {
         lock(_registerLock) {
+            _receiverPipelines.Clear();
+            
             foreach(var pipeline in _collectorOptionsMonitor.CurrentValue.Pipelines) {
                 _receiverPipelines.AddRange(pipeline.HttpReceivers.Select(x => new ReceiverPipeline {
                     HttpReceiver = x,
@@ -62,8 +64,10 @@ public class HttpReceiver
                             httpContext = context
                         });
 
-                    if(handlerResult != null)
-                        ExportResult(handlerResult, receiverPipeline.Pipeline);
+                    if(handlerResult != null){
+                        foreach(var result in handlerResult)
+                            ExportResult(result, receiverPipeline.Pipeline);
+                    }
                 }
                 catch(Exception e) {
                     _logger.LogError(e, "An error occured while handling the request. The result is not generated so not exported.");

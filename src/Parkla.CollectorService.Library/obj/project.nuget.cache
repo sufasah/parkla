@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FHjzfRA5x5ZuL57/0evmshBI9WeUX4lS6qgfw4ZjPLCaaQ54PT92vU2nZE9gNGW7ZGvgnSqKOSRiOl17kFK9aQ==",
+  "dgSpecHash": "LlBzG7VVh5qFWygVhsUUh3YjgpLfquwPlhRBVRlE3E/E4LOtal3LT5CUMLfaenHLnSMjjmNyq06Yq/vDc3Xq1g==",
   "success": true,
-  "projectFilePath": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
+  "projectFilePath": "C:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.CollectorService.Library\\Parkla.CollectorService.Library.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\nihaSWin\\.nuget\\packages\\microsoft.aspnetcore.antiforgery\\2.2.0\\microsoft.aspnetcore.antiforgery.2.2.0.nupkg.sha512",
     "C:\\Users\\nihaSWin\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

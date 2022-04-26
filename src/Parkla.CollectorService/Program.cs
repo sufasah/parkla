@@ -191,7 +191,7 @@ app.UseEndpoints(builder => {
     builder.MapControllerRoute(
         "HttpReceiver",
         "{**all}",
-        defaults: new {Controller = "HttpReceiver", action = "Receive"});
+        defaults: new {Controller = "HttpReceiver", action = "CatchAllRequests"});
 });
 
 

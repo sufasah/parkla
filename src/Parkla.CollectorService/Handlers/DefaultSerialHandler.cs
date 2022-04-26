@@ -1,20 +1,28 @@
 using Parkla.Core.DTOs;
 using Parkla.CollectorService.Library;
+using System.IO.Ports;
+using System.Text.Json;
 
 namespace Parkla.CollectorService.Handlers;
 public class DefaultSerialHandler : HandlerBase
 {
     // THIS HANDLE METHOD WILL BE CALLED WHEN DATARECEIVEDEVENT IS RAISED
-    public override ParkSpaceStatusDto Handle(ReceiverType receiverType, object param)
+    public override IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object param)
     {
-        throw new NotImplementedException();
-    }
+        if(receiverType != ReceiverType.SERIAL)
+            throw new ArgumentException("DefaultSerialHandler only handles serial ports");
 
-    /*public void Receive (object sender, SerialDataReceivedEventArgs args) {
-        var serialPort = (SerialPort) sender;
+        var serialReceiverParam = (SerialReceiverParam) param;
+        var serialPort = serialReceiverParam.SerialPort;
+
+        if(serialReceiverParam.State == null) {
+            serialReceiverParam.State = new JsonSerialPort(serialPort);
+        }
+
         var data = serialPort.ReadExisting();
-        var jsonSerialPort = FindJsonSerialPort(serialPort)!;
+        var jsonSerialPort = (JsonSerialPort)serialReceiverParam.State;
         var readFrom = 0;
+        List<ParkSpaceStatusDto> results = new();
 
         for(var i=0; i<data.Length; i++) {
             var ch = data[i];
@@ -27,17 +35,17 @@ public class DefaultSerialHandler : HandlerBase
                 if(jsonSerialPort.BracketCount == 0){
                     jsonSerialPort.StringBuilder.Append(data[readFrom..(i + 1)]);
                     readFrom = i+1;
-                    OnJsonFound(jsonSerialPort);
+
+                    var jsonData = jsonSerialPort.StringBuilder.ToString();
+                    results.Add(JsonSerializer.Deserialize<ParkSpaceStatusDto>(jsonData)!);
+                    jsonSerialPort.StringBuilder.Clear();
                 }
             }
         }
 
         if(readFrom < data.Length)
             jsonSerialPort.StringBuilder.Append(data[readFrom..]);
-    }
 
-    public void OnJsonFound(JsonSerialPort jsonSerialPort) {
-        var jsonData = jsonSerialPort.StringBuilder.ToString();
-        jsonSerialPort.StringBuilder.Clear();
-    }*/
+        return results;
+    }
 }

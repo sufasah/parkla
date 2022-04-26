@@ -5,7 +5,7 @@ namespace Parkla.CollectorService.Handlers;
 public class DefaultHttpHandler : HandlerBase
 {
     // THIS HANDLE METHOD WILL BE CALLED WHEN A REQUEST IS SENT
-    public override ParkSpaceStatusDto Handle(ReceiverType receiverType, object param)
+    public override IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object param)
     {
         if(receiverType != ReceiverType.HTTP)
             throw new ArgumentException("DefaultHttpHandler only handles http requests");
@@ -18,7 +18,9 @@ public class DefaultHttpHandler : HandlerBase
         var task = valueTask.AsTask();
 
         task.Wait();
-        return task.Result;
+        
+        if(task.Result == null) return null;
+        return new ParkSpaceStatusDto[] {task.Result};
     }
 
 }

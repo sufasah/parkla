@@ -10,5 +10,6 @@ namespace Parkla.Core.DTOs
         
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ParkStatus Status { get; set; }
+        public DateTime DateTime { get; set; }
     }
 }

@@ -30,5 +30,5 @@ public abstract class HandlerBase
         }
 
     }
-    abstract public ParkSpaceStatusDto? Handle(ReceiverType receiverType, object parameter);
+    abstract public IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object parameter);
 }
