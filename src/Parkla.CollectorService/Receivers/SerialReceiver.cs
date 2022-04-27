@@ -1,6 +1,5 @@
 using System.IO.Ports;
 using Parkla.CollectorService.Exporters;
-using Parkla.CollectorService.Handlers;
 using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
@@ -12,7 +11,7 @@ public class SerialReceiver
     private readonly ILogger<SerialReceiver> _logger;
     private readonly HttpExportManager _httpExportManager;
     private readonly SerialExportManager _serialExportManager;
-    private readonly List<SerialPortPipeline> _serialPortPipelines = new();
+    private readonly List<SerialPort> _serialPorts = new();
     
     public SerialReceiver(
         ILogger<SerialReceiver> logger,
@@ -26,20 +25,22 @@ public class SerialReceiver
     }
     public void RegisterOpitons(CollectorOptions options) {
         lock(registeringLock) {
-            _serialPortPipelines.Clear();
+            _serialPorts.ForEach(port => port.Dispose());
+            _serialPorts.Clear();
 
             foreach(var pipeline in options.Pipelines) {
                 var serialReceivers = pipeline.SerialReceivers;
                 if(serialReceivers.Length == 0) continue;
                 
                 foreach(var serialReceiver in serialReceivers) {
-                    var serialPort = new SerialPort(serialReceiver.PortName, 9600);
-                    serialPort.DataReceived += MakeDataReceived(serialPort, serialReceiver.Handler, pipeline);
-                    
-                    /*_serialPortPipelines.Add(new SerialPortPipeline {
-                        SerialPort = serialPort,
-                        Pipeline = pipeline
-                    });*/
+                    try {
+                        var serialPort = new SerialPort(serialReceiver.PortName, 9600);
+                        serialPort.Open();
+                        serialPort.DataReceived += MakeDataReceived(serialPort, serialReceiver.Handler, pipeline);
+                        _serialPorts.Add(serialPort);
+                    } catch(Exception e) {
+                        _logger.LogError("SerialReceiver: Serial port receiver with {} port name could not be opened. \n{}", serialReceiver.PortName, e.Message);
+                    }
                 }
             }
         }
@@ -49,6 +50,7 @@ public class SerialReceiver
         var param = new SerialReceiverParam {
             SerialPort = serialPort,
             State = null,
+            Logger = _logger
         };
 
         return (object sender, SerialDataReceivedEventArgs args) => {
@@ -79,9 +81,4 @@ public class SerialReceiver
         }
     }
 
-}
-
-class SerialPortPipeline {
-    public SerialPort SerialPort { get; set; }
-    public PipelineOptions Pipeline { get; set; }
 }

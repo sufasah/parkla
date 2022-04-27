@@ -11,15 +11,23 @@ public class DefaultHttpHandler : HandlerBase
             throw new ArgumentException("DefaultHttpHandler only handles http requests");
 
         var httpParam = (HttpReceiverParam) param;
-        var httpContext = httpParam.httpContext;
+        var httpContext = httpParam.HttpContext;
+        var logger = httpParam.Logger;
         var request = httpContext.Request;
 
-        var valueTask = request.ReadFromJsonAsync<ParkSpaceStatusDto>();
+        ValueTask<ParkSpaceStatusDto?> valueTask;
+        try {
+            valueTask = request.ReadFromJsonAsync<ParkSpaceStatusDto?>();
+        }
+        catch (Exception e) {
+            logger.LogInformation("DefaultHttpHandler: Request body could not be deserialized as json\n{}", e.Message);
+            return Array.Empty<ParkSpaceStatusDto>();
+        }
         var task = valueTask.AsTask();
 
         task.Wait();
         
-        if(task.Result == null) return null;
+        if(task.Result == null) return Array.Empty<ParkSpaceStatusDto>();
         return new ParkSpaceStatusDto[] {task.Result};
     }
 

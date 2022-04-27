@@ -1,0 +1,19 @@
+{
+  "FilePath": "c:\\Users\\nihaSWin\\Desktop\\Ders kaynakları\\4. sınıf bahar\\Bitirme Projesi\\parkla\\src\\Parkla.SerialTester\\Parkla.SerialTester.csproj",
+  "Configuration": {
+    "ConfigurationName": "MVC-3.0",
+    "LanguageVersion": "6.0",
+    "Extensions": [
+      {
+        "ExtensionName": "MVC-3.0"
+      }
+    ]
+  },
+  "ProjectWorkspaceState": {
+    "TagHelpers": [],
+    "CSharpLanguageVersion": 1000
+  },
+  "RootNamespace": "Parkla.SerialTester",
+  "Documents": [],
+  "SerializationFormat": "0.2"
+}

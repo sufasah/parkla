@@ -25,8 +25,14 @@ public class SerialExportManager
         var isGot = _serialPortMap.TryGetValue(portName, out var serialPort);
         
         if(!isGot) {
-            serialPort = new SerialPort(portName,9600);
-            _serialPortMap.Add(portName,serialPort);
+            try {
+                serialPort = new SerialPort(portName,9600);
+                serialPort.Open();
+                _serialPortMap.Add(portName,serialPort);
+            } catch(Exception e) {
+                _logger.LogError("SerialExporter: Serial port receiver with {} port name could not be opened. \n{}", portName, e.Message);  
+                return;
+            }
         }
 
         _exportQueue.Enqueue(new SerialQueueItem{
@@ -46,8 +52,12 @@ public class SerialExportManager
             var serialPort = queueItem.SerialPort;
             var dto = queueItem.Dto;
 
-            serialPort.Write(JsonSerializer.Serialize(dto));
-            _logger.LogInformation("SerialExporter [Successful]: ParkId='{}', SpaceId='{}', Status='{}' is exported", dto.Parkid, dto.Spaceid, dto.Status);
+            try {
+                serialPort.Write(JsonSerializer.Serialize(dto));
+                _logger.LogInformation("SerialExporter [Successful]: ParkId='{}', SpaceId='{}', Status='{}' is exported", dto.Parkid, dto.Spaceid, dto.Status);
+            } catch(Exception e) {
+                _logger.LogError("SerialExporter [Fail]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
+            }
         }
 
         await Task.Delay(_exportDelay);

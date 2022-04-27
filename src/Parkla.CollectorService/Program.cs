@@ -9,7 +9,7 @@ using Parkla.CollectorService.Receivers;
 Assembly pluginDll = null;
 
 var GetHandler = (string handlerStr, Type defaultHandler) => {
-    if(handlerStr == "default")
+    if(string.IsNullOrWhiteSpace(handlerStr) || handlerStr == "default")
         return defaultHandler;
 
     if(pluginDll == null)
@@ -25,7 +25,7 @@ var GetHandler = (string handlerStr, Type defaultHandler) => {
 
 var GetHttpReceiver = (ConfigurationManager configuration, string receiverPath) => {
     var httpReciever = configuration.GetRequiredSection($"{receiverPath}").Get<HttpReceiverOptions>();
-    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler") ?? "default";
+    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler");
 
     var handlerType = GetHandler(handlerStr,typeof(DefaultHttpHandler));
     
@@ -33,7 +33,7 @@ var GetHttpReceiver = (ConfigurationManager configuration, string receiverPath) 
     if(httpReciever.Handler == null)
         httpReciever.Handler = HandlerBase.GetInstance<DefaultSerialHandler>()!;
     
-    if(httpReciever.Endpoint == null) 
+    if(string.IsNullOrWhiteSpace(httpReciever.Endpoint)) 
         throw new ArgumentNullException("Endpoint","HttpReceiver Endpoint configuration value must be given"); 
     
     return httpReciever;
@@ -41,7 +41,7 @@ var GetHttpReceiver = (ConfigurationManager configuration, string receiverPath) 
 
 var GetSerialReceiver = (ConfigurationManager configuration, string receiverPath) => {
     var serialReceiver = configuration.GetSection($"{receiverPath}").Get<SerialReceiverOptions>();
-    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler") ?? "default";
+    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler");
         
     var handlerType = GetHandler(handlerStr, typeof(DefaultSerialHandler));
     
@@ -49,7 +49,7 @@ var GetSerialReceiver = (ConfigurationManager configuration, string receiverPath
     if(serialReceiver.Handler == null)
         serialReceiver.Handler = HandlerBase.GetInstance<DefaultSerialHandler>()!;
 
-    if(serialReceiver.PortName == null) 
+    if(string.IsNullOrWhiteSpace(serialReceiver.PortName)) 
         throw new ArgumentNullException("PortName","SerialReceiver PortName configuration value must be given");
     
     return serialReceiver;
@@ -57,13 +57,15 @@ var GetSerialReceiver = (ConfigurationManager configuration, string receiverPath
 
 var GetHttpExporter = (ConfigurationManager configuration, string exporterPath) => {
     var httpExporter = configuration.GetSection($"{exporterPath}").Get<HttpExporterOptions>();
-    if(httpExporter.Url == null) throw new ArgumentNullException("Url","HttpExporter Url configuration value must be given");
+    if(httpExporter.Url == null) 
+        throw new ArgumentNullException("Url","HttpExporter Url configuration value must be given");
     return httpExporter;
 };
 
 var GetSerialExporter = (ConfigurationManager configuration, string exporterPath) => {
     var serialExporter = configuration.GetSection($"{exporterPath}").Get<SerialExporterOptions>();
-    if(serialExporter.PortName == null) throw new ArgumentNullException("Url","SerialExporter PortName configuration value must be given");
+    if(string.IsNullOrWhiteSpace(serialExporter.PortName)) 
+        throw new ArgumentNullException("Url","SerialExporter PortName configuration value must be given");
     return serialExporter;
 };
 

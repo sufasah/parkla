@@ -54,14 +54,15 @@ public class HttpReceiver
             ).ToArray();
             
             foreach(var receiverPipeline in receiverPipelines) {
-                _logger.LogInformation("Executing handler with name '{}' for path '{}'",receiverPipeline.HttpReceiver.Handler.GetType().Name, path);
+                _logger.LogInformation("Executing handler with name '{}' for path '{}'", receiverPipeline.HttpReceiver.Handler.GetType().Name, path);
 
                 try {
                     var handlerResult = receiverPipeline
                         .HttpReceiver
                         .Handler
                         .Handle(ReceiverType.HTTP, new HttpReceiverParam{
-                            httpContext = context
+                            HttpContext = context,
+                            Logger = _logger
                         });
 
                     if(handlerResult != null){

@@ -1,0 +1,13 @@
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\Parkla.SerialTester.exe
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\Parkla.SerialTester.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\Parkla.SerialTester.deps.json
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\Parkla.SerialTester.runtimeconfig.json
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\Parkla.SerialTester.pdb
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\System.IO.Ports.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\unix\lib\net6.0\System.IO.Ports.dll
+C:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.SerialTester\bin\runtimes\win\lib\net6.0\System.IO.Ports.dll
