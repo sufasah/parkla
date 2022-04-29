@@ -30,8 +30,12 @@ public class HttpExporter
         }
     }
 
-    public void Export(IEnumerable<ParkSpaceStatusDto> dtos, Uri url) {
+    public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, Uri url) {
+        var tasks = new List<Task>();
+        
         foreach(var dto in dtos)
-            ExportAsync(dto, url);
+            tasks.Add(ExportAsync(dto, url));
+        
+        await Task.WhenAll(tasks);
     }
 }

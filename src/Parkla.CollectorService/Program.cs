@@ -184,11 +184,18 @@ var app = builder.Build();
 
 var httpReceiver = app.Services.GetService<HttpReceiver>()!;
 var serialReceiver = app.Services.GetService<SerialReceiver>()!;
+var httpExporter = app.Services.GetService<HttpExporter>()!;
+var serialExporter = app.Services.GetService<SerialExporter>()!;
+var logger = app.Services.GetService<ILogger<Program>>()!;
 
 Task.Run(() =>
 {
+    logger.LogInformation("START: Starting receiver and exporters");
+    serialExporter.Start();
     httpReceiver.Start();
     serialReceiver.Start();
+    logger.LogInformation("START: Receiver and exporters are started");
+
 });
 
 if (!app.Environment.IsDevelopment())

@@ -7,7 +7,7 @@ namespace Parkla.CollectorService
     {
         public SerialPort SerialPort { get; set; }
         public StringBuilder StringBuilder { get; set; }
-        public ulong BracketCount { get; set; }
+        public int BracketCount { get; set; }
 
         public JsonSerialPort(SerialPort serialPort)
         {

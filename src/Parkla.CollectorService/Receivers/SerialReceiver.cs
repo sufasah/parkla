@@ -6,7 +6,7 @@ using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
-public class SerialReceiver
+public class SerialReceiver : ReceiverBase
 {
     private readonly ILogger<SerialReceiver> _logger;
     private readonly HttpExporter _httpExporter;
@@ -20,7 +20,7 @@ public class SerialReceiver
         HttpExporter httpExporter,
         SerialExporter serialExporter,
         IOptions<CollectorOptions> options
-    )
+    ) : base(logger, httpExporter, serialExporter)
     {
         _logger = logger;
         _httpExporter = httpExporter;
@@ -53,7 +53,10 @@ public class SerialReceiver
                     }
                     catch (Exception e)
                     {
-                        _logger.LogError("SerialReceiver: Serial port receiver with {} port name could not be opened. \n{}", serialReceiver.PortName, e.Message);
+                        var found = _serialPorts.FirstOrDefault(x => x.PortName == serialReceiver.PortName);
+                        if(found != null)
+                            _logger.LogError("SerialReceiver: Serial port with {} port name already in use", serialReceiver.PortName);
+                        _logger.LogError(e, "SerialReceiver: Serial port receiver with {} port name could not be opened. \n", serialReceiver.PortName);
                     }
                 }
             }
@@ -72,17 +75,17 @@ public class SerialReceiver
             Logger = _logger
         };
 
-        return async (object sender, SerialDataReceivedEventArgs args) =>
+        return (object sender, SerialDataReceivedEventArgs args) =>
         {
+            _logger.LogInformation("SerialReceiver: Executing handler with name '{}'", handler.GetType().Name);
             try
             {
                 param.SerialDataReceivedEventArgs = args;
-                var handlerResult = await handler.HandleAsync(ReceiverType.SERIAL, param);
+                var handlerResults = ResultSafe(handler.HandleAsync(ReceiverType.SERIAL, param)).Result;
 
-                if (handlerResult != null)
+                if (handlerResults != null)
                 {
-                    foreach (var result in handlerResult)
-                        ExportResult(result, pipeline);
+                   ExportResults(handlerResults, pipeline);
                 }
             }
             catch (Exception e)
@@ -92,19 +95,9 @@ public class SerialReceiver
         };
     }
 
-    private void ExportResult(ParkSpaceStatusDto result, PipelineOptions pipeline)
-    {
-        _logger.LogInformation("ParkId='{}', SpaceId='{}', Status='{}' is exporting with all exporters in the pipeline", result.Parkid, result.Spaceid, result.Status);
-
-        foreach (var exporter in pipeline.HttpExporters)
-        {
-            _httpExporter.ExportAsync(result, exporter.Url);
-        }
-
-        foreach (var exporter in pipeline.SerialExporters)
-        {
-            _serialExporter.Enqueue(result, exporter.PortName);
-        }
+    private static async Task<IEnumerable<ParkSpaceStatusDto>> ResultSafe(Task<IEnumerable<ParkSpaceStatusDto>> task) {
+        // For legacy synchronization context deadlocks configureAwait
+        var taskResult = await task.ConfigureAwait(false);
+        return taskResult;
     }
-
 }

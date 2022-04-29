@@ -1,12 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Parkla.Core.DTOs;
-using Parkla.CollectorService.Library;
-using Parkla.CollectorService.Exporters;
-using Parkla.CollectorService.Options;
-using Parkla.CollectorService.Handlers;
-using System.Text.Json;
-using System.Net;
 using Parkla.CollectorService.Receivers;
 
 namespace Parkla.Web.Controllers;
@@ -24,8 +16,8 @@ public class HttpReceiverController : ControllerBase
         _httpReceiver = httpReceiver;
     }
 
-    public void CatchAllRequests () {
-        _httpReceiver.Receive(HttpContext);
+    public async Task CatchAllRequests () {
+        await _httpReceiver.ReceiveAsync(HttpContext);
     }
     
     

@@ -1,6 +1,7 @@
 using Parkla.Core.DTOs;
 using Parkla.CollectorService.Library;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Parkla.CollectorService.Handlers;
 public class DefaultSerialHandler : HandlerBase
@@ -9,6 +10,8 @@ public class DefaultSerialHandler : HandlerBase
     
     public DefaultSerialHandler()
     {
+        jsonSerializerOptions.AllowTrailingCommas = true;
+        jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
         jsonSerializerOptions.MaxDepth = 1;
         jsonSerializerOptions.PropertyNameCaseInsensitive = true;
         jsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
@@ -32,7 +35,7 @@ public class DefaultSerialHandler : HandlerBase
         try {
             data = serialPort.ReadExisting();
         } catch(Exception e) {
-            logger.LogError(e, "DefaultSerialHandler: Serail port could not be read");
+            logger.LogError(e, "DefaultSerialHandler: Serial port could not be read");
             return Array.Empty<ParkSpaceStatusDto>();
         }
 
@@ -43,7 +46,7 @@ public class DefaultSerialHandler : HandlerBase
         for(var i=0; i<data.Length; i++) {
             var ch = data[i];
 
-            if(ch == '{')
+            if(ch == '{' /*&& jsonSerialPort.BracketCount == 0 -> MaxDepth = 1 like jsonserializer*/)
                 jsonSerialPort.BracketCount++;
             else if(ch == '}' && jsonSerialPort.BracketCount > 0) {
                 jsonSerialPort.BracketCount--;

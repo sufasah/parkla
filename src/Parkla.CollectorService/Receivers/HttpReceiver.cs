@@ -5,7 +5,7 @@ using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
-public class HttpReceiver
+public class HttpReceiver : ReceiverBase
 {
     private readonly object _startLock = new();
     private readonly ILogger<HttpReceiver> _logger;
@@ -17,14 +17,14 @@ public class HttpReceiver
 
     public HttpReceiver(
         ILogger<HttpReceiver> logger,
-        HttpExporter httpExportManager,
-        SerialExporter serialExportManager,
+        HttpExporter httpExporter,
+        SerialExporter serialExporter,
         IOptions<CollectorOptions> options
-    )
+    ) : base(logger, httpExporter, serialExporter)
     {
         _logger = logger;
-        _httpExporter = httpExportManager;
-        _serialExporter = serialExportManager;
+        _httpExporter = httpExporter;
+        _serialExporter = serialExporter;
         _options = options;
     }
 
@@ -52,7 +52,7 @@ public class HttpReceiver
         }
     }
 
-    public void Receive(HttpContext context)
+    public async Task ReceiveAsync(HttpContext context)
     {
         if (!Started)
             throw new InvalidOperationException("HttpReceiver is not started yet.");
@@ -65,14 +65,15 @@ public class HttpReceiver
                 StringComparison.OrdinalIgnoreCase) == 0
         ).ToArray();
         
+        var tasks = new List<Task>();
         foreach (var receiverPipeline in receiverPipelines)
         {
-            Task.Run(async () =>
+            var task = Task.Run(async () =>
             {
-                _logger.LogInformation("Executing handler with name '{}' for path '{}'", receiverPipeline.HttpReceiver.Handler.GetType().Name, path);
+                _logger.LogInformation("HttpReceiver: Executing handler with name '{}' for path '{}'", receiverPipeline.HttpReceiver.Handler.GetType().Name, path);
                 try
                 {
-                    var handlerResult = await receiverPipeline
+                    var handlerResults = await receiverPipeline
                         .HttpReceiver
                         .Handler.HandleAsync(ReceiverType.HTTP, new HttpReceiverParam
                         {
@@ -80,10 +81,9 @@ public class HttpReceiver
                             Logger = _logger
                         });
 
-                    if (handlerResult != null)
+                    if (handlerResults != null)
                     {
-                        foreach (var result in handlerResult)
-                            ExportResult(result, receiverPipeline.Pipeline);
+                        ExportResults(handlerResults, receiverPipeline.Pipeline);
                     }
                 }
                 catch (Exception e)
@@ -91,22 +91,11 @@ public class HttpReceiver
                     _logger.LogError(e, "An error occured while handling the request with '{}' handler for '{}' path. The result is not generated so not exported.", receiverPipeline.HttpReceiver.Handler.GetType().Name, path);
                 }
             });
-        }
-    }
 
-    private void ExportResult(ParkSpaceStatusDto result, PipelineOptions pipeline)
-    {
-        _logger.LogInformation("ParkId='{}', SpaceId='{}', Status='{}' is exporting with all exporters in the pipeline", result.Parkid, result.Spaceid, result.Status);
-
-        foreach (var exporter in pipeline.HttpExporters)
-        {
-            _httpExporter.ExportAsync(result, exporter.Url);
+            tasks.Add(task);
         }
 
-        foreach (var exporter in pipeline.SerialExporters)
-        {
-            _serialExporter.Enqueue(result, exporter.PortName);
-        }
+        await Task.WhenAll(tasks);
     }
 
 }
