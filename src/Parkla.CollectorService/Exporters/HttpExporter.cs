@@ -3,14 +3,14 @@ using System.Net;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
-public class HttpExportManager
+public class HttpExporter
 {
     private readonly HttpClient _client;
-    private readonly ILogger<HttpExportManager> _logger;
+    private readonly ILogger<HttpExporter> _logger;
 
-    public HttpExportManager(
+    public HttpExporter(
         IHttpClientFactory factory,
-        ILogger<HttpExportManager> logger
+        ILogger<HttpExporter> logger
     )
     {
         _client = factory.CreateClient();
@@ -30,8 +30,8 @@ public class HttpExportManager
         }
     }
 
-    public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, Uri url) {
+    public void Export(IEnumerable<ParkSpaceStatusDto> dtos, Uri url) {
         foreach(var dto in dtos)
-            await ExportAsync(dto, url);
+            ExportAsync(dto, url);
     }
 }

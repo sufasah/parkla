@@ -1,7 +1,6 @@
 using Parkla.Core.DTOs;
 using Parkla.CollectorService.Library;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Parkla.CollectorService.Handlers;
 public class DefaultSerialHandler : HandlerBase

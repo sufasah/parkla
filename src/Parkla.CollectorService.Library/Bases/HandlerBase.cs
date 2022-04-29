@@ -9,7 +9,7 @@ public abstract class HandlerBase
         var type = typeof(T);
         return (T?) GetInstance(type);
     }
-    public static object? GetInstance(Type type) {
+    public static HandlerBase? GetInstance(Type type) {
         if(!type.IsClass || !type.IsPublic || type.IsAbstract || !type.IsSubclassOf(typeof(HandlerBase))) 
             return null;
         
@@ -30,5 +30,13 @@ public abstract class HandlerBase
         }
 
     }
-    abstract public IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object parameter);
+    // TO USE HANDLE METHOD IN APPLICATION, IN CHILD CLASS NOT OVERRIDE HANDLEASYNC BUT DEFINE HANDLE METHOD. IF HANDLEASYNC IS OVERRIDDEN, ONLY IT WILL BE WORKING.
+    virtual public IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object parameter) {
+        return null;
+    }
+
+    // IF HANDLEASYNC OVERRIDDEN IT WILL BE CALLED OTHERWISE THIS BASE ONE WILL BE CALLED DURING APPLICATION. BY DEFAULT IT CALLS HANDLE METHOD.
+    virtual public Task<IEnumerable<ParkSpaceStatusDto>> HandleAsync(ReceiverType receiverType, object parameter) {
+        return Task.FromResult(Handle(receiverType, parameter));
+    }
 }
