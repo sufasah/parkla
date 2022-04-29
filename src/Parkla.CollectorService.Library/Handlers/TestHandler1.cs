@@ -1,11 +1,21 @@
 using Parkla.Core.DTOs;
+using Parkla.Core.Enums;
 
 namespace Parkla.CollectorService.Library;
 
 public class TestHandler1 : HandlerBase
 {
-    public override IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object param)
+    public override async Task<IEnumerable<ParkSpaceStatusDto>> HandleAsync(ReceiverType receiverType, object parameter)
     {
-        throw new NotImplementedException("THIS WILL CAUSE AN EXCEPTION AND BECAUSE OF THAT ERROR WILL BE LOGGED");
+        return await Task.Run(() => {
+            return new ParkSpaceStatusDto[] {
+                    new() {
+                    Parkid = Guid.NewGuid(),
+                    Spaceid = "testhandler1 object is here [111111111]",
+                    Status = ParkStatus.EMPTY,
+                    DateTime = DateTime.Now
+                },
+            };
+        });
     }
 }

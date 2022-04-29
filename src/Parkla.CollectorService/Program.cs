@@ -4,117 +4,139 @@ using Parkla.CollectorService.Library;
 using System.Reflection;
 using Parkla.CollectorService.Handlers;
 using Parkla.CollectorService.Receivers;
+using Parkla.Core.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
-Assembly? pluginDll = null;
+var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configuration) => {
+    var GetHandler = (string handlerStr, Type defaultHandler) => {
+        if (string.IsNullOrWhiteSpace(handlerStr) || handlerStr == "default")
+            return HandlerBase.GetInstance(defaultHandler)!;
 
-var GetHandler = (string handlerStr, Type defaultHandler) =>
-{
-    if (string.IsNullOrWhiteSpace(handlerStr) || handlerStr == "default")
-        return defaultHandler;
+        Type? handlerType = Assembly.GetExecutingAssembly()
+            .GetType(handlerStr);
+        
+        if(handlerType == null) {
+            if (opt.pluginAssembly == null)
+                throw new DllNotFoundException($"Plugin library could not found while finding handler '{handlerStr}'");
 
-    if (pluginDll == null)
-        throw new DllNotFoundException($"Plugin library could not found while finding handler '{handlerStr}'");
+            handlerType = opt.pluginAssembly.ExportedTypes
+                .FirstOrDefault(x => x.Name == handlerStr);
 
-    Type? handlerType = pluginDll.ExportedTypes.FirstOrDefault(x => x.Name == handlerStr);
+            if (handlerType == null)
+                throw new TypeUnloadedException($"Handler type '{handlerStr}' could not found in loaded plugin library");
+        }
 
-    if (handlerType == null)
-        throw new TypeUnloadedException($"Handler type '{handlerStr}' could not found in loaded plugin library");
-
-    return handlerType;
-};
-
-var GetHttpReceiver = (ConfigurationManager configuration, string receiverPath) =>
-{
-    var httpReciever = configuration.GetRequiredSection($"{receiverPath}").Get<HttpReceiverOptions>();
-    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler");
-    var handlerType = GetHandler(handlerStr, typeof(DefaultHttpHandler));
-
-    httpReciever.Handler = HandlerBase.GetInstance(handlerType)
-        ?? HandlerBase.GetInstance<DefaultSerialHandler>()!;
-
-    if (string.IsNullOrWhiteSpace(httpReciever.Endpoint))
-        throw new ArgumentNullException("Endpoint", "HttpReceiver Endpoint configuration value must be given");
-
-    return httpReciever;
-};
-
-var GetSerialReceiver = (ConfigurationManager configuration, string receiverPath) =>
-{
-    var serialReceiver = configuration.GetSection($"{receiverPath}").Get<SerialReceiverOptions>();
-    var handlerStr = configuration.GetValue<string>($"{receiverPath}:handler");
-    var handlerType = GetHandler(handlerStr, typeof(DefaultSerialHandler));
-
-    serialReceiver.Handler = HandlerBase.GetInstance(handlerType)
-        ?? HandlerBase.GetInstance<DefaultSerialHandler>()!;
-
-    if (string.IsNullOrWhiteSpace(serialReceiver.PortName))
-        throw new ArgumentNullException("PortName", "SerialReceiver PortName configuration value must be given");
-
-    return serialReceiver;
-};
-
-var GetHttpExporter = (ConfigurationManager configuration, string exporterPath) =>
-{
-    var httpExporter = configuration.GetSection($"{exporterPath}").Get<HttpExporterOptions>();
-    if (httpExporter.Url == null)
-        throw new ArgumentNullException("Url", "HttpExporter Url configuration value must be given");
-    return httpExporter;
-};
-
-var GetSerialExporter = (ConfigurationManager configuration, string exporterPath) =>
-{
-    var serialExporter = configuration.GetSection($"{exporterPath}").Get<SerialExporterOptions>();
-    if (string.IsNullOrWhiteSpace(serialExporter.PortName))
-        throw new ArgumentNullException("Url", "SerialExporter PortName configuration value must be given");
-    return serialExporter;
-};
-
-var GetPipeline = (ConfigurationManager configuration, string pipelinePath) =>
-{
-    List<HttpReceiverOptions> httpReceivers = new();
-    List<SerialReceiverOptions> serialReceivers = new();
-    List<HttpExporterOptions> httpExporters = new();
-    List<SerialExporterOptions> serialExporters = new();
-
-    var j = 0;
-    while (true)
-    {
-        var receiverPath = $"{pipelinePath}:receivers:{j}";
-        var type = configuration.GetValue<ReceiverType?>($"{receiverPath}:type");
-        if (type == null) break;
-
-        if (type == ReceiverType.HTTP)
-            httpReceivers.Add(GetHttpReceiver(configuration, receiverPath));
-        else if (type == ReceiverType.SERIAL)
-            serialReceivers.Add(GetSerialReceiver(configuration, receiverPath));
-        j++;
-    }
-
-    j = 0;
-    while (true)
-    {
-        var exporterPath = $"{pipelinePath}:exporters:{j}";
-        var type = configuration.GetValue<ExporterType?>($"{exporterPath}:type");
-        if (type == null) break;
-
-        if (type == ExporterType.HTTP)
-            httpExporters.Add(GetHttpExporter(configuration, exporterPath));
-        else if (type == ExporterType.SERIAL)
-            serialExporters.Add(GetSerialExporter(configuration, exporterPath));
-        j++;
-    }
-
-    if (!httpReceivers.Any() && !serialReceivers.Any() && !httpExporters.Any() && !serialExporters.Any())
-        return null;
-
-    return new PipelineOptions
-    {
-        HttpReceivers = httpReceivers.ToArray(),
-        SerialReceivers = serialReceivers.ToArray(),
-        HttpExporters = httpExporters.ToArray(),
-        SerialExporters = serialExporters.ToArray()
+        var handler = HandlerBase.GetInstance(handlerType);
+        
+        if(handler == null)
+            throw new InvalidCastException($"Handler with '{handlerStr}' value is not a correctly built handler class. Check this handler class is a valid HandlerBase child");
+        
+        return handler;
     };
+    
+    var GetHttpReceiver = (IConfigurationSection receiver) => {
+        var httpReciever = receiver.Get<HttpReceiverOptions>();
+        var handlerStr = receiver.GetSection("handler").Value;
+        httpReciever.Handler = GetHandler(handlerStr, typeof(DefaultHttpHandler));
+
+        if (string.IsNullOrWhiteSpace(httpReciever.Endpoint))
+            throw new ArgumentNullException("Endpoint", "HttpReceiver Endpoint configuration value must be a valid http url");
+            
+        return httpReciever;
+    };
+
+    var GetSerialReceiver = (IConfigurationSection receiver) => {
+        var serialReceiver = receiver.Get<SerialReceiverOptions>();
+        var handlerStr = receiver.GetSection("handler").Value;
+        serialReceiver.Handler = GetHandler(handlerStr, typeof(DefaultSerialHandler));
+
+        if (string.IsNullOrWhiteSpace(serialReceiver.PortName))
+            throw new ArgumentNullException("PortName", "SerialReceiver PortName configuration value must be given");
+
+        return serialReceiver;
+    };
+
+    var GetHttpExporter = (IConfigurationSection exporter) => {
+        var httpExporter = exporter.Get<HttpExporterOptions>();
+        if(string.IsNullOrWhiteSpace(httpExporter.Url.OriginalString))
+            throw new ArgumentNullException("Url", "HttpExporter Url value must be a valid http url");
+        return httpExporter;
+    };
+
+    var GetSerialExporter = (IConfigurationSection exporter) => {
+        var serialExporter = exporter.Get<SerialExporterOptions>();
+        if (string.IsNullOrWhiteSpace(serialExporter.PortName))
+            throw new ArgumentNullException("Url", "SerialExporter PortName value must be given");
+        return serialExporter;
+    };
+
+    var GetPipeline = (IConfigurationSection pipeline) => {
+        var httpReceivers = new List<HttpReceiverOptions>();
+        var serialReceivers = new List<SerialReceiverOptions>();
+        var httpExporters = new List<HttpExporterOptions>();
+        var serialExporters = new List<SerialExporterOptions>();
+
+        var receivers = pipeline.GetSection("receivers")
+            .GetChildren()
+            .ToArray();
+        
+        var exporters = pipeline.GetSection("exporters")
+            .GetChildren()
+            .ToArray();
+
+        foreach(var receiver in receivers) {
+            var type = receiver.GetSection("type").Get<ReceiverType?>();
+            if(type == null) continue;
+
+            if (type == ReceiverType.HTTP)
+                httpReceivers.Add(GetHttpReceiver(receiver));
+            else if (type == ReceiverType.SERIAL)
+                serialReceivers.Add(GetSerialReceiver(receiver));
+        }
+
+        foreach(var exporter in exporters) {
+            var type = exporter.GetSection("type").Get<ExporterType?>();
+            if (type == null) continue;
+
+            if (type == ExporterType.HTTP)
+                httpExporters.Add(GetHttpExporter(exporter));
+            else if (type == ExporterType.SERIAL)
+                serialExporters.Add(GetSerialExporter(exporter));
+        }
+
+        if (!httpReceivers.Any() && !serialReceivers.Any() && !httpExporters.Any() && !serialExporters.Any())
+            return null;
+
+        return new PipelineOptions() {
+            HttpReceivers = httpReceivers.ToArray(),
+            SerialReceivers = serialReceivers.ToArray(),
+            HttpExporters = httpExporters.ToArray(),
+            SerialExporters = serialExporters.ToArray()
+        };
+    };
+
+    // -------------------------- LOAD PLUGIN LIBRARY
+    var pluginLibrary = configuration.GetValue<string>("parkla:pluginLibrary");
+    if (!string.IsNullOrWhiteSpace(pluginLibrary)) {
+        var dllFile = new FileInfo(
+            pluginLibrary.Contains('/') || pluginLibrary.Contains('\\')
+            ? pluginLibrary
+            : Path.Combine(".", pluginLibrary)
+        );
+        opt.pluginAssembly = Assembly.LoadFrom(dllFile.FullName);
+    }
+
+    // -------------------------- LOAD PIPELINES
+    var pipelines = new List<PipelineOptions>();
+    var children = configuration.GetSection("parkla:pipelines").GetChildren();
+
+    foreach(var child in children)
+        pipelines.Add(GetPipeline(child));
+
+    opt.Pipelines = pipelines.ToArray();
+
 };
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -122,35 +144,7 @@ builder.Host.ConfigureServices(services =>
 {
     services.AddOptions();
 
-    services.Configure<CollectorOptions>((opt) =>
-    {
-        ConfigurationManager configuration = builder.Configuration;
-
-        var pluginLibrary = configuration.GetValue<string>("parkla:pluginLibrary");
-        if (pluginDll == null && pluginLibrary != null)
-        {
-            var dllFile = new FileInfo(
-                pluginLibrary.Contains('/') || pluginLibrary.Contains('\\')
-                ? pluginLibrary
-                : Path.Combine(".", pluginLibrary)
-            );
-            pluginDll = Assembly.LoadFrom(dllFile.FullName);
-        }
-
-        var pipelines = new List<PipelineOptions>();
-        var i = 0;
-        while (true)
-        {
-            var pipelinePath = $"parkla:pipelines:{i}";
-            var pipeline = GetPipeline(configuration, pipelinePath);
-            if (pipeline == null) break;
-            pipelines.Add(pipeline);
-            i++;
-        }
-
-        opt.pluginAssembly = pluginDll;
-        opt.Pipelines = pipelines.ToArray();
-    });
+    services.Configure<CollectorOptions>((opt) => LoadCollectorOptions(opt, builder.Configuration));
 
     services.AddSingleton<HttpExporter>();
     services.AddSingleton<SerialExporter>();
@@ -188,14 +182,12 @@ var httpExporter = app.Services.GetService<HttpExporter>()!;
 var serialExporter = app.Services.GetService<SerialExporter>()!;
 var logger = app.Services.GetService<ILogger<Program>>()!;
 
-Task.Run(() =>
+var startTask = Task.Run(() =>
 {
     logger.LogInformation("START: Starting receiver and exporters");
     serialExporter.Start();
-    httpReceiver.Start();
     serialReceiver.Start();
-    logger.LogInformation("START: Receiver and exporters are started");
-
+    httpReceiver.Start();
 });
 
 if (!app.Environment.IsDevelopment())
@@ -212,12 +204,31 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+
 app.UseEndpoints(builder =>
 {
-    builder.MapControllerRoute(
+    /*builder.MapControllerRoute(
         "HttpReceiver",
         "{**all}",
-        defaults: new { Controller = "HttpReceiver", action = "CatchAllRequests" });
+        defaults: new { Controller = "HttpReceiver", action = "CatchAllRequests" });*/
+    
+    startTask.Wait();
+    var httpPipelinesList = httpReceiver.GetHttpPipelinesList();
+    
+    foreach (var httpPipelines in httpPipelinesList)
+    {
+        builder.MapPost(httpPipelines.Endpoint, async (HttpContext httpContext) => {
+            await httpReceiver.ReceiveAsync(httpContext, httpPipelines);
+        });
+    }
+
+    builder.Map("/ECHO/TO/LOG",([FromBody] ParkSpaceStatusDto dto) => {
+        logger.LogWarning(@"
+            '/ECHO/ENDPOINT' RECEIVED THE DATA:
+            Parkid='{}' Spaceid='{}' Status='{}' DateTime='{}'
+        ",dto.Parkid, dto.Spaceid, dto.Status, dto.DateTime);
+    });
 });
 
+logger.LogInformation("START: Receiver and exporters are started");
 app.Run();

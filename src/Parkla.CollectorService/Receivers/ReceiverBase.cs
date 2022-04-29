@@ -20,17 +20,21 @@ public abstract class ReceiverBase
         _httpExporter = httpExporter;
         _serialExporter = serialExporter;
     }
-    protected void ExportResults(IEnumerable<ParkSpaceStatusDto> results, PipelineOptions pipeline) {
+    protected void ExportResults(
+        IEnumerable<ParkSpaceStatusDto> results, 
+        IEnumerable<HttpExporterOptions> httpExporters, 
+        IEnumerable<SerialExporterOptions> serialExporters
+    ) {
         foreach (var result in results) {
             var tasks = new List<Task>();
 
             _logger.LogInformation("ParkId='{}', SpaceId='{}', Status='{}' is being exported with all exporters in the pipeline", result.Parkid, result.Spaceid, result.Status);
 
-            foreach (var exporter in pipeline.HttpExporters) {
+            foreach (var exporter in httpExporters) {
                 tasks.Add(_httpExporter.ExportAsync(result, exporter.Url));
             }
 
-            foreach (var exporter in pipeline.SerialExporters) {
+            foreach (var exporter in serialExporters) {
                 _serialExporter.Enqueue(result, exporter.PortName);
             }
 

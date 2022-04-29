@@ -17,7 +17,7 @@ public class HttpReceiverController : ControllerBase
     }
 
     public async Task CatchAllRequests () {
-        await _httpReceiver.ReceiveAsync(HttpContext);
+        //await _httpReceiver.ReceiveAsync(HttpContext);
     }
     
     

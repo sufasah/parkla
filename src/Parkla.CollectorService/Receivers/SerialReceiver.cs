@@ -12,7 +12,7 @@ public class SerialReceiver : ReceiverBase
     private readonly HttpExporter _httpExporter;
     private readonly SerialExporter _serialExporter;
     private readonly IOptions<CollectorOptions> _options;
-    private readonly List<SerialPort> _serialPorts = new();
+    private readonly List<SerialPipelines> _serialPipelinesList = new();
     private readonly object _startLock = new();
     private bool Started { get; set; } = false;
     public SerialReceiver(
@@ -44,20 +44,32 @@ public class SerialReceiver : ReceiverBase
 
                 foreach (var serialReceiver in serialReceivers)
                 {
-                    try
-                    {
-                        var serialPort = new SerialPort(serialReceiver.PortName, 9600);
-                        serialPort.Open();
-                        serialPort.DataReceived += MakeDataReceived(serialPort, serialReceiver.Handler, pipeline);
-                        _serialPorts.Add(serialPort);
+                    var serialPipelines = _serialPipelinesList.Find(x => x.SerialPort.PortName == serialReceiver.PortName);
+                    
+                    if(serialPipelines == null) {
+                        try {
+                            var serialPort = new SerialPort(serialReceiver.PortName, 9600);
+                            serialPort.Open();
+                            serialPipelines = new() {
+                                SerialPort = serialPort,
+                                Pipelines = new()
+                            };
+                            serialPort.DataReceived += MakeDataReceived(serialPort, serialPipelines);
+                            _serialPipelinesList.Add(serialPipelines);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError(e, "SerialReceiver: Serial port receiver with {} port name could not be opened. \n", serialReceiver.PortName);
+                            //if port name will be available other receivers with same serial port can work but this one's handler won't exist 
+                            continue;
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        var found = _serialPorts.FirstOrDefault(x => x.PortName == serialReceiver.PortName);
-                        if(found != null)
-                            _logger.LogError("SerialReceiver: Serial port with {} port name already in use", serialReceiver.PortName);
-                        _logger.LogError(e, "SerialReceiver: Serial port receiver with {} port name could not be opened. \n", serialReceiver.PortName);
-                    }
+
+                    serialPipelines.Pipelines.Add(new() {
+                        Handler = serialReceiver.Handler,
+                        HttpExporters = pipeline.HttpExporters,
+                        SerialExporters = pipeline.SerialExporters
+                    });   
                 }
             }
 
@@ -66,7 +78,7 @@ public class SerialReceiver : ReceiverBase
         }
     }
 
-    private SerialDataReceivedEventHandler MakeDataReceived(SerialPort serialPort, HandlerBase handler, PipelineOptions pipeline)
+    private SerialDataReceivedEventHandler MakeDataReceived(SerialPort serialPort, SerialPipelines serialPipelines)
     {
         var param = new SerialReceiverParam
         {
@@ -77,20 +89,21 @@ public class SerialReceiver : ReceiverBase
 
         return (object sender, SerialDataReceivedEventArgs args) =>
         {
-            _logger.LogInformation("SerialReceiver: Executing handler with name '{}'", handler.GetType().Name);
-            try
-            {
-                param.SerialDataReceivedEventArgs = args;
-                var handlerResults = ResultSafe(handler.HandleAsync(ReceiverType.SERIAL, param)).Result;
+            foreach(var pipeline in serialPipelines.Pipelines) {
+                var handler = pipeline.Handler;
+                // _logger.LogInformation("SerialReceiver: Executing handler with name '{}'", handler.GetType().Name);
+                try {
+                    param.SerialDataReceivedEventArgs = args;
+                    var handlerResults = ResultSafe(handler.HandleAsync(ReceiverType.SERIAL, param)).Result;
 
-                if (handlerResults != null)
-                {
-                   ExportResults(handlerResults, pipeline);
+                    if (handlerResults != null) {
+                        ExportResults(handlerResults, pipeline.HttpExporters, pipeline.SerialExporters);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occured while handling the request '{}' handler. The result is not generated so it will not be exported.", handler.GetType().Name);
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "An error occured while handling the request '{}' handler. The result is not generated so it will not be exported.", handler.GetType().Name);
+                }
             }
         };
     }
@@ -100,4 +113,15 @@ public class SerialReceiver : ReceiverBase
         var taskResult = await task.ConfigureAwait(false);
         return taskResult;
     }
+}
+
+class SerialPipelines {
+    public SerialPort SerialPort { get; set; }
+    public List<SerialPipeline> Pipelines { get; set; }
+}
+
+class SerialPipeline {
+    public HandlerBase Handler { get; set; }
+    public IEnumerable<HttpExporterOptions> HttpExporters { get; set; }
+    public IEnumerable<SerialExporterOptions> SerialExporters { get; set; }
 }

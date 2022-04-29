@@ -4,8 +4,8 @@ namespace Parkla.CollectorService.Library;
 
 public class TestHandler6 : HandlerBase
 {
-    public override async Task<IEnumerable<ParkSpaceStatusDto>> HandleAsync(ReceiverType receiverType, object parameter)
+    public override IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object param)
     {
-        return null;
+        throw new NotImplementedException("THIS WILL CAUSE AN EXCEPTION AND BECAUSE OF THAT ERROR WILL BE LOGGED");
     }
 }

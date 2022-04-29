@@ -72,6 +72,7 @@ public class SerialExporter
         
         if(!isGot) {
             _logger.LogWarning("SerialExporter.Enqueue: Serial port exporter could not found  {} port name to enqueue. \nParkId='{}', SpaceId='{}', Status='{}' is not enqueued", portName, dto.Parkid, dto.Spaceid, dto.Spaceid);
+            return;
         }
 
         _exportQueue.Add(new SerialQueueItem {
