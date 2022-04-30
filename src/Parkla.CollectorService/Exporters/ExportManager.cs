@@ -4,12 +4,10 @@ using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Options;
 
 namespace Parkla.CollectorService.Exporters;
-public class ExportManager : IDisposable
+public class ExportManager
 {
     private readonly HttpExporter _httpExporter;
     private readonly SerialExporter _serialExporter;
-    private bool disposed = false;
-
     public ExportManager(
         HttpExporter httpExporter,
         SerialExporter serialExporter)
@@ -43,27 +41,5 @@ public class ExportManager : IDisposable
         }
 
         await Task.WhenAll(tasks);
-    }
-
-    public void Dispose(bool disposing) {
-        if(disposed) {
-            return;
-        }
-
-        if(disposing) {
-            _httpExporter.Dispose();
-            _serialExporter.Dispose();
-        }
-
-        disposed = true;
-    }
-
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~ExportManager() {
-        Dispose(false);
     }
 }

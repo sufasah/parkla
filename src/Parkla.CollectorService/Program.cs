@@ -6,6 +6,7 @@ using Parkla.CollectorService.Handlers;
 using Parkla.CollectorService.Receivers;
 using Parkla.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Parkla.CollectorService.Generators;
 
 var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configuration) => {
     var GetHandler = (string handlerStr, Type defaultHandler) => {
@@ -151,6 +152,7 @@ builder.Host.ConfigureServices(services =>
     services.AddSingleton<ExportManager>();
     services.AddSingleton<SerialReceiver>();
     services.AddSingleton<HttpReceiver>();
+    services.AddSingleton<SerialPortPool>();
 });
 
 builder.WebHost.ConfigureServices(services =>

@@ -1,13 +1,13 @@
 
 using System.Net;
+using System.Text;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
-public class HttpExporter : IDisposable
+public class HttpExporter
 {
     private readonly HttpClient _client;
     private readonly ILogger<HttpExporter> _logger;
-    private bool disposed = false;
 
     public HttpExporter(
         IHttpClientFactory factory,
@@ -20,44 +20,39 @@ public class HttpExporter : IDisposable
 
     public async Task ExportAsync(ParkSpaceStatusDto dto, Uri url) {
         try {
-            var response = await _client.PostAsync(url,JsonContent.Create(dto));
-
-            if(response.StatusCode == HttpStatusCode.OK)
-                _logger.LogInformation("HttpExporter [OK]: ParkId='{}', SpaceId='{}', Status='{}' is exported", dto.Parkid, dto.Spaceid, dto.Status);
-            else
-                _logger.LogInformation("HttpExporter [NOT OK]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
+            var response = await _client.PostAsync(
+                url,
+                JsonContent.Create(dto)
+            );
+            _logger.LogInformation("HttpExporter [{}]: ParkId='{}', SpaceId='{}', Status='{}' is exported", response.StatusCode == HttpStatusCode.OK ? "OK" : "NOT OK", dto.Parkid, dto.Spaceid, dto.Status);
         } catch(Exception e) {
             _logger.LogError(e, "HttpExporter: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
         }
     }
 
     public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, Uri url) {
-        var tasks = new List<Task>();
-        
-        foreach(var dto in dtos)
-            tasks.Add(ExportAsync(dto, url));
-        
-        await Task.WhenAll(tasks);
-    }
-
-    public void Dispose(bool disposing) {
-        if(disposed) {
-            return;
+        try {
+            var response = await _client.PostAsync(
+                url,
+                JsonContent.Create(dtos)
+            );
+            
+            var str = LogStrList(dtos, response.StatusCode == HttpStatusCode.OK);
+            _logger.LogInformation(str);
+        } catch(Exception e) {
+            var str = LogStrList(dtos, false);
+            _logger.LogError(e,str);
         }
 
-        if(disposing) {
-            _client.Dispose();
+    }
+
+    private static string LogStrList(IEnumerable<ParkSpaceStatusDto> dtos, bool successful) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine();
+        foreach(var dto in dtos) {
+            stringBuilder.AppendFormat("HttpExporter [{}]: ParkId='{}', SpaceId='{}', Status='{}' is exported\n", successful ? "SUCCESS" : "FAIL", dto.Parkid, dto.Spaceid, dto.Status);
         }
 
-        disposed = true;
-    }
-
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~HttpExporter() {
-        Dispose(false);
+        return stringBuilder.ToString();
     }
 }

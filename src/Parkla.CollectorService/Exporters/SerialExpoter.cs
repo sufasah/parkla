@@ -3,11 +3,12 @@ using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
+using Parkla.CollectorService.Generators;
 using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
-public class SerialExporter : IDisposable
+public class SerialExporter
 {
     private readonly object _startLock = new();
     private bool Started { get; set; } = false;
@@ -15,14 +16,17 @@ public class SerialExporter : IDisposable
     private readonly BlockingCollection<SerialQueueItem> _exportQueue = new();
     private readonly ILogger<SerialExporter> _logger;
     private readonly IOptions<CollectorOptions> _options;
-    private bool disposed = false;
+    private readonly SerialPortPool _serialPortPool;
+
     public SerialExporter(
         ILogger<SerialExporter> logger,
-        IOptions<CollectorOptions> options
+        IOptions<CollectorOptions> options,
+        SerialPortPool serialPortPool
     )
     {
         _logger = logger;
         _options = options;
+        _serialPortPool = serialPortPool;
     }
 
     public void Start() {
@@ -40,21 +44,13 @@ public class SerialExporter : IDisposable
 
                 foreach (var serialExporter in serialExporters)
                 {
-                    try
-                    {
-                        var serialPort = new SerialPort(serialExporter.PortName, 9600);
-                        serialPort.Open();
-                        _serialPortMap.TryAdd(serialExporter.PortName ,serialPort);
+                    var serialPort = _serialPortPool.GetInstance(serialExporter.PortName);
+                    if(serialPort == null) {
+                        //if port name will be available other exporters with same serial port can work but this one's handler won't exist 
+                        continue;
                     }
-                    catch (Exception e)
-                    {
-                        var contains = _serialPortMap.ContainsKey(serialExporter.PortName);
-                        
-                        if(!contains)
-                            _logger.LogError("SerialReceiver: Serial port with {} port name already in use", serialExporter.PortName);
 
-                        _logger.LogError("SerialExporter: Serial port exporter with {} port name could not be opened. \n{}", serialExporter.PortName, e.Message);
-                    }   
+                    _serialPortMap.TryAdd(serialExporter.PortName, serialPort);
                 }
             }
             Started = true;
@@ -99,33 +95,5 @@ public class SerialExporter : IDisposable
                 _logger.LogError(e, "SerialExporter [Fail]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
             }
         }
-    }
-
-    public void Dispose(bool disposing) {
-        if(disposed) {
-            return;
-        }
-
-        if(disposing) {
-            foreach(var item in _exportQueue) {
-                item.SerialPort.Dispose();
-            }
-            foreach(var item in _serialPortMap) {
-                item.Value.Dispose();
-            }
-            _exportQueue.Dispose();
-        
-        }
-
-        disposed = true;
-    }
-
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~SerialExporter() {
-        Dispose(false);
     }
 }

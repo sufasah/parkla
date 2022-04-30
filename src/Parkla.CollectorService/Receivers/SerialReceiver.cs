@@ -1,6 +1,7 @@
 using System.IO.Ports;
 using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Exporters;
+using Parkla.CollectorService.Generators;
 using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
@@ -12,21 +13,24 @@ public class SerialReceiver : ReceiverBase, IDisposable
     private readonly HttpExporter _httpExporter;
     private readonly SerialExporter _serialExporter;
     private readonly IOptions<CollectorOptions> _options;
+    private readonly SerialPortPool _serialPortPool;
     private readonly List<SerialPipelines> _serialPipelinesList = new();
     private readonly object _startLock = new();
     private bool Started { get; set; } = false;
-    private bool disposed = false;
+    
     public SerialReceiver(
         ILogger<SerialReceiver> logger,
         HttpExporter httpExporter,
         SerialExporter serialExporter,
-        IOptions<CollectorOptions> options
+        IOptions<CollectorOptions> options,
+        SerialPortPool serialPortPool
     ) : base(logger, httpExporter, serialExporter)
     {
         _logger = logger;
         _httpExporter = httpExporter;
         _serialExporter = serialExporter;
         _options = options;
+        _serialPortPool = serialPortPool;
     }
     public void Start()
     {
@@ -48,22 +52,18 @@ public class SerialReceiver : ReceiverBase, IDisposable
                     var serialPipelines = _serialPipelinesList.Find(x => x.SerialPort.PortName == serialReceiver.PortName);
                     
                     if(serialPipelines == null) {
-                        try {
-                            var serialPort = new SerialPort(serialReceiver.PortName, 9600);
-                            serialPort.Open();
-                            serialPipelines = new() {
-                                SerialPort = serialPort,
-                                Pipelines = new()
-                            };
-                            serialPort.DataReceived += MakeDataReceived(serialPort, serialPipelines);
-                            _serialPipelinesList.Add(serialPipelines);
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.LogError(e, "SerialReceiver: Serial port receiver with {} port name could not be opened. \n", serialReceiver.PortName);
+                        var serialPort = _serialPortPool.GetInstance(serialReceiver.PortName);
+                        
+                        if(serialPort == null) {
                             //if port name will be available other receivers with same serial port can work but this one's handler won't exist 
                             continue;
                         }
+                        serialPipelines = new() {
+                            SerialPort = serialPort,
+                            Pipelines = new()
+                        };
+                        serialPort.DataReceived += MakeDataReceived(serialPort, serialPipelines);
+                        _serialPipelinesList.Add(serialPipelines);
                     }
 
                     serialPipelines.Pipelines.Add(new() {
@@ -113,32 +113,6 @@ public class SerialReceiver : ReceiverBase, IDisposable
         // For legacy synchronization context deadlocks configureAwait
         var taskResult = await task.ConfigureAwait(false);
         return taskResult;
-    }
-
-    public new void Dispose(bool disposing) {
-        if(disposed) {
-            return;
-        }
-
-        if(disposing) {
-            base.Dispose();
-            _httpExporter.Dispose();
-            _serialExporter.Dispose();
-            foreach(var item in _serialPipelinesList) {
-                item.SerialPort.Dispose();
-            }
-        }
-
-        disposed = true;
-    }
-
-    public new void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~SerialReceiver() {
-        Dispose(false);
     }
 }
 
