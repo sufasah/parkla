@@ -7,7 +7,7 @@ using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
-public class SerialExporter
+public class SerialExporter : IDisposable
 {
     private readonly object _startLock = new();
     private bool Started { get; set; } = false;
@@ -15,7 +15,7 @@ public class SerialExporter
     private readonly BlockingCollection<SerialQueueItem> _exportQueue = new();
     private readonly ILogger<SerialExporter> _logger;
     private readonly IOptions<CollectorOptions> _options;
-
+    private bool disposed = false;
     public SerialExporter(
         ILogger<SerialExporter> logger,
         IOptions<CollectorOptions> options
@@ -99,5 +99,33 @@ public class SerialExporter
                 _logger.LogError(e, "SerialExporter [Fail]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
             }
         }
+    }
+
+    public void Dispose(bool disposing) {
+        if(disposed) {
+            return;
+        }
+
+        if(disposing) {
+            foreach(var item in _exportQueue) {
+                item.SerialPort.Dispose();
+            }
+            foreach(var item in _serialPortMap) {
+                item.Value.Dispose();
+            }
+            _exportQueue.Dispose();
+        
+        }
+
+        disposed = true;
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~SerialExporter() {
+        Dispose(false);
     }
 }

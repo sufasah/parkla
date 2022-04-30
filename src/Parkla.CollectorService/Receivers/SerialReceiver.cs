@@ -6,7 +6,7 @@ using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
-public class SerialReceiver : ReceiverBase
+public class SerialReceiver : ReceiverBase, IDisposable
 {
     private readonly ILogger<SerialReceiver> _logger;
     private readonly HttpExporter _httpExporter;
@@ -15,6 +15,7 @@ public class SerialReceiver : ReceiverBase
     private readonly List<SerialPipelines> _serialPipelinesList = new();
     private readonly object _startLock = new();
     private bool Started { get; set; } = false;
+    private bool disposed = false;
     public SerialReceiver(
         ILogger<SerialReceiver> logger,
         HttpExporter httpExporter,
@@ -112,6 +113,32 @@ public class SerialReceiver : ReceiverBase
         // For legacy synchronization context deadlocks configureAwait
         var taskResult = await task.ConfigureAwait(false);
         return taskResult;
+    }
+
+    public new void Dispose(bool disposing) {
+        if(disposed) {
+            return;
+        }
+
+        if(disposing) {
+            base.Dispose();
+            _httpExporter.Dispose();
+            _serialExporter.Dispose();
+            foreach(var item in _serialPipelinesList) {
+                item.SerialPort.Dispose();
+            }
+        }
+
+        disposed = true;
+    }
+
+    public new void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~SerialReceiver() {
+        Dispose(false);
     }
 }
 

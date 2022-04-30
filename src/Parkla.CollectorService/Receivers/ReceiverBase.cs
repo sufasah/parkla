@@ -4,11 +4,12 @@ using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
 
-public abstract class ReceiverBase
+public abstract class ReceiverBase : IDisposable
 {
     private readonly ILogger _logger;
     private readonly HttpExporter _httpExporter;
     private readonly SerialExporter _serialExporter;
+    private bool disposed = false;
 
     public ReceiverBase(
         ILogger logger,
@@ -42,5 +43,27 @@ public abstract class ReceiverBase
                 _logger.LogInformation("ParkId='{}', SpaceId='{}', Status='{}' is exported with all exporters in the pipeline", result.Parkid, result.Spaceid, result.Status);
             });
         }
+    }
+
+    public void Dispose(bool disposing) {
+        if(disposed) {
+            return;
+        }
+
+        if(disposing) {
+            _httpExporter.Dispose();
+            _serialExporter.Dispose();
+        }
+
+        disposed = true;
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~ReceiverBase() {
+        Dispose(false);
     }
 }

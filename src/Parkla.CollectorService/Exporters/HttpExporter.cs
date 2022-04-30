@@ -3,10 +3,11 @@ using System.Net;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
-public class HttpExporter
+public class HttpExporter : IDisposable
 {
     private readonly HttpClient _client;
     private readonly ILogger<HttpExporter> _logger;
+    private bool disposed = false;
 
     public HttpExporter(
         IHttpClientFactory factory,
@@ -37,5 +38,26 @@ public class HttpExporter
             tasks.Add(ExportAsync(dto, url));
         
         await Task.WhenAll(tasks);
+    }
+
+    public void Dispose(bool disposing) {
+        if(disposed) {
+            return;
+        }
+
+        if(disposing) {
+            _client.Dispose();
+        }
+
+        disposed = true;
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~HttpExporter() {
+        Dispose(false);
     }
 }
