@@ -7,7 +7,7 @@ using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
-public class SerialReceiver : ReceiverBase, IDisposable
+public class SerialReceiver : ReceiverBase
 {
     private readonly ILogger<SerialReceiver> _logger;
     private readonly HttpExporter _httpExporter;
@@ -17,7 +17,7 @@ public class SerialReceiver : ReceiverBase, IDisposable
     private readonly List<SerialPipelines> _serialPipelinesList = new();
     private readonly object _startLock = new();
     private bool Started { get; set; } = false;
-    
+
     public SerialReceiver(
         ILogger<SerialReceiver> logger,
         HttpExporter httpExporter,

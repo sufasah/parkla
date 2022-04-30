@@ -5,7 +5,7 @@ using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Options;
 
 namespace Parkla.CollectorService.Receivers;
-public class HttpReceiver : ReceiverBase, IDisposable
+public class HttpReceiver : ReceiverBase
 {
     private readonly object _startLock = new();
     private readonly ILogger<HttpReceiver> _logger;
@@ -14,7 +14,6 @@ public class HttpReceiver : ReceiverBase, IDisposable
     private readonly SerialExporter _serialExporter;
     private readonly IOptions<CollectorOptions> _options;
     private bool Started { get; set; } = false;
-    private bool disposed = false;
 
     public HttpReceiver(
         ILogger<HttpReceiver> logger,
@@ -112,29 +111,6 @@ public class HttpReceiver : ReceiverBase, IDisposable
 
     public ReadOnlyCollection<HttpPipelines> GetHttpPipelinesList() {
         return _httpPipelinesList.AsReadOnly();
-    }
-
-    public new void Dispose(bool disposing) {
-        if(disposed) {
-            return;
-        }
-
-        if(disposing) {
-            base.Dispose();
-            _httpExporter.Dispose();
-            _serialExporter.Dispose();
-        }
-
-        disposed = true;
-    }
-
-    public new void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    ~HttpReceiver() {
-        Dispose(false);
     }
 }
 
