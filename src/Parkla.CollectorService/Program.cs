@@ -167,11 +167,7 @@ builder.WebHost.ConfigureServices(services =>
             .SetIsOriginAllowed(origin => true);
         });
     });
-
-    services.AddAuthentication();
-    services.AddAuthorization();
     services.AddHttpClient();
-    services.AddControllers();
 });
 
 var app = builder.Build();
@@ -200,11 +196,6 @@ if (!app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseCors("allow-all");
-
-app.UseAuthentication();
-
-app.UseAuthorization();
-
 
 app.UseEndpoints(builder =>
 {
