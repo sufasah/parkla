@@ -34,7 +34,7 @@ public class HttpExporter
         try {
             var response = await _client.PostAsync(
                 url,
-                JsonContent.Create(dtos)
+                JsonContent.Create(dtos.ToArray())
             );
             
             var str = LogStrList(dtos, response.StatusCode == HttpStatusCode.OK);
@@ -47,6 +47,9 @@ public class HttpExporter
     }
 
     private static string LogStrList(IEnumerable<ParkSpaceStatusDto> dtos, bool successful) {
+        if(!dtos.Any())
+            return "";
+            
         var stringBuilder = new StringBuilder();
         stringBuilder.AppendLine();
         foreach(var dto in dtos) {

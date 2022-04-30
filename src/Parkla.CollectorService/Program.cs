@@ -149,7 +149,6 @@ builder.Host.ConfigureServices(services =>
 
     services.AddSingleton<HttpExporter>();
     services.AddSingleton<SerialExporter>();
-    services.AddSingleton<ExportManager>();
     services.AddSingleton<SerialReceiver>();
     services.AddSingleton<HttpReceiver>();
     services.AddSingleton<SerialPortPool>();
@@ -224,11 +223,14 @@ app.UseEndpoints(builder =>
         });
     }
 
-    builder.Map("/ECHO/TO/LOG",([FromBody] ParkSpaceStatusDto dto) => {
-        logger.LogWarning(@"
-            '/ECHO/ENDPOINT' RECEIVED THE DATA:
-            Parkid='{}' Spaceid='{}' Status='{}' DateTime='{}'
-        ",dto.Parkid, dto.Spaceid, dto.Status, dto.DateTime);
+    builder.Map("/ECHO/TO/LOG",([FromBody] IEnumerable<ParkSpaceStatusDto> dtos) => {
+        foreach (var dto in dtos)
+        {
+            logger.LogWarning(@"
+                '/ECHO/ENDPOINT' RECEIVED THE DATA:
+                Parkid='{}' Spaceid='{}' Status='{}' DateTime='{}'
+            ",dto.Parkid, dto.Spaceid, dto.Status, dto.DateTime);
+        }
     });
 });
 
