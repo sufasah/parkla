@@ -7,6 +7,7 @@ using Parkla.CollectorService.Receivers;
 using Parkla.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Parkla.CollectorService.Generators;
+using Collector;
 
 var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configuration) => {
     var GetHandler = (string handlerStr, Type defaultHandler) => {
@@ -46,6 +47,17 @@ var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configura
         return httpReciever;
     };
 
+    var GetGrpcReceiver = (IConfigurationSection receiver) => {
+        var grpcReiver = receiver.Get<GrpcReceiverOptions>();
+        var handlerStr = receiver.GetSection("handler").Value;
+        grpcReiver.Handler = GetHandler(handlerStr, typeof(DefualtGrpcHandler));
+
+        if (string.IsNullOrWhiteSpace(grpcReiver.Group))
+            throw new ArgumentNullException("Group", "GrpcReceiver Group configuration value must be given");
+            
+        return grpcReiver;
+    };
+
     var GetSerialReceiver = (IConfigurationSection receiver) => {
         var serialReceiver = receiver.Get<SerialReceiverOptions>();
         var handlerStr = receiver.GetSection("handler").Value;
@@ -71,11 +83,22 @@ var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configura
         return serialExporter;
     };
 
+    var GetGrpcExporter = (IConfigurationSection exporter) => {
+        var grpcExporter = exporter.Get<GrpcExporterOptions>();
+        if (string.IsNullOrWhiteSpace(grpcExporter.Group))
+            throw new ArgumentNullException("Group", "GrpcExporter group value must be given");
+        if (string.IsNullOrWhiteSpace(grpcExporter.Address))
+            throw new ArgumentNullException("Address", "GrpcExporter address value must be given");
+        return grpcExporter;
+    };
+
     var GetPipeline = (IConfigurationSection pipeline) => {
         var httpReceivers = new List<HttpReceiverOptions>();
         var serialReceivers = new List<SerialReceiverOptions>();
+        var grpcReceivers = new List<GrpcReceiverOptions>();
         var httpExporters = new List<HttpExporterOptions>();
         var serialExporters = new List<SerialExporterOptions>();
+        var grpcExporters = new List<GrpcExporterOptions>();
 
         var receivers = pipeline.GetSection("receivers")
             .GetChildren()
@@ -93,6 +116,8 @@ var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configura
                 httpReceivers.Add(GetHttpReceiver(receiver));
             else if (type == ReceiverType.SERIAL)
                 serialReceivers.Add(GetSerialReceiver(receiver));
+            else if (type == ReceiverType.GRPC)
+                grpcReceivers.Add(GetGrpcReceiver(receiver));
         }
 
         foreach(var exporter in exporters) {
@@ -103,6 +128,8 @@ var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configura
                 httpExporters.Add(GetHttpExporter(exporter));
             else if (type == ExporterType.SERIAL)
                 serialExporters.Add(GetSerialExporter(exporter));
+            else if (type == ExporterType.GRPC)
+                grpcExporters.Add(GetGrpcExporter(exporter));
         }
 
         if (!httpReceivers.Any() && !serialReceivers.Any() && !httpExporters.Any() && !serialExporters.Any())
@@ -112,7 +139,9 @@ var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configura
             HttpReceivers = httpReceivers.ToArray(),
             SerialReceivers = serialReceivers.ToArray(),
             HttpExporters = httpExporters.ToArray(),
-            SerialExporters = serialExporters.ToArray()
+            SerialExporters = serialExporters.ToArray(),
+            GrpcReceivers = grpcReceivers.ToArray(),
+            GrpcExporters = grpcExporters.ToArray()
         };
     };
 
@@ -138,19 +167,22 @@ var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configura
 
 };
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureServices(services =>
 {
     services.AddOptions();
-
     services.Configure<CollectorOptions>((opt) => LoadCollectorOptions(opt, builder.Configuration));
+    services.AddGrpc();
 
     services.AddSingleton<HttpExporter>();
     services.AddSingleton<SerialExporter>();
     services.AddSingleton<SerialReceiver>();
     services.AddSingleton<HttpReceiver>();
+    services.AddSingleton<GrpcReceiver>();
+    services.AddSingleton<GrpcExporter>();
+
+    services.AddSingleton<GrpcClientPool>();
     services.AddSingleton<SerialPortPool>();
 });
 
@@ -175,16 +207,20 @@ var app = builder.Build();
 
 var httpReceiver = app.Services.GetService<HttpReceiver>()!;
 var serialReceiver = app.Services.GetService<SerialReceiver>()!;
+var grpcReceiver = app.Services.GetService<GrpcReceiver>()!;
 var httpExporter = app.Services.GetService<HttpExporter>()!;
 var serialExporter = app.Services.GetService<SerialExporter>()!;
+var grpcExporter = app.Services.GetService<GrpcExporter>()!;
 var logger = app.Services.GetService<ILogger<Program>>()!;
 
 var startTask = Task.Run(() =>
 {
     logger.LogInformation("START: Starting receiver and exporters");
     serialExporter.Start();
+    grpcExporter.Start();
     serialReceiver.Start();
     httpReceiver.Start();
+    grpcReceiver.Start();
 });
 
 if (!app.Environment.IsDevelopment())
@@ -203,8 +239,11 @@ app.UseEndpoints(builder =>
         "HttpReceiver",
         "{**all}",
         defaults: new { Controller = "HttpReceiver", action = "CatchAllRequests" });*/
-    
+        
     startTask.Wait();
+    
+    builder.MapGrpcService<CollectorService>();
+
     var httpPipelinesList = httpReceiver.GetHttpPipelinesList();
     
     foreach (var httpPipelines in httpPipelinesList)

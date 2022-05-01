@@ -11,5 +11,5 @@ export interface AppUser {
   city: string;
   district: string;
   address?: string;
-  zip?: string;
+  zip?: string;//delete
 }

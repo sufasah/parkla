@@ -6,6 +6,5 @@ public class SerialReceiverParam : ParamBase
 {
     public SerialPort SerialPort { get; set; }
     public SerialDataReceivedEventArgs SerialDataReceivedEventArgs { get; set; }
-    public object? State { get; set; }
     public ILogger Logger { get; set; }
 }

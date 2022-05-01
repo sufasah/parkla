@@ -8,7 +8,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0"/>
     <PackageReference Include="System.IO.Ports" Version="6.0.0"/>
-    <ProjectReference Include="../Parkla.CollectorService.Library/Parkla.CollectorService.Library.csproj" />
-    <ProjectReference Include="../Parkla.Core/Parkla.Core.csproj" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.45.0"/>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.45.0"/>
+    <ProjectReference Include="../Parkla.CollectorService.Library/Parkla.CollectorService.Library.csproj"/>
+    <ProjectReference Include="../Parkla.Core/Parkla.Core.csproj"/>
   </ItemGroup>
 </Project>

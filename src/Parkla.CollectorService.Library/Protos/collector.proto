@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "Collector";
+
+package collector;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/Empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service Collector {
+    rpc Receive(Data) returns (google.protobuf.Empty);
+}
+
+message Data {
+    repeated google.protobuf.Any dataList = 1;
+}
+
+message ParkSpaceStatus {
+    string Parkid = 1;
+    string Spaceid = 2;
+    int32 Status = 3;
+    google.protobuf.Timestamp DateTime = 4;
+}

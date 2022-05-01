@@ -9,7 +9,16 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="System.IO.Ports" Version="6.0.0"/>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.45.0"/>
+    <PackageReference Include="Google.Protobuf" Version="4.0.0-rc2"/>
+    <PackageReference Include="Grpc.Tools" Version="2.45.0">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <ProjectReference Include="../Parkla.Core/Parkla.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="Protos\collector.proto" GrpcServices="Both" />
+  </ItemGroup>
 </Project>

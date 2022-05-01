@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Text;
 using Parkla.Core.DTOs;
@@ -31,31 +30,35 @@ public class HttpExporter
     }
 
     public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, Uri url) {
+        if(!dtos.Any()) return;
+
         try {
             var response = await _client.PostAsync(
                 url,
                 JsonContent.Create(dtos.ToArray())
             );
             
-            var str = LogStrList(dtos, response.StatusCode == HttpStatusCode.OK);
+            var str = LogStrList(dtos, "HttpExporter", response.StatusCode == HttpStatusCode.OK);
             _logger.LogInformation(str);
         } catch(Exception e) {
-            var str = LogStrList(dtos, false);
+            var str = LogStrList(dtos, "HttpExporter", false);
             _logger.LogError(e,str);
         }
 
     }
 
-    private static string LogStrList(IEnumerable<ParkSpaceStatusDto> dtos, bool successful) {
-        if(!dtos.Any())
-            return "";
-            
+    public static string LogStrList(IEnumerable<ParkSpaceStatusDto> dtos, string className, bool successful) {           
         var stringBuilder = new StringBuilder();
         stringBuilder.AppendLine();
         foreach(var dto in dtos) {
-            stringBuilder.AppendFormat("HttpExporter [{}]: ParkId='{}', SpaceId='{}', Status='{}' is exported\n", successful ? "SUCCESS" : "FAIL", dto.Parkid, dto.Spaceid, dto.Status);
+            stringBuilder.AppendFormat("{0} [{1}]: ParkId='{2}', SpaceId='{3}', Status='{4}' is{5} exported\n", 
+                className, 
+                successful ? "SUCCESS" : "FAIL", 
+                dto.Parkid, 
+                dto.Spaceid, 
+                dto.Status, 
+                successful ? "" : " not");
         }
-
         return stringBuilder.ToString();
     }
 }

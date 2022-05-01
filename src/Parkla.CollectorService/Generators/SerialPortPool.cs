@@ -26,7 +26,7 @@ public class SerialPortPool
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "SerialReceiver: Serial port receiver with {} port name could not be opened. \n", portName);
+                _logger.LogError(e, "SerialPortPool: Serial port with {} port name could not be opened", portName);
                 return null;
             }
         }

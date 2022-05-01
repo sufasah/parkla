@@ -1,4 +1,3 @@
-
 using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;

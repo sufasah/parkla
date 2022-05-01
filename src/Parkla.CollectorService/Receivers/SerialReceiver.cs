@@ -22,9 +22,10 @@ public class SerialReceiver : ReceiverBase
         ILogger<SerialReceiver> logger,
         HttpExporter httpExporter,
         SerialExporter serialExporter,
+        GrpcExporter grpcExporter,
         IOptions<CollectorOptions> options,
         SerialPortPool serialPortPool
-    ) : base(logger, httpExporter, serialExporter)
+    ) : base(logger, httpExporter, serialExporter, grpcExporter)
     {
         _logger = logger;
         _httpExporter = httpExporter;
@@ -69,7 +70,8 @@ public class SerialReceiver : ReceiverBase
                     serialPipelines.Pipelines.Add(new() {
                         Handler = serialReceiver.Handler,
                         HttpExporters = pipeline.HttpExporters,
-                        SerialExporters = pipeline.SerialExporters
+                        SerialExporters = pipeline.SerialExporters,
+                        GrpcExporters = pipeline.GrpcExporters
                     });   
                 }
             }
@@ -98,7 +100,7 @@ public class SerialReceiver : ReceiverBase
                     var handlerResults = ResultSafe(handler.HandleAsync(ReceiverType.SERIAL, param)).Result;
 
                     if (handlerResults != null) {
-                        ExportResults(handlerResults, pipeline.HttpExporters, pipeline.SerialExporters);
+                        ExportResults(handlerResults, pipeline.HttpExporters, pipeline.SerialExporters, pipeline.GrpcExporters);
                     }
                 }
                 catch (Exception e)
@@ -125,4 +127,5 @@ class SerialPipeline {
     public HandlerBase Handler { get; set; }
     public IEnumerable<HttpExporterOptions> HttpExporters { get; set; }
     public IEnumerable<SerialExporterOptions> SerialExporters { get; set; }
+    public IEnumerable<GrpcExporterOptions> GrpcExporters { get; set; }
 }

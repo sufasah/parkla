@@ -19,8 +19,9 @@ public class HttpReceiver : ReceiverBase
         ILogger<HttpReceiver> logger,
         HttpExporter httpExporter,
         SerialExporter serialExporter,
+        GrpcExporter grpcExporter,
         IOptions<CollectorOptions> options
-    ) : base(logger, httpExporter, serialExporter)
+    ) : base(logger, httpExporter, serialExporter, grpcExporter)
     {
         _logger = logger;
         _httpExporter = httpExporter;
@@ -63,7 +64,8 @@ public class HttpReceiver : ReceiverBase
                     httpPipelines.Pipelines.Add(new() {
                         Handler = httpReceiver.Handler,
                         HttpExporters = pipeline.HttpExporters,
-                        SerialExporters = pipeline.SerialExporters
+                        SerialExporters = pipeline.SerialExporters,
+                        GrpcExporters = pipeline.GrpcExporters
                     });
                 }
             }
@@ -82,6 +84,9 @@ public class HttpReceiver : ReceiverBase
         foreach (var httpPipeline in httpPipelines.Pipelines)
         {
             var handler = httpPipeline.Handler;
+            var httpExporters = httpPipeline.HttpExporters;
+            var serialExporters = httpPipeline.SerialExporters;
+            var grpcExporters = httpPipeline.GrpcExporters;
             var task = Task.Run(async () =>
             {
                 _logger.LogInformation("HttpReceiver: Executing handler with name '{}' for path '{}'", handler.GetType().Name, httpPipelines.Endpoint);
@@ -94,7 +99,7 @@ public class HttpReceiver : ReceiverBase
 
                     if (handlerResults != null)
                     {
-                        ExportResults(handlerResults, httpPipeline.HttpExporters, httpPipeline.SerialExporters);
+                        ExportResults(handlerResults, httpExporters, serialExporters, grpcExporters);
                     }
                 }
                 catch (Exception e)
@@ -124,4 +129,5 @@ public class HttpPipeline {
     public HandlerBase Handler { get; set; }
     public HttpExporterOptions[] HttpExporters { get; set; }
     public SerialExporterOptions[] SerialExporters { get; set; }
+    public GrpcExporterOptions[] GrpcExporters { get; set; }
 }
