@@ -1,14 +1,10 @@
-using System.Text;
-using Collector;
-using Google.Protobuf;
-using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
-using Grpc.Net.Client;
 using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Generators;
 using Parkla.CollectorService.Options;
 using Parkla.Core.DTOs;
-using static Collector.Collector;
+using Parkla.Protobuf;
+using static Parkla.Protobuf.Collector;
 
 namespace Parkla.CollectorService.Exporters;
 public class GrpcExporter
@@ -60,11 +56,11 @@ public class GrpcExporter
         }
     }
 
-    public async Task ExportAsync(ParkSpaceStatusDto dto, string address)
+    public async Task ExportAsync(ParkSpaceStatusDto dto, string group, string address)
     {
-        await ExportAsync(new ParkSpaceStatusDto[]{dto}, address);
+        await ExportAsync(new ParkSpaceStatusDto[]{dto}, group, address);
     }
-    public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, string address)
+    public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, string group, string address)
     {
         if(!dtos.Any()) return;
 
@@ -78,6 +74,7 @@ public class GrpcExporter
         var data = new Data();
         string logStr;
         
+        data.Group = group;
         foreach (var dto in dtos)
         {
             data.DataList.Add(Any.Pack(

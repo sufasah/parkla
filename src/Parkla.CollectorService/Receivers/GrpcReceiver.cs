@@ -1,4 +1,4 @@
-using Collector;
+using Parkla.Protobuf;
 using Grpc.Core;
 using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Exporters;
@@ -13,7 +13,7 @@ public class GrpcReceiver : ReceiverBase
     private readonly HttpExporter _httpExporter;
     private readonly SerialExporter _serialExporter;
     private readonly IOptions<CollectorOptions> _options;
-    private readonly List<GrpcPipeline> _grpcPipelines = new();
+    private readonly List<GrpcPipelines> _grpcPipelinesList = new();
 
     private bool Started { get; set; } = false;
 
@@ -47,7 +47,17 @@ public class GrpcReceiver : ReceiverBase
                     continue;
                 
                 foreach(var grpcReceiver in pipeline.GrpcReceivers) {
-                    _grpcPipelines.Add(new() {
+                    var grpcPipelines = _grpcPipelinesList.Find(x => x.Group == grpcReceiver.Group);
+
+                    if(grpcPipelines == null) {
+                        grpcPipelines = new(){
+                            Group = grpcReceiver.Group,
+                            Pipelines = new()
+                        };
+                        _grpcPipelinesList.Add(grpcPipelines);
+                    }
+
+                    grpcPipelines.Pipelines.Add(new() {
                         Handler = grpcReceiver.Handler,
                         SerialExporters = pipeline.SerialExporters,
                         GrpcExporters = pipeline.GrpcExporters,
@@ -63,7 +73,10 @@ public class GrpcReceiver : ReceiverBase
 
     public async Task ReceiveAsync(Data data, ServerCallContext context) {
         var tasks = new List<Task>();
-        foreach(var pipeline in _grpcPipelines) {
+        var grpcPipelines = _grpcPipelinesList.Find(x => x.Group == data.Group);
+        if(grpcPipelines == null) return;
+
+        foreach(var pipeline in grpcPipelines.Pipelines) {
             var handler = pipeline.Handler;
             var httpExporters = pipeline.HttpExporters;
             var serialExporters = pipeline.SerialExporters;
@@ -94,6 +107,7 @@ public class GrpcReceiver : ReceiverBase
 }
 
 public class GrpcPipelines {
+    public string Group { get; set; }
     public List<GrpcPipeline> Pipelines { get; set; }
 }
 

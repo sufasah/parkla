@@ -1,6 +1,4 @@
-using Collector;
-using Google.Protobuf;
-using Google.Protobuf.Reflection;
+using Parkla.Protobuf;
 using Parkla.CollectorService.Library;
 using Parkla.Core.DTOs;
 using Parkla.Core.Enums;

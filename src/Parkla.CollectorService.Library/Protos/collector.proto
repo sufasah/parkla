@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "Collector";
+option csharp_namespace = "Parkla.Protobuf";
 
 package collector;
 
@@ -13,7 +13,8 @@ service Collector {
 }
 
 message Data {
-    repeated google.protobuf.Any dataList = 1;
+    string Group = 1;
+    repeated google.protobuf.Any dataList = 2;
 }
 
 message ParkSpaceStatus {

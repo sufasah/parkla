@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Grpc.Net.Client;
-using static Collector.Collector;
+using static Parkla.Protobuf.Collector;
 
 namespace Parkla.CollectorService.Generators;
 public class GrpcClientPool

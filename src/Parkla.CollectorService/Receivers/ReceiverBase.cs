@@ -41,7 +41,7 @@ public abstract class ReceiverBase
 
         foreach (var exporter in grpcExporters)
         {
-            _grpcExporter.ExportAsync(results, exporter.Address);
+            _grpcExporter.ExportAsync(results, exporter.Group, exporter.Address);
         }
     }
 }

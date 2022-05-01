@@ -1,4 +1,4 @@
-using Collector;
+using Parkla.Protobuf;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 
