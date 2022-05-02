@@ -93,7 +93,7 @@ app.UseEndpoints(builder =>
     builder.MapGrpcService<CollectorService>();
 
     var httpPipes = HttpReceiverElem.HttpPipes;
-    var endpointPipesMap = new Dictionary<string, List<Pipe>>();
+    var endpointPipesMap = new Dictionary<string, List<Pipe>>(StringComparer.OrdinalIgnoreCase);
     
     foreach (var pipe in httpPipes)
     {

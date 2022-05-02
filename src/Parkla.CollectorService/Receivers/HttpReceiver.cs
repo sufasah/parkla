@@ -1,9 +1,5 @@
-using System.Collections.ObjectModel;
-using Microsoft.Extensions.Options;
-using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Library;
 using Parkla.CollectorService.OptionsManager;
-using Parkla.CollectorService.Options;
 
 namespace Parkla.CollectorService.Receivers;
 public class HttpReceiver : ReceiverBase
@@ -11,8 +7,6 @@ public class HttpReceiver : ReceiverBase
     private readonly object _startLock = new();
     private readonly ILogger<HttpReceiver> _logger;
     private readonly ParklaOptionsManager _parklaOptionsManager;
-
-    private bool Started { get; set; } = false;
 
     public HttpReceiver(
         ILogger<HttpReceiver> logger,

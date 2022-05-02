@@ -8,7 +8,7 @@ public abstract class ReceiverBase
 {
     private readonly ILogger _logger;
     private readonly object _startLock = new();
-    private bool Started { get; set; } = false;
+    public bool Started { get; private set; } = false;
 
     public ReceiverBase(
         ILogger logger
