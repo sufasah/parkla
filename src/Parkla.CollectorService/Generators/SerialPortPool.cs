@@ -2,19 +2,12 @@ using System.IO.Ports;
 using System.Collections.Concurrent;
 
 namespace Parkla.CollectorService.Generators;
-public class SerialPortPool
+public static class SerialPortPool
 {
     // needed fast in searching
-    private readonly ConcurrentDictionary<string, SerialPort> _serialPorts = new();
-    private readonly ILogger<SerialPortPool> _logger;
+    private static readonly ConcurrentDictionary<string, SerialPort> _serialPorts = new();
 
-    public SerialPortPool(
-        ILogger<SerialPortPool> logger
-    )
-    {
-        _logger = logger;
-    }
-    public SerialPort? GetInstance(string portName) {
+    public static SerialPort? GetInstance(string portName, ILogger? logger = null) {
 
         var isGot = _serialPorts.TryGetValue(portName, out var serialPort);
 
@@ -26,7 +19,8 @@ public class SerialPortPool
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "SerialPortPool: Serial port with {} port name could not be opened", portName);
+                if(logger != null)
+                    logger.LogError(e, "SerialPortPool: Serial port with {} port name could not be opened", portName);
                 return null;
             }
         }

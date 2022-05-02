@@ -1,87 +1,36 @@
 using System.IO.Ports;
-using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Generators;
 using Parkla.CollectorService.Library;
-using Parkla.CollectorService.Options;
+using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
 public class SerialReceiver : ReceiverBase
 {
     private readonly ILogger<SerialReceiver> _logger;
-    private readonly HttpExporter _httpExporter;
-    private readonly SerialExporter _serialExporter;
-    private readonly IOptions<CollectorOptions> _options;
-    private readonly SerialPortPool _serialPortPool;
-    private readonly List<SerialPipelines> _serialPipelinesList = new();
-    private readonly object _startLock = new();
-    private bool Started { get; set; } = false;
-
+    private readonly ParklaOptionsManager _parklaOptionsManager;
     public SerialReceiver(
         ILogger<SerialReceiver> logger,
-        HttpExporter httpExporter,
-        SerialExporter serialExporter,
-        GrpcExporter grpcExporter,
-        IOptions<CollectorOptions> options,
-        SerialPortPool serialPortPool
-    ) : base(logger, httpExporter, serialExporter, grpcExporter)
+        ParklaOptionsManager parklaOptionsManager   
+    ) : base(logger)
     {
         _logger = logger;
-        _httpExporter = httpExporter;
-        _serialExporter = serialExporter;
-        _options = options;
-        _serialPortPool = serialPortPool;
+        _parklaOptionsManager = parklaOptionsManager; 
     }
-    public void Start()
+    protected override void DoStart()
     {
-        lock (_startLock)
+        foreach (var pipe in SerialReceiverElem.SerialPipes)
         {
-            if (Started)
-            {
-                _logger.LogWarning("SerialReceiver.StartAsnyc: SerialReceiver is already started.");
-                return;
-            }
-
-            foreach (var pipeline in _options.Value.Pipelines)
-            {
-                var serialReceivers = pipeline.SerialReceivers;
-                if (serialReceivers.Length == 0) continue;
-
-                foreach (var serialReceiver in serialReceivers)
-                {
-                    var serialPipelines = _serialPipelinesList.Find(x => x.SerialPort.PortName == serialReceiver.PortName);
-                    
-                    if(serialPipelines == null) {
-                        var serialPort = _serialPortPool.GetInstance(serialReceiver.PortName);
-                        
-                        if(serialPort == null) {
-                            //if port name will be available other receivers with same serial port can work but this one's handler won't exist 
-                            continue;
-                        }
-                        serialPipelines = new() {
-                            SerialPort = serialPort,
-                            Pipelines = new()
-                        };
-                        serialPort.DataReceived += MakeDataReceived(serialPort, serialPipelines);
-                        _serialPipelinesList.Add(serialPipelines);
-                    }
-
-                    serialPipelines.Pipelines.Add(new() {
-                        Handler = serialReceiver.Handler,
-                        HttpExporters = pipeline.HttpExporters,
-                        SerialExporters = pipeline.SerialExporters,
-                        GrpcExporters = pipeline.GrpcExporters
-                    });   
-                }
-            }
-
-            Started = true;
-            _logger.LogInformation("START: SerialReceiver is started");
+            var receiver = (SerialReceiverElem) pipe.Receiver;
+            var serialPort = receiver.SerialPort;
+            
+            if(serialPort != null)
+                serialPort.DataReceived += MakeDataReceived(serialPort, pipe);
         }
     }
 
-    private SerialDataReceivedEventHandler MakeDataReceived(SerialPort serialPort, SerialPipelines serialPipelines)
+    private SerialDataReceivedEventHandler MakeDataReceived(SerialPort serialPort, Pipe serialPipe)
     {
         var param = new SerialReceiverParam
         {
@@ -92,21 +41,19 @@ public class SerialReceiver : ReceiverBase
 
         return (object sender, SerialDataReceivedEventArgs args) =>
         {
-            foreach(var pipeline in serialPipelines.Pipelines) {
-                var handler = pipeline.Handler;
-                // _logger.LogInformation("SerialReceiver: Executing handler with name '{}'", handler.GetType().Name);
-                try {
-                    param.SerialDataReceivedEventArgs = args;
-                    var handlerResults = ResultSafe(handler.HandleAsync(ReceiverType.SERIAL, param)).Result;
+            var handler = serialPipe.Receiver.Handler;
+            // _logger.LogInformation("SerialReceiver: Executing handler with name '{}'", handler.GetType().Name);
+            try {
+                param.SerialDataReceivedEventArgs = args;
+                var handlerResults = ResultSafe(handler.HandleAsync(ReceiverType.SERIAL, param)).Result;
 
-                    if (handlerResults != null) {
-                        ExportResults(handlerResults, pipeline.HttpExporters, pipeline.SerialExporters, pipeline.GrpcExporters);
-                    }
+                if (handlerResults != null) {
+                    ExportResultsAsync(handlerResults, serialPipe.Exporters);
                 }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "An error occured while handling the request '{}' handler. The result is not generated so it will not be exported.", handler.GetType().Name);
-                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occured while handling the request '{}' handler. The result is not generated so it will not be exported.", handler.GetType().Name);
             }
         };
     }
@@ -116,16 +63,4 @@ public class SerialReceiver : ReceiverBase
         var taskResult = await task.ConfigureAwait(false);
         return taskResult;
     }
-}
-
-class SerialPipelines {
-    public SerialPort SerialPort { get; set; }
-    public List<SerialPipeline> Pipelines { get; set; }
-}
-
-class SerialPipeline {
-    public HandlerBase Handler { get; set; }
-    public IEnumerable<HttpExporterOptions> HttpExporters { get; set; }
-    public IEnumerable<SerialExporterOptions> SerialExporters { get; set; }
-    public IEnumerable<GrpcExporterOptions> GrpcExporters { get; set; }
 }

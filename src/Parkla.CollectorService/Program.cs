@@ -1,189 +1,29 @@
 using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Options;
-using Parkla.CollectorService.Library;
-using System.Reflection;
-using Parkla.CollectorService.Handlers;
 using Parkla.CollectorService.Receivers;
 using Parkla.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Parkla.CollectorService.Generators;
 using Collector;
-
-var LoadCollectorOptions = (CollectorOptions opt, ConfigurationManager configuration) => {
-    var GetHandler = (string handlerStr, Type defaultHandler) => {
-        if (string.IsNullOrWhiteSpace(handlerStr) || handlerStr == "default")
-            return HandlerBase.GetInstance(defaultHandler)!;
-
-        Type? handlerType = Assembly.GetExecutingAssembly()
-            .GetType(handlerStr);
-        
-        if(handlerType == null) {
-            if (opt.pluginAssembly == null)
-                throw new DllNotFoundException($"Plugin library could not found while finding handler '{handlerStr}'");
-
-            handlerType = opt.pluginAssembly.ExportedTypes
-                .FirstOrDefault(x => x.Name == handlerStr);
-
-            if (handlerType == null)
-                throw new TypeUnloadedException($"Handler type '{handlerStr}' could not found in loaded plugin library");
-        }
-
-        var handler = HandlerBase.GetInstance(handlerType);
-        
-        if(handler == null)
-            throw new InvalidCastException($"Handler with '{handlerStr}' value is not a correctly built handler class. Check this handler class is a valid HandlerBase child");
-        
-        return handler;
-    };
-    
-    var GetHttpReceiver = (IConfigurationSection receiver) => {
-        var httpReciever = receiver.Get<HttpReceiverOptions>();
-        var handlerStr = receiver.GetSection("handler").Value;
-        httpReciever.Handler = GetHandler(handlerStr, typeof(DefaultHttpHandler));
-
-        if (string.IsNullOrWhiteSpace(httpReciever.Endpoint))
-            throw new ArgumentNullException("Endpoint", "HttpReceiver Endpoint configuration value must be a valid http url");
-            
-        return httpReciever;
-    };
-
-    var GetGrpcReceiver = (IConfigurationSection receiver) => {
-        var grpcReiver = receiver.Get<GrpcReceiverOptions>();
-        var handlerStr = receiver.GetSection("handler").Value;
-        grpcReiver.Handler = GetHandler(handlerStr, typeof(DefualtGrpcHandler));
-
-        if (string.IsNullOrWhiteSpace(grpcReiver.Group))
-            throw new ArgumentNullException("Group", "GrpcReceiver Group configuration value must be given");
-            
-        return grpcReiver;
-    };
-
-    var GetSerialReceiver = (IConfigurationSection receiver) => {
-        var serialReceiver = receiver.Get<SerialReceiverOptions>();
-        var handlerStr = receiver.GetSection("handler").Value;
-        serialReceiver.Handler = GetHandler(handlerStr, typeof(DefaultSerialHandler));
-
-        if (string.IsNullOrWhiteSpace(serialReceiver.PortName))
-            throw new ArgumentNullException("PortName", "SerialReceiver PortName configuration value must be given");
-
-        return serialReceiver;
-    };
-
-    var GetHttpExporter = (IConfigurationSection exporter) => {
-        var httpExporter = exporter.Get<HttpExporterOptions>();
-        if(string.IsNullOrWhiteSpace(httpExporter.Url.OriginalString))
-            throw new ArgumentNullException("Url", "HttpExporter Url value must be a valid http url");
-        return httpExporter;
-    };
-
-    var GetSerialExporter = (IConfigurationSection exporter) => {
-        var serialExporter = exporter.Get<SerialExporterOptions>();
-        if (string.IsNullOrWhiteSpace(serialExporter.PortName))
-            throw new ArgumentNullException("Url", "SerialExporter PortName value must be given");
-        return serialExporter;
-    };
-
-    var GetGrpcExporter = (IConfigurationSection exporter) => {
-        var grpcExporter = exporter.Get<GrpcExporterOptions>();
-        if (string.IsNullOrWhiteSpace(grpcExporter.Group))
-            throw new ArgumentNullException("Group", "GrpcExporter group value must be given");
-        if (string.IsNullOrWhiteSpace(grpcExporter.Address))
-            throw new ArgumentNullException("Address", "GrpcExporter address value must be given");
-        return grpcExporter;
-    };
-
-    var GetPipeline = (IConfigurationSection pipeline) => {
-        var httpReceivers = new List<HttpReceiverOptions>();
-        var serialReceivers = new List<SerialReceiverOptions>();
-        var grpcReceivers = new List<GrpcReceiverOptions>();
-        var httpExporters = new List<HttpExporterOptions>();
-        var serialExporters = new List<SerialExporterOptions>();
-        var grpcExporters = new List<GrpcExporterOptions>();
-
-        var receivers = pipeline.GetSection("receivers")
-            .GetChildren()
-            .ToArray();
-        
-        var exporters = pipeline.GetSection("exporters")
-            .GetChildren()
-            .ToArray();
-
-        foreach(var receiver in receivers) {
-            var type = receiver.GetSection("type").Get<ReceiverType?>();
-            if(type == null) continue;
-
-            if (type == ReceiverType.HTTP)
-                httpReceivers.Add(GetHttpReceiver(receiver));
-            else if (type == ReceiverType.SERIAL)
-                serialReceivers.Add(GetSerialReceiver(receiver));
-            else if (type == ReceiverType.GRPC)
-                grpcReceivers.Add(GetGrpcReceiver(receiver));
-        }
-
-        foreach(var exporter in exporters) {
-            var type = exporter.GetSection("type").Get<ExporterType?>();
-            if (type == null) continue;
-
-            if (type == ExporterType.HTTP)
-                httpExporters.Add(GetHttpExporter(exporter));
-            else if (type == ExporterType.SERIAL)
-                serialExporters.Add(GetSerialExporter(exporter));
-            else if (type == ExporterType.GRPC)
-                grpcExporters.Add(GetGrpcExporter(exporter));
-        }
-
-        if (!httpReceivers.Any() && !serialReceivers.Any() && !httpExporters.Any() && !serialExporters.Any())
-            return null;
-
-        return new PipelineOptions() {
-            HttpReceivers = httpReceivers.ToArray(),
-            SerialReceivers = serialReceivers.ToArray(),
-            HttpExporters = httpExporters.ToArray(),
-            SerialExporters = serialExporters.ToArray(),
-            GrpcReceivers = grpcReceivers.ToArray(),
-            GrpcExporters = grpcExporters.ToArray()
-        };
-    };
-
-    // -------------------------- LOAD PLUGIN LIBRARY
-    var pluginLibrary = configuration.GetValue<string>("parkla:pluginLibrary");
-    if (!string.IsNullOrWhiteSpace(pluginLibrary)) {
-        var dllFile = new FileInfo(
-            pluginLibrary.Contains('/') || pluginLibrary.Contains('\\')
-            ? pluginLibrary
-            : Path.Combine(".", pluginLibrary)
-        );
-        opt.pluginAssembly = Assembly.LoadFrom(dllFile.FullName);
-    }
-
-    // -------------------------- LOAD PIPELINES
-    var pipelines = new List<PipelineOptions>();
-    var children = configuration.GetSection("parkla:pipelines").GetChildren();
-
-    foreach(var child in children)
-        pipelines.Add(GetPipeline(child));
-
-    opt.Pipelines = pipelines.ToArray();
-
-};
+using Parkla.CollectorService.OptionsManager;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureServices(services =>
 {
     services.AddOptions();
-    services.Configure<CollectorOptions>((opt) => LoadCollectorOptions(opt, builder.Configuration));
+    //services.Configure<CollectorOptions>((opt) => LoadCollectorOptions(opt, builder.Configuration));
+    services.Configure<ParklaOptions>(builder.Configuration.GetSection("parkla"));
+
     services.AddGrpc();
 
     services.AddSingleton<HttpExporter>();
     services.AddSingleton<SerialExporter>();
+    services.AddSingleton<GrpcExporter>();
     services.AddSingleton<SerialReceiver>();
     services.AddSingleton<HttpReceiver>();
     services.AddSingleton<GrpcReceiver>();
-    services.AddSingleton<GrpcExporter>();
-
-    services.AddSingleton<GrpcClientPool>();
-    services.AddSingleton<SerialPortPool>();
+    
+    services.AddSingleton<ParklaOptionsManager>();
 });
 
 builder.WebHost.ConfigureServices(services =>
@@ -204,23 +44,31 @@ builder.WebHost.ConfigureServices(services =>
 
 var app = builder.Build();
 
+var s = app.Services;
+var parklaOptionsManager = s.GetService<ParklaOptionsManager>()!;
+var logger = s.GetService<ILogger<Program>>()!;
+var httpReceiver = s.GetService<HttpReceiver>()!;
 
-var httpReceiver = app.Services.GetService<HttpReceiver>()!;
-var serialReceiver = app.Services.GetService<SerialReceiver>()!;
-var grpcReceiver = app.Services.GetService<GrpcReceiver>()!;
-var httpExporter = app.Services.GetService<HttpExporter>()!;
-var serialExporter = app.Services.GetService<SerialExporter>()!;
-var grpcExporter = app.Services.GetService<GrpcExporter>()!;
-var logger = app.Services.GetService<ILogger<Program>>()!;
+var exporters = new ExporterBase[] {
+    s.GetService<HttpExporter>()!,
+    s.GetService<SerialExporter>()!,
+    s.GetService<GrpcExporter>()!
+};
+var receivers = new ReceiverBase[] {
+    httpReceiver,
+    s.GetService<SerialReceiver>()!,
+    s.GetService<GrpcReceiver>()!
+};
+
+parklaOptionsManager.Configure();
 
 var startTask = Task.Run(() =>
 {
     logger.LogInformation("START: Starting receiver and exporters");
-    serialExporter.Start();
-    grpcExporter.Start();
-    serialReceiver.Start();
-    httpReceiver.Start();
-    grpcReceiver.Start();
+    foreach (var exporter in exporters)
+        exporter.Start();
+    foreach (var receiver in receivers)
+        receiver.Start();
 });
 
 if (!app.Environment.IsDevelopment())
@@ -244,12 +92,28 @@ app.UseEndpoints(builder =>
     
     builder.MapGrpcService<CollectorService>();
 
-    var httpPipelinesList = httpReceiver.GetHttpPipelinesList();
+    var httpPipes = HttpReceiverElem.HttpPipes;
+    var endpointPipesMap = new Dictionary<string, List<Pipe>>();
     
-    foreach (var httpPipelines in httpPipelinesList)
+    foreach (var pipe in httpPipes)
     {
-        builder.MapPost(httpPipelines.Endpoint, async (HttpContext httpContext) => {
-            await httpReceiver.ReceiveAsync(httpContext, httpPipelines);
+        var receiver = (HttpReceiverElem)pipe.Receiver;
+        var isGot = endpointPipesMap.TryGetValue(receiver.Endpoint, out var pipes);
+
+        if(!isGot) {
+            pipes = new();
+            endpointPipesMap.Add(receiver.Endpoint, pipes);
+        }
+
+        pipes!.Add(pipe);
+    }
+
+    foreach(var endpointPipes in endpointPipesMap) {
+        var endpoint = endpointPipes.Key;
+        var pipes = endpointPipes.Value.ToArray();
+        
+        builder.MapPost(endpoint, async (HttpContext httpContext) => {
+            await httpReceiver.ReceiveAsync(httpContext, pipes);
         });
     }
 

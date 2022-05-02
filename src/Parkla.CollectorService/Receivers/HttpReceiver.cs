@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Library;
+using Parkla.CollectorService.OptionsManager;
 using Parkla.CollectorService.Options;
 
 namespace Parkla.CollectorService.Receivers;
@@ -9,87 +10,36 @@ public class HttpReceiver : ReceiverBase
 {
     private readonly object _startLock = new();
     private readonly ILogger<HttpReceiver> _logger;
-    private readonly List<HttpPipelines> _httpPipelinesList = new();
-    private readonly HttpExporter _httpExporter;
-    private readonly SerialExporter _serialExporter;
-    private readonly IOptions<CollectorOptions> _options;
+    private readonly ParklaOptionsManager _parklaOptionsManager;
+
     private bool Started { get; set; } = false;
 
     public HttpReceiver(
         ILogger<HttpReceiver> logger,
-        HttpExporter httpExporter,
-        SerialExporter serialExporter,
-        GrpcExporter grpcExporter,
-        IOptions<CollectorOptions> options
-    ) : base(logger, httpExporter, serialExporter, grpcExporter)
+        ParklaOptionsManager parklaOptionsManager
+    ) : base(logger)
     {
         _logger = logger;
-        _httpExporter = httpExporter;
-        _serialExporter = serialExporter;
-        _options = options;
+        _parklaOptionsManager = parklaOptionsManager;
     }
 
-    public void Start()
-    {
-        lock (_startLock)
-        {
-            if (Started)
-            {
-                _logger.LogWarning("HttpReceiver.Start: HttpReceiver is already started.");
-                return;
-            }
+    protected override void DoStart(){}
 
-            foreach (var pipeline in _options.Value.Pipelines)
-            {
-                var httpReceivers = pipeline.HttpReceivers;
-                if (httpReceivers.Length == 0) continue;
-
-                foreach(var httpReceiver in httpReceivers) {
-                    var httpPipelines = _httpPipelinesList.Find(x => 
-                        string.Compare(
-                            x.Endpoint, 
-                            httpReceiver.Endpoint, 
-                            StringComparison.OrdinalIgnoreCase
-                        ) == 0
-                    );
-                    
-                    if(httpPipelines == null) {
-                        httpPipelines = new(){
-                            Endpoint = httpReceiver.Endpoint,
-                            Pipelines = new()
-                        };
-                        _httpPipelinesList.Add(httpPipelines);
-                    }
-
-                    httpPipelines.Pipelines.Add(new() {
-                        Handler = httpReceiver.Handler,
-                        HttpExporters = pipeline.HttpExporters,
-                        SerialExporters = pipeline.SerialExporters,
-                        GrpcExporters = pipeline.GrpcExporters
-                    });
-                }
-            }
-
-            Started = true;
-            _logger.LogInformation("START: HttpReceiver is started");
-        }
-    }
-
-    public async Task ReceiveAsync(HttpContext context, HttpPipelines httpPipelines)
+    public async Task ReceiveAsync(HttpContext context, Pipe[] httpPipes)
     {
         if (!Started)
             throw new InvalidOperationException("HttpReceiver is not started yet.");
         
         var tasks = new List<Task>();
-        foreach (var httpPipeline in httpPipelines.Pipelines)
+        foreach (var pipe in httpPipes)
         {
-            var handler = httpPipeline.Handler;
-            var httpExporters = httpPipeline.HttpExporters;
-            var serialExporters = httpPipeline.SerialExporters;
-            var grpcExporters = httpPipeline.GrpcExporters;
+            var receiver = (HttpReceiverElem) pipe.Receiver;
+            var handler = receiver.Handler;
+            var exporters = pipe.Exporters;
+
             var task = Task.Run(async () =>
             {
-                _logger.LogInformation("HttpReceiver: Executing handler with name '{}' for path '{}'", handler.GetType().Name, httpPipelines.Endpoint);
+                _logger.LogInformation("HttpReceiver: Executing handler with name '{}' for path '{}'", handler.GetType().Name, receiver.Endpoint);
                 try
                 {
                     var handlerResults = await handler.HandleAsync(ReceiverType.HTTP, new HttpReceiverParam {
@@ -99,12 +49,12 @@ public class HttpReceiver : ReceiverBase
 
                     if (handlerResults != null)
                     {
-                        ExportResults(handlerResults, httpExporters, serialExporters, grpcExporters);
+                        ExportResultsAsync(handlerResults, exporters);
                     }
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "An error occured while handling the request with '{}' handler for '{}' path. The result is not generated so not exported.", handler.GetType().Name, httpPipelines.Endpoint);
+                    _logger.LogError(e, "An error occured while handling the request with '{}' handler for '{}' path. The result is not generated so not exported.", handler.GetType().Name, receiver.Endpoint);
                 }
             });
 
@@ -113,21 +63,4 @@ public class HttpReceiver : ReceiverBase
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
     }
-
-    public ReadOnlyCollection<HttpPipelines> GetHttpPipelinesList() {
-        return _httpPipelinesList.AsReadOnly();
-    }
-}
-
-public class HttpPipelines
-{
-    public string Endpoint { get; set; }
-    public List<HttpPipeline> Pipelines { get; set; }
-}
-
-public class HttpPipeline {
-    public HandlerBase Handler { get; set; }
-    public HttpExporterOptions[] HttpExporters { get; set; }
-    public SerialExporterOptions[] SerialExporters { get; set; }
-    public GrpcExporterOptions[] GrpcExporters { get; set; }
 }

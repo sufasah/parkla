@@ -4,83 +4,41 @@ using Microsoft.Extensions.Options;
 using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Library;
 using Parkla.CollectorService.Options;
+using Parkla.CollectorService.OptionsManager;
 
 namespace Parkla.CollectorService.Receivers;
 public class GrpcReceiver : ReceiverBase
 {
-    private readonly object _startLock = new();
     private readonly ILogger<GrpcReceiver> _logger;
-    private readonly HttpExporter _httpExporter;
-    private readonly SerialExporter _serialExporter;
-    private readonly IOptions<CollectorOptions> _options;
-    private readonly List<GrpcPipelines> _grpcPipelinesList = new();
+    private readonly ParklaOptionsManager _parklaOptionsManager;
 
     private bool Started { get; set; } = false;
 
     public GrpcReceiver(
         ILogger<GrpcReceiver> logger,
-        HttpExporter httpExporter,
-        SerialExporter serialExporter,
-        GrpcExporter grpcExporter,
-        IOptions<CollectorOptions> options
-    ) : base(logger, httpExporter, serialExporter, grpcExporter)
+        ParklaOptionsManager parklaOptionsManager        
+    ) : base(logger)
     {
         _logger = logger;
-        _httpExporter = httpExporter;
-        _serialExporter = serialExporter;
-        _options = options;
+        _parklaOptionsManager = parklaOptionsManager; 
     }
 
-    public void Start()
-    {
-        lock (_startLock)
-        {
-            if (Started)
-            {
-                _logger.LogWarning("HttpReceiver.Start: HttpReceiver is already started.");
-                return;
-            }
-
-            foreach (var pipeline in _options.Value.Pipelines)
-            {
-                if(pipeline.GrpcReceivers.Length == 0) 
-                    continue;
-                
-                foreach(var grpcReceiver in pipeline.GrpcReceivers) {
-                    var grpcPipelines = _grpcPipelinesList.Find(x => x.Group == grpcReceiver.Group);
-
-                    if(grpcPipelines == null) {
-                        grpcPipelines = new(){
-                            Group = grpcReceiver.Group,
-                            Pipelines = new()
-                        };
-                        _grpcPipelinesList.Add(grpcPipelines);
-                    }
-
-                    grpcPipelines.Pipelines.Add(new() {
-                        Handler = grpcReceiver.Handler,
-                        SerialExporters = pipeline.SerialExporters,
-                        GrpcExporters = pipeline.GrpcExporters,
-                        HttpExporters = pipeline.HttpExporters
-                    });
-                }
-            }
-
-            Started = true;
-            _logger.LogInformation("START: HttpReceiver is started");
-        }
-    }
+    protected override void DoStart(){}
 
     public async Task ReceiveAsync(Data data, ServerCallContext context) {
         var tasks = new List<Task>();
-        var grpcPipelines = _grpcPipelinesList.Find(x => x.Group == data.Group);
-        if(grpcPipelines == null) return;
+        
+        var grpcPipes = GrpcReceiverElem.GrpcPipes.FindAll(x => {
+            var receiver = (GrpcReceiverElem)x.Receiver;
+            return receiver.Group == data.Group;
+        });
 
-        foreach(var pipeline in grpcPipelines.Pipelines) {
-            var handler = pipeline.Handler;
-            var httpExporters = pipeline.HttpExporters;
-            var serialExporters = pipeline.SerialExporters;
-            var grpcExporters = pipeline.GrpcExporters;
+        if(grpcPipes == null) return;
+
+        foreach(var pipe in grpcPipes) {
+            var receiver = (GrpcReceiverElem) pipe.Receiver;
+            var exporters = pipe.Exporters;
+            var handler = receiver.Handler;
 
             var task = Task.Run(async () => {
                 _logger.LogInformation("GrpcReceiver: Executing handler with name '{}'", handler.GetType().Name);
@@ -89,10 +47,10 @@ public class GrpcReceiver : ReceiverBase
                         Data = data,
                         Context = context,
                         Logger = _logger
-                    });
+                    }).ConfigureAwait(false);
 
                     if (handlerResults != null) {
-                        ExportResults(handlerResults, httpExporters, serialExporters, grpcExporters);
+                        ExportResultsAsync(handlerResults, exporters);
                     }
                 }
                 catch (Exception e)
@@ -104,16 +62,4 @@ public class GrpcReceiver : ReceiverBase
         }
         await Task.WhenAll(tasks);
     }
-}
-
-public class GrpcPipelines {
-    public string Group { get; set; }
-    public List<GrpcPipeline> Pipelines { get; set; }
-}
-
-public class GrpcPipeline {
-    public HandlerBase Handler { get; set; }
-    public HttpExporterOptions[] HttpExporters { get; set; }
-    public SerialExporterOptions[] SerialExporters { get; set; }
-    public GrpcExporterOptions[] GrpcExporters { get; set; }
 }

@@ -3,19 +3,11 @@ using Grpc.Net.Client;
 using static Parkla.Protobuf.Collector;
 
 namespace Parkla.CollectorService.Generators;
-public class GrpcClientPool
+public static class GrpcClientPool
 {
     // needed fast in searching
-    private readonly ConcurrentDictionary<string, CollectorClient> _clients = new();
-    private readonly ILogger<GrpcClientPool> _logger;
-
-    public GrpcClientPool(
-        ILogger<GrpcClientPool> logger
-    )
-    {
-        _logger = logger;
-    }
-    public CollectorClient? GetInstance(string address) {
+    private static readonly ConcurrentDictionary<string, CollectorClient> _clients = new();
+    public static CollectorClient? GetInstance(string address, ILogger? logger = null) {
 
         var isGot = _clients.TryGetValue(address, out var client);
 
@@ -26,7 +18,8 @@ public class GrpcClientPool
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "GrpcClientPool: GrpcClient with {} address could not be opened", address);
+                if(logger != null)
+                    logger.LogError(e, "GrpcClientPool: GrpcClient with {} address could not be opened", address);
                 return null;
             }
         }

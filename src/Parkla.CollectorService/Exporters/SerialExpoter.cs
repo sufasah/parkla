@@ -1,86 +1,59 @@
 using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
-using Parkla.CollectorService.Generators;
-using Parkla.CollectorService.Options;
+using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Exporters;
-public class SerialExporter
+public class SerialExporter : ExporterBase
 {
-    private readonly object _startLock = new();
-    private bool Started { get; set; } = false;
-    private readonly ConcurrentDictionary<string,SerialPort> _serialPortMap = new();
     private readonly BlockingCollection<SerialQueueItem> _exportQueue = new();
     private readonly ILogger<SerialExporter> _logger;
-    private readonly IOptions<CollectorOptions> _options;
-    private readonly SerialPortPool _serialPortPool;
 
     public SerialExporter(
-        ILogger<SerialExporter> logger,
-        IOptions<CollectorOptions> options,
-        SerialPortPool serialPortPool
-    )
+        ILogger<SerialExporter> logger
+    ) : base(logger)
     {
         _logger = logger;
-        _options = options;
-        _serialPortPool = serialPortPool;
     }
 
-    public void Start() {
-        lock(_startLock) {
-            if (Started)
-            {
-                _logger.LogWarning("SerialExporter.Start: SerialExporter is already started.");
-                return;
-            }
+    protected override void DoStart() {
+        Task.Run(ExportTask);
+    }
 
-            foreach (var pipeline in _options.Value.Pipelines)
-            {
-                var serialExporters = pipeline.SerialExporters;
-                if(serialExporters.Length == 0) continue;
+    public override Task ExportAsync(ParkSpaceStatusDto dto, ExporterElemBase exporterElemBase)
+    {
+        var exporterElem = (SerialExporterElem) exporterElemBase;
+        Enqueue(dto, exporterElem.SerialPort);
+        return Task.CompletedTask;
+    }
 
-                foreach (var serialExporter in serialExporters)
-                {
-                    var serialPort = _serialPortPool.GetInstance(serialExporter.PortName);
-                    if(serialPort == null) {
-                        //if port name will be available other exporters with same serial port can work but this one's handler won't exist 
-                        continue;
-                    }
-
-                    _serialPortMap.TryAdd(serialExporter.PortName, serialPort);
-                }
-            }
-            Started = true;
-            Task.Run(ExportTask);
-            _logger.LogInformation("START: SerialExporter is started");
+    public override Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, ExporterElemBase exporterElemBase)
+    {
+        var exporterElem = (SerialExporterElem) exporterElemBase;
+        foreach (var dto in dtos)
+        {
+            Enqueue(dto, exporterElem.SerialPort);
         }
+        return Task.CompletedTask;
     }
 
-    public void Enqueue(ParkSpaceStatusDto dto, string portName)
+    public void Enqueue(ParkSpaceStatusDto dto, SerialPort? serialPort)
     {
         if(!Started)
             throw new InvalidOperationException("SerialExporter is not started yet.");
 
-        var isGot = _serialPortMap.TryGetValue(portName, out var serialPort);
-        
-        if(!isGot) {
-            _logger.LogWarning("SerialExporter.Enqueue: Serial port exporter could not found  {} port name to enqueue. \nParkId='{}', SpaceId='{}', Status='{}' is not enqueued", portName, dto.Parkid, dto.Spaceid, dto.Spaceid);
+        if(serialPort == null) {
+            _logger.LogWarning("SerialExporter.Enqueue: SerialPortExporter could not found the SerialPort to enqueue. \nParkId='{}', SpaceId='{}', Status='{}' is not enqueued", dto.Parkid, dto.Spaceid, dto.Spaceid);
             return;
         }
 
         _exportQueue.Add(new SerialQueueItem {
-            SerialPort = serialPort!,
+            SerialPort = serialPort,
             Dto = dto
         });
     }
-    public void Enqueue(IEnumerable<ParkSpaceStatusDto> dtos, string portName)
-    {
-        foreach(var dto in dtos)
-            Enqueue(dto, portName);
-    }
-
+    
     private void ExportTask() {
         while(true) {
             var queueItem = _exportQueue.Take();
@@ -95,4 +68,6 @@ public class SerialExporter
             }
         }
     }
+
+   
 }

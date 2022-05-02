@@ -1,80 +1,42 @@
 using Google.Protobuf.WellKnownTypes;
-using Microsoft.Extensions.Options;
-using Parkla.CollectorService.Generators;
-using Parkla.CollectorService.Options;
+using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
 using Parkla.Protobuf;
-using static Parkla.Protobuf.Collector;
 
 namespace Parkla.CollectorService.Exporters;
-public class GrpcExporter
+public class GrpcExporter : ExporterBase
 {
-    private readonly object _startLock = new();
-    private bool Started { get; set; } = false;
     private readonly ILogger<GrpcExporter> _logger;
-    private readonly IOptions<CollectorOptions> _options;
-    private readonly GrpcClientPool _grpcClientPool;
-    private readonly Dictionary<string, CollectorClient> _grpcClientMap = new();
 
     public GrpcExporter(
-        ILogger<GrpcExporter> logger,
-        IOptions<CollectorOptions> options,
-        GrpcClientPool grpcClientPool
-    )
+        ILogger<GrpcExporter> logger
+    ) : base(logger)
     {
         _logger = logger;
-        _options = options;
-        _grpcClientPool = grpcClientPool;
     }
     
-    public void Start() {
-        lock(_startLock) {
-            if (Started)
-            {
-                _logger.LogWarning("GrpcExporter.Start: GrpcExporter is already started.");
-                return;
-            }
+    protected override void DoStart() {}
 
-            foreach (var pipeline in _options.Value.Pipelines)
-            {
-                var grpcExporters = pipeline.GrpcExporters;
-                if(grpcExporters.Length == 0) continue;
-
-                foreach (var grpcExporter in grpcExporters)
-                {
-                    var grpcClient = _grpcClientPool.GetInstance(grpcExporter.Address);
-                    if(grpcClient == null) {
-                        //if address will be available other exporters with same serial port can work but this one's handler won't exist 
-                        continue;
-                    }
-
-                    _grpcClientMap.TryAdd(grpcExporter.Address, grpcClient);
-                }
-            }
-            Started = true;
-            _logger.LogInformation("START: GrpcExporter is started");
-        }
-    }
-
-    public async Task ExportAsync(ParkSpaceStatusDto dto, string group, string address)
+    public override async Task ExportAsync(ParkSpaceStatusDto dto, ExporterElemBase exporterElemBase)
     {
-        await ExportAsync(new ParkSpaceStatusDto[]{dto}, group, address);
+        await ExportAsync(new ParkSpaceStatusDto[]{dto}, exporterElemBase);
     }
-    public async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, string group, string address)
+    
+    public override async Task ExportAsync(IEnumerable<ParkSpaceStatusDto> dtos, ExporterElemBase exporterElemBase)
     {
         if(!dtos.Any()) return;
-
-        var isGot = _grpcClientMap.TryGetValue(address, out var grpcClient);
+        var exporterElem = (GrpcExporterElem) exporterElemBase;
+        var grpcClient = exporterElem.Client;
         
-        if(!isGot) {
-            _logger.LogWarning("GrpcExporter: GrpcChannel could not found with {} address to export", address);
+        if(grpcClient == null) {
+            _logger.LogWarning("GrpcExporter: GrpcClient could not found with client to export");
             return;
         }
 
         var data = new Data();
         string logStr;
         
-        data.Group = group;
+        data.Group = exporterElem.Group;
         foreach (var dto in dtos)
         {
             data.DataList.Add(Any.Pack(
@@ -88,12 +50,12 @@ public class GrpcExporter
         }
 
         try {
-            await grpcClient.ReceiveAsync(data);
-            logStr = HttpExporter.LogStrList(dtos, "GrpcExporter", true);
+            await grpcClient!.ReceiveAsync(data);
+            logStr = LogStrList(dtos, "GrpcExporter", true);
             _logger.LogInformation(logStr);
         }
         catch(Exception e) {
-            logStr = HttpExporter.LogStrList(dtos, "GrpcExporter", false);
+            logStr = LogStrList(dtos, "GrpcExporter", false);
             _logger.LogError(e,logStr);
         }
     }

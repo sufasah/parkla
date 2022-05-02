@@ -1,10 +1,8 @@
-using System.Reflection;
-
 namespace Parkla.CollectorService.Options
 {
-    public class CollectorOptions
+    public class ParklaOptions
     {
-        public Assembly pluginAssembly { get; set; }
+        public string PluginLibrary { get; set; }
         public PipelineOptions[] Pipelines { get; set; }
     }
 }

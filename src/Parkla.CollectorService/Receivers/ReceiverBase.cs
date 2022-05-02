@@ -1,5 +1,5 @@
 using Parkla.CollectorService.Exporters;
-using Parkla.CollectorService.Options;
+using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
 
 namespace Parkla.CollectorService.Receivers;
@@ -7,41 +7,44 @@ namespace Parkla.CollectorService.Receivers;
 public abstract class ReceiverBase
 {
     private readonly ILogger _logger;
-    private readonly HttpExporter _httpExporter;
-    private readonly SerialExporter _serialExporter;
-    private readonly GrpcExporter _grpcExporter;
+    private readonly object _startLock = new();
+    private bool Started { get; set; } = false;
 
     public ReceiverBase(
-        ILogger logger,
-        HttpExporter httpExporter,
-        SerialExporter serialExporter,
-        GrpcExporter grpcExporter
+        ILogger logger
     )
     {
         _logger = logger;
-        _httpExporter = httpExporter;
-        _serialExporter = serialExporter;
-        _grpcExporter = grpcExporter;
     }
-    protected void ExportResults(
-        IEnumerable<ParkSpaceStatusDto> results, 
-        IEnumerable<HttpExporterOptions> httpExporters, 
-        IEnumerable<SerialExporterOptions> serialExporters,
-        IEnumerable<GrpcExporterOptions> grpcExporters
+
+    public void Start() {
+        lock (_startLock) {
+            var typeName = GetType().Name;
+            if (Started) {
+                _logger.LogWarning("{}.Start: {} is already started.",typeName, typeName);
+                return;
+            }
+
+            DoStart();
+        
+            Started = true;
+            _logger.LogInformation("START: {} is started", typeName);
+        }
+    }
+
+    protected abstract void DoStart();
+
+    protected async Task ExportResultsAsync(
+        IEnumerable<ParkSpaceStatusDto> results,
+        ExporterElemBase[] exporters
     ) {
         var tasks = new List<Task>();
         
-        foreach (var exporter in httpExporters) {
-            tasks.Add(_httpExporter.ExportAsync(results, exporter.Url));
-        }
-        
-        foreach (var exporter in serialExporters) {
-            _serialExporter.Enqueue(results, exporter.PortName);
+        foreach (var exporter in exporters) {
+            var task = exporter.ExporterReference.ExportAsync(results, exporter);
+            tasks.Add(task);
         }
 
-        foreach (var exporter in grpcExporters)
-        {
-            _grpcExporter.ExportAsync(results, exporter.Group, exporter.Address);
-        }
+        await Task.WhenAll(tasks);
     }
 }
