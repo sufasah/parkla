@@ -3,8 +3,8 @@ using Parkla.CollectorService.Options;
 using Parkla.CollectorService.Receivers;
 using Parkla.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using Collector;
 using Parkla.CollectorService.OptionsManager;
+using Collector;
 
 var builder = WebApplication.CreateBuilder(args);
 

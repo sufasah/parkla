@@ -1,10 +1,7 @@
-using Parkla.Protobuf;
 using Grpc.Core;
-using Microsoft.Extensions.Options;
-using Parkla.CollectorService.Exporters;
 using Parkla.CollectorService.Library;
-using Parkla.CollectorService.Options;
 using Parkla.CollectorService.OptionsManager;
+using Parkla.Protobuf;
 
 namespace Parkla.CollectorService.Receivers;
 public class GrpcReceiver : ReceiverBase
