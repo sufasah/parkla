@@ -13,10 +13,10 @@ public class GrpcExporterElem : ExporterElemBase
     
     public override void ConfigureExporter(ExporterOptions exporter, ExporterBase exporterReference)
     {
-        if (string.IsNullOrWhiteSpace(exporter.Group))
-            throw new ArgumentNullException("Group", "GrpcExporter group value must be given");
         if (string.IsNullOrWhiteSpace(exporter.Address))
             throw new ArgumentNullException("Address", "GrpcExporter address value must be given");
+        if (string.IsNullOrWhiteSpace(exporter.Group))
+            throw new ArgumentNullException("Group", "GrpcExporter group value must be given");
 
         Group = exporter.Group;
         ExporterReference = exporterReference;

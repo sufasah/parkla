@@ -20,9 +20,9 @@ public abstract class ReceiverElemBase
         return (ReceiverElemBase)instance;
     }
 
-    protected HandlerBase GetHandler(string handlerStr, Type defaultHandler, Assembly pluginAssembly) {
+    protected HandlerBase GetHandler(string? handlerStr, Type defaultHandler, Assembly pluginAssembly) {
         if (string.IsNullOrWhiteSpace(handlerStr) || handlerStr == "default")
-        return HandlerBase.GetInstance(defaultHandler)!;
+            return HandlerBase.GetInstance(defaultHandler)!;
 
         Type? handlerType = Assembly.GetExecutingAssembly()
             .GetType(handlerStr);

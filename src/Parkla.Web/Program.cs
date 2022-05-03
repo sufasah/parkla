@@ -1,29 +1,28 @@
+using System.Reflection;
+using System.Text.Json;
 using Collector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
 using Parkla.Core.DTOs;
-using Parkla.Web.Requirements;
+using Parkla.Web.Hubs;
+using Parkla.Web.Options;
+using Parkla.Web.SerialCom;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureServices(services => {
-    services.AddAuthenticationCore(o => {
-        o.DefaultAuthenticateScheme = "allowAll";
-        o.DefaultScheme = "allowAll";
-    });
+    services.AddOptions();
+    services.Configure<WebOptions>(builder.Configuration.GetSection("Parkla"));
 
-    services.AddAuthorizationCore(o => {
-        o.DefaultPolicy = new AuthorizationPolicyBuilder("allowAll")
-            .AddRequirements(new IAuthorizationRequirement[]{
-                new NoRequirement()
-            })
-            .Build();
-
-    });
-
-    services.AddControllers().AddFluentValidation(config => {
-
+    services.AddControllers(o => {
+        o.AllowEmptyInputInBodyModelBinding = true;
+        o.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+    }).AddJsonOptions(options => {
+        options.JsonSerializerOptions.AllowTrailingCommas = true;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+    }).AddFluentValidation(config => {
+        config.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     });
 
     services.AddCors(o => {
@@ -37,6 +36,9 @@ builder.WebHost.ConfigureServices(services => {
     });
 
     services.AddGrpc();
+    services.AddSignalR();
+
+    services.AddHostedService<SerialReceiver>();
 
     services.AddTransient<IValidator<ParkSpaceStatusDto>, ParkSpaceStatusValidator>();
 });
@@ -63,6 +65,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(builder => {
     builder.MapGrpcService<CollectorService>();
+    builder.MapHub<CollectorHub>("/parkla");
 
     builder.MapControllerRoute(
         name: "default",

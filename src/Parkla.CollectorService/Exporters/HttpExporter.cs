@@ -1,4 +1,6 @@
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
 
@@ -7,6 +9,7 @@ public class HttpExporter : ExporterBase
 {
     private readonly HttpClient _client;
     private readonly ILogger<HttpExporter> _logger;
+    private readonly JsonSerializerOptions jsonSerializerOptions = new();
 
     public HttpExporter(
         IHttpClientFactory factory,
@@ -15,6 +18,12 @@ public class HttpExporter : ExporterBase
     {
         _client = factory.CreateClient();
         _logger = logger;
+
+        jsonSerializerOptions.AllowTrailingCommas = true;
+        jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+        jsonSerializerOptions.MaxDepth = 3;
+        jsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        jsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
     }
 
     public override async Task ExportAsync(ParkSpaceStatusDto dto, ExporterElemBase exporterElemBase) {
@@ -22,7 +31,7 @@ public class HttpExporter : ExporterBase
         try {
             var response = await _client.PostAsync(
                 exporterElem.Url,
-                JsonContent.Create(dto)
+                JsonContent.Create(dto, null, jsonSerializerOptions)
             );
             _logger.LogInformation("HttpExporter [{}]: ParkId='{}', SpaceId='{}', Status='{}' is exported", response.StatusCode == HttpStatusCode.OK ? "OK" : "NOT OK", dto.Parkid, dto.Spaceid, dto.Status);
         } catch(Exception e) {
@@ -37,7 +46,7 @@ public class HttpExporter : ExporterBase
         try {
             var response = await _client.PostAsync(
                 exporterElem.Url,
-                JsonContent.Create(dtos.ToArray())
+                JsonContent.Create(dtos.ToArray(), null, jsonSerializerOptions)
             );
             
             var str = LogStrList(dtos, "HttpExporter", response.StatusCode == HttpStatusCode.OK);

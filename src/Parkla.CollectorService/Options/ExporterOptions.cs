@@ -15,7 +15,7 @@ namespace Parkla.CollectorService.Options
 
 
         // -------------------------------- GRPC
-        public string Group { get; set; }
+        public string? Group { get; set; }
         public string Address { get; set; }
     }
 }

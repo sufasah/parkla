@@ -8,9 +8,6 @@ public class GrpcReceiver : ReceiverBase
 {
     private readonly ILogger<GrpcReceiver> _logger;
     private readonly ParklaOptionsManager _parklaOptionsManager;
-
-    private bool Started { get; set; } = false;
-
     public GrpcReceiver(
         ILogger<GrpcReceiver> logger,
         ParklaOptionsManager parklaOptionsManager        
@@ -23,6 +20,9 @@ public class GrpcReceiver : ReceiverBase
     protected override void DoStart(){}
 
     public async Task ReceiveAsync(Data data, ServerCallContext context) {
+        if (!Started)
+            throw new InvalidOperationException("HttpReceiver is not started yet.");
+            
         var tasks = new List<Task>();
         
         var grpcPipes = GrpcReceiverElem.GrpcPipes.FindAll(x => {

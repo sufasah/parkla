@@ -10,7 +10,9 @@ public class CollectorService : CollectorBase
 {
     private readonly ILogger<CollectorService> _logger;
 
-    public CollectorService(ILogger<CollectorService> logger) {
+    public CollectorService(
+        ILogger<CollectorService> logger
+    ) {
         _logger = logger;
     }
     public override Task<Empty> Receive(Data data, ServerCallContext context)
@@ -26,9 +28,16 @@ public class CollectorService : CollectorBase
                     DateTime = status.DateTime.ToDateTime()
                 };
                 result.Add(parkSpaceStatusDto);
+                _logger.LogInformation(
+                    "GrpcReceiver: ParkId='{}' SpaceId='{}' Status='{}' DateTime='{}' is received", 
+                    parkSpaceStatusDto.Parkid,
+                    parkSpaceStatusDto.Spaceid,
+                    parkSpaceStatusDto.Status,
+                    parkSpaceStatusDto.DateTime
+                );
             }
             catch (Exception e) {
-                _logger.LogInformation("CollectorService: Grpc message could not be deserialized\n{}", e.ToString());
+                _logger.LogInformation("GrpcReceiver: Grpc message could not be deserialized\n{}", e.ToString());
             }
         }
         

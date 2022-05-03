@@ -5,7 +5,7 @@ namespace Parkla.CollectorService.Options
     public class ReceiverOptions
     {
         public ReceiverType Type { get; set; }
-        public string Handler { get; set; }
+        public string? Handler { get; set; }
 
         // -------------------------------- SERİAL
         public string PortName { get; set; }
@@ -16,7 +16,7 @@ namespace Parkla.CollectorService.Options
 
 
         // -------------------------------- GRPC
-        public string Group { get; set; }
+        public string? Group { get; set; }
 
     }
 }

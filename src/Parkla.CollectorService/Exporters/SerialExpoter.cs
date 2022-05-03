@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
 
@@ -9,12 +10,19 @@ public class SerialExporter : ExporterBase
 {
     private readonly BlockingCollection<SerialQueueItem> _exportQueue = new();
     private readonly ILogger<SerialExporter> _logger;
+    private readonly JsonSerializerOptions jsonSerializerOptions = new();
 
     public SerialExporter(
         ILogger<SerialExporter> logger
     ) : base(logger)
     {
         _logger = logger;
+
+        jsonSerializerOptions.AllowTrailingCommas = true;
+        jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+        jsonSerializerOptions.MaxDepth = 3;
+        jsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        jsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
     }
 
     protected override void DoStart() {
@@ -61,7 +69,7 @@ public class SerialExporter : ExporterBase
             var dto = queueItem.Dto;
 
             try {
-                serialPort.Write(JsonSerializer.Serialize(dto));
+                serialPort.Write(JsonSerializer.Serialize(dto, jsonSerializerOptions));
                 _logger.LogInformation("SerialExporter [Successful]: ParkId='{}', SpaceId='{}', Status='{}' is exported", dto.Parkid, dto.Spaceid, dto.Status);
             } catch(Exception e) {
                 _logger.LogError(e, "SerialExporter [Fail]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
