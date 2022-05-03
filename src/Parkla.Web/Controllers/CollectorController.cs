@@ -1,8 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Parkla.Business.Abstract;
 using Parkla.Core.DTOs;
 
 namespace Parkla.Web.Controllers;
@@ -19,15 +18,14 @@ public class CollectorController : ControllerBase
         ReadCommentHandling = JsonCommentHandling.Skip
     };
     private readonly ILogger<CollectorController> _logger;
-    private readonly IValidator<ParkSpaceStatusDto> _parkSpaceStatusValidator;
-
+    private readonly ICollectorService _collectorService;
     public CollectorController(
         ILogger<CollectorController> logger,
-        IValidator<ParkSpaceStatusDto> ParkSpaceStatusValidator
+        ICollectorService collectorService
     )
     {
         _logger = logger;
-        _parkSpaceStatusValidator = ParkSpaceStatusValidator;
+        _collectorService = collectorService;
     }
 
     [HttpPost("receive")]
@@ -55,17 +53,16 @@ public class CollectorController : ControllerBase
 
         foreach (var dto in results)
         {
-            var validationResult = _parkSpaceStatusValidator.Validate(dto);
-            //if(validationResult.IsValid) {
-                _logger.LogInformation(
-                    "HttpReceiver: ParkId='{}' SpaceId='{}' Status='{}' DateTime='{}' is received", 
-                    dto.Parkid,
-                    dto.Spaceid,
-                    dto.Status,
-                    dto.DateTime
-                );
-            //}
+            _logger.LogInformation(
+                "HttpReceiver: ParkId='{}' SpaceId='{}' Status='{}' DateTime='{}' is received", 
+                dto.Parkid,
+                dto.Spaceid,
+                dto.Status,
+                dto.DateTime
+            );
         }
+
+        _collectorService.CollectParkSpaceStatus(results);
     }
     
 }

@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
+using Parkla.Business.Abstract;
 using Parkla.Core.DTOs;
 using Parkla.Web.Options;
 
@@ -12,6 +13,7 @@ public class SerialReceiver : BackgroundService
     private readonly object init = new();
     private readonly WebOptions _options;
     private readonly ILogger<SerialReceiver> _logger;
+    private readonly ICollectorService _cllectorService;
     private CancellationTokenRegistration? Subscription;
     private readonly JsonSerializerOptions jsonSerializerOptions = new();
     private SerialPort SerialPort { get; set; }
@@ -20,10 +22,12 @@ public class SerialReceiver : BackgroundService
 
     public SerialReceiver(
         IOptions<WebOptions> options,
-        ILogger<SerialReceiver> logger
+        ILogger<SerialReceiver> logger,
+        ICollectorService collectorService
     ) {
         _options = options.Value;
         _logger = logger;
+        _cllectorService = collectorService;
 
         jsonSerializerOptions.AllowTrailingCommas = true;
         jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
@@ -105,5 +109,7 @@ public class SerialReceiver : BackgroundService
                 dto.DateTime
             );
         }
+
+        _cllectorService.CollectParkSpaceStatus(results);
     }
 }
