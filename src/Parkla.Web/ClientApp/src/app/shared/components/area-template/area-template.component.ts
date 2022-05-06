@@ -44,6 +44,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   imageLoading = true;
 
+  imageError = false;
+
   dialogVisible = false;
 
   constructor() { }
@@ -62,6 +64,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     };
 
     this.ParkImage.onerror = () => {
+      this.imageError = true;
       this.ParkImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
     }
   }
@@ -117,6 +120,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       this.ParkImage.width,
       this.ParkImage.height
     );
+
+    if(this.imageError) return;
 
     this.parkArea.spaces.forEach(space => {
       if(this.parkArea.reservationsEnabled && space.reservations){

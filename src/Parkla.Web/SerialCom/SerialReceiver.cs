@@ -103,8 +103,8 @@ public class SerialReceiver : BackgroundService
         foreach (var dto in results) {
             _logger.LogInformation(
                 "SerialReceiver: ParkId='{}' SpaceId='{}' Status='{}' DateTime='{}' is received", 
-                dto.Parkid,
-                dto.Spaceid,
+                dto.ParkId,
+                dto.SpaceId,
                 dto.Status,
                 dto.DateTime
             );

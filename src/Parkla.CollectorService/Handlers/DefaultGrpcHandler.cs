@@ -24,9 +24,9 @@ public class DefualtGrpcHandler : HandlerBase
             try {
                 var status = data.Unpack<ParkSpaceStatus>();
                 var parkSpaceStatusDto= new ParkSpaceStatusDto() {
-                    Parkid = Guid.Parse(status.Parkid),
-                    Spaceid = status.Spaceid,
-                    Status = (ParkStatus)status.Status,
+                    ParkId = Guid.Parse(status.ParkId),
+                    SpaceId = status.SpaceId,
+                    Status = (SpaceStatus)status.Status,
                     DateTime = status.DateTime.ToDateTime()
                 };
                 result.Add(parkSpaceStatusDto);

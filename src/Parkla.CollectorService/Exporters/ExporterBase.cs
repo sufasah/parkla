@@ -43,8 +43,8 @@ public abstract class ExporterBase
             stringBuilder.AppendFormat("{0} [{1}]: ParkId='{2}', SpaceId='{3}', Status='{4}' is{5} exported\n", 
                 className, 
                 successful ? "SUCCESS" : "FAIL", 
-                dto.Parkid, 
-                dto.Spaceid, 
+                dto.ParkId, 
+                dto.SpaceId, 
                 dto.Status, 
                 successful ? "" : " not");
         }

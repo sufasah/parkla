@@ -1,5 +1,5 @@
 namespace Parkla.Core.Enums {
-    public enum ParkStatus
+    public enum SpaceStatus
     {
         EMPTY = 0,
         OCCUPIED = 1

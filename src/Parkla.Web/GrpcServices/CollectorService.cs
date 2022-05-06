@@ -26,16 +26,16 @@ public class CollectorService : CollectorBase
             try {
                 var status = item.Unpack<ParkSpaceStatus>();
                 var parkSpaceStatusDto= new ParkSpaceStatusDto() {
-                    Parkid = Guid.Parse(status.Parkid),
-                    Spaceid = status.Spaceid,
-                    Status = (ParkStatus)status.Status,
+                    ParkId = Guid.Parse(status.ParkId),
+                    SpaceId = status.SpaceId,
+                    Status = (SpaceStatus)status.Status,
                     DateTime = status.DateTime.ToDateTime()
                 };
                 result.Add(parkSpaceStatusDto);
                 _logger.LogInformation(
                     "GrpcReceiver: ParkId='{}' SpaceId='{}' Status='{}' DateTime='{}' is received", 
-                    parkSpaceStatusDto.Parkid,
-                    parkSpaceStatusDto.Spaceid,
+                    parkSpaceStatusDto.ParkId,
+                    parkSpaceStatusDto.SpaceId,
                     parkSpaceStatusDto.Status,
                     parkSpaceStatusDto.DateTime
                 );

@@ -5,11 +5,11 @@ namespace Parkla.Core.DTOs
 {
     public class ParkSpaceStatusDto
     {
-        public Guid Parkid { get; set; }
-        public string Spaceid { get; set; }
+        public Guid ParkId { get; set; }
+        public string SpaceId { get; set; }
         
         [JsonConverter(typeof(JsonStringEnumConverter))]
-        public ParkStatus Status { get; set; }
+        public SpaceStatus Status { get; set; }
         public DateTime DateTime { get; set; }
     }
 }

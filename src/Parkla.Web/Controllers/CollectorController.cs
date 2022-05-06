@@ -55,8 +55,8 @@ public class CollectorController : ControllerBase
         {
             _logger.LogInformation(
                 "HttpReceiver: ParkId='{}' SpaceId='{}' Status='{}' DateTime='{}' is received", 
-                dto.Parkid,
-                dto.Spaceid,
+                dto.ParkId,
+                dto.SpaceId,
                 dto.Status,
                 dto.DateTime
             );

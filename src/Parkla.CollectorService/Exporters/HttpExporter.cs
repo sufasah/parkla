@@ -33,9 +33,9 @@ public class HttpExporter : ExporterBase
                 exporterElem.Url,
                 JsonContent.Create(dto, null, jsonSerializerOptions)
             );
-            _logger.LogInformation("HttpExporter [{}]: ParkId='{}', SpaceId='{}', Status='{}' is exported", response.StatusCode == HttpStatusCode.OK ? "OK" : "NOT OK", dto.Parkid, dto.Spaceid, dto.Status);
+            _logger.LogInformation("HttpExporter [{}]: ParkId='{}', SpaceId='{}', Status='{}' is exported", response.StatusCode == HttpStatusCode.OK ? "OK" : "NOT OK", dto.ParkId, dto.SpaceId, dto.Status);
         } catch(Exception e) {
-            _logger.LogError(e, "HttpExporter: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
+            _logger.LogError(e, "HttpExporter: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.ParkId, dto.SpaceId, dto.Status);
         }
     }
 

@@ -10,9 +10,9 @@ public class TestHandler1 : HandlerBase
         return await Task.Run(() => {
             return new ParkSpaceStatusDto[] {
                     new() {
-                    Parkid = Guid.NewGuid(),
-                    Spaceid = "testhandler1 object is here [111111111]",
-                    Status = ParkStatus.EMPTY,
+                    ParkId = Guid.NewGuid(),
+                    SpaceId = "testhandler1 object is here [111111111]",
+                    Status = SpaceStatus.EMPTY,
                     DateTime = DateTime.Now
                 },
             };

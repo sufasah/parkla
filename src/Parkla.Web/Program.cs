@@ -3,7 +3,9 @@ using System.Text.Json;
 using Collector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using Parkla.Core.DTOs;
+using Parkla.DataAccess.Contexts;
 using Parkla.Web.Hubs;
 using Parkla.Web.Options;
 using Parkla.Web.SerialCom;
@@ -39,6 +41,13 @@ builder.WebHost.ConfigureServices(services => {
     services.AddSignalR();
 
     services.AddHostedService<SerialReceiver>();
+
+    services.AddDbContext<ParklaDbContext>(o => {
+        o.UseNpgsql(builder.Configuration.GetConnectionString("parkla-admin"), b => {
+            b.EnableRetryOnFailure(30);
+            b.SetPostgresVersion(13,6);
+        });
+    });
 
     services.AddTransient<IValidator<ParkSpaceStatusDto>, ParkSpaceStatusValidator>();
 });

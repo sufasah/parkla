@@ -18,8 +18,8 @@ message Data {
 }
 
 message ParkSpaceStatus {
-    string Parkid = 1;
-    string Spaceid = 2;
+    string ParkId = 1;
+    string SpaceId = 2;
     int32 Status = 3;
     google.protobuf.Timestamp DateTime = 4;
 }

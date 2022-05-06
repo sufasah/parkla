@@ -123,7 +123,7 @@ app.UseEndpoints(builder =>
             logger.LogWarning(@"
                 '/ECHO/ENDPOINT' RECEIVED THE DATA:
                 Parkid='{}' Spaceid='{}' Status='{}' DateTime='{}'
-            ",dto.Parkid, dto.Spaceid, dto.Status, dto.DateTime);
+            ",dto.ParkId, dto.SpaceId, dto.Status, dto.DateTime);
         }
     });
 });

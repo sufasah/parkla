@@ -52,7 +52,7 @@ public class SerialExporter : ExporterBase
             throw new InvalidOperationException("SerialExporter is not started yet.");
 
         if(serialPort == null) {
-            _logger.LogWarning("SerialExporter.Enqueue: SerialPortExporter could not found the SerialPort to enqueue. \nParkId='{}', SpaceId='{}', Status='{}' is not enqueued", dto.Parkid, dto.Spaceid, dto.Spaceid);
+            _logger.LogWarning("SerialExporter.Enqueue: SerialPortExporter could not found the SerialPort to enqueue. \nParkId='{}', SpaceId='{}', Status='{}' is not enqueued", dto.ParkId, dto.SpaceId, dto.Status);
             return;
         }
 
@@ -70,9 +70,9 @@ public class SerialExporter : ExporterBase
 
             try {
                 serialPort.Write(JsonSerializer.Serialize(dto, jsonSerializerOptions));
-                _logger.LogInformation("SerialExporter [Successful]: ParkId='{}', SpaceId='{}', Status='{}' is exported", dto.Parkid, dto.Spaceid, dto.Status);
+                _logger.LogInformation("SerialExporter [Successful]: ParkId='{}', SpaceId='{}', Status='{}' is exported", dto.ParkId, dto.SpaceId, dto.Status);
             } catch(Exception e) {
-                _logger.LogError(e, "SerialExporter [Fail]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.Parkid, dto.Spaceid, dto.Status);
+                _logger.LogError(e, "SerialExporter [Fail]: ParkId='{}', SpaceId='{}', Status='{}' is not exported", dto.ParkId, dto.SpaceId, dto.Status);
             }
         }
     }

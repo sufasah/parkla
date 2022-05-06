@@ -10,15 +10,15 @@ public class TestHandler : HandlerBase
         // THIS HANDLER WILL WORK AND EXPORT BELOW
         return new ParkSpaceStatusDto[]{
             new() {
-                Parkid = Guid.NewGuid(),
-                Spaceid = "FIRST OBJECT OF TESTHANDLER [00000]",
-                Status = ParkStatus.EMPTY,
+                ParkId = Guid.NewGuid(),
+                SpaceId = "FIRST OBJECT OF TESTHANDLER [00000]",
+                Status = SpaceStatus.EMPTY,
                 DateTime = DateTime.Now
             },
             new() {
-                Parkid = Guid.NewGuid(),
-                Spaceid = "SECOND OBJECT OF TESTHANDLER [00000]",
-                Status = ParkStatus.EMPTY,
+                ParkId = Guid.NewGuid(),
+                SpaceId = "SECOND OBJECT OF TESTHANDLER [00000]",
+                Status = SpaceStatus.EMPTY,
                 DateTime = DateTime.Now
             },
         };

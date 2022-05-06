@@ -70,6 +70,8 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   dialogVisible = false;
 
+  imageError = false;
+
   spacePathPoint = 0;
   spacePath: SpacePath = [[0,0],[0,0],[0,0],[0,0]];
 
@@ -90,6 +92,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     };
 
     this.ParkImage.onerror = () => {
+      this.imageError = true;
       this.ParkImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
     }
   }
@@ -145,6 +148,8 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
       this.ParkImage.width,
       this.ParkImage.height
     );
+
+    if(this.imageError) return;
 
     this.parkArea.spaces.forEach(space => {
       if(space.name && space.realSpace && space.name.length > 0 && space.name.length <= 30)
