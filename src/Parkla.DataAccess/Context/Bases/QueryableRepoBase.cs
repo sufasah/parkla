@@ -7,10 +7,12 @@ namespace Parkla.DataAccess.Context
         where TEntity : class, IEntity, new()
     {
         private readonly DbContext _context;
-        private DbSet<TEntity> _entities;
+        private readonly DbSet<TEntity> _entities;
         public QueryableRepoBase(DbContext context)
         {
             _context = context;
+            _entities = _context.Set<TEntity>();
+
         }
         public IQueryable<TEntity> Table{
             get{
@@ -18,10 +20,7 @@ namespace Parkla.DataAccess.Context
             }
         }
         protected virtual DbSet<TEntity> Entities{
-            get{
-                if(_entities==null){
-                    _entities = _context.Set<TEntity>();
-                }
+            get {
                 return _entities;
             }
             private set {}

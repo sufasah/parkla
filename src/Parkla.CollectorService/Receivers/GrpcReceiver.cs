@@ -7,14 +7,11 @@ namespace Parkla.CollectorService.Receivers;
 public class GrpcReceiver : ReceiverBase
 {
     private readonly ILogger<GrpcReceiver> _logger;
-    private readonly ParklaOptionsManager _parklaOptionsManager;
     public GrpcReceiver(
-        ILogger<GrpcReceiver> logger,
-        ParklaOptionsManager parklaOptionsManager        
+        ILogger<GrpcReceiver> logger
     ) : base(logger)
     {
         _logger = logger;
-        _parklaOptionsManager = parklaOptionsManager; 
     }
 
     protected override void DoStart(){}

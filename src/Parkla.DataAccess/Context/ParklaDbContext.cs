@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Parkla.Core.Entities;
+using Parkla.DataAccess.Context.Maps;
 
 namespace Parkla.DataAccess.Contexts;
 public class ParklaDbContext : DbContext

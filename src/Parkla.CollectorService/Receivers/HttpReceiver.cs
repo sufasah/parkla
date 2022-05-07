@@ -4,17 +4,13 @@ using Parkla.CollectorService.OptionsManager;
 namespace Parkla.CollectorService.Receivers;
 public class HttpReceiver : ReceiverBase
 {
-    private readonly object _startLock = new();
     private readonly ILogger<HttpReceiver> _logger;
-    private readonly ParklaOptionsManager _parklaOptionsManager;
 
     public HttpReceiver(
-        ILogger<HttpReceiver> logger,
-        ParklaOptionsManager parklaOptionsManager
+        ILogger<HttpReceiver> logger
     ) : base(logger)
     {
         _logger = logger;
-        _parklaOptionsManager = parklaOptionsManager;
     }
 
     protected override void DoStart(){}

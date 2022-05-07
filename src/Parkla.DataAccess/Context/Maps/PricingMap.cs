@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Parkla.Core.Enums;
+using Parkla.Core.Entities;
 
-namespace Parkla.Core.Entities;
+namespace Parkla.DataAccess.Context.Maps;
 
 public class PricingMap : IEntityTypeConfiguration<Pricing> {
     public void Configure(EntityTypeBuilder<Pricing> b)

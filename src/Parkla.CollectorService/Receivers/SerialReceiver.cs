@@ -1,6 +1,4 @@
 using System.IO.Ports;
-using Parkla.CollectorService.Exporters;
-using Parkla.CollectorService.Generators;
 using Parkla.CollectorService.Library;
 using Parkla.CollectorService.OptionsManager;
 using Parkla.Core.DTOs;
@@ -9,14 +7,11 @@ namespace Parkla.CollectorService.Receivers;
 public class SerialReceiver : ReceiverBase
 {
     private readonly ILogger<SerialReceiver> _logger;
-    private readonly ParklaOptionsManager _parklaOptionsManager;
     public SerialReceiver(
-        ILogger<SerialReceiver> logger,
-        ParklaOptionsManager parklaOptionsManager   
+        ILogger<SerialReceiver> logger
     ) : base(logger)
     {
-        _logger = logger;
-        _parklaOptionsManager = parklaOptionsManager; 
+        _logger = logger; 
     }
     protected override void DoStart()
     {

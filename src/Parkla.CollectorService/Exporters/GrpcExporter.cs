@@ -41,8 +41,8 @@ public class GrpcExporter : ExporterBase
         {
             data.DataList.Add(Any.Pack(
                 new ParkSpaceStatus {
-                    Parkid = dto.ParkId.ToString(),
-                    Spaceid = dto.SpaceId,
+                    ParkId = dto.ParkId.ToString(),
+                    SpaceId = dto.SpaceId,
                     Status = (int)dto.Status,
                     DateTime = Timestamp.FromDateTime(dto.DateTime.ToUniversalTime())
                 }

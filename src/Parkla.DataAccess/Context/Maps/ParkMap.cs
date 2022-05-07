@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-namespace Parkla.Core.Entities;
+using Parkla.Core.Entities;
+namespace Parkla.DataAccess.Context.Maps;
 
 public class ParkMap : IEntityTypeConfiguration<Park> {
     public void Configure(EntityTypeBuilder<Park> b)

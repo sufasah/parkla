@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Parkla.Core.Enums;
+using Parkla.Core.Entities;
 
-namespace Parkla.Core.Entities;
+namespace Parkla.DataAccess.Context.Maps;
 
 public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStatus> {
     public void Configure(EntityTypeBuilder<ReceivedSpaceStatus> b)

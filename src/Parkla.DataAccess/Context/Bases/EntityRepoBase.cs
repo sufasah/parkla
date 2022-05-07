@@ -1,12 +1,13 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Parkla.Core.Entities;
+using Parkla.Web.Helpers;
 
 namespace Parkla.DataAccess.Context
 {
     public class EntityRepoBase<TEntity,TContext> : IEntityRepository<TEntity> 
         where TEntity :class, IEntity, new()
-        where TContext:DbContext,new()
+        where TContext:DbContext, new()
     {
         public TEntity Add(TEntity entity)
         {
@@ -25,19 +26,26 @@ namespace Parkla.DataAccess.Context
             context.SaveChanges();
         }
 
-        public TEntity Get(Expression<Func<TEntity, bool>> filter)
+        public TEntity? Get(Expression<Func<TEntity, bool>> filter)
         {
             using var context = new TContext();
-            TEntity result = context.Set<TEntity>().SingleOrDefault(filter);
+            TEntity? result = context.Set<TEntity>().SingleOrDefault(filter);
             return result;
         }
 
-        public List<TEntity> GetList(Expression<Func<TEntity, bool>> filter = null)
+        public List<TEntity> GetList(Expression<Func<TEntity, bool>>? filter = null)
         {
             using var context = new TContext();
             if (filter == null)
                 return context.Set<TEntity>().ToList();
             List<TEntity> result = context.Set<TEntity>().Where(filter).ToList();
+            return result;
+        }
+        public PagedList<TEntity> GetList(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? filter = null)
+        {
+            using var context = new TContext();
+            var resultSet = context.Set<TEntity>().Where(filter!);
+            var result = PagedList<TEntity>.ToPagedList(resultSet, pageNumber, pageSize);
             return result;
         }
 
