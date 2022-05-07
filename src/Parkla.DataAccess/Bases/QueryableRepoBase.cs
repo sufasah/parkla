@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Parkla.Core.Entities;
+using Parkla.DataAccess.Abstract;
 
-namespace Parkla.DataAccess.Context
+namespace Parkla.DataAccess.Bases
 {
     public class QueryableRepoBase<TEntity> : IQueryableRepository<TEntity>
         where TEntity : class, IEntity, new()

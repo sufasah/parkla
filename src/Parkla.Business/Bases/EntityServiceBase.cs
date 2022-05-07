@@ -1,8 +1,7 @@
-using System.Linq.Expressions;
 using FluentValidation;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
-using Parkla.DataAccess.Context;
+using Parkla.DataAccess.Abstract;
 using Parkla.Web.Helpers;
 
 namespace Parkla.Business.Bases
@@ -22,36 +21,46 @@ namespace Parkla.Business.Bases
             _validator = validator;
         }
 
-        public virtual TEntity Add(TEntity entity)
-        {
-            return _entityRepository.Add(entity);
+        public virtual async Task<TEntity> NoValidateAddAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        ) {
+            return await _entityRepository.AddAsync(entity, cancellationToken);
         }
 
-        public virtual void Delete(TEntity entity)
-        {
-            _entityRepository.Delete(entity);
+        public virtual async Task NoValidateDeleteAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        ) {
+            await _entityRepository.DeleteAsync(entity, cancellationToken);
         }
 
-        public virtual List<TEntity> GetAll()
+        public virtual async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            var entities = _entityRepository.GetList();
+            var entities = await _entityRepository.GetListAsync(cancellationToken: cancellationToken);
             return entities;
         }
 
-        public virtual PagedList<TEntity> GetPage(int pageNumber, int pageSize, Expression<Func<TEntity, bool>>? filter = null)
-        {
-            var entities = _entityRepository.GetList(pageNumber, pageSize, filter);
-            return entities;
+        public virtual async Task<PagedList<TEntity>> GetPageAsync(
+            int pageNumber, 
+            int pageSize,
+            CancellationToken cancellationToken = default
+        ) {
+            var entities = _entityRepository.GetListAsync(pageNumber, pageSize, cancellationToken: cancellationToken);
+            return await entities;
         }
 
-        public virtual TEntity Update(TEntity entity)
-        {
-            return _entityRepository.Update(entity);
+        public virtual async Task<TEntity> NoValidateUpdateAsync(
+            TEntity entity, 
+            CancellationToken cancellationToken = default
+        ) {
+            return await _entityRepository.UpdateAsync(entity, cancellationToken);
         }
         
         private void ValidateAndThrow(TEntity entity) {
             _validator.ValidateAndThrow(entity);
         }
+        
         private void ValidateAndThrow(ICollection<TEntity> entities) {
             foreach (var entity in entities)
             {
@@ -59,21 +68,27 @@ namespace Parkla.Business.Bases
             }
         }
 
-        public virtual TEntity ValidateAdd(TEntity entity)
-        {
+        public virtual async Task<TEntity> AddAsync(
+            TEntity entity, 
+            CancellationToken cancellationToken = default
+        ) {
             ValidateAndThrow(entity);
-            return Add(entity);
+            return await NoValidateAddAsync(entity, cancellationToken);
         }
 
-        public virtual void ValidateDelete(TEntity entity)
-        {
+        public virtual async Task DeleteAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        ) {
             ValidateAndThrow(entity);
-            Delete(entity);
+            await NoValidateDeleteAsync(entity, cancellationToken);
         }
-        public virtual TEntity ValidateUpdate(TEntity entity)
-        {
+        public virtual async Task<TEntity> UpdateAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        ) {
             ValidateAndThrow(entity);
-            return Update(entity);
+            return await NoValidateUpdateAsync(entity, cancellationToken);
         }
     }
 }

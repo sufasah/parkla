@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Parkla.Core.Entities;
 using Parkla.Web.Helpers;
 
@@ -6,19 +5,43 @@ namespace Parkla.Business.Abstract;
 public interface IEntityService<TEntity> 
     where TEntity: class, IEntity, new()
 {
-        List<TEntity> GetAll();
+        Task<List<TEntity>> GetAllAsync(
+            CancellationToken cancellationToken = default
+        );
 
-        PagedList<TEntity> GetPage(int pageNumber, int PageSize, Expression<Func<TEntity, bool>>? filter);
+        Task<PagedList<TEntity>> GetPageAsync(
+            int pageNumber, 
+            int PageSize,
+            CancellationToken cancellationToken = default
+        );
 
-        TEntity Add(TEntity entity);
+        Task<TEntity> AddAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        );
 
-        TEntity Update(TEntity entity);
+        Task<TEntity> UpdateAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        );
 
-        void Delete(TEntity entity);
+        Task DeleteAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        );
 
-        TEntity ValidateAdd(TEntity entity);
+        Task<TEntity> NoValidateAddAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        );
 
-        void ValidateDelete(TEntity entity);
-        TEntity ValidateUpdate(TEntity entity);
+        Task NoValidateDeleteAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        );
+        Task<TEntity> NoValidateUpdateAsync(
+            TEntity entity,
+            CancellationToken cancellationToken = default
+        );
 
 }

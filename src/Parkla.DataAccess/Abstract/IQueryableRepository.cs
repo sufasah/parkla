@@ -1,6 +1,6 @@
 using Parkla.Core.Entities;
 
-namespace Parkla.DataAccess.Context
+namespace Parkla.DataAccess.Abstract
 {
     public interface IQueryableRepository<T> 
         where T:class, IEntity, new()
