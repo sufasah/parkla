@@ -10,12 +10,18 @@ public class PricingMap : IEntityTypeConfiguration<Pricing> {
         b.ToTable(@"pricings",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.AreaId)
+            .HasColumnName("area_id");
         b.Property(x => x.Unit)
+            .HasColumnName("unit")
             .IsRequired();
         b.Property(x => x.Amount)
+            .HasColumnName("amount")
             .IsRequired();
         b.Property(x => x.Price)
+            .HasColumnName("price")
             .HasPrecision(30,2)
             .IsRequired();
             

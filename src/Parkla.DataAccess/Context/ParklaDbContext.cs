@@ -6,17 +6,12 @@ using Parkla.DataAccess.Context.Maps;
 namespace Parkla.DataAccess.Contexts;
 public class ParklaDbContext : DbContext
 {
-    private readonly IConfiguration _configuration;
+    private static readonly IConfiguration _configuration = new ConfigurationBuilder()
+        .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Parkla.Web"))
+        .AddJsonFile("appsettings.json")
+        .Build();
 
     public ParklaDbContext() {}
-
-    public ParklaDbContext(
-        DbContextOptions<ParklaDbContext> options, 
-        IConfiguration configuration
-    ) : base(options)
-    {
-        _configuration = configuration;
-    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new CityMap());

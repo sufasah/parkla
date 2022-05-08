@@ -9,38 +9,52 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
         b.ToTable(@"park_areas",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.ParkId)
+            .HasColumnName("park_id");
         b.Property(x => x.Name)
+            .HasColumnName("name")
             .HasMaxLength(50)
             .IsRequired();
         b.Property(x => x.Description)
+            .HasColumnName("description")
             .HasMaxLength(200);
         b.Property(x => x.TemplateImage)
+            .HasColumnName("template_image")
             .HasMaxLength(500);
         b.Property(x => x.ReservationsEnabled)
+            .HasColumnName("reservations_enabled")
             .IsRequired();
         b.Property(x => x.StatusUpdateTime)
+            .HasColumnName("status_update_time")
             .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
             .IsRequired();
         b.Property(x => x.EmptySpace)
+            .HasColumnName("empty_space")
             .IsRequired();
         b.Property(x => x.ReservedSpace)
+            .HasColumnName("reserved_space")
             .IsRequired();
         b.Property(x => x.OccupiedSpace)
+            .HasColumnName("occupied_space")
             .IsRequired();
         b.Property(x => x.MinPrice)
+            .HasColumnName("min_price")
             .HasPrecision(30,2)
             .IsRequired();
         b.Property(x => x.AvaragePrice)
+            .HasColumnName("avarage_price")
             .HasPrecision(30,2)
             .IsRequired();
         b.Property(x => x.MaxPrice)
+            .HasColumnName("max_price")
             .HasPrecision(30,2)
             .IsRequired();
 
         b.HasOne(x => x.Park).WithMany(x => x.Areas).HasForeignKey(x => x.ParkId);
 
-        b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","[StatusUpdateTime] < (now() at time zone 'utc')");
-        b.HasCheckConstraint("CK_PRICES_VALID","[MinPrice] <= [AvaragePrice] and [AvaragePrice] <= [MaxPrice]");
+        b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
+        b.HasCheckConstraint("CK_PRICES_VALID","min_price <= avarage_price and avarage_price <= max_price");
     }
 }

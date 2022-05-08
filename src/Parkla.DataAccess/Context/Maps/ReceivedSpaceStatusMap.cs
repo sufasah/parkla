@@ -11,17 +11,24 @@ public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStat
         b.ToTable(@"received_space_statusses",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.SpaceId)
+            .HasColumnName("space_id");
+        b.Property(x => x.RealSpaceId)
+            .HasColumnName("real_space_id");
         b.Property(x => x.Status)
+            .HasColumnName("status")
             .HasDefaultValue(SpaceStatus.OCCUPIED)
             .IsRequired();
         b.Property(x => x.DateTime)
+            .HasColumnName("datetime")
             .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
             .IsRequired();
             
         b.HasOne(x => x.RealSpace).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.RealSpaceId);
         b.HasOne(x => x.Space).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.SpaceId);
 
-        b.HasCheckConstraint("CK_DATETIME_LESS_THAN_NOW_UTC","[DateTime] < (now() at time zone 'utc')");
+        b.HasCheckConstraint("CK_DATETIME_LESS_THAN_NOW_UTC","datetime < (now() at time zone 'utc')");
     }
 }

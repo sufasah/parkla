@@ -11,20 +11,29 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
         b.ToTable(@"real_park_spaces",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.ParkId)
+            .HasColumnName("park_id");
+        b.Property(x => x.SpaceId)
+            .HasColumnName("space_id");
         b.Property(x => x.Name)
+            .HasColumnName("name")
             .HasMaxLength(30)
             .IsRequired();
         b.Property(x => x.StatusUpdateTime)
+            .HasColumnName("status_update_time")
             .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
             .IsRequired();
         b.Property(x => x.Status)
+            .HasColumnName("status")
             .HasDefaultValue(SpaceStatus.OCCUPIED)
             .IsRequired();
         
             
         b.HasOne(x => x.Park).WithMany(x => x.RealSpaces).HasForeignKey(x => x.ParkId);
+        b.HasOne(x => x.Space).WithOne(x => x.RealSpace).HasForeignKey<RealParkSpace>(x => x.SpaceId);
 
-        b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","[StatusUpdateTime] < (now() at time zone 'utc')");
+        b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
     }
 }

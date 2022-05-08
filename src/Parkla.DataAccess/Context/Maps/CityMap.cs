@@ -10,8 +10,10 @@ public class CityMap : IEntityTypeConfiguration<City> {
         b.ToTable(@"cities",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
-            .UseIdentityAlwaysColumn();
+            .UseIdentityAlwaysColumn()
+            .HasColumnName("id");
         b.Property(x => x.Name)
+            .HasColumnName("name")
             .HasMaxLength(20)
             .IsRequired();
     }

@@ -10,31 +10,46 @@ public class UserMap : IEntityTypeConfiguration<User> {
         b.ToTable(@"users",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.Wallet)
+            .HasColumnName("wallet")
             .HasPrecision(30,2)
             .IsRequired();
         b.Property(x => x.Username)
+            .HasColumnName("username")
             .HasMaxLength(30)
             .IsRequired();
         b.Property(x => x.Password)
+            .HasColumnName("password")
             .HasMaxLength(50)
             .IsRequired();
         b.Property(x => x.Email)
+            .HasColumnName("email")
             .HasMaxLength(320)
             .IsRequired();
         b.Property(x => x.Name)
+            .HasColumnName("name")
             .HasMaxLength(50)
             .IsRequired();
         b.Property(x => x.Surname)
+            .HasColumnName("surname")
             .HasMaxLength(50)
             .IsRequired();
         b.Property(x => x.Phone)
+            .HasColumnName("phone")
             .HasMaxLength(20)
             .IsRequired();
-        b.Property(x => x.Birthdate);
-        b.Property(x => x.Gender);
+        b.Property(x => x.Birthdate)
+            .HasColumnName("birthdate");
+        b.Property(x => x.Gender)
+            .HasColumnName("gender");
+        b.Property(x => x.CityId)
+            .HasColumnName("city_id");
+        b.Property(x => x.DistrictId)
+            .HasColumnName("district_id");
         b.Property(x => x.Address)
+            .HasColumnName("address")
             .HasMaxLength(200);
         
             

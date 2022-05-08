@@ -10,16 +10,25 @@ public class ReservationMap : IEntityTypeConfiguration<Reservation> {
         b.ToTable(@"reservaions",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.UserId)
+            .HasColumnName("user_id");
+        b.Property(x => x.SpaceId)
+            .HasColumnName("space_id");
+        b.Property(x => x.PricingId)
+            .HasColumnName("pricing_id");
         b.Property(x => x.StartTime)
+            .HasColumnName("start_time")
             .IsRequired();
         b.Property(x => x.EndTime)
+            .HasColumnName("end_time")
             .IsRequired();
             
         b.HasOne(x => x.User).WithMany(x => x.Reservations).HasForeignKey(x => x.UserId);
         b.HasOne(x => x.Space).WithMany(x => x.Reservations).HasForeignKey(x => x.SpaceId);
         b.HasOne(x => x.Pricing).WithMany(x => x.Reservations).HasForeignKey(x => x.PricingId);
 
-        b.HasCheckConstraint("CK_STARTTIME_LESS_THAN_ENDTIME","[StartTime] < [EndTime]");
+        b.HasCheckConstraint("CK_STARTTIME_LESS_THAN_ENDTIME","start_time < end_time");
     }
 }

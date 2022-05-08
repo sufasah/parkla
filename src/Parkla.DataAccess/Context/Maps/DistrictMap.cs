@@ -9,8 +9,12 @@ public class DistrictMap : IEntityTypeConfiguration<District> {
         b.ToTable(@"districts",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .HasColumnName("id")
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.CityId)
+            .HasColumnName("city_id");
         b.Property(x => x.Name)
+            .HasColumnName("name")
             .HasMaxLength(30)
             .IsRequired();
 
