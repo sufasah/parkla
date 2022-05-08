@@ -36,6 +36,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
         return _mapper.Map<List<TEntityDto>>(result);
     }
 
+    [HttpPost("")]
     public virtual async Task<TEntityDto> AddAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
@@ -45,6 +46,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
         return _mapper.Map<TEntityDto>(result);
     }
 
+    [HttpPut("")]
     public virtual async Task<TEntityDto> UpdateAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
@@ -54,6 +56,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
         return _mapper.Map<TEntityDto>(result);
     }
 
+    [HttpDelete("")]
     public virtual async Task DeleteAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
@@ -61,7 +64,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
         var entity = _mapper.Map<TEntity>(entityDto);
         await _service.DeleteAsync(entity, cancellationToken);
     }
-
+    [HttpPost("novalidate")]
     public virtual async Task<TEntityDto> NoValidateAddAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
@@ -71,6 +74,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
         return _mapper.Map<TEntityDto>(result);
     }
 
+    [HttpPut("novalidate")]
     public virtual async Task<TEntityDto> NoValidateUpdateAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
@@ -80,6 +84,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
         return _mapper.Map<TEntityDto>(result);
     }
 
+    [HttpDelete("novalidate")]
     public virtual async Task NoValidateDeleteAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
