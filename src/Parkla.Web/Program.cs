@@ -50,6 +50,10 @@ builder.WebHost.ConfigureServices(services => {
     });
 
     ServiceCollectionHelper.AddDependencies<ParklaDbContext>(services);
+
+    services.AddAutoMapper(cfg => {
+        
+    }, Assembly.GetExecutingAssembly());
 });
 
 var app = builder.Build();
