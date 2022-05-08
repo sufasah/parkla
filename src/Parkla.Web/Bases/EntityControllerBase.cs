@@ -5,7 +5,7 @@ using Parkla.Core.Entities;
 namespace Parkla.Web.Controllers;
 
 [ApiController]
-public class EntityControllerBase<TEntity> : ControllerBase
+public class EntityControllerBase<TEntity> : ApiControllerBase
     where TEntity: class, IEntity, new() 
 {
     private readonly IEntityService<TEntity> _service;
@@ -15,11 +15,6 @@ public class EntityControllerBase<TEntity> : ControllerBase
     ) {
         _service = service;
     }
-
-    public virtual async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken) {
-        return await _service.GetAllAsync(cancellationToken);
-    }
-
     public virtual async Task<List<TEntity>> GetPageAsync(
         int pageNumber, 
         int pageSize, 

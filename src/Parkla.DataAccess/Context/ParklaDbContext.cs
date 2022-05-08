@@ -8,6 +8,8 @@ public class ParklaDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
+    public ParklaDbContext() {}
+
     public ParklaDbContext(
         DbContextOptions<ParklaDbContext> options, 
         IConfiguration configuration

@@ -1,5 +1,5 @@
 namespace Parkla.Web.Models;
-abstract class PageBaseDto
+public  class PageDto
 {
     const int maxPageSize = 50;
     public int PageNumber { get; set; } = 1;

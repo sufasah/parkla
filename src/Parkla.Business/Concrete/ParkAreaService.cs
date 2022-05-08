@@ -1,15 +1,16 @@
 using FluentValidation;
+using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.DataAccess.Abstract;
 
 namespace Parkla.Business.Concrete;
-public class ParkAreaService : EntityServiceBase<ParkArea>
+public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
 {
     public ParkAreaService(
-        IEntityRepository<ParkArea> entityRepository, 
+        IParkAreaRepo parkAreaRepo, 
         IValidator<ParkArea> validator
-    ) : base(entityRepository, validator)
+    ) : base(parkAreaRepo, validator)
     {
     }
 }

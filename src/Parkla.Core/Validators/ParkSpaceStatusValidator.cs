@@ -2,7 +2,7 @@ using FluentValidation;
 using Parkla.Core.DTOs;
 using Parkla.Core.Enums;
 
-namespace Collector;
+namespace Parkla.Core.Validators;
 public class ParkSpaceStatusValidator : AbstractValidator<ParkSpaceStatusDto>
 {
     public ParkSpaceStatusValidator()

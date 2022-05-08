@@ -5,7 +5,7 @@ using Parkla.DataAccess.Bases;
 
 namespace Parkla.DataAccess.Concrete;
 
-public class UserRepo<TContext> : EntityRepoBase<Reservation, TContext>, IReservationRepo 
+public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo 
     where TContext: DbContext, new()
 {
     

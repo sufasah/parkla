@@ -1,15 +1,16 @@
 using FluentValidation;
+using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.DataAccess.Abstract;
 
 namespace Parkla.Business.Concrete;
-public class UserService : EntityServiceBase<User>
+public class UserService : EntityServiceBase<User>, IUserService
 {
     public UserService(
-        IEntityRepository<User> entityRepository, 
+        IUserRepo userRepo, 
         IValidator<User> validator
-    ) : base(entityRepository, validator)
+    ) : base(userRepo, validator)
     {
     }
 }

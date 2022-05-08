@@ -1,14 +1,14 @@
 using System.Reflection;
 using System.Text.Json;
 using Collector;
-using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Parkla.Core.DTOs;
 using Parkla.DataAccess.Contexts;
+using Parkla.Web.Helper;
 using Parkla.Web.Hubs;
 using Parkla.Web.Options;
 using Parkla.Web.SerialCom;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +49,7 @@ builder.WebHost.ConfigureServices(services => {
         });
     });
 
-    services.AddTransient<IValidator<ParkSpaceStatusDto>, ParkSpaceStatusValidator>();
+    ServiceCollectionHelper.AddDependencies<ParklaDbContext>(services);
 });
 
 var app = builder.Build();

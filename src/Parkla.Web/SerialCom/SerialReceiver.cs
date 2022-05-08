@@ -40,8 +40,7 @@ public class SerialReceiver : BackgroundService
         Subscription = stoppingToken.Register(() => {
             lock(init) {
                 if(Subscription != null ){
-
-
+                    SerialPort.Dispose();
                     Subscription?.Unregister();
                     Subscription = null;
                 }
