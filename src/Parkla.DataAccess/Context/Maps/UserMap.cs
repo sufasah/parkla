@@ -44,6 +44,11 @@ public class UserMap : IEntityTypeConfiguration<User> {
             .HasColumnName("birthdate");
         b.Property(x => x.Gender)
             .HasColumnName("gender");
+        b.Property(x => x.VerificationCode)
+            .HasColumnName("verify_code");
+        b.Property(x => x.RefreshTokenSignature)
+            .HasColumnName("refresh_token_signature")
+            .HasMaxLength(400);
         b.Property(x => x.CityId)
             .HasColumnName("city_id");
         b.Property(x => x.DistrictId)
@@ -55,5 +60,7 @@ public class UserMap : IEntityTypeConfiguration<User> {
             
         b.HasOne(x => x.City).WithMany(x => x.Users).HasForeignKey(x => x.CityId);
         b.HasOne(x => x.District).WithMany(x => x.Users).HasForeignKey(x => x.DistrictId);
+
+        b.HasIndex(x => x.Username).IsUnique();
     }
 }

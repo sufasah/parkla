@@ -13,7 +13,8 @@ public class PricingMap : IEntityTypeConfiguration<Pricing> {
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.AreaId)
-            .HasColumnName("area_id");
+            .HasColumnName("area_id")
+            .IsRequired();
         b.Property(x => x.Unit)
             .HasColumnName("unit")
             .IsRequired();

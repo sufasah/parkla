@@ -14,7 +14,8 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.ParkId)
-            .HasColumnName("park_id");
+            .HasColumnName("park_id")
+            .IsRequired();
         b.Property(x => x.SpaceId)
             .HasColumnName("space_id");
         b.Property(x => x.Name)

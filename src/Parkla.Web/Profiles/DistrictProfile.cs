@@ -8,6 +8,7 @@ public class DistrictProfile : Profile
     public DistrictProfile()
     {
         AllowNullDestinationValues = true;
-        CreateMap<District, DistrictDto>();
+        CreateMap<District, DistrictDto>()
+            .ReverseMap();
     }
 }

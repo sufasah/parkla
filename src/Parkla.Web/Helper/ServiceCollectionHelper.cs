@@ -37,6 +37,7 @@ public class ServiceCollectionHelper
         s.AddSingleton<IRealParkSpaceService, RealParkSpaceService>();
         s.AddSingleton<IReceivedSpaceStatusService, ReceivedSpaceStatusService>();
         s.AddSingleton<IReservationService, ReservationService>();
+        s.AddSingleton<IAuthService, AuthService>();
         s.AddSingleton<IUserService, UserService>();
         
         //----------------------------------------------------------------------------------- VALIDATORS

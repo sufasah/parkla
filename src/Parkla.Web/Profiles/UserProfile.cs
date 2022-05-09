@@ -8,6 +8,7 @@ public class UserProfile : Profile
     public UserProfile()
     {
         AllowNullDestinationValues = true;
-        CreateMap<User, UserDto>();
+        CreateMap<User, UserDto>()
+            .ReverseMap();
     }
 }

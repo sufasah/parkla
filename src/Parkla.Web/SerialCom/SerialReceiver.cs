@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Options;
 using Parkla.Business.Abstract;
 using Parkla.Core.DTOs;
-using Parkla.Web.Options;
+using Parkla.Core.Options;
 
 namespace Parkla.Web.SerialCom;
 public class SerialReceiver : BackgroundService

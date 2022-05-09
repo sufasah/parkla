@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Parkla.Core.Entities;
 using Parkla.Web.Helpers;
 
@@ -12,6 +13,11 @@ public interface IEntityService<TEntity>
         Task<PagedList<TEntity>> GetPageAsync(
             int pageNumber, 
             int PageSize,
+            CancellationToken cancellationToken = default
+        );
+
+        Task<TEntity?> GetAsync(
+            Expression<Func<TEntity,bool>> filter,
             CancellationToken cancellationToken = default
         );
 

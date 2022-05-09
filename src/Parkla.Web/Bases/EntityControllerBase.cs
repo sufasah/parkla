@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
+using Parkla.Core.Options;
 using Parkla.Web.Models;
 
 namespace Parkla.Web.Controllers;
-
-public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
+[ApiController]
+[Route(WebOptions.API_PREFIX+"/[controller]")]
+[Authorize]
+public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
     where TEntity: class, IEntity, new()
     where TEntityDto: class, new()
 {
@@ -22,74 +26,76 @@ public class EntityControllerBase<TEntity, TEntityDto> : ApiControllerBase
     }
 
     [HttpGet("all")]
-    public virtual async Task<List<TEntityDto>> GetAllAsync(CancellationToken cancellationToken) {
-        var result = await _service.GetAllAsync(cancellationToken);
-        return _mapper.Map<List<TEntityDto>>(result);
+    public virtual async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken) {
+        var result = await _service.GetAllAsync(cancellationToken).ConfigureAwait(false);
+        return Ok(_mapper.Map<List<TEntityDto>>(result));
     }
 
     [HttpGet("")]
-    public virtual async Task<List<TEntityDto>> GetPageAsync(
+    public virtual async Task<IActionResult> GetPageAsync(
         [FromQuery] PageDto pageDto,
         CancellationToken cancellationToken
     ) {
-        var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, cancellationToken);
-        return _mapper.Map<List<TEntityDto>>(result);
+        var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, cancellationToken).ConfigureAwait(false);
+        return Ok(_mapper.Map<List<TEntityDto>>(result));
     }
 
     [HttpPost("")]
-    public virtual async Task<TEntityDto> AddAsync(
+    public virtual async Task<IActionResult> AddAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
     ) {
         var entity = _mapper.Map<TEntity>(entityDto);
-        var result = await _service.AddAsync(entity, cancellationToken);
-        return _mapper.Map<TEntityDto>(result);
+        var result = await _service.AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        return Ok(_mapper.Map<TEntityDto>(result));
     }
 
     [HttpPut("")]
-    public virtual async Task<TEntityDto> UpdateAsync(
+    public virtual async Task<IActionResult> UpdateAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
     ) {
         var entity = _mapper.Map<TEntity>(entityDto);
-        var result = await _service.UpdateAsync(entity, cancellationToken);
-        return _mapper.Map<TEntityDto>(result);
+        var result = await _service.UpdateAsync(entity, cancellationToken).ConfigureAwait(false);
+        return Ok(_mapper.Map<TEntityDto>(result));
     }
 
     [HttpDelete("")]
-    public virtual async Task DeleteAsync(
+    public virtual async Task<IActionResult> DeleteAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
     ) {
         var entity = _mapper.Map<TEntity>(entityDto);
-        await _service.DeleteAsync(entity, cancellationToken);
+        await _service.DeleteAsync(entity, cancellationToken).ConfigureAwait(false);
+        return Ok();
     }
     [HttpPost("novalidate")]
-    public virtual async Task<TEntityDto> NoValidateAddAsync(
+    public virtual async Task<IActionResult> NoValidateAddAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
     ) {
         var entity = _mapper.Map<TEntity>(entityDto);
-        var result = await _service.NoValidateAddAsync(entity, cancellationToken);
-        return _mapper.Map<TEntityDto>(result);
+        var result = await _service.NoValidateAddAsync(entity, cancellationToken).ConfigureAwait(false);
+        return Ok(_mapper.Map<TEntityDto>(result));
     }
 
     [HttpPut("novalidate")]
-    public virtual async Task<TEntityDto> NoValidateUpdateAsync(
+    public virtual async Task<IActionResult> NoValidateUpdateAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
     ) {
         var entity = _mapper.Map<TEntity>(entityDto);
-        var result = await _service.NoValidateUpdateAsync(entity, cancellationToken);
-        return _mapper.Map<TEntityDto>(result);
+        var result = await _service.NoValidateUpdateAsync(entity, cancellationToken).ConfigureAwait(false);
+        return Ok(_mapper.Map<TEntityDto>(result));
     }
 
     [HttpDelete("novalidate")]
-    public virtual async Task NoValidateDeleteAsync(
+    public virtual async Task<IActionResult> NoValidateDeleteAsync(
         [FromBody] TEntityDto entityDto,
         CancellationToken cancellationToken
     ) {
         var entity = _mapper.Map<TEntity>(entityDto);
-        await _service.NoValidateDeleteAsync(entity, cancellationToken);
+        await _service.NoValidateDeleteAsync(entity, cancellationToken).ConfigureAwait(false);
+        return Ok();
     }
 }

@@ -8,6 +8,7 @@ public class ParkSpaceProfile : Profile
     public ParkSpaceProfile()
     {
         AllowNullDestinationValues = true;
-        CreateMap<ParkSpace, ParkSpaceDto>();
+        CreateMap<ParkSpace, ParkSpaceDto>()
+            .ReverseMap();
     }
 }

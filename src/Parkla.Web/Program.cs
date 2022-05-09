@@ -1,20 +1,44 @@
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using Collector;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Parkla.Core.Helpers;
+using Parkla.Core.Options;
 using Parkla.DataAccess.Contexts;
+using Parkla.Web.Extensions;
 using Parkla.Web.Helper;
 using Parkla.Web.Hubs;
-using Parkla.Web.Options;
 using Parkla.Web.SerialCom;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddConfiguration(new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("secret.json")
+    .Build());
+
 builder.WebHost.ConfigureServices(services => {
     services.AddOptions();
     services.Configure<WebOptions>(builder.Configuration.GetSection("Parkla"));
+    services.Configure<SecretOptions>(builder.Configuration.GetSection("SecretParkla"));
+    JwtHelper.SecretKey = Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("SecretParkla:tokenSecret"));
+
+    services.AddAuthentication(cfg => {
+        cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o => {
+        o.RequireHttpsMetadata = false;
+        o.SaveToken = true;
+        o.TokenValidationParameters = JwtHelper.TokenValidationParameters;
+    });
+
+    services.AddAuthorization(o => {
+    });
+
 
     services.AddControllers(o => {
         o.AllowEmptyInputInBodyModelBinding = true;
@@ -38,6 +62,7 @@ builder.WebHost.ConfigureServices(services => {
     });
 
     services.AddGrpc();
+
     services.AddSignalR();
 
     services.AddHostedService<SerialReceiver>();
@@ -65,8 +90,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
     app.UseDeveloperExceptionPage();
 }
+else {
+    app.UseAppExceptionHandler();
+}
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.UseCors("allow-all");
 

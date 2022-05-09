@@ -12,7 +12,8 @@ public class DistrictMap : IEntityTypeConfiguration<District> {
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.CityId)
-            .HasColumnName("city_id");
+            .HasColumnName("city_id")
+            .IsRequired();
         b.Property(x => x.Name)
             .HasColumnName("name")
             .HasMaxLength(30)

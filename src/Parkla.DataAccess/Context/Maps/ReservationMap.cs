@@ -13,11 +13,14 @@ public class ReservationMap : IEntityTypeConfiguration<Reservation> {
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.UserId)
-            .HasColumnName("user_id");
+            .HasColumnName("user_id")
+            .IsRequired();
         b.Property(x => x.SpaceId)
-            .HasColumnName("space_id");
+            .HasColumnName("space_id")
+            .IsRequired();
         b.Property(x => x.PricingId)
-            .HasColumnName("pricing_id");
+            .HasColumnName("pricing_id")
+            .IsRequired();
         b.Property(x => x.StartTime)
             .HasColumnName("start_time")
             .IsRequired();

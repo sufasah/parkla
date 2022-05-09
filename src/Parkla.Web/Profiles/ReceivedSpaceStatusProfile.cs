@@ -8,6 +8,7 @@ public class ReceivedSpaceStatusProfile : Profile
     public ReceivedSpaceStatusProfile()
     {
         AllowNullDestinationValues = true;
-        CreateMap<ReceivedSpaceStatus, ReceivedSpaceStatusDto>();
+        CreateMap<ReceivedSpaceStatus, ReceivedSpaceStatusDto>()
+            .ReverseMap();
     }
 }

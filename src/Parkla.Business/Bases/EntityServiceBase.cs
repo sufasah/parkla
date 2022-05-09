@@ -1,3 +1,5 @@
+using System;
+using System.Linq.Expressions;
 using FluentValidation;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
@@ -89,6 +91,13 @@ namespace Parkla.Business.Bases
         ) {
             ValidateAndThrow(entity);
             return await NoValidateUpdateAsync(entity, cancellationToken);
+        }
+
+        public async Task<TEntity?> GetAsync(
+            Expression<Func<TEntity,bool>> filter,
+            CancellationToken cancellationToken = default
+        ) {
+            return await _entityRepository.GetAsync(filter, cancellationToken);
         }
     }
 }

@@ -12,7 +12,8 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.ParkId)
-            .HasColumnName("park_id");
+            .HasColumnName("park_id")
+            .IsRequired();
         b.Property(x => x.Name)
             .HasColumnName("name")
             .HasMaxLength(50)
