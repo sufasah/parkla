@@ -93,7 +93,7 @@ public class AuthService : IAuthService
             throw new ParklaException("Already a user exists with given username. Every user must have unique username", HttpStatusCode.Forbidden);
 
         user.VerificationCode = Guid.NewGuid().ToString().Split('-').First().ToUpper();
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password + _secretOptions.PasswordSalt);
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, BCrypt.Net.BCrypt.GenerateSalt(9) + _secretOptions.PasswordPepper);
         user = await _userRepo.AddAsync(user, cancellationToken).ConfigureAwait(false);
         
         await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of account is necessary to registeration. You need to verify your account with the code below:\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
@@ -118,7 +118,7 @@ public class AuthService : IAuthService
             throw new ParklaException("Verification code has sent to the email. Please check your e-mail", HttpStatusCode.OK);
         }
 
-        var isVerifyPassword = BCrypt.Net.BCrypt.Verify(password+_secretOptions.PasswordSalt, user.Password);
+        var isVerifyPassword = BCrypt.Net.BCrypt.Verify(password, user.Password);
         if (!isVerifyPassword) throw notFound;
 
         return JwtHelper.GetTokens(user);

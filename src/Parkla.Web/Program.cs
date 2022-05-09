@@ -15,7 +15,8 @@ using Parkla.Web.SerialCom;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
+var deneme = BCrypt.Net.BCrypt.HashPassword("examplepass", BCrypt.Net.BCrypt.GenerateSalt(11)+"examplepepper");
+var verified = BCrypt.Net.BCrypt.Verify("examplepass",deneme);
 builder.Configuration.AddConfiguration(new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("secret.json")
