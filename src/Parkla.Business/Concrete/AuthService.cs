@@ -17,18 +17,18 @@ namespace Parkla.Business.Concrete;
 public class AuthService : IAuthService
 {
     private readonly IMailService _mailService;
-    private readonly IValidator<User> _validatior;
+    private readonly IValidator<User> _userValidatior;
     private readonly IUserRepo _userRepo;
     private readonly SecretOptions _secretOptions;
 
     public AuthService(
         IMailService mailService,
-        IValidator<User> validator,
+        IValidator<User> userValidator,
         IUserRepo userRepo,
         IOptions<SecretOptions> secretOptions
     ) {
         _mailService = mailService;
-        _validatior = validator;
+        _userValidatior = userValidator;
         _userRepo = userRepo;
         _secretOptions = secretOptions.Value;
     }
@@ -73,18 +73,19 @@ public class AuthService : IAuthService
         var user = await _userRepo.GetAsync(x => x.Id == id).ConfigureAwait(false);
 
         var userTokenNotMatch =  new ParklaException("Refresh token and its user does not match. User has this token is not found", HttpStatusCode.NotFound);
-
-        if(user == null) 
-            throw userTokenNotMatch;
-
-        if(user.RefreshTokenSignature != signature)
+        if(user == null || user.RefreshTokenSignature != signature)
             throw userTokenNotMatch;
         
         return user;
     }
 
     public async Task RegisterAsync(User user, CancellationToken cancellationToken = default) {
-        var result = _validatior.Validate(user);
+        var result = _userValidatior.Validate(user, o => o.IncludeProperties(
+            x=>x.Username, x=>x.Password, x=>x.Email,
+            x=>x.Name, x=>x.Surname, x=>x.Phone,
+            x=>x.Address, x=>x.Birthdate, x=>x.Gender,
+            x=>x.CityId, x=>x.DistrictId
+        ));
         if (!result.IsValid)
             throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
 
@@ -102,9 +103,11 @@ public class AuthService : IAuthService
     public async Task<TokensDto> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
     {
         var notValid = new ParklaException("Username or password is not valid", HttpStatusCode.BadRequest);
-        if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            throw notValid;
-        if(username.Length > 30 || password.Length > 50)
+        var validation = _userValidatior.Validate(
+            new User{Username=username, Password=password},
+            o => o.IncludeProperties(x => x.Username, x => x.Password)
+        );
+        if(!validation.IsValid)
             throw notValid;
 
         var user = await _userRepo.GetAsync(x => x.Username == username, cancellationToken).ConfigureAwait(false);
@@ -127,7 +130,11 @@ public class AuthService : IAuthService
     public async Task<bool> VerifyEmailCodeAsync(string username, string verificationCode, CancellationToken cancellationToken = default)
     {
         var notValid = new ParklaException("Username or verification code is not valid", HttpStatusCode.BadRequest);
-        if(string.IsNullOrWhiteSpace(username) || username.Length > 30 || string.IsNullOrWhiteSpace(verificationCode))
+        var validation = _userValidatior.Validate(
+            new User{Username=username, VerificationCode=verificationCode},
+            o => o.IncludeProperties(x => x.Username, x => x.VerificationCode)
+        );
+        if(!validation.IsValid)
             throw notValid;
 
         var user = await _userRepo.GetAsync(x => x.Username == username, cancellationToken).ConfigureAwait(false);

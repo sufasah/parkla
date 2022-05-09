@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Parkla.Core.DTOs;
 using Parkla.Core.Entities;
@@ -10,12 +9,7 @@ namespace Parkla.Core.Helpers
     public static class JwtHelper
     {
         public static byte[] SecretKey;
-        public static readonly TokenValidationParameters TokenValidationParameters = new() {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(SecretKey),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
+        public static TokenValidationParameters TokenValidationParameters;
 
         public static readonly JwtSecurityTokenHandler TokenHandler = new() {
             MaximumTokenSizeInBytes = 4000

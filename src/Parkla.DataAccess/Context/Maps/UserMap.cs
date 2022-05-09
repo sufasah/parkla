@@ -22,7 +22,7 @@ public class UserMap : IEntityTypeConfiguration<User> {
             .IsRequired();
         b.Property(x => x.Password)
             .HasColumnName("password")
-            .HasMaxLength(50)
+            .HasMaxLength(80)
             .IsRequired();
         b.Property(x => x.Email)
             .HasColumnName("email")

@@ -22,6 +22,7 @@ public class UserValidator : AbstractValidator<User>
         RuleFor(x => x.Email)
             .NotNull()
             .NotEmpty()
+            .EmailAddress()
             .MaximumLength(320);
         RuleFor(x => x.Name)
             .NotNull()
@@ -36,7 +37,8 @@ public class UserValidator : AbstractValidator<User>
             .NotEmpty()
             .MaximumLength(20);
         RuleFor(x => x.Birthdate);
-        RuleFor(x => x.Gender);
+        RuleFor(x => x.Gender)
+            .IsInEnum();
         RuleFor(x => x.VerificationCode);
         RuleFor(x => x.RefreshTokenSignature)
             .MaximumLength(400);
@@ -45,5 +47,6 @@ public class UserValidator : AbstractValidator<User>
         RuleFor(x => x.Address)
             .MaximumLength(200)
             .NotEmpty();
+        
     }
 }

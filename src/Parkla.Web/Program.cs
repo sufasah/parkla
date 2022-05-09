@@ -5,6 +5,7 @@ using Collector;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Parkla.Core.Helpers;
 using Parkla.Core.Options;
 using Parkla.DataAccess.Contexts;
@@ -15,8 +16,7 @@ using Parkla.Web.SerialCom;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var deneme = BCrypt.Net.BCrypt.HashPassword("examplepass", BCrypt.Net.BCrypt.GenerateSalt(11)+"examplepepper");
-var verified = BCrypt.Net.BCrypt.Verify("examplepass",deneme);
+
 builder.Configuration.AddConfiguration(new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("secret.json")
@@ -27,6 +27,12 @@ builder.WebHost.ConfigureServices(services => {
     services.Configure<WebOptions>(builder.Configuration.GetSection("Parkla"));
     services.Configure<SecretOptions>(builder.Configuration.GetSection("SecretParkla"));
     JwtHelper.SecretKey = Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("SecretParkla:tokenSecret"));
+    JwtHelper.TokenValidationParameters = new() {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(JwtHelper.SecretKey),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };;
 
     services.AddAuthentication(cfg => {
         cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

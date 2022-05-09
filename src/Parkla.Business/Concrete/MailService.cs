@@ -13,7 +13,7 @@ public class MailService : IMailService
     private readonly string _email;
     private readonly string _password;
     public MailService(
-        ILogger logger,
+        ILogger<MailService> logger,
         IOptions<SecretOptions> options
     ) {
         _logger = logger;
