@@ -5,8 +5,8 @@ public class ParkArea : IEntity {
     public int ParkId { get; set; }
     public virtual Park Park { get; set; }
     public string Name { get; set; }
-    public string Description { get; set; }
-    public string TemplateImage { get; set; }
+    public string? Description { get; set; }
+    public string? TemplateImage { get; set; }
     public bool ReservationsEnabled { get; set; }
     public DateTime StatusUpdateTime { get; set; }
     public int EmptySpace { get; set; }

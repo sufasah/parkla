@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
 using Parkla.Core.DTOs;
 using Parkla.Core.Entities;
@@ -15,11 +16,11 @@ namespace Parkla.Core.Helpers
             MaximumTokenSizeInBytes = 4000
         };
 
-        public static TokensDto GetTokens(User user) {
+        public static TokensDto GetTokens(User user, out JwtSecurityToken accessToken, out JwtSecurityToken refreshToken) {
             var dto = new TokensDto
             {
-                AccessToken = GenerateAccessToken(user, out _),
-                RefreshToken = GenerateRefreshToken(user.Id.ToString(), out var refreshToken),
+                AccessToken = GenerateAccessToken(user, out accessToken),
+                RefreshToken = GenerateRefreshToken(user.Id.ToString(), out refreshToken),
                 Expires = (int)(refreshToken.ValidTo - refreshToken.ValidFrom).TotalMinutes
             };
             return dto;
@@ -40,7 +41,9 @@ namespace Parkla.Core.Helpers
         public static string GenerateRefreshToken(string userId, out JwtSecurityToken securityToken)
         {
             var tokenDescriptor = new SecurityTokenDescriptor {
-                Subject = new(new Claim[]{new(ClaimTypes.NameIdentifier, userId)}),
+                Subject = new(new Claim[]{
+                    new(JwtRegisteredClaimNames.Sub, userId)
+                }),
                 IssuedAt = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddDays(7), // this will be changed later
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(SecretKey), SecurityAlgorithms.HmacSha256Signature)
@@ -55,18 +58,28 @@ namespace Parkla.Core.Helpers
             var dic = new Dictionary<string, object>
             {
                 { ClaimTypes.NameIdentifier, user.Id.ToString() },
-                { ClaimTypes.UserData, user.Name },
                 { ClaimTypes.Name, user.Name },
                 { ClaimTypes.Surname, user.Surname },
                 { ClaimTypes.Email, user.Email },
-                { ClaimTypes.Country, "Turkey" },
                 { ClaimTypes.DateOfBirth, user.Birthdate },
                 { ClaimTypes.Gender, user.Gender },
-                { ClaimTypes.GivenName, user.Email },
-                { ClaimTypes.Email, user.Email },
                 { ClaimTypes.MobilePhone, user.Phone },
-                { ClaimTypes.StateOrProvince, user.District },
-                { ClaimTypes.StreetAddress, user.Address }
+                { ClaimTypes.Locality, user.CityId },
+                { ClaimTypes.StateOrProvince, user.DistrictId },
+                { ClaimTypes.StreetAddress, user.Address },
+                { JwtRegisteredClaimNames.Sub, user.Id.ToString() },
+                { "preferred_username", user.Username },
+                { JwtRegisteredClaimNames.Name, user.Name },
+                { JwtRegisteredClaimNames.FamilyName, user.Surname },
+                { JwtRegisteredClaimNames.Email, user.Email },
+                { JwtRegisteredClaimNames.Birthdate, user.Birthdate },
+                { JwtRegisteredClaimNames.Gender, user.Gender },
+                { "phone_number", user.Phone },
+                { "address", JsonSerializer.Serialize(new{
+                    locality = user.CityId,
+                    region = user.DistrictId,
+                    street_address = user.Address
+                }) },
             };
             return dic;
         }

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Parkla.DataAccess.Migrations
 {
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -86,8 +86,8 @@ namespace Parkla.DataAccess.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     park_id = table.Column<int>(type: "integer", nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    template_image = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    template_image = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     reservations_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
                     empty_space = table.Column<int>(type: "integer", nullable: false),
@@ -120,16 +120,18 @@ namespace Parkla.DataAccess.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     wallet = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false),
                     username = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    password = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    password = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false),
                     email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: false),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     surname = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    birthdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    gender = table.Column<int>(type: "integer", nullable: false),
-                    city_id = table.Column<int>(type: "integer", nullable: false),
-                    district_id = table.Column<int>(type: "integer", nullable: false),
-                    address = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false)
+                    address = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    birthdate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    gender = table.Column<int>(type: "integer", nullable: true),
+                    verify_code = table.Column<string>(type: "text", nullable: true),
+                    refresh_token_signature = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
+                    city_id = table.Column<int>(type: "integer", nullable: true),
+                    district_id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -139,15 +141,13 @@ namespace Parkla.DataAccess.Migrations
                         column: x => x.city_id,
                         principalSchema: "public",
                         principalTable: "cities",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_users_districts_district_id",
                         column: x => x.district_id,
                         principalSchema: "public",
                         principalTable: "districts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -158,7 +158,7 @@ namespace Parkla.DataAccess.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     area_id = table.Column<int>(type: "integer", nullable: false),
-                    real_space_id = table.Column<int>(type: "integer", nullable: false),
+                    real_space_id = table.Column<int>(type: "integer", nullable: true),
                     name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
                     status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
@@ -209,7 +209,7 @@ namespace Parkla.DataAccess.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     park_id = table.Column<int>(type: "integer", nullable: false),
-                    space_id = table.Column<int>(type: "integer", nullable: false),
+                    space_id = table.Column<int>(type: "integer", nullable: true),
                     name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
                     status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1)
@@ -223,8 +223,7 @@ namespace Parkla.DataAccess.Migrations
                         column: x => x.space_id,
                         principalSchema: "public",
                         principalTable: "park_spaces",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_real_park_spaces_parks_park_id",
                         column: x => x.park_id,
@@ -281,8 +280,8 @@ namespace Parkla.DataAccess.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    space_id = table.Column<int>(type: "integer", nullable: false),
-                    real_space_id = table.Column<int>(type: "integer", nullable: false),
+                    space_id = table.Column<int>(type: "integer", nullable: true),
+                    real_space_id = table.Column<int>(type: "integer", nullable: true),
                     status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     datetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                 },
@@ -295,15 +294,13 @@ namespace Parkla.DataAccess.Migrations
                         column: x => x.space_id,
                         principalSchema: "public",
                         principalTable: "park_spaces",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_received_space_statusses_real_park_spaces_real_space_id",
                         column: x => x.real_space_id,
                         principalSchema: "public",
                         principalTable: "real_park_spaces",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -384,6 +381,13 @@ namespace Parkla.DataAccess.Migrations
                 schema: "public",
                 table: "users",
                 column: "district_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_users_username",
+                schema: "public",
+                table: "users",
+                column: "username",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

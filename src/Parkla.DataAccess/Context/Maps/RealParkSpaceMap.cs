@@ -17,7 +17,8 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
             .HasColumnName("park_id")
             .IsRequired();
         b.Property(x => x.SpaceId)
-            .HasColumnName("space_id");
+            .HasColumnName("space_id")
+            .IsRequired(false);
         b.Property(x => x.Name)
             .HasColumnName("name")
             .HasMaxLength(30)

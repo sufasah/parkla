@@ -23,6 +23,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
             .NotNull();
         RuleFor(x => x.StatusUpdateTime)
             .NotNull()
+            .Must(x => x.Kind == DateTimeKind.Utc)
             .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
             .LessThanOrEqualTo(DateTime.UtcNow);
         RuleFor(x => x.EmptySpace)
@@ -33,14 +34,14 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
             .NotNull();
         RuleFor(x => x.MinPrice)
             .NotNull()
-            .InclusiveBetween(precision30,0)
+            .InclusiveBetween(0,precision30)
             .Must((y, x) => x <= y.AvaragePrice);
         RuleFor(x => x.AvaragePrice)
             .NotNull()
-            .InclusiveBetween(precision30,0)
+            .InclusiveBetween(0,precision30)
             .Must((y, x) => x <= y.MaxPrice);
         RuleFor(x => x.MaxPrice)
             .NotNull()
-            .InclusiveBetween(precision30,0);
+            .InclusiveBetween(0,precision30);
     }
 }

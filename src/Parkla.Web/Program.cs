@@ -31,7 +31,8 @@ builder.WebHost.ConfigureServices(services => {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(JwtHelper.SecretKey),
         ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateAudience = false,
+        ValidateLifetime = true
     };;
 
     services.AddAuthentication(cfg => {

@@ -50,9 +50,11 @@ public class UserMap : IEntityTypeConfiguration<User> {
             .HasColumnName("refresh_token_signature")
             .HasMaxLength(400);
         b.Property(x => x.CityId)
-            .HasColumnName("city_id");
+            .HasColumnName("city_id")
+            .IsRequired(false);
         b.Property(x => x.DistrictId)
-            .HasColumnName("district_id");
+            .HasColumnName("district_id")
+            .IsRequired(false);
         b.Property(x => x.Address)
             .HasColumnName("address")
             .HasMaxLength(200);

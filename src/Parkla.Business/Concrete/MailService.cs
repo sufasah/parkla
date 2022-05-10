@@ -26,8 +26,8 @@ public class MailService : IMailService
         CancellationToken cancellationToken = default
     ) {
         
-        message.From = new MailAddress("parkla@outlook.com", "Parkla");
-        var encoding = new UnicodeEncoding();
+        message.From = new MailAddress(_email, "Parkla");
+        var encoding = new UTF8Encoding();
         message.BodyEncoding = encoding;
         message.HeadersEncoding = encoding;
         message.SubjectEncoding = encoding;

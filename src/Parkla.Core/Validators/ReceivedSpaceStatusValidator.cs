@@ -13,6 +13,7 @@ public class ReceivedSpaceStatusValidator : AbstractValidator<ReceivedSpaceStatu
             .IsInEnum();
         RuleFor(x => x.DateTime)
             .NotNull()
+            .Must(x => x.Kind == DateTimeKind.Utc)
             .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
             .LessThanOrEqualTo(DateTime.UtcNow);
     }

@@ -164,7 +164,6 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnName("avarage_price");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("description");
@@ -212,7 +211,6 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnName("status_update_time");
 
                     b.Property<string>("TemplateImage")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("template_image");
@@ -247,7 +245,7 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("character varying(30)")
                         .HasColumnName("name");
 
-                    b.Property<int>("RealSpaceId")
+                    b.Property<int?>("RealSpaceId")
                         .HasColumnType("integer")
                         .HasColumnName("real_space_id");
 
@@ -329,7 +327,7 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("park_id");
 
-                    b.Property<int>("SpaceId")
+                    b.Property<int?>("SpaceId")
                         .HasColumnType("integer")
                         .HasColumnName("space_id");
 
@@ -372,11 +370,11 @@ namespace Parkla.DataAccess.Migrations
                         .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                         .HasColumnName("datetime");
 
-                    b.Property<int>("RealSpaceId")
+                    b.Property<int?>("RealSpaceId")
                         .HasColumnType("integer")
                         .HasColumnName("real_space_id");
 
-                    b.Property<int>("SpaceId")
+                    b.Property<int?>("SpaceId")
                         .HasColumnType("integer")
                         .HasColumnName("space_id");
 
@@ -449,20 +447,19 @@ namespace Parkla.DataAccess.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")
                         .HasColumnName("address");
 
-                    b.Property<DateTime>("Birthdate")
+                    b.Property<DateTime?>("Birthdate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("birthdate");
 
-                    b.Property<int>("CityId")
+                    b.Property<int?>("CityId")
                         .HasColumnType("integer")
                         .HasColumnName("city_id");
 
-                    b.Property<int>("DistrictId")
+                    b.Property<int?>("DistrictId")
                         .HasColumnType("integer")
                         .HasColumnName("district_id");
 
@@ -472,7 +469,7 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("character varying(320)")
                         .HasColumnName("email");
 
-                    b.Property<int>("Gender")
+                    b.Property<int?>("Gender")
                         .HasColumnType("integer")
                         .HasColumnName("gender");
 
@@ -484,8 +481,8 @@ namespace Parkla.DataAccess.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
                         .HasColumnName("password");
 
                     b.Property<string>("Phone")
@@ -493,6 +490,11 @@ namespace Parkla.DataAccess.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("phone");
+
+                    b.Property<string>("RefreshTokenSignature")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)")
+                        .HasColumnName("refresh_token_signature");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -506,6 +508,10 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("character varying(30)")
                         .HasColumnName("username");
 
+                    b.Property<string>("VerificationCode")
+                        .HasColumnType("text")
+                        .HasColumnName("verify_code");
+
                     b.Property<float>("Wallet")
                         .HasPrecision(30, 2)
                         .HasColumnType("real")
@@ -516,6 +522,9 @@ namespace Parkla.DataAccess.Migrations
                     b.HasIndex("CityId");
 
                     b.HasIndex("DistrictId");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("users", "public");
                 });
@@ -574,9 +583,7 @@ namespace Parkla.DataAccess.Migrations
 
                     b.HasOne("Parkla.Core.Entities.ParkSpace", "Space")
                         .WithOne("RealSpace")
-                        .HasForeignKey("Parkla.Core.Entities.RealParkSpace", "SpaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Parkla.Core.Entities.RealParkSpace", "SpaceId");
 
                     b.Navigation("Park");
 
@@ -587,15 +594,11 @@ namespace Parkla.DataAccess.Migrations
                 {
                     b.HasOne("Parkla.Core.Entities.RealParkSpace", "RealSpace")
                         .WithMany("ReceivedSpaceStatuses")
-                        .HasForeignKey("RealSpaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RealSpaceId");
 
                     b.HasOne("Parkla.Core.Entities.ParkSpace", "Space")
                         .WithMany("ReceivedSpaceStatuses")
-                        .HasForeignKey("SpaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SpaceId");
 
                     b.Navigation("RealSpace");
 
@@ -633,15 +636,11 @@ namespace Parkla.DataAccess.Migrations
                 {
                     b.HasOne("Parkla.Core.Entities.City", "City")
                         .WithMany("Users")
-                        .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CityId");
 
                     b.HasOne("Parkla.Core.Entities.District", "District")
                         .WithMany("Users")
-                        .HasForeignKey("DistrictId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DistrictId");
 
                     b.Navigation("City");
 
@@ -676,8 +675,7 @@ namespace Parkla.DataAccess.Migrations
 
             modelBuilder.Entity("Parkla.Core.Entities.ParkSpace", b =>
                 {
-                    b.Navigation("RealSpace")
-                        .IsRequired();
+                    b.Navigation("RealSpace");
 
                     b.Navigation("ReceivedSpaceStatuses");
 

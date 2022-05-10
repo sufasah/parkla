@@ -10,7 +10,7 @@ public class UserValidator : AbstractValidator<User>
 
         RuleFor(x => x.Wallet)
             .NotNull()
-            .InclusiveBetween(precision30, 0);
+            .InclusiveBetween(0,precision30);
         RuleFor(x => x.Username)
             .NotNull()
             .NotEmpty()

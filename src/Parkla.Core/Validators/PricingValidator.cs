@@ -17,6 +17,6 @@ public class PricingValidator : AbstractValidator<Pricing>
             .NotNull();
         RuleFor(x => x.Price)
             .NotNull()
-            .InclusiveBetween(precision30, 0);
+            .InclusiveBetween(0, precision30);
     }
 }

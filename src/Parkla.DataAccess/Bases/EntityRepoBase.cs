@@ -47,14 +47,13 @@ namespace Parkla.DataAccess.Bases
             CancellationToken cancellationToken = default
         ) {
             using var context = new TContext();
+            IQueryable<TEntity> resultSet;
             if (filter == null)
-                return await context.Set<TEntity>()
-                    .ToListAsync(cancellationToken)
-                    .ConfigureAwait(false);
-            List<TEntity> result = await context.Set<TEntity>()
-                .Where(filter)
-                .ToListAsync(cancellationToken)
-                .ConfigureAwait(false);
+                resultSet = context.Set<TEntity>();
+            else
+                resultSet = context.Set<TEntity>().Where(filter);
+            
+            var result = await resultSet.ToListAsync(cancellationToken).ConfigureAwait(false);
             return result;
         }
         public async Task<PagedList<TEntity>> GetListAsync(
@@ -64,7 +63,12 @@ namespace Parkla.DataAccess.Bases
             CancellationToken cancellationToken = default
         ) {
             using var context = new TContext();
-            var resultSet = context.Set<TEntity>().Where(filter!);
+            IQueryable<TEntity> resultSet;
+            if(filter == null)
+                resultSet = context.Set<TEntity>();
+            else
+                resultSet = context.Set<TEntity>().Where(filter);
+
             var result = await ToPagedListAsync(resultSet, pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
             return result;
         }

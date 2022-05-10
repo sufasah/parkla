@@ -40,8 +40,8 @@ public class AuthService : IAuthService
     }
     public async Task<TokensDto> RefreshToken(string oldRefreshToken) {
         var user = await ValidateRefreshToken(oldRefreshToken).ConfigureAwait(false);
-        var tokens = JwtHelper.GetTokens(user);
-        user.RefreshTokenSignature = JwtHelper.TokenHandler.ReadJwtToken(tokens.RefreshToken).RawSignature;
+        var tokens = JwtHelper.GetTokens(user, out _, out var refreshToken);
+        user.RefreshTokenSignature = refreshToken.RawSignature;
         await _userRepo.UpdateAsync(user).ConfigureAwait(false);
         return tokens;
     }
@@ -62,7 +62,7 @@ public class AuthService : IAuthService
         JwtSecurityToken token;
         try {
             token = (validationResult.SecurityToken as JwtSecurityToken)!;
-            var claim = token!.Payload.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            var claim = token!.Payload.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub);
             id = int.Parse(claim!.Value);
         } catch {
             throw tokenNotValid;
@@ -72,7 +72,7 @@ public class AuthService : IAuthService
 
         var user = await _userRepo.GetAsync(x => x.Id == id).ConfigureAwait(false);
 
-        var userTokenNotMatch =  new ParklaException("Refresh token and its user does not match. User has this token is not found", HttpStatusCode.NotFound);
+        var userTokenNotMatch =  new ParklaException("User match with the refresh token has not been found", HttpStatusCode.NotFound);
         if(user == null || user.RefreshTokenSignature != signature)
             throw userTokenNotMatch;
         
@@ -97,7 +97,7 @@ public class AuthService : IAuthService
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, BCrypt.Net.BCrypt.GenerateSalt(9) + _secretOptions.PasswordPepper);
         user = await _userRepo.AddAsync(user, cancellationToken).ConfigureAwait(false);
         
-        await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of account is necessary to registeration. You need to verify your account with the code below:\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
+        await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of the account is necessary to registeration. You need to verify your account with the code below:\n\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
     }
 
     public async Task<TokensDto> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
@@ -117,14 +117,19 @@ public class AuthService : IAuthService
         if (user.VerificationCode != null) {
             user.VerificationCode = Guid.NewGuid().ToString().Split('-').First().ToUpper();
             user = await _userRepo.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
-            await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of account is necessary to registeration. You need to verify your account with the code below:\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
+            await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of the account is necessary to registeration. You need to verify your account with the code below:\n\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
             throw new ParklaException("Verification code has sent to the email. Please check your e-mail", HttpStatusCode.OK);
         }
 
         var isVerifyPassword = BCrypt.Net.BCrypt.Verify(password, user.Password);
         if (!isVerifyPassword) throw notFound;
 
-        return JwtHelper.GetTokens(user);
+        var tokens = JwtHelper.GetTokens(user, out _, out var refreshToken);
+        
+        user.RefreshTokenSignature = refreshToken.RawSignature;
+        await _userRepo.UpdateAsync(user,cancellationToken).ConfigureAwait(false);
+
+        return tokens;
     }
 
     public async Task<bool> VerifyEmailCodeAsync(string username, string verificationCode, CancellationToken cancellationToken = default)

@@ -14,9 +14,11 @@ public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStat
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.SpaceId)
-            .HasColumnName("space_id");
+            .HasColumnName("space_id")
+            .IsRequired(false);
         b.Property(x => x.RealSpaceId)
-            .HasColumnName("real_space_id");
+            .HasColumnName("real_space_id")
+            .IsRequired(false);
         b.Property(x => x.Status)
             .HasColumnName("status")
             .HasDefaultValue(SpaceStatus.OCCUPIED)
