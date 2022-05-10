@@ -7,7 +7,6 @@ public class ParkProfile : Profile
 {
     public ParkProfile()
     {
-        AllowNullDestinationValues = true;
         CreateMap<Park, ParkDto>()
             .ReverseMap();
     }

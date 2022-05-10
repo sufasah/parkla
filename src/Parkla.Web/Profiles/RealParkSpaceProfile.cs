@@ -7,7 +7,6 @@ public class RealParkSpaceProfile : Profile
 {
     public RealParkSpaceProfile()
     {
-        AllowNullDestinationValues = true;
         CreateMap<RealParkSpace, RealParkSpaceDto>()
             .ReverseMap();
     }

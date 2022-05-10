@@ -7,7 +7,6 @@ public class PricingProfile : Profile
 {
     public PricingProfile()
     {
-        AllowNullDestinationValues = true;
         CreateMap<Pricing, PricingDto>()
             .ReverseMap();
     }

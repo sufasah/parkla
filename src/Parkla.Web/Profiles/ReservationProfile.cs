@@ -7,7 +7,6 @@ public class ReservationProfile : Profile
 {
     public ReservationProfile()
     {
-        AllowNullDestinationValues = true;
         CreateMap<Reservation, ReservationDto>()
             .ReverseMap();
     }
