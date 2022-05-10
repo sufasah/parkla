@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
@@ -80,12 +81,7 @@ public class AuthService : IAuthService
     }
 
     public async Task RegisterAsync(User user, CancellationToken cancellationToken = default) {
-        var result = _userValidatior.Validate(user, o => o.IncludeProperties(
-            x=>x.Username, x=>x.Password, x=>x.Email,
-            x=>x.Name, x=>x.Surname, x=>x.Phone,
-            x=>x.Address, x=>x.Birthdate, x=>x.Gender,
-            x=>x.CityId, x=>x.DistrictId
-        ));
+        var result = _userValidatior.Validate(user, o => o.IncludeRuleSets("register"));
         if (!result.IsValid)
             throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
 
@@ -93,6 +89,8 @@ public class AuthService : IAuthService
         if (dbUser != null)
             throw new ParklaException("Already a user exists with given username. Every user must have unique username", HttpStatusCode.Forbidden);
 
+        user.Wallet = 0;
+        user.RefreshTokenSignature = null;
         user.VerificationCode = Guid.NewGuid().ToString().Split('-').First().ToUpper();
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, BCrypt.Net.BCrypt.GenerateSalt(9) + _secretOptions.PasswordPepper);
         user = await _userRepo.AddAsync(user, cancellationToken).ConfigureAwait(false);

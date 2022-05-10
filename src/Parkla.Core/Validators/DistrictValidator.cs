@@ -6,11 +6,13 @@ public class DistrictValidator : AbstractValidator<District>
 {
     public DistrictValidator()
     {
-        RuleFor(x => x.CityId)
-            .NotNull();
-        RuleFor(x => x.Name)
-            .NotNull()
-            .NotEmpty()
-            .MaximumLength(30);
+        CityId();
+        Name();
     }
+    private void CityId() => RuleFor(x => x.CityId)
+        .NotNull();
+    private void Name() => RuleFor(x => x.Name)
+        .NotNull()
+        .NotEmpty()
+        .MaximumLength(30);
 }

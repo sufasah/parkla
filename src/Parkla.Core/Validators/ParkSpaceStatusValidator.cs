@@ -6,25 +6,25 @@ public class ParkSpaceStatusValidator : AbstractValidator<ParkSpaceStatusDto>
 {
     public ParkSpaceStatusValidator()
     {
-        RuleFor(x => x.ParkId)
-            .NotNull()
-            .NotEmpty()
-        ;
-        RuleFor(x => x.SpaceId)
-            .NotNull()
-            .NotEmpty()
-            .MinimumLength(1)
-            .MaximumLength(40)
-        ;
-        RuleFor(x => x.Status)
-            .NotNull()
-            .IsInEnum()
-        ;
-        RuleFor(x => x.DateTime)
-            .NotNull()
-            .NotEmpty()
-            .Must(x => x.Kind == DateTimeKind.Utc)
-            .LessThanOrEqualTo(x => DateTime.UtcNow)
-        ;
+        ParkId();
+        SpaceId();
+        Status();
+        DateTime();
     }
+    private void ParkId() => RuleFor(x => x.ParkId)
+        .NotNull()
+        .NotEmpty();
+    private void SpaceId() => RuleFor(x => x.SpaceId)
+        .NotNull()
+        .NotEmpty()
+        .MinimumLength(1)
+        .MaximumLength(40);
+    private void Status() => RuleFor(x => x.Status)
+        .NotNull()
+        .IsInEnum();
+    private void DateTime() => RuleFor(x => x.DateTime)
+        .NotNull()
+        .NotEmpty()
+        .Must(x => x.Kind == DateTimeKind.Utc)
+        .LessThanOrEqualTo(x => System.DateTime.UtcNow);
 }

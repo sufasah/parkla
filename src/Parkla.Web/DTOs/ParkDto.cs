@@ -16,6 +16,4 @@ public class ParkDto
     public float? MinPrice { get; set; }
     public float? AvaragePrice { get; set; }
     public float? MaxPrice { get; set; }
-    public virtual ICollection<ParkArea>? Areas { get; set; }
-    public virtual ICollection<RealParkSpace>? RealSpaces { get; set; }
 }

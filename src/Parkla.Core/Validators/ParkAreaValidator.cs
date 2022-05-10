@@ -1,47 +1,59 @@
+using System.Linq.Expressions;
 using FluentValidation;
 using Parkla.Core.Entities;
 
 namespace Parkla.Core.Validators;
 public class ParkAreaValidator : AbstractValidator<ParkArea>
 {
+    private readonly float precision30 = (float)Math.Pow(10,30)-1;
     public ParkAreaValidator()
     {
-        var precision30 = (float)Math.Pow(10,30)-1;
-
-        RuleFor(x => x.ParkId)
-            .NotNull();
-        RuleFor(x => x.Name)
-            .NotNull()
-            .NotEmpty()
-            .MaximumLength(50);
-        RuleFor(x => x.Description)
-            .MaximumLength(200);
-        RuleFor(x => x.TemplateImage)
-            .NotEmpty()
-            .MaximumLength(500);
-        RuleFor(x => x.ReservationsEnabled)
-            .NotNull();
-        RuleFor(x => x.StatusUpdateTime)
-            .NotNull()
-            .Must(x => x.Kind == DateTimeKind.Utc)
-            .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
-            .LessThanOrEqualTo(DateTime.UtcNow);
-        RuleFor(x => x.EmptySpace)
-            .NotNull();
-        RuleFor(x => x.ReservedSpace)
-            .NotNull();
-        RuleFor(x => x.OccupiedSpace)
-            .NotNull();
-        RuleFor(x => x.MinPrice)
-            .NotNull()
-            .InclusiveBetween(0,precision30)
-            .Must((y, x) => x <= y.AvaragePrice);
-        RuleFor(x => x.AvaragePrice)
-            .NotNull()
-            .InclusiveBetween(0,precision30)
-            .Must((y, x) => x <= y.MaxPrice);
-        RuleFor(x => x.MaxPrice)
-            .NotNull()
-            .InclusiveBetween(0,precision30);
+        ParkId();
+        Name();
+        Description();
+        TemplateImage();
+        ReservationsEnabled();
+        StatusUpdateTime();
+        EmptySpace();
+        ReservedSpace();
+        OccupiedSpace();
+        MinPrice();
+        AvaragePrice();
+        MaxPrice();
     }
+    private void ParkId() => RuleFor(x => x.ParkId)
+        .NotNull();
+    private void Name() => RuleFor(x => x.Name)
+        .NotNull()
+        .NotEmpty()
+        .MaximumLength(50);
+    private void Description() => RuleFor(x => x.Description)
+        .MaximumLength(200);
+    private void TemplateImage() => RuleFor(x => x.TemplateImage)
+        .NotEmpty()
+        .MaximumLength(500);
+    private void ReservationsEnabled() => RuleFor(x => x.ReservationsEnabled)
+        .NotNull();
+    private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
+        .NotNull()
+        .Must(x => x.Kind == DateTimeKind.Utc)
+        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
+        .LessThanOrEqualTo(DateTime.UtcNow);
+    private void EmptySpace() => RuleFor(x => x.EmptySpace)
+        .NotNull();
+    private void ReservedSpace() => RuleFor(x => x.ReservedSpace)
+        .NotNull();
+    private void OccupiedSpace() => RuleFor(x => x.OccupiedSpace)
+        .NotNull();
+    private void MinPrice() => RuleFor(x => x.MinPrice)
+        .NotNull()
+        .InclusiveBetween(0,precision30)
+        .Must((y, x) => x <= y.AvaragePrice);
+    private void AvaragePrice() => RuleFor(x => x.AvaragePrice)
+        .NotNull()
+        .InclusiveBetween(0,precision30)
+        .Must((y, x) => x <= y.MaxPrice);
+    private void MaxPrice() => RuleFor(x => x.MaxPrice)
+        .NotNull()
+        .InclusiveBetween(0,precision30);
 }

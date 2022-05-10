@@ -10,5 +10,4 @@ public class PricingDto
     public TimeUnit? Unit { get; set; }
     public int? Amount { get; set; }
     public float? Price { get; set; }
-    public virtual ICollection<Reservation>? Reservations { get; set; }
 }

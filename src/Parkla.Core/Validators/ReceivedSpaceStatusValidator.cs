@@ -6,15 +6,20 @@ public class ReceivedSpaceStatusValidator : AbstractValidator<ReceivedSpaceStatu
 {
     public ReceivedSpaceStatusValidator()
     {
-        RuleFor(x => x.SpaceId);
-        RuleFor(x => x.RealSpaceId);
-        RuleFor(x => x.Status)
-            .NotNull()
-            .IsInEnum();
-        RuleFor(x => x.DateTime)
-            .NotNull()
-            .Must(x => x.Kind == DateTimeKind.Utc)
-            .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
-            .LessThanOrEqualTo(DateTime.UtcNow);
+        SpaceId();
+        RealSpaceId();
+        Status();
+        DateTime();
     }
+
+    private void SpaceId() => RuleFor(x => x.SpaceId);
+    private void RealSpaceId() => RuleFor(x => x.RealSpaceId);
+    private void Status() => RuleFor(x => x.Status)
+        .NotNull()
+        .IsInEnum();
+    private void DateTime() => RuleFor(x => x.DateTime)
+        .NotNull()
+        .Must(x => x.Kind == DateTimeKind.Utc)
+        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
+        .LessThanOrEqualTo(System.DateTime.UtcNow);
 }
