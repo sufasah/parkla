@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppUser } from '@app/core/models/app-user';
+import { City } from '@app/core/models/city';
+import { District } from '@app/core/models/district';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
 import { RouteUrl } from '@app/core/utils/route';
@@ -28,28 +30,16 @@ export class ProfileComponent implements OnInit {
   countryCode = 90;
   phone:string | null = null;
   address = "";
-  city = "Turkey";
-  district = "";
+  city = <City>{id: 1, name: "ist"};
+  district = <District>{id: 2, city: {id:5, name:"ank"}, name: "avcilar"};
   zip = "";
-  birthdate:Date | null = null;
+  birthdate: string | null = null;
   citySuggestions = [];
   districtSuggestions = [];
   countryCodeSuggestions = [];
   submitted = false;
 
   updating = false;
-
-  get birthDay(){
-    return this.birthdate?.getDay();
-  }
-
-  get birthMonth(){
-    return this.birthdate?.getMonth();
-  }
-
-  get birthYear(){
-    return this.birthdate?.getFullYear();
-  }
 
   get maxBirthDate(){
     var date = new Date();
@@ -72,7 +62,6 @@ export class ProfileComponent implements OnInit {
       district: this.district,
       gender: this.gender.value,
       address: this.address,
-      zip: this.zip,
       birthdate: this.birthdate,
     };
   }
@@ -103,7 +92,6 @@ export class ProfileComponent implements OnInit {
       this.city = userDetail.city;
       this.district = userDetail.district;
       this.address = userDetail.address;
-      this.zip = userDetail.zip;
     })
   }
 

@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Collector;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +19,15 @@ using Parkla.Web.SerialCom;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Configuration.AddConfiguration(new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("secret.json")
     .Build());
 
 builder.WebHost.ConfigureServices(services => {
+    ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en-US");
+    
     services.AddOptions();
     services.Configure<WebOptions>(builder.Configuration.GetSection("Parkla"));
     services.Configure<SecretOptions>(builder.Configuration.GetSection("SecretParkla"));
@@ -42,6 +47,14 @@ builder.WebHost.ConfigureServices(services => {
         o.RequireHttpsMetadata = false;
         o.SaveToken = true;
         o.TokenValidationParameters = JwtHelper.TokenValidationParameters;
+        o.Events = new JwtBearerEvents() {
+            OnAuthenticationFailed = context => {
+                if(context.Exception.GetType() == typeof(SecurityTokenExpiredException)) {
+                    context.Response.Headers.Add("Token-Expired", "true");
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
     services.AddAuthorization(o => {
@@ -96,17 +109,15 @@ if (!app.Environment.IsDevelopment())
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    app.UseDeveloperExceptionPage();
 }
-else {
-    app.UseAppExceptionHandler();
-}
+
+app.UseAppExceptionHandler();
 
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseCors("allow-all");
+app.UseCors("allowAll");
 
 app.UseRouting();
 

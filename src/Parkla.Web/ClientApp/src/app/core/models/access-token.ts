@@ -1,16 +1,24 @@
+import { Gender } from "../enums/Gender";
+
 export interface AccessToken {
-  iss?: string;
   sub?: string;
-  aud?: string;
   exp?: number;
   nbf?: number;
   iat?: number;
-  jti?: string;
   sid?: string;
-  preferred_username?: string;
-  name?: string;
-  email?: string;
-  email_verified?: boolean;
-  gender?: string;
-  phone_number_verified?: boolean;
+  preferred_username: string;
+  name: string;
+  family_name: string;
+  email: string;
+  email_verified: boolean;
+  gender: Gender;
+  birthdate: Date;
+  phone_number: string;
+  address: TokenAddress;
+}
+
+export interface TokenAddress {
+  locality: string;
+  region: string;
+  street_address: string;
 }

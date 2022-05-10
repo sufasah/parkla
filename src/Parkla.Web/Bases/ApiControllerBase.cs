@@ -6,6 +6,7 @@ namespace Parkla.Web.Controllers;
 [ApiController]
 [Route(WebOptions.API_PREFIX+"/[controller]")]
 [Authorize]
+[Produces("application/json")]
 public class ApiControllerBase: ControllerBase
 {
 }

@@ -21,20 +21,25 @@ public class MailService : IMailService
         _password = options.Value.ServerEmailPassword;
     }
 
-    public async Task SendMailAsync(
+    public async Task<bool> SendMailAsync(
         MailMessage message, 
         CancellationToken cancellationToken = default
     ) {
-        
-        message.From = new MailAddress(_email, "Parkla");
-        var encoding = new UTF8Encoding();
-        message.BodyEncoding = encoding;
-        message.HeadersEncoding = encoding;
-        message.SubjectEncoding = encoding;
+        try {
+            message.From = new MailAddress(_email, "Parkla");
+            var encoding = new UTF8Encoding();
+            message.BodyEncoding = encoding;
+            message.HeadersEncoding = encoding;
+            message.SubjectEncoding = encoding;
 
-        using var smtpClient = new SmtpClient("smtp.office365.com", 587);
-        smtpClient.EnableSsl = true;
-        smtpClient.Credentials = new NetworkCredential(_email, _password);
-        await smtpClient.SendMailAsync(message, cancellationToken);
+            using var smtpClient = new SmtpClient("smtp.office365.com", 587);
+            smtpClient.EnableSsl = true;
+            smtpClient.Credentials = new NetworkCredential(_email, _password);
+            await smtpClient.SendMailAsync(message, cancellationToken);
+            return true;
+        } catch(Exception e) {
+            _logger.LogError(e, "Mail could not send");
+            return false;
+        }
     }
 }

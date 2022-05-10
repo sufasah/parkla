@@ -95,7 +95,10 @@ public class AuthService : IAuthService
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, BCrypt.Net.BCrypt.GenerateSalt(9) + _secretOptions.PasswordPepper);
         user = await _userRepo.AddAsync(user, cancellationToken).ConfigureAwait(false);
         
-        await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of the account is necessary to registeration. You need to verify your account with the code below:\n\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
+        var isSent = await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of the account is necessary to registeration. You need to verify your account with the code below:\n\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
+
+        if(!isSent)
+            throw new ParklaException("User registered successfully but verification e-mail could not send to the email address. Please try to login later", HttpStatusCode.OK);
     }
 
     public async Task<TokensDto> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
@@ -115,8 +118,11 @@ public class AuthService : IAuthService
         if (user.VerificationCode != null) {
             user.VerificationCode = Guid.NewGuid().ToString().Split('-').First().ToUpper();
             user = await _userRepo.UpdateAsync(user, cancellationToken).ConfigureAwait(false);
-            await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of the account is necessary to registeration. You need to verify your account with the code below:\n\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
-            throw new ParklaException("Verification code has sent to the email. Please check your e-mail", HttpStatusCode.OK);
+            var isSent = await SendEmailAsync(user, "E-Mail Verification | Parkla", $"Dear {user.Name}, Verification of the account is necessary to registeration. You need to verify your account with the code below:\n\nVerification Code: {user.VerificationCode}").ConfigureAwait(false);
+            if(isSent)
+                throw new ParklaException("Verification code has sent to the email. Please check your e-mail", HttpStatusCode.OK);
+            else
+                throw new ParklaException("Verification email could not send. Please try to login again later", HttpStatusCode.BadGateway);
         }
 
         var isVerifyPassword = BCrypt.Net.BCrypt.Verify(password, user.Password);
@@ -154,12 +160,12 @@ public class AuthService : IAuthService
         return true;
     }
 
-    private async Task SendEmailAsync(User user, string subject, string text)
+    private async Task<bool> SendEmailAsync(User user, string subject, string text)
     {
         var message = new MailMessage();
         message.To.Add(new MailAddress(user.Email, $"{user.Name} {user.Surname}"));
         message.Subject = subject;
         message.Body = text;
-        await _mailService.SendMailAsync(message).ConfigureAwait(false);
+        return await _mailService.SendMailAsync(message).ConfigureAwait(false);
     }
 }

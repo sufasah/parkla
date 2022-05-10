@@ -1,15 +1,18 @@
 import { Gender } from "../enums/Gender";
+import { City } from "./city";
+import { District } from "./district";
 
 export interface AppUser {
+  id: number;
+  wallet: number;
   username: string;
   email: string;
   name: string;
   surname: string;
-  birthdate?: Date;
-  gender?: Gender;
   phone: string;
-  city: string;
-  district: string;
+  city?: City;
+  district?: District;
+  birthdate?: string;
+  gender?: Gender;
   address?: string;
-  zip?: string;//delete
 }

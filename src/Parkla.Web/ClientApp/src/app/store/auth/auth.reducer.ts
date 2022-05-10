@@ -1,6 +1,6 @@
 import { accessTokenKey, expiresKey, refreshTokenKey } from '@app/core/constants/storage';
 import { createReducer, on } from '@ngrx/store';
-import { login, loginFailure, loginSuccess, logout, refreshAccessToken, refreshTokenExpired } from './auth.actions';
+import { loginFailure, loginSuccess, logout, refreshTokens, refreshTokenExpired, loginVerify } from './auth.actions';
 import { clearStorageTokens, setStorageTokens } from "@app/core/utils/storage";
 
 export const authStateKey = "auth";
@@ -31,12 +31,6 @@ export const initAuthState: AuthState = {
 export const authReducer = createReducer(
   initAuthState,
 
-  on(login, state => ({
-    ...state,
-    tokenLoading: true,
-    tokenLoadSuccess: null,
-    tokenLoadFail: null
-  })),
   on(loginSuccess, (state, action) => {
     setStorageTokens(
       action.accessToken,
@@ -61,7 +55,7 @@ export const authReducer = createReducer(
     tokenLoadFail: true,
     loginError: action.error
   })),
-  on(refreshAccessToken, (state, action) => {
+  on(refreshTokens, (state, action) => {
     setStorageTokens(
       action.accessToken,
       action.refreshToken,

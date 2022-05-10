@@ -1,25 +1,52 @@
 using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using Parkla.Core.Exceptions;
 
 namespace Parkla.Web.Extensions;
 public static class AppExceptionHandler
 {
+    public static async Task WriteMessage(
+        HttpContext context, 
+        string message, 
+        HttpStatusCode statusCode,
+        ILogger? logger = null,
+        Exception? error = null
+
+    ) {
+        context.Response.StatusCode = (int)statusCode;
+        logger?.LogError(error, "AppExceptionHandler: An exception catched");
+        await context.Response.WriteAsync(JsonSerializer.Serialize(message)).ConfigureAwait(false);
+    }
     public static void UseAppExceptionHandler(this WebApplication app) {
         var logger = app.Services.GetService<ILogger<WebApplication>>()!;
         app.UseExceptionHandler(o => {
             o.Run(async context => {
                 var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerPathFeature>()!;
                 var error = exceptionHandlerFeature.Error;
+                context.Response.ContentType = "application/json; charset=utf-8";
 
                 if(error is ParklaException) {
                     await (error as ParklaException)!.HandleException(context);
                 }
+                else if(error is DbUpdateException) {
+                    await WriteMessage(
+                        context,
+                        "An unknown internal error occured. If this error occurs frequently, please inform us via information channels.",
+                        HttpStatusCode.InsufficientStorage,
+                        logger,
+                        error
+                    ).ConfigureAwait(false);
+                }
                 else {
-                    var task = context.Response.WriteAsync("An unknown internal error occured. If this error occurs frequently, please inform us via information channels.").ConfigureAwait(false);
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    logger.LogError(error, "AppExceptionHandler: An exception handling");
-                    await task;
+                    await WriteMessage(
+                        context,
+                        "An unknown internal error occured. If this error occurs frequently, please inform us via information channels.",
+                        HttpStatusCode.InternalServerError,
+                        logger,
+                        error
+                    ).ConfigureAwait(false);
                 }
             });
         });

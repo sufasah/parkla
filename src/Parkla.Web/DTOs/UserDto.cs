@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 
@@ -13,6 +14,7 @@ public class UserDto
     public string? Phone { get; set; }
     public string? Address { get; set; }
     public DateTime? Birthdate { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public Gender? Gender { get; set; }
     public int? CityId { get; set; }
     public int? DistrictId { get; set; }

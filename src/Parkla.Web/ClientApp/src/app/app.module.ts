@@ -84,6 +84,7 @@ import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.co
 import { QRCodeModule } from 'angularx-qrcode';
 import { TimeRangeComponent } from './shared/components/time-range/time-range.component';
 import { EditAreaTemplateComponent } from './shared/components/edit-area-template/edit-area-template.component';
+import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.interceptor';
 
 @NgModule({
   declarations: [
@@ -185,6 +186,11 @@ import { EditAreaTemplateComponent } from './shared/components/edit-area-templat
     AuthGuard,
     AuthService,
     MessageService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenRefreshInterceptor,

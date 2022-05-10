@@ -1,22 +1,22 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { AccessToken } from '@app/core/models/access-token';
 import { AppUser } from '@app/core/models/app-user';
-import { refreshAccessToken } from '@app/store/auth/auth.actions';
+import { loginFailure, loginSuccess, refreshTokens } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
-import { delay, filter, of, Subscription, tap } from 'rxjs';
-import { apiUrl } from '../constants/http';
-import { TokenResponse } from '@app/core/server-models/token-response';
+import { catchError, filter, map, Subscription, tap, throwError } from 'rxjs';
+import { apiAuthScheme, apiLogin, apiRefreshToken, apiRegister, apiUrl, apiVerification } from '../constants/http';
+import { TokenResponse } from '@app/core/server-models/token';
 import { NavigationEnd, Router } from '@angular/router';
+import { Gender } from '../enums/Gender';
+import { RegisterRequest } from '../server-models/register';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService implements OnDestroy{
-  static exampleToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL3d3dy5sb2NhbGhvc3QuY29tOjcwNzAiLCJzdWIiOiJiNTg2ZjNhNi0zMzcxLTQyZTQtYTExMy01ZmNlNWM3NmU2MmUiLCJhdWQiOiJodHRwczovL3d3dy5sb2NhbGhvc3QuY29tOjcwNzAiLCJleHAiOjE2NDU5MDY5NzEsIm5iZiI6MzAwMCwiaWF0IjoxNTE2MjM5MDIyLCJqdGkiOiJpZDEyMzEyMyIsIm5hbWUiOiJBaG1ldCBNZWhtZXQgVMO8cmsiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlciIsImVtYWlsIjoidGVzdEBlbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZ2VuZGVyIjoibWFsZSIsImJpcnRoZGF0ZSI6bnVsbCwicGhvbmVfbnVtYmVyIjoiMDU1NSA1NTUgNTUgNTUiLCJwaG9uZV9udW1iZXJfdmVyaWZpZWQiOmZhbHNlLCJhZGRyZXNzIjpudWxsLCJzaWQiOiJzaWQxMjMxMjMiLCJyb2xlcyI6WyJ0ZXN0MSIsInRlc3QyIl0sImdyb3VwcyI6WyJ0ZXN0Z3JvdXAxIiwidGVzdGdyb3VwMiJdfQ.nNzkVaxJo9JqM39o7x3LHiPEGv2Dh72d-_dDB77nlAE";
-
   private _accessToken: AccessToken | null = null;
   private _refreshToken: string | null = null;
 
@@ -37,21 +37,20 @@ export class AuthService implements OnDestroy{
     private store:Store,
     private httpClient: HttpClient,
     private jwtHelper: JwtHelperService,
-    private router: Router) {
+    private router: Router
+    ) {
+      this.authStateSubscription = store.select(selectAuthState).subscribe(state => {
+        this._accessToken = state.accessToken ? this.jwtHelper.decodeToken<AccessToken>(state.accessToken) : null;
+        this._refreshToken = state.refreshToken;
+      });
 
-    this.authStateSubscription = store.select(selectAuthState).subscribe(state => {
-      this._accessToken = state.accessToken ? this.jwtHelper.decodeToken<AccessToken>(state.accessToken) : null;
-      this._refreshToken = state.refreshToken;
-    });
-
-    this.routeSubscription = router.events
+      this.routeSubscription = router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event) => {
         let navEnd = <NavigationEnd> event;
         this.asManager = navEnd.urlAfterRedirects.toLowerCase().includes("manager");
       });
-
-  }
+    }
 
 
   ngOnDestroy(): void {
@@ -59,26 +58,53 @@ export class AuthService implements OnDestroy{
     this.routeSubscription?.unsubscribe();
   }
 
-  register(
-    user:AppUser,
-    password: string) {
-
-      return of(true).pipe(delay(2000));
-    return this.httpClient.post(`${apiUrl}/register`,{
-      ...user,
-      password
-    });
+  login(username: string, password: string) {
+    return this.httpClient.post<TokenResponse | string>(
+      apiLogin,
+      {
+        username: username,
+        password: password
+      }
+    ).pipe(
+      catchError((err:HttpErrorResponse) => {
+        this.store.dispatch(loginFailure({error: err.error.message}))
+        return throwError(() => err);
+      }),
+      map(result => {
+        let isStr = typeof result === "string";
+        if(!isStr) {
+          let tokens = <TokenResponse> result;
+          this.store.dispatch(loginSuccess({
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+            expires: tokens.expires
+          }));
+          return true;
+        }
+        return false;
+      })
+    );
   }
 
-  refreshAccessToken() {
-    return this.httpClient.post<TokenResponse>(`http://localhost:5252/refreshToken`, {
-      refreshToken: this.refreshToken
-    });
+  verify(username:string, verificationCode: string) {
+    return this.httpClient.post(apiVerification, {
+      username: username,
+      verificationCode: verificationCode
+    })
+  }
 
-    return this.httpClient.post<TokenResponse>(`${apiUrl}/refreshToken`, {
-      refreshToken: this.refreshToken
+  register(data: RegisterRequest) {
+
+    return this.httpClient.post(apiRegister,data);
+  }
+
+  refreshTokens() {
+    return this.httpClient.get<TokenResponse>(apiRefreshToken, {
+      headers: {
+        "Authorization": apiAuthScheme + this.refreshToken
+      }
     }).pipe(tap(resp => {
-      this.store.dispatch(refreshAccessToken({
+      this.store.dispatch(refreshTokens({
         accessToken: resp.accessToken,
         refreshToken: resp.refreshToken,
         expires: resp.expires
@@ -91,8 +117,8 @@ export class AuthService implements OnDestroy{
   }
 
   isTokenExpired() {
-    if(!(this.accessToken && this.accessToken.exp)) return false;
-
+    if(!(this.accessToken && this.accessToken.exp))
+      throw "Access token or exp value is not found";
     return this.accessToken.exp < Date.now();
   }
 

@@ -1,6 +1,42 @@
 <form
+  #verifyForm="ngForm"
+  (ngSubmit)="verify(verifyForm)"
+  *ngIf="verification"
+>
+  <p>Verification code has been sent to the email. Please enter the verification code.</p>
+  <div class="p-inputgroup">
+    <label
+      for="verificationCode"
+      class="p-inputgroup-addon"
+      >
+      <i class="pi pi-user"></i>
+    </label>
+
+    <input
+      #model="ngModel"
+      type="text"
+      name="verificationCode"
+      required
+      maxlength="30"
+      [(ngModel)]="verifCode"
+      pInputText
+      placeholder="Verification code"
+      >
+  </div>
+  <button
+    type="submit"
+    class="p-button-raised"
+    pButton
+    pRipple
+    [loading]="verifying"
+    label="Verify"
+    >
+  </button>
+</form>
+<form
   #loginForm="ngForm"
   (ngSubmit)="login(loginForm)"
+  *ngIf="!verification"
   >
   <div class="p-inputgroup">
     <label
@@ -15,9 +51,10 @@
       type="text"
       name="username"
       required
-      [(ngModel)]="email"
+      maxlength="30"
+      [(ngModel)]="username"
       pInputText
-      placeholder="Enter your username"
+      placeholder="Username"
       pattern="[a-zA-Z0-9]+"
       >
   </div>

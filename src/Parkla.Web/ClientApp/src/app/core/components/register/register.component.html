@@ -17,7 +17,8 @@
       required
       [(ngModel)]="username"
       pInputText
-      placeholder="Enter your username"
+      maxlength="30"
+      placeholder="Username"
       pattern="[a-zA-Z0-9]+"
       />
   </div>
@@ -35,9 +36,10 @@
       name="email"
       required
       email="true"
+      maxlength="320"
       [(ngModel)]="email"
       pInputText
-      placeholder="Enter your email"
+      placeholder="Email"
       />
   </div>
 
@@ -50,7 +52,7 @@
       maxlength="20"
       name="password"
       [(ngModel)]="password"
-      [placeholder]="'Enter your password'"
+      [placeholder]="'Password'"
       [toggleMask]="true"
       styleClass="p-password p-component p-inputwrapper p-input-icon-right"
       [ngClass]="registerForm.errors?.valuesNotMatch ? {'ng-invalid':true} : ''"
@@ -69,7 +71,7 @@
 
       <ng-template pTemplate="footer">
           <p-divider></p-divider>
-          <small class="d-block mb-3">one uppercase,lowercase,numeric <br>minimum 8 characters</small>
+          <small class="d-block mb-3">one uppercase,lowercase,numeric <br>minimum 6 characters</small>
       </ng-template>
     </p-password>
 
@@ -81,7 +83,7 @@
       name="passwordAgain"
       [(ngModel)]="passwordAgain"
       [toggleMask]="true"
-      [placeholder]="'Enter your password again'"
+      [placeholder]="'Password again'"
       styleClass="p-password p-component p-inputwrapper p-input-icon-right"
       valuesMatch="logpwmatch"
       [valuesMatchControl]="pwam.control"
@@ -117,11 +119,11 @@
       type="text"
       name="name"
       required
-      minlength="3"
-      maxlength="30"
+      minlength="1"
+      maxlength="50"
       [(ngModel)]="name"
       pInputText
-      placeholder="Enter your name"
+      placeholder="Name"
       />
   </div>
 
@@ -141,11 +143,11 @@
       type="text"
       name="surname"
       required
-      minlength="3"
-      maxlength="30"
+      minlength="1"
+      maxlength="50"
       [(ngModel)]="surname"
       pInputText
-      placeholder="Enter your surname"
+      placeholder="Surname"
       >
   </div>
 
@@ -168,38 +170,14 @@
   </div>
 
   <div>
-    <p-autoComplete
-      name="countryCode"
-      class="country-code"
-      [size]="2"
-      [(ngModel)]="countryCode"
-      [suggestions]="countryCodeSuggestions"
-      (completeMethod)="searchCountryCode()"
-      [forceSelection]="true"
-      field="code"
-      [required]="true"
-      >
-      <ng-template let-countryCode pTemplate="item">
-        <img
-          src="https://i.stack.imgur.com/4rtxd.png?s=64&g=1"
-          style="width:32px;display:inline-block;margin:5px 0 2px 5px"
-          />
-
-        <div
-          style="font-size:18px;margin:10px 10px 0 0"
-          >
-          {{countryCode.code+" "+countryCode.flag}}
-        </div>
-      </ng-template>
-    </p-autoComplete>
-
     <p-inputMask
       name="phone"
       [(ngModel)]="phone"
       mask="(999) 999 99 99"
-      minlength="10"
+      [minlength]="10"
+      [maxlength]="10"
       slotChar="-"
-      placeholder="phone"
+      placeholder="Phone"
       [required]="true"
       [autoClear]="false"
       [unmask]="true"
@@ -208,23 +186,24 @@
 
   <div>
     <p-autoComplete
-      [required]="true"
       name="city"
       [(ngModel)]="city"
       [suggestions]="citySuggestions"
+      placeholder="City"
       (completeMethod)="searchCity()"
       [dropdown]="true"
       field="name"
       ></p-autoComplete>
 
     <p-autoComplete
-      [required]="true"
       name="district"
       [(ngModel)]="district"
       [suggestions]="districtSuggestions"
       (completeMethod)="searchDistrict()"
       [dropdown]="true"
+      placeholder="District"
       [forceSelection]="true"
+      field="name"
       >
       <ng-template let-district pTemplate="item">
         <img
@@ -252,30 +231,10 @@
     <input
       type="text"
       name="address"
-      minlength="3"
-      maxlength="30"
+      maxlength="200"
       [(ngModel)]="address"
       pInputText
-      placeholder="Enter your address"
-      />
-  </div>
-
-  <div class="p-inputgroup">
-    <label
-      for="zip"
-      class="p-inputgroup-addon"
-      >
-      <i class="pi pi-user"></i>
-    </label>
-
-    <input
-      type="text"
-      name="zip"
-      minlength="3"
-      maxlength="30"
-      [(ngModel)]="zip"
-      pInputText
-      placeholder="Zip/Postal Code"
+      placeholder="Address"
       />
   </div>
 

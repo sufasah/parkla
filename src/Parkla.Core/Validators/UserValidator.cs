@@ -32,10 +32,12 @@ public class UserValidator : AbstractValidator<User>
     private void Username() => RuleFor(x => x.Username)
         .NotNull()
         .NotEmpty()
+        .Matches("[a-zA-Z0-9]+")
         .MaximumLength(30);
     private void Password() => RuleFor(x => x.Password)
         .NotNull()
         .NotEmpty()
+        .MinimumLength(6)
         .MaximumLength(20); //hashed so different from database mapping
     private void Email() => RuleFor(x => x.Email)
         .NotNull()
@@ -55,7 +57,9 @@ public class UserValidator : AbstractValidator<User>
         .NotEmpty()
         .MaximumLength(10)
         .Matches("5[0-9]{9}");
-    private void Birthdate() => RuleFor(x => x.Birthdate);
+    private void Birthdate() => RuleFor(x => x.Birthdate)
+        .LessThanOrEqualTo(DateTime.UtcNow.AddYears(-18))
+        .GreaterThanOrEqualTo(DateTime.UtcNow.AddYears(-100));
     private void Gender() => RuleFor(x => x.Gender)
         .IsInEnum();
     private void VerificationCode() => RuleFor(x => x.VerificationCode);
@@ -64,8 +68,7 @@ public class UserValidator : AbstractValidator<User>
     private void CityId() => RuleFor(x => x.CityId);
     private void DistrictId() => RuleFor(x => x.DistrictId);
     private void Address() => RuleFor(x => x.Address)
-        .MaximumLength(200)
-        .NotEmpty();
+        .MaximumLength(200);
     
     private void RsRegister() {
         Username();

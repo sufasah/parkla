@@ -72,6 +72,7 @@ namespace Parkla.Core.Helpers
                 { JwtRegisteredClaimNames.Name, user.Name },
                 { JwtRegisteredClaimNames.FamilyName, user.Surname },
                 { JwtRegisteredClaimNames.Email, user.Email },
+                { "email_verified", user.VerificationCode == null },
                 { JwtRegisteredClaimNames.Birthdate, user.Birthdate },
                 { JwtRegisteredClaimNames.Gender, user.Gender },
                 { "phone_number", user.Phone },

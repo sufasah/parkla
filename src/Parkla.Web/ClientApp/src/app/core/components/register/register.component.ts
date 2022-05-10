@@ -4,9 +4,13 @@ import { FormControl, NgForm } from '@angular/forms';
 import { AuthService } from '@app/core/services/auth.service';
 import { AppUser } from '@app/core/models/app-user';
 import { MessageService } from 'primeng/api';
-import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { RouteUrl } from '@app/core/utils/route';
+import { Gender } from '@app/core/enums/Gender';
+import { capitalize } from '@app/core/utils/string';
+import { City } from '@app/core/models/city';
+import { District } from '@app/core/models/district';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -22,63 +26,34 @@ export class RegisterComponent implements OnInit, OnDestroy {
   name = "";
   surname = "";
   gender = new FormControl("");
-  genderOptions = ['Male','Female'];
-  countryCode = {flag:"",code:90};
-  phone:string | null = null;
+  genderOptions = [
+    capitalize(Gender[Gender.MALE]),
+    capitalize(Gender[Gender.FEMALE])
+  ];
+  phone: string | null = null;
   address = "";
-  city = {name:"Turkey",code:"TR"};
-  district = "";
-  zip = "";
-  birthdate:Date | null = null;
+  city = <City>{id: 1, name: "ist"};
+  district = <District>{id: 2, city: {id:5, name:"ank"}, name: "avcilar"};
+  birthdate: string | null = null;
   citySuggestions = [];
   districtSuggestions = [];
-  countryCodeSuggestions = [];
   submitted = false;
-
   registering = false;
 
-  get birthDay(){
-    return this.birthdate?.getDay();
-  }
-
-  get birthMonth(){
-    return this.birthdate?.getMonth();
-  }
-
-  get birthYear(){
-    return this.birthdate?.getFullYear();
-  }
-
   get maxBirthDate(){
-    var date = new Date();
-    date.setFullYear(date.getFullYear()-18);
-    return date;
+    let date = new Date();
+    return date.setFullYear(date.getFullYear()-18);
   }
 
   get minBirthDate(){
-    return new Date(0);
-  }
-
-  get getUser() {
-    return <AppUser>{
-      username: this.username,
-      email: this.email,
-      name: this.name,
-      surname: this.surname,
-      phone: this.phone!,
-      city: this.city.name,
-      district: this.district,
-      gender: this.gender.value,
-      address: this.address,
-      zip: this.zip,
-      birthdate: this.birthdate,
-    }
+    return `01.01.${new Date().getFullYear()-99}`;
   }
 
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
-    private router: Router) {
+    private router: Router
+  ) {
 
   }
 
@@ -87,39 +62,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   register(form:NgForm) {
-    console.log(form);
-    this.registering = true;
-
-    this.authService
-      .register(this.getUser,this.password)
-      .subscribe(success => {
-        if(success){
-          this.messageService.add({
-            life:1500,
-            severity:'register',
-            summary: 'Register',
-            detail: 'User registered successfully',
-            icon:"pi-user-plus",
-            data: {
-              navigate: true,
-              navigateTo: RouteUrl.parkMap()
-            }
-          })
-        }
-        else {
-          this.messageService.add({
-            life:1500,
-            severity:"register-error",
-            summary: "Register",
-            detail: "User not Registered",
-            icon: "pi-lock",
-          })
-        }
-        this.registering = false;
-      });
-
-    return;
-
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {
@@ -128,10 +70,23 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.registering = true;
     this.authService
-      .register(this.getUser,this.password)
-      .subscribe(success => {
-        if(success){
+      .register({
+        username: this.username,
+        password: this.password,
+        email: this.email,
+        name: this.name,
+        surname: this.surname,
+        phone: this.phone!,
+        cityId: this.city ? this.city.id : null,
+        districtId: this.district ? this.district.id : null,
+        gender: this.gender.value ? this.gender.value : null,
+        address: this.address ? this.address : null ,
+        birthdate: this.birthdate ? this.birthdate : null,
+      })
+      .subscribe({
+        next: () => {
           this.messageService.add({
             life:1500,
             severity:'register',
@@ -143,18 +98,21 @@ export class RegisterComponent implements OnInit, OnDestroy {
               navigateTo: RouteUrl.parkMap()
             }
           })
-        }
-        else {
+          this.registering = false;
+        },
+        error: (err:HttpErrorResponse) => {
+          console.log(err);
           this.messageService.add({
-            life:1500,
+            life:5000,
             severity:"register-error",
             summary: "Register",
-            detail: "User not Registered",
+            detail: err.error.message,
             icon: "pi-lock",
           })
-        }
-        this.registering = false;
+          this.registering = false;
+        },
       });
+
   }
 
   searchCity() {
@@ -162,10 +120,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   searchDistrict() {
     this.districtSuggestions = <any>["a","b","c"];
-  }
-
-  searchCountryCode() {
-    this.countryCodeSuggestions = <any>[{flag:"",code:"90"}]
   }
 
   genderClick(event:any){

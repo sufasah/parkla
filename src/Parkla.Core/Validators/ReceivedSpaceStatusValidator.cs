@@ -20,6 +20,5 @@ public class ReceivedSpaceStatusValidator : AbstractValidator<ReceivedSpaceStatu
     private void DateTime() => RuleFor(x => x.DateTime)
         .NotNull()
         .Must(x => x.Kind == DateTimeKind.Utc)
-        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(System.DateTime.UtcNow);
 }

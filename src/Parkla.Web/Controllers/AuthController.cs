@@ -64,14 +64,14 @@ public class AuthController : ApiControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync(LoginDto dto)
     {
-        var tokens = await _service.LoginAsync(dto.Username, dto.Password).ConfigureAwait(false);
+        var tokens = await _service.LoginAsync(dto.Username!, dto.Password!).ConfigureAwait(false);
         return Ok(tokens);
     }
 
     [HttpPost("verify")]
     public async Task<IActionResult> VerifyEmailCodeAsync(VerifyAccountDto dto, CancellationToken cancellationToken)
     {
-        var verified = await _service.VerifyEmailCodeAsync(dto.Username, dto.VerificationCode, cancellationToken).ConfigureAwait(false);
+        var verified = await _service.VerifyEmailCodeAsync(dto.Username!, dto.VerificationCode!, cancellationToken).ConfigureAwait(false);
         
         if(verified) return Ok("Email verified");
         else return BadRequest("Verification code is not correct");

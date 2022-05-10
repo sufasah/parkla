@@ -22,10 +22,10 @@ public class ReservationValidator : AbstractValidator<Reservation>
     private void StartTime() => RuleFor(x => x.StartTime)
         .NotNull()
         .Must(x => x.Kind == DateTimeKind.Utc)
-        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
+        .GreaterThanOrEqualTo(DateTime.UtcNow.Subtract(new TimeSpan(0,15,0)))
         .Must((y, x) => x < y.EndTime);
     private void EndTime() => RuleFor(x => x.EndTime)
         .Must(x => x.Kind == DateTimeKind.Utc)
-        .LessThanOrEqualTo(DateTime.UtcNow)
+        .GreaterThan(DateTime.UtcNow.Add(new TimeSpan(0,15,0)))
         .NotNull();
 }

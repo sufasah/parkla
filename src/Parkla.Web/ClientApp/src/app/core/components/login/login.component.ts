@@ -1,10 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
-import { UserService } from '@app/core/services/user.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { login } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { Store } from '@ngrx/store';
 import { Message, MessageService } from 'primeng/api';
@@ -17,13 +16,18 @@ import { Subscription } from 'rxjs';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
-  email = "";
+  username = "";
   password = "";
   asManager = false;
   tokenLoading:boolean = false;
   tokenLoadSuccess:boolean | null = null;
   tokenLoadFail:boolean | null = null;
   loginError:string | null = null;
+  verification = false;
+  verifCode = "";
+  verifying = false;
+  verifyUsername = "";
+  verifyPassword = "";
 
   private authStateSubscription?: Subscription;
 
@@ -57,7 +61,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
       else if(this.tokenLoadFail) {
         this.messageService.add({
-          life:1500,
+          life:5000,
           severity:"error",
           summary: "Login",
           detail: this.loginError!,
@@ -69,18 +73,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login(form:NgForm) {
-    console.log(form);
-
-    this.authService.asManager = this.asManager;
-
-    this.store.dispatch(login({
-      email: this.email,
-      password: this.password
-    }));
-
-
-    return;
-
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {
@@ -91,10 +83,57 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.authService.asManager = this.asManager;
 
-    this.store.dispatch(login({
-      email:this.email,
-      password: this.password
-    }));
+    this.tokenLoading = true;
+
+    this.authService.login(
+      this.username,
+      this.password
+    ).subscribe({
+      next: successful => {
+        if(!successful) {
+          this.verifyUsername = this.username;
+          this.verifyPassword = this.password;
+          this.verification = true;
+        }
+      }
+    });
+  }
+
+  verify(form:NgForm) {
+    if(form.invalid){
+      var keys = Object.keys(form.controls);
+      keys.forEach(e => {
+        form.controls[e].markAsDirty()
+      });
+      return;
+    }
+
+    this.verifying = true;
+
+    this.authService.verify(this.username, this.verifCode)
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            life:1500,
+            severity:'login',
+            summary: 'Verification',
+            detail: 'Email is verified',
+            icon:"pi-lock-open"
+          });
+          this.verifying = false;
+          this.authService.login(this.verifyUsername, this.verifyPassword).subscribe();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.messageService.add({
+            life:5000,
+            severity:"error",
+            summary: "Verification",
+            detail: err.error.message,
+            icon: "pi-lock",
+          })
+          this.verifying = false;
+        }
+      });
   }
 
   messageClose(message: Message) {

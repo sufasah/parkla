@@ -24,37 +24,22 @@ export class TokenRefreshInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(catchError((err: HttpErrorResponse) => {
       if (err.status == 401 && err.headers.get("Token-Expired") == "true") {
-        return authService.refreshAccessToken().pipe(
+        return authService.refreshTokens().pipe(
+          catchError((refreshTokenErr:HttpErrorResponse) => {
+            store.dispatch(refreshTokenExpired());
+            return throwError(() => refreshTokenErr);
+          }),
           switchMap(resp => {
+            let requestHeaders = request.headers;
             let newRequest = request.clone({
               setHeaders: {
-                Authorization: apiAuthScheme+resp.accessToken
+                Authorization: apiAuthScheme + resp.accessToken,
+                ...requestHeaders
               }
             });
 
             return next.handle(newRequest);
           }),
-
-          catchError((refreshTokenErr:HttpErrorResponse) => {
-            if(refreshTokenErr.status == 403){
-              store.dispatch(refreshTokenExpired());
-              let newResponse = new HttpErrorResponse({
-                ...err,
-                url: err.url!,
-                error: refreshTokenErr.message,
-              });
-
-              return throwError(() => newResponse);
-            }
-
-            let newResponse  = new HttpErrorResponse({
-              ...err,
-              url: err.url ?? "",
-              error: "AccessToken Refresh Error"
-            })
-
-            return throwError(() => newResponse);
-          })
         );
       }
       return throwError(() => err);
