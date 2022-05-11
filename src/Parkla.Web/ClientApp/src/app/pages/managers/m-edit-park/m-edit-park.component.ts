@@ -89,7 +89,7 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
       }
       else {
         this.messageService.add({
-          life:1500,
+          life:5000,
           severity:"error",
           summary: "Edit Fail",
           detail: "Parking lot isn't edited successfully",

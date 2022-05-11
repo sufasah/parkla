@@ -12,33 +12,41 @@ import { AuthService } from '../services/auth.service';
 import { apiAuthScheme } from '../constants/http';
 import { Store } from '@ngrx/store';
 import { refreshTokenExpired } from '@app/store/auth/auth.actions';
+import { Router } from '@angular/router';
+import { RouteUrl } from '../utils/route';
 
 @Injectable()
 export class TokenRefreshInterceptor implements HttpInterceptor {
 
-  constructor(private injector:Injector) {}
+  constructor(
+    private injector:Injector,
+    private router: Router
+  ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     let authService = this.injector.get<AuthService>(AuthService);
     let store = this.injector.get<Store>(Store);
 
     return next.handle(request).pipe(catchError((err: HttpErrorResponse) => {
-      if (err.status == 401 && err.headers.get("Token-Expired") == "true") {
-        return authService.refreshTokens().pipe(
-          catchError((refreshTokenErr:HttpErrorResponse) => {
-            store.dispatch(refreshTokenExpired());
-            return throwError(() => refreshTokenErr);
-          }),
-          switchMap(resp => {
-            let requestHeaders = request.headers;
-            let newRequest = request.clone({
-              setHeaders: {
-                Authorization: apiAuthScheme + resp.accessToken,
-                ...requestHeaders
-              }
-            });
+        if (err.status == 401 && err.headers.get("Token-Expired") == "true") {
+          return authService.refreshTokens().pipe(
+            catchError((refreshTokenErr:HttpErrorResponse) => {
+              store.dispatch(refreshTokenExpired());
+              setTimeout(() => {
+                window.location.href = window.location.origin + "/"+ RouteUrl.login();
+              }, 3000);
+              return throwError(() => refreshTokenErr);
+            }),
+            switchMap(resp => {
+              let requestHeaders = request.headers;
+              let newRequest = request.clone({
+                setHeaders: {
+                  Authorization: apiAuthScheme + resp.accessToken,
+                  ...requestHeaders
+                }
+              });
 
-            return next.handle(newRequest);
+              return next.handle(newRequest);
           }),
         );
       }

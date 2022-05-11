@@ -45,6 +45,7 @@ export class VerifyComponent implements OnInit, OnDestroy {
   }
 
   verify(form:NgForm) {
+    if(this.verifying) return;
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {

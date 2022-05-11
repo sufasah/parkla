@@ -1,8 +1,10 @@
 using System;
 using System.Linq.Expressions;
+using System.Net;
 using FluentValidation;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
+using Parkla.Core.Exceptions;
 using Parkla.DataAccess.Abstract;
 using Parkla.Web.Helpers;
 
@@ -60,13 +62,17 @@ namespace Parkla.Business.Bases
         }
         
         private void ValidateAndThrow(TEntity entity) {
-            _validator.ValidateAndThrow(entity);
+            var result = _validator.Validate(entity);
+            if (!result.IsValid)
+                throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
         }
         
         private void ValidateAndThrow(ICollection<TEntity> entities) {
             foreach (var entity in entities)
             {
-                ValidateAndThrow(entity);
+                var result = _validator.Validate(entity);
+                if (!result.IsValid)
+                    throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
             }
         }
 

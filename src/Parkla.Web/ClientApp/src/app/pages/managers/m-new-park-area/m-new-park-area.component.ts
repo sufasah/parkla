@@ -136,7 +136,7 @@ export class MNewParkAreaComponent implements OnInit, AfterViewInit {
       }
       else {
         this.messageService.add({
-          life:1500,
+          life:5000,
           severity:"error",
           summary: "Add Fail",
           detail: "Park area isn't added successfully",

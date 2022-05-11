@@ -59,7 +59,7 @@ export class MParkAreasComponent implements OnInit {
           summary: "Park Area Deletion",
           closable: true,
           severity: "error",
-          life:1500,
+          life:5000,
           detail: "The park area with xxx id and xxx name is deleted."
         })
       }

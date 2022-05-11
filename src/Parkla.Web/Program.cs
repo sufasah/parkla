@@ -6,6 +6,7 @@ using Collector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Parkla.Core.Helpers;
@@ -37,7 +38,8 @@ builder.WebHost.ConfigureServices(services => {
         IssuerSigningKey = new SymmetricSecurityKey(JwtHelper.SecretKey),
         ValidateIssuer = false,
         ValidateAudience = false,
-        ValidateLifetime = true
+        ValidateLifetime = true,
+        ClockSkew = new TimeSpan(0,0,0)
     };;
 
     services.AddAuthentication(cfg => {
@@ -50,15 +52,15 @@ builder.WebHost.ConfigureServices(services => {
         o.Events = new JwtBearerEvents() {
             OnAuthenticationFailed = context => {
                 if(context.Exception.GetType() == typeof(SecurityTokenExpiredException)) {
-                    context.Response.Headers.Add("Token-Expired", "true");
+                    context.HttpContext.Response.Headers.Add("Access-Control-Expose-Headers", "token-expired");
+                    context.Response.Headers.Add("token-expired", "true");
                 }
                 return Task.CompletedTask;
             }
         };
     });
 
-    services.AddAuthorization(o => {
-    });
+    services.AddAuthorization(o => {});
 
 
     services.AddControllers(o => {

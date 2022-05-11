@@ -49,7 +49,7 @@ public class AuthService : IAuthService
 
     private async Task<User> ValidateRefreshToken(string oldRefreshToken) {
         TokenValidationResult validationResult;
-        var tokenNotValid = new ParklaException("Refresh token is not a valid jwt token", HttpStatusCode.BadRequest);
+        var tokenNotValid = new ParklaException("Refresh token is not a valid jwt token or expired", HttpStatusCode.BadRequest);
         
         try {
             validationResult = await JwtHelper.TokenHandler.ValidateTokenAsync(oldRefreshToken, JwtHelper.TokenValidationParameters).ConfigureAwait(false);
@@ -81,7 +81,7 @@ public class AuthService : IAuthService
     }
 
     public async Task RegisterAsync(User user, CancellationToken cancellationToken = default) {
-        var result = _userValidatior.Validate(user, o => o.IncludeRuleSets("register"));
+        var result = await _userValidatior.ValidateAsync(user, o => o.IncludeRuleSets("register"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
             throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
 

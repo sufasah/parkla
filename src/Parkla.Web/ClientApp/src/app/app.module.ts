@@ -181,7 +181,10 @@ import { VerifyComponent } from './shared/components/verify/verify.component';
           return <JwtConfig>{
             allowedDomains:["localhost:7070","localhost:5252"],
             authScheme: apiAuthScheme,
+            skipWhenExpired: false,
             tokenGetter: (request) => {
+              if(request && request.headers.has("authorization"))
+                return null;
               return firstValueFrom(store.select(selectAuthState))
                 .then(state => state.accessToken)
             }

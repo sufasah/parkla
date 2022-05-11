@@ -114,7 +114,7 @@ export class ProfileComponent implements OnInit {
     })
     .pipe(catchError(err => {
       this.messageService.add({
-        life:1500,
+        life:5000,
         severity:"error",
         summary: "Save",
         detail: "Values can't be saved successfully",
@@ -175,7 +175,7 @@ export class ProfileComponent implements OnInit {
         }
         else {
           this.messageService.add({
-            life:1500,
+            life:5000,
             severity:"error",
             summary: "Save",
             detail: "Values can't be saved successfully",

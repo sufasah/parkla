@@ -19,6 +19,8 @@ public class ParkValidator : AbstractValidator<Park>
         MinPrice();
         AvaragePrice();
         MaxPrice();
+
+        RuleSet("add", RsAdd);
     }
 
     private void Name() => RuleFor(x => x.Name)
@@ -62,4 +64,12 @@ public class ParkValidator : AbstractValidator<Park>
     private void MaxPrice() => RuleFor(x => x.MaxPrice)
         .NotNull()
         .InclusiveBetween(0,precision30);
+
+    private void RsAdd() {
+        Name();
+        Location();
+        Latitude();
+        Longitude();
+        Extras();
+    }
 }

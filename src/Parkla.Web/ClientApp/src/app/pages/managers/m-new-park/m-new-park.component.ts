@@ -55,6 +55,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   }
 
   addPark(form: NgForm) {
+    if(this.adding) return;
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {
@@ -81,7 +82,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
-          life:1500,
+          life:5000,
           severity:"error",
           summary: "Add Fail",
           detail: err.error.message,

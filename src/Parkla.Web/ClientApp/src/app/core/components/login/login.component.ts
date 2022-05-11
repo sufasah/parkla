@@ -73,6 +73,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login(form:NgForm) {
+    if(this.logging) return;
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {

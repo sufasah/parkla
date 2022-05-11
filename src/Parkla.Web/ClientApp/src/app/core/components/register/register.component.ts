@@ -114,6 +114,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   register(form:NgForm) {
+    if(this.registering) return;
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {
