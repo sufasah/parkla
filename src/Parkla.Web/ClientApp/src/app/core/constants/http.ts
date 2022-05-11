@@ -10,8 +10,25 @@ export const apiRevokeToken = `${apiUrl}/auth/revoke-refresh-token`;
 
 export const apiVerification = `${apiUrl}/auth/verify`;
 
-export const apiCities = `${apiUrl}/cities`;
-
-export const apiDistricts = `${apiUrl}/districts`;
-
 export const apiAuthScheme = "Bearer ";
+
+export const apiCities = `${apiUrl}/Cities`;
+
+export const apiDistricts = `${apiUrl}/Districts`;
+
+export const apiParkAreas = `${apiUrl}/ParkAreas`;
+
+export const apiParks = `${apiUrl}/Parks`;
+
+export const apiParkSpaces = `${apiUrl}/ParkSpaces`;
+
+export const apiPricings = `${apiUrl}/Pricings`;
+
+export const apiRealParkSpaces = `${apiUrl}/RealParkSpaces`;
+
+export const apiReceivedSpaceStasusses = `${apiUrl}/ReceivedSpaceStasusses`;
+
+export const apiReservations = `${apiUrl}/Reservations`;
+
+export const apiUsers = `${apiUrl}/Users`;
+

@@ -27,8 +27,8 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
   mapModalVisible = false;
 
   setLatLng(lat:number, lng:number) {
-    this.park.lat = lat;
-    this.park.lng = lng;
+    this.park.latitude = lat;
+    this.park.longitude = lng;
 
     this.latLngMarker?.remove();
     this.latLngMarker = new Marker()
@@ -125,8 +125,8 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
   }
 
   mapModalCancel() {
-    this.park.lat = <any>undefined;
-    this.park.lng = <any>undefined;
+    this.park.latitude = <any>undefined;
+    this.park.longitude = <any>undefined;
     this.latLngMarker?.remove();
     this.mapModalVisible = false;
   }

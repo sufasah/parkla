@@ -96,7 +96,7 @@ export class MapComponent implements OnInit, AfterViewInit{
             type: "Feature",
             geometry: {
               type: "Point",
-              coordinates: [park.lng,park.lat],
+              coordinates: [park.longitude,park.latitude],
             },
             properties: {
               ...park
@@ -167,8 +167,8 @@ export class MapComponent implements OnInit, AfterViewInit{
 
       this.appMap?.easeTo({
         center: {
-          lat:result.position.lat,
-          lng:result.position.lng,
+          lat: result.position.lat,
+          lng: result.position.lng,
         },
         animate: true,
         duration: 1500,
@@ -204,7 +204,7 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   makeMarker(park: Park) {
     return new Marker(this.makeMarkerElement(park))
-      .setLngLat({lat: park.lat, lng: park.lng})
+      .setLngLat({lat: park.latitude, lng: park.longitude})
       .remove()
   }
 

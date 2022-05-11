@@ -58,7 +58,7 @@
       name="latitude"
       pInputText
       type="number"
-      [ngModel]="park.lat"
+      [ngModel]="park.latitude"
       readonly
       placeholder="Latitude"
       class="me-1"
@@ -67,7 +67,7 @@
     <input
       name="longitude"
       pInputText
-      [ngModel]="park.lng"
+      [ngModel]="park.longitude"
       type="number"
       readonly
       placeholder="Longitude"
@@ -150,9 +150,9 @@
       label="Select"
       ></button>
 
-    <span style="height: 100%;">Latitude: {{park.lat}}</span>
+    <span style="height: 100%;">Latitude: {{park.latitude}}</span>
 
-    <span style="height: 100%;">Longitude: {{park.lng}}</span>
+    <span style="height: 100%;">Longitude: {{park.longitude}}</span>
 
     <button
       type="button"

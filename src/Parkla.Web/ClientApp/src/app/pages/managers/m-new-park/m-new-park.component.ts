@@ -1,16 +1,13 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ttkey } from '@app/core/constants/private';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { Park } from '@app/core/models/park';
 import { ParkService } from '@app/core/services/park.service';
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { makeTomTomMap } from '@app/core/utils/tomtom';
-import { FullscreenControl, GeolocateControl, map, Map, Marker, NavigationControl } from '@tomtom-international/web-sdk-maps';
-import { MessageService } from 'primeng/api';
-import { delay, of } from 'rxjs';
+import { Map, Marker } from '@tomtom-international/web-sdk-maps';
+import { Message, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-m-new-park',
@@ -31,8 +28,8 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   mapModalVisible = false;
 
   setLatLng(lat:number, lng:number) {
-    this.park.lat = lat;
-    this.park.lng = lng;
+    this.park.latitude = lat;
+    this.park.longitude = lng;
 
     this.latLngMarker?.remove();
     this.latLngMarker = new Marker()
@@ -69,27 +66,30 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
     this.park.extras = this.extrasModel.map(x => x.val);
     this.adding = true;
 
-    //add opeartion to the server and result
-    /*this.parkService.addPark().subscribe(success => {
-      if(success){
+    this.parkService.addPark(this.park).subscribe({
+      next: park => {
         this.messageService.add({
           life:1500,
           severity:'success',
           summary: 'Added',
           detail: 'Parking lot is added successfully',
-        })
-      }
-      else {
+          data: {
+            navigate: true,
+            navigateTo: RouteUrl.mParkMap()
+          }
+        });
+      },
+      error: (err: HttpErrorResponse) => {
         this.messageService.add({
           life:1500,
           severity:"error",
           summary: "Add Fail",
-          detail: "Parking lot isn't added successfully",
+          detail: err.error.message,
           icon: "pi-lock",
         })
+        this.adding = false;
       }
-      this.adding = false;
-    });*/
+    });
   }
 
   addExtra() {
@@ -117,12 +117,15 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   }
 
   mapModalCancel() {
-    this.park.lat = <any>undefined;
-    this.park.lng = <any>undefined;
+    this.park.latitude = <any>undefined;
+    this.park.longitude = <any>undefined;
     this.latLngMarker?.remove();
     this.mapModalVisible = false;
   }
 
-  messageClose() {
+  messageClose(message: Message) {
+    if(message.data?.navigate) {
+      this.router.navigateByUrl(message.data.navigateTo);
+    }
   }
 }

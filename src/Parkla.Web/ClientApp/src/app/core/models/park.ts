@@ -2,8 +2,8 @@ import { ParkArea } from "./park-area";
 export interface Park {
   id: number;
   name: string;
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
   location: string;
   extras: string[];
   statusUpdateTime: number;
