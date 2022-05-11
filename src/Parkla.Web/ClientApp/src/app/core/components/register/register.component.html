@@ -150,6 +150,20 @@
       placeholder="Surname"
       >
   </div>
+  <div>
+    <p-inputMask
+      name="phone"
+      [(ngModel)]="phone"
+      mask="(999) 999 99 99"
+      [minlength]="10"
+      [maxlength]="10"
+      slotChar="-"
+      placeholder="Phone"
+      [required]="true"
+      [autoClear]="false"
+      [unmask]="true"
+      ></p-inputMask>
+  </div>
 
   <div>
     <p-selectButton
@@ -170,40 +184,33 @@
   </div>
 
   <div>
-    <p-inputMask
-      name="phone"
-      [(ngModel)]="phone"
-      mask="(999) 999 99 99"
-      [minlength]="10"
-      [maxlength]="10"
-      slotChar="-"
-      placeholder="Phone"
-      [required]="true"
-      [autoClear]="false"
-      [unmask]="true"
-      ></p-inputMask>
-  </div>
-
-  <div>
     <p-autoComplete
       name="city"
       [(ngModel)]="city"
       [suggestions]="citySuggestions"
       placeholder="City"
-      (completeMethod)="searchCity()"
+      (completeMethod)="searchCity($event)"
       [dropdown]="true"
+      [showEmptyMessage]="true"
+      [emptyMessage]="cityEmptyMessage"
+      [forceSelection]="true"
       field="name"
+      [delay]="1000"
       ></p-autoComplete>
 
     <p-autoComplete
       name="district"
       [(ngModel)]="district"
       [suggestions]="districtSuggestions"
-      (completeMethod)="searchDistrict()"
+      (completeMethod)="searchDistrict($event)"
       [dropdown]="true"
       placeholder="District"
       [forceSelection]="true"
+      [showEmptyMessage]="true"
+      [forceSelection]="true"
+      [emptyMessage]="districtEmptyMessage"
       field="name"
+      [delay]="1000"
       >
       <ng-template let-district pTemplate="item">
         <img
@@ -214,7 +221,7 @@
         <div
           style="font-size:18px;float:right;margin:10px 10px 0 0"
           >
-          {{district}}
+          {{district.name}}
         </div>
       </ng-template>
     </p-autoComplete>

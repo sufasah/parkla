@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
 using Parkla.Web.Models;
@@ -18,5 +20,14 @@ public class CitiesController : EntityControllerBase<City, CityDto>
         _mapper = mapper;
     }
 
-    
+    [HttpGet("search")]
+    [AllowAnonymous]
+    public async Task<List<City>> Search(
+        [FromQuery] string s,
+        CancellationToken cancellationToken
+    ) {
+        if(string.IsNullOrWhiteSpace(s)) s = "";
+        s = s.Trim();
+        return await _service.SearchAsync(s, cancellationToken);
+    }
 }

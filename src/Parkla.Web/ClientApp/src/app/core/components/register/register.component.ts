@@ -2,7 +2,6 @@ import { Message } from 'primeng/api';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { AuthService } from '@app/core/services/auth.service';
-import { AppUser } from '@app/core/models/app-user';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { RouteUrl } from '@app/core/utils/route';
@@ -10,7 +9,8 @@ import { Gender } from '@app/core/enums/Gender';
 import { capitalize } from '@app/core/utils/string';
 import { City } from '@app/core/models/city';
 import { District } from '@app/core/models/district';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { apiCities, apiDistricts, apiLogin } from '@app/core/constants/http';
 
 @Component({
   selector: 'app-register',
@@ -32,11 +32,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ];
   phone: string | null = null;
   address = "";
-  city = <City>{id: 1, name: "ist"};
-  district = <District>{id: 2, city: {id:5, name:"ank"}, name: "avcilar"};
   birthdate: string | null = null;
-  citySuggestions = [];
-  districtSuggestions = [];
+
+  city?: City;
+  citySuggestions: City[] = [];
+  cityEmptyMessage = "";
+
+  district?: District;
+  districtSuggestions: District[] = [];
+  districtEmptyMessage = "";
+
   submitted = false;
   registering = false;
 
@@ -52,7 +57,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private httpClient: HttpClient
   ) {
 
   }
@@ -115,11 +121,38 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   }
 
-  searchCity() {
+  searchCity(evt: any) {
+    this.httpClient.get<City[]>(apiCities+"/search", {
+      params: {
+        s: evt.query
+      }
+    }).subscribe({
+      next: cities => {
+        this.citySuggestions = cities;
+        this.cityEmptyMessage = "No city found"
+      },
+      error: (err: HttpErrorResponse) => {
+        this.citySuggestions = [];
+        this.cityEmptyMessage = err.error.message;
+      }
+    });
   }
 
-  searchDistrict() {
-    this.districtSuggestions = <any>["a","b","c"];
+  searchDistrict(evt: any) {
+    this.httpClient.get<District[]>(apiDistricts+"/search", {
+      params: {
+        s: evt.query
+      }
+    }).subscribe({
+      next: districts => {
+        this.districtSuggestions = districts;
+        this.districtEmptyMessage = "No city found"
+      },
+      error: (err: HttpErrorResponse) => {
+        this.districtSuggestions = [];
+        this.districtEmptyMessage = err.error.message;
+      }
+    });
   }
 
   genderClick(event:any){

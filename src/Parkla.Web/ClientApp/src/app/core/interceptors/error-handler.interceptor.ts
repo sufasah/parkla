@@ -35,7 +35,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
           let isString = typeof init.error === "string";
           init.error = <ParklaError> {
             innerError:  isString ? null : init.error,
-            message: isString ? init.error : "Error could not resolved"
+            message: isString ? init.error : "Connection error. Request could not reach server endpoints"
           };
         }
         return throwError(() => new HttpErrorResponse(init));

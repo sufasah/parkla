@@ -10,4 +10,8 @@ export const apiRevokeToken = `${apiUrl}/auth/revoke-refresh-token`;
 
 export const apiVerification = `${apiUrl}/auth/verify`;
 
+export const apiCities = `${apiUrl}/cities`;
+
+export const apiDistricts = `${apiUrl}/districts`;
+
 export const apiAuthScheme = "Bearer ";
