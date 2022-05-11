@@ -47,19 +47,16 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .IsRequired();
         b.Property(x => x.MinPrice)
             .HasColumnName("min_price")
-            .HasPrecision(30,2)
-            .HasDefaultValue(-1)
-            .IsRequired();
+            .HasDefaultValue(null)
+            .HasPrecision(30,2);
         b.Property(x => x.AvaragePrice)
             .HasColumnName("avarage_price")
-            .HasPrecision(30,2)
-            .HasDefaultValue(-1)
-            .IsRequired();
+            .HasDefaultValue(null)
+            .HasPrecision(30,2);
         b.Property(x => x.MaxPrice)
             .HasColumnName("max_price")
-            .HasPrecision(30,2)
-            .HasDefaultValue(-1)
-            .IsRequired();
+            .HasDefaultValue(null)
+            .HasPrecision(30,2);
         
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
         b.HasCheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID","latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");

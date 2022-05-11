@@ -21,7 +21,7 @@ export class UserAvatarComponent implements OnInit {
     private store: Store) { }
 
   ngOnInit(): void {
-    this.label = "this.authService.accessToken?.preferred_username![0]!";
+    this.label = this.authService.accessToken?.preferred_username![0]!;
 
     if(this.authService.asManager)
       this.initAsManager();
