@@ -8,6 +8,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
     private readonly float precision30 = (float)Math.Pow(10,30)-1;
     public ParkAreaValidator()
     {
+        Id();
         ParkId();
         Name();
         Description();
@@ -20,7 +21,11 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         MinPrice();
         AvaragePrice();
         MaxPrice();
+     
+        RuleSet("id", Id);
     }
+    private void Id() => RuleFor(x => x.Id)
+        .NotNull();
     private void ParkId() => RuleFor(x => x.ParkId)
         .NotNull();
     private void Name() => RuleFor(x => x.Name)
@@ -36,7 +41,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         .NotNull();
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
         .NotNull()
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void EmptySpace() => RuleFor(x => x.EmptySpace)

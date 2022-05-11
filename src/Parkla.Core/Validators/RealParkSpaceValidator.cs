@@ -6,12 +6,17 @@ public class RealParkSpaceValidator : AbstractValidator<RealParkSpace>
 {
     public RealParkSpaceValidator()
     {
+        Id();
         ParkId();
         SpaceId();
         Name();
         StatusUpdateTime();
         Status();
+     
+        RuleSet("id", Id);
     }
+    private void Id() => RuleFor(x => x.Id)
+        .NotNull();
     private void ParkId() => RuleFor(x => x.ParkId)
         .NotNull();
     private void SpaceId() => RuleFor(x => x.SpaceId);
@@ -21,7 +26,7 @@ public class RealParkSpaceValidator : AbstractValidator<RealParkSpace>
         .NotNull();
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
         .NotNull()
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void Status() => RuleFor(x => x.Status)

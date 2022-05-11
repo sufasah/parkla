@@ -88,7 +88,6 @@ namespace Parkla.Business.Bases
             TEntity entity,
             CancellationToken cancellationToken = default
         ) {
-            ValidateAndThrow(entity);
             await NoValidateDeleteAsync(entity, cancellationToken);
         }
         public virtual async Task<TEntity> UpdateAsync(

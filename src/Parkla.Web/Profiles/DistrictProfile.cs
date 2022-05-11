@@ -7,7 +7,7 @@ public class DistrictProfile : Profile
 {
     public DistrictProfile()
     {
-        CreateMap<District, DistrictDto>()
+        CreateMap<DistrictDto, District>()
             .ReverseMap();
     }
 }

@@ -7,6 +7,7 @@ public class ParkValidator : AbstractValidator<Park>
     private readonly float precision30 = (float)Math.Pow(10,30)-1;
     public ParkValidator()
     {
+        Id();
         Name();
         Location();
         Latitude();
@@ -20,9 +21,11 @@ public class ParkValidator : AbstractValidator<Park>
         AvaragePrice();
         MaxPrice();
 
+        RuleSet("id", Id);
         RuleSet("add", RsAdd);
     }
-
+    private void Id() => RuleFor(x => x.Id)
+        .NotNull();
     private void Name() => RuleFor(x => x.Name)
         .NotNull()
         .NotEmpty()
@@ -41,10 +44,10 @@ public class ParkValidator : AbstractValidator<Park>
         .LessThanOrEqualTo(180);
     private void Extras() => RuleFor(x => x.Extras)
         .NotNull()
-        .Must(x => x.Length <= 10);
+        .Must(x => x!.Length <= 10);
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
         .NotNull()
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void EmptySpace() => RuleFor(x => x.EmptySpace)

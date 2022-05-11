@@ -6,13 +6,17 @@ public class ReservationValidator : AbstractValidator<Reservation>
 {
     public ReservationValidator()
     {
+        Id();
         UserId();
         SpaceId();
         PricingId();
         StartTime();
         EndTime();
+     
+        RuleSet("id", Id);
     }
-
+    private void Id() => RuleFor(x => x.Id)
+        .NotNull();
     private void UserId() => RuleFor(x => x.UserId)
         .NotNull();
     private void SpaceId() => RuleFor(x => x.SpaceId)
@@ -21,11 +25,11 @@ public class ReservationValidator : AbstractValidator<Reservation>
         .NotNull();
     private void StartTime() => RuleFor(x => x.StartTime)
         .NotNull()
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThanOrEqualTo(DateTime.UtcNow.Subtract(new TimeSpan(0,15,0)))
         .Must((y, x) => x < y.EndTime);
     private void EndTime() => RuleFor(x => x.EndTime)
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThan(DateTime.UtcNow.Add(new TimeSpan(0,15,0)))
         .NotNull();
 }

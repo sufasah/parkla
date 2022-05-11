@@ -7,7 +7,7 @@ public class ParkSpaceProfile : Profile
 {
     public ParkSpaceProfile()
     {
-        CreateMap<ParkSpace, ParkSpaceDto>()
+        CreateMap<ParkSpaceDto, ParkSpace>()
             .ReverseMap();
     }
 }

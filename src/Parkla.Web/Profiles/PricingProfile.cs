@@ -7,7 +7,7 @@ public class PricingProfile : Profile
 {
     public PricingProfile()
     {
-        CreateMap<Pricing, PricingDto>()
+        CreateMap<PricingDto, Pricing>()
             .ReverseMap();
     }
 }

@@ -8,6 +8,7 @@ public class UserValidator : AbstractValidator<User>
     private readonly float precision30 = (float)Math.Pow(10,30)-1;
     public UserValidator()
     {
+        Id();
         Wallet();
         Username();
         Password();
@@ -23,9 +24,11 @@ public class UserValidator : AbstractValidator<User>
         DistrictId();
         Address();
         
+        RuleSet("id", Id);
         RuleSet("register", RsRegister);
     }
-
+    private void Id() => RuleFor(x => x.Id)
+        .NotNull();
     private void Wallet() => RuleFor(x => x.Wallet)
         .NotNull()
         .InclusiveBetween(0,precision30);

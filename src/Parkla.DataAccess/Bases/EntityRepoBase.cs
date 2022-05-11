@@ -84,6 +84,23 @@ namespace Parkla.DataAccess.Bases
             return entity;
         }
 
+        public async Task<TEntity> UpdateAsync(
+            TEntity entity,
+            Expression<Func<TEntity, object?>>[] properties,
+            bool excludes = true,
+            CancellationToken cancellationToken = default
+        ) {
+            using var context = new TContext();
+            var result = context.Entry(entity);
+            result.State = excludes ? EntityState.Modified : EntityState.Unchanged;
+            foreach (var prop in properties)
+            {
+                result.Property(prop).IsModified = !excludes;
+            }
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            return entity;
+        }
+
         private static async Task<PagedList<TEntity>> ToPagedListAsync(
             IQueryable<TEntity> source, 
             int pageNumber, 

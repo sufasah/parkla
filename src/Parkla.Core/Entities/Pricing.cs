@@ -3,11 +3,11 @@ using Parkla.Core.Enums;
 namespace Parkla.Core.Entities;
 
 public class Pricing : IEntity {
-    public int Id { get; set; }
-    public int AreaId { get; set; }
-    public ParkArea Area { get; set; }
-    public TimeUnit Unit { get; set; }
-    public int Amount { get; set; }
-    public float Price { get; set; }
-    public virtual ICollection<Reservation> Reservations { get; set; }
+    public int? Id { get; set; }
+    public int? AreaId { get; set; }
+    public ParkArea? Area { get; set; }
+    public TimeUnit? Unit { get; set; }
+    public int? Amount { get; set; }
+    public float? Price { get; set; }
+    public virtual ICollection<Reservation>? Reservations { get; set; }
 }

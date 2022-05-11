@@ -6,13 +6,18 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
 {
     public ParkSpaceValidator()
     {
+        Id();
         AreaId();
         RealSpaceId();
         Name();
         StatusUpdateTime();
         Status();
         SpacePath();
+     
+        RuleSet("id", Id);
     }
+    private void Id() => RuleFor(x => x.Id)
+        .NotNull();
     private void AreaId() => RuleFor(x => x.AreaId)
         .NotNull();
     private void RealSpaceId() => RuleFor(x => x.RealSpaceId);
@@ -22,7 +27,7 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
         .MaximumLength(30);
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
         .NotNull()
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void Status() => RuleFor(x => x.Status)
@@ -30,5 +35,5 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
         .IsInEnum();
     private void SpacePath() => RuleFor(x => x.SpacePath)
         .NotNull()
-        .Must(x => x.Length == 4 && x.Aggregate(true, (prev, y) => y.Length == 2 && prev));
+        .Must(x => x!.Length == 4 && x.Aggregate(true, (prev, y) => y.Length == 2 && prev));
 }

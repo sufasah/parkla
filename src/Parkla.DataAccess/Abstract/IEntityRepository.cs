@@ -33,6 +33,13 @@ namespace Parkla.DataAccess.Abstract
             CancellationToken cancellationToken = default
         );
 
+        Task<T> UpdateAsync(
+            T entity,
+            Expression<Func<T, object?>>[] properties,
+            bool excludes = true,
+            CancellationToken cancellationToken = default
+        );
+
         Task DeleteAsync(
             T entity, 
             CancellationToken cancellationToken = default

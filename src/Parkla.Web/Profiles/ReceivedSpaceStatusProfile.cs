@@ -7,7 +7,7 @@ public class ReceivedSpaceStatusProfile : Profile
 {
     public ReceivedSpaceStatusProfile()
     {
-        CreateMap<ReceivedSpaceStatus, ReceivedSpaceStatusDto>()
+        CreateMap<ReceivedSpaceStatusDto, ReceivedSpaceStatus>()
             .ReverseMap();
     }
 }

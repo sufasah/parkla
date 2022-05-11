@@ -7,7 +7,7 @@ public class ParkAreaProfile : Profile
 {
     public ParkAreaProfile()
     {
-        CreateMap<ParkArea, ParkAreaDto>()
+        CreateMap<ParkAreaDto, ParkArea>()
             .ReverseMap();
     }
 }
