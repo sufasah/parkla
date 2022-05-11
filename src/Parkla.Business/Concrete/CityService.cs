@@ -21,6 +21,6 @@ public class CityService : EntityServiceBase<City>, ICityService
 
     public async Task<List<City>> SearchAsync(string search, CancellationToken cancellationToken = default)
     {
-        return await _cityRepo.GetListAsync(x =>  x.Name.ToLower().Contains(search.ToLower()), cancellationToken);
+        return await _cityRepo.GetListAsync(x =>  x.Name!.ToLower().Contains(search.ToLower()), cancellationToken);
     }
 }

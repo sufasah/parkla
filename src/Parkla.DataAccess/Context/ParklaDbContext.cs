@@ -4,6 +4,7 @@ using Parkla.Core.Entities;
 using Parkla.DataAccess.Context.Maps;
 
 namespace Parkla.DataAccess.Contexts;
+#pragma warning disable CS8618
 public class ParklaDbContext : DbContext
 {
     private static readonly IConfiguration _configuration = new ConfigurationBuilder()

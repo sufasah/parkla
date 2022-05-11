@@ -23,16 +23,16 @@ public class GrpcReceiver : ReceiverBase
         var tasks = new List<Task>();
         
         var grpcPipes = GrpcReceiverElem.GrpcPipes.FindAll(x => {
-            var receiver = (GrpcReceiverElem)x.Receiver;
+            var receiver = (GrpcReceiverElem) x.Receiver!;
             return receiver.Group == data.Group;
         });
 
         if(grpcPipes == null) return;
 
         foreach(var pipe in grpcPipes) {
-            var receiver = (GrpcReceiverElem) pipe.Receiver;
+            var receiver = (GrpcReceiverElem) pipe.Receiver!;
             var exporters = pipe.Exporters;
-            var handler = receiver.Handler;
+            var handler = receiver.Handler!;
 
             var task = Task.Run(async () => {
                 _logger.LogInformation("GrpcReceiver: Executing handler with name '{}'", handler.GetType().Name);

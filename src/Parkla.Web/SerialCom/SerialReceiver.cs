@@ -16,7 +16,7 @@ public class SerialReceiver : BackgroundService
     private readonly ICollectorService _cllectorService;
     private CancellationTokenRegistration? Subscription;
     private readonly JsonSerializerOptions jsonSerializerOptions = new();
-    private SerialPort SerialPort { get; set; }
+    private SerialPort? SerialPort { get; set; }
     private StringBuilder StringBuilder { get; set; } = new();
     private int BracketCount = 0;
 
@@ -40,7 +40,7 @@ public class SerialReceiver : BackgroundService
         Subscription = stoppingToken.Register(() => {
             lock(init) {
                 if(Subscription != null ){
-                    SerialPort.Dispose();
+                    SerialPort?.Dispose();
                     Subscription?.Unregister();
                     Subscription = null;
                 }

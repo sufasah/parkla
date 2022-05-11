@@ -20,6 +20,6 @@ public class DistrictService : EntityServiceBase<District>, IDistrictService
     }
     public async Task<List<District>> SearchAsync(string search, CancellationToken cancellationToken = default)
     {
-        return await _repo.GetListAsync(x =>  x.Name.ToLower().Contains(search.ToLower()), cancellationToken);
+        return await _repo.GetListAsync(x =>  x.Name!.ToLower().Contains(search.ToLower()), cancellationToken);
     }
 }

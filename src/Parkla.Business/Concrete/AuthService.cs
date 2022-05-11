@@ -163,7 +163,7 @@ public class AuthService : IAuthService
     private async Task<bool> SendEmailAsync(User user, string subject, string text)
     {
         var message = new MailMessage();
-        message.To.Add(new MailAddress(user.Email, $"{user.Name} {user.Surname}"));
+        message.To.Add(new MailAddress(user.Email!, $"{user.Name} {user.Surname}"));
         message.Subject = subject;
         message.Body = text;
         return await _mailService.SendMailAsync(message).ConfigureAwait(false);

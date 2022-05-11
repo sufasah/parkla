@@ -35,7 +35,7 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
         b.Property(x => x.SpacePath)
             .HasColumnName("space_path")
             .HasConversion(
-                x => $"{x[0][0]}:{x[0][1]},{x[1][0]}:{x[1][1]},{x[2][0]}:{x[2][1]},{x[3][0]}:{x[3][1]}",
+                x => $"{x![0][0]}:{x[0][1]},{x[1][0]}:{x[1][1]},{x[2][0]}:{x[2][1]},{x[3][0]}:{x[3][1]}",
                 x => x.Split(',', StringSplitOptions.None)
                     .Select(y => y.Split(':', StringSplitOptions.None)
                         .Select(z => int.Parse(z)).ToArray()).ToArray(),

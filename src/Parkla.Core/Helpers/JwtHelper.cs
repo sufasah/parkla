@@ -17,12 +17,11 @@ namespace Parkla.Core.Helpers
         };
 
         public static TokensDto GetTokens(User user, out JwtSecurityToken accessToken, out JwtSecurityToken refreshToken) {
-            var dto = new TokensDto
-            {
-                AccessToken = GenerateAccessToken(user, out accessToken),
-                RefreshToken = GenerateRefreshToken(user.Id.ToString(), out refreshToken),
-                Expires = (int)(refreshToken.ValidTo - refreshToken.ValidFrom).TotalMinutes
-            };
+            var dto = new TokensDto(
+                GenerateAccessToken(user, out accessToken),
+                 GenerateRefreshToken(user.Id.ToString()!, out refreshToken),
+                 (int)(refreshToken.ValidTo - refreshToken.ValidFrom).TotalMinutes
+            );
             return dto;
         }
         public static string GenerateAccessToken(User user, out JwtSecurityToken securityToken)
@@ -57,25 +56,25 @@ namespace Parkla.Core.Helpers
         {
             var dic = new Dictionary<string, object>
             {
-                { ClaimTypes.NameIdentifier, user.Id.ToString() },
-                { ClaimTypes.Name, user.Name },
-                { ClaimTypes.Surname, user.Surname },
-                { ClaimTypes.Email, user.Email },
-                { ClaimTypes.DateOfBirth, user.Birthdate },
-                { ClaimTypes.Gender, user.Gender },
-                { ClaimTypes.MobilePhone, user.Phone },
-                { ClaimTypes.Locality, user.CityId },
-                { ClaimTypes.StateOrProvince, user.DistrictId },
-                { ClaimTypes.StreetAddress, user.Address },
-                { JwtRegisteredClaimNames.Sub, user.Id.ToString() },
-                { "preferred_username", user.Username },
-                { JwtRegisteredClaimNames.Name, user.Name },
-                { JwtRegisteredClaimNames.FamilyName, user.Surname },
-                { JwtRegisteredClaimNames.Email, user.Email },
+                { ClaimTypes.NameIdentifier, user.Id.ToString()! },
+                { ClaimTypes.Name, user.Name! },
+                { ClaimTypes.Surname, user.Surname! },
+                { ClaimTypes.Email, user.Email! },
+                { ClaimTypes.DateOfBirth, user.Birthdate! },
+                { ClaimTypes.Gender, user.Gender! },
+                { ClaimTypes.MobilePhone, user.Phone! },
+                { ClaimTypes.Locality, user.CityId! },
+                { ClaimTypes.StateOrProvince, user.DistrictId! },
+                { ClaimTypes.StreetAddress, user.Address! },
+                { JwtRegisteredClaimNames.Sub, user.Id.ToString()! },
+                { "preferred_username", user.Username! },
+                { JwtRegisteredClaimNames.Name, user.Name! },
+                { JwtRegisteredClaimNames.FamilyName, user.Surname! },
+                { JwtRegisteredClaimNames.Email, user.Email! },
                 { "email_verified", user.VerificationCode == null },
-                { JwtRegisteredClaimNames.Birthdate, user.Birthdate },
-                { JwtRegisteredClaimNames.Gender, user.Gender },
-                { "phone_number", user.Phone },
+                { JwtRegisteredClaimNames.Birthdate, user.Birthdate! },
+                { JwtRegisteredClaimNames.Gender, user.Gender! },
+                { "phone_number", user.Phone! },
                 { "address", JsonSerializer.Serialize(new{
                     locality = user.CityId,
                     region = user.DistrictId,

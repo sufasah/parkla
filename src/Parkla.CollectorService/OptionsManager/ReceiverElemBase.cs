@@ -6,7 +6,7 @@ using Parkla.CollectorService.Options;
 namespace Parkla.CollectorService.OptionsManager;
 public abstract class ReceiverElemBase
 {
-    public HandlerBase Handler { get; set; }
+    public HandlerBase? Handler { get; set; }
     public static ReceiverElemBase GetReceiverElem(ReceiverType receiverType) {
         var prefix = receiverType.ToString();
         prefix = char.ToUpper(prefix[0], CultureInfo.InvariantCulture) + prefix[1..].ToLower(CultureInfo.InvariantCulture);

@@ -5,7 +5,7 @@ using Parkla.CollectorService.Options;
 
 namespace Parkla.CollectorService.OptionsManager;
 public class ParklaOptionsManager {
-    public Assembly PluginAssembly { get; set; }
+    public Assembly? PluginAssembly { get; set; }
     private readonly ParklaOptions _options;
     private readonly IServiceProvider _provider;
 
@@ -67,7 +67,7 @@ public class ParklaOptionsManager {
             foreach (var receiver in pipeline.Receivers)
             {
                 var receiverElem = ReceiverElemBase.GetReceiverElem(receiver.Type);
-                receiverElem.ConfigureReceiver(receiver, exporterElems.ToArray(), PluginAssembly);
+                receiverElem.ConfigureReceiver(receiver, exporterElems.ToArray(), PluginAssembly!);
             }
 
         }

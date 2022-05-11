@@ -6,7 +6,7 @@ namespace Parkla.CollectorService.OptionsManager;
 public class HttpReceiverElem : ReceiverElemBase
 {
     public readonly static List<Pipe> HttpPipes = new();
-    public string Endpoint { get; set; }
+    public string? Endpoint { get; set; }
 
     public override void ConfigureReceiver(ReceiverOptions receiver, ExporterElemBase[] exporters, Assembly assemblyPlugin)
     {

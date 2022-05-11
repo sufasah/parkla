@@ -6,7 +6,7 @@ namespace Parkla.CollectorService.OptionsManager;
 public class GrpcReceiverElem : ReceiverElemBase
 {
     public readonly static List<Pipe> GrpcPipes = new();
-    public string Group { get; set; }
+    public string? Group { get; set; }
 
     public override void ConfigureReceiver(ReceiverOptions receiver, ExporterElemBase[] exporters, Assembly pluginAssembly)
     {

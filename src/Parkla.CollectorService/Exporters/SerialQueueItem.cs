@@ -7,4 +7,10 @@ public class SerialQueueItem
 {
     public SerialPort SerialPort { get; set; }
     public ParkSpaceStatusDto Dto { get; set; }
+
+    public SerialQueueItem(SerialPort serialPort, ParkSpaceStatusDto dto)
+    {
+        SerialPort = serialPort;
+        Dto = dto;
+    }
 }

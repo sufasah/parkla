@@ -6,7 +6,7 @@ using Parkla.CollectorService.Options;
 namespace Parkla.CollectorService.OptionsManager;
 public abstract class ExporterElemBase
 {
-    public ExporterBase ExporterReference { get; set; }
+    public ExporterBase? ExporterReference { get; set; }
     public static ExporterElemBase GetExporterElem(ExporterType exporterType) {
         var prefix = exporterType.ToString();
         prefix = char.ToUpper(prefix[0],CultureInfo.InvariantCulture) + prefix[1..].ToLower(CultureInfo.InvariantCulture);

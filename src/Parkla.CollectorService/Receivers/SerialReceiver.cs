@@ -17,7 +17,7 @@ public class SerialReceiver : ReceiverBase
     {
         foreach (var pipe in SerialReceiverElem.SerialPipes)
         {
-            var receiver = (SerialReceiverElem) pipe.Receiver;
+            var receiver = (SerialReceiverElem) pipe.Receiver!;
             var serialPort = receiver.SerialPort;
             
             if(serialPort != null)
@@ -36,7 +36,7 @@ public class SerialReceiver : ReceiverBase
 
         return (object sender, SerialDataReceivedEventArgs args) =>
         {
-            var handler = serialPipe.Receiver.Handler;
+            var handler = serialPipe.Receiver!.Handler!;
             // _logger.LogInformation("SerialReceiver: Executing handler with name '{}'", handler.GetType().Name);
             try {
                 param.SerialDataReceivedEventArgs = args;

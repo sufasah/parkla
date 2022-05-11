@@ -32,6 +32,7 @@ public abstract class HandlerBase
     }
     // TO USE HANDLE METHOD IN APPLICATION, IN CHILD CLASS NOT OVERRIDE HANDLEASYNC BUT DEFINE HANDLE METHOD. IF HANDLEASYNC IS OVERRIDDEN, ONLY IT WILL BE WORKING.
     virtual public IEnumerable<ParkSpaceStatusDto> Handle(ReceiverType receiverType, object parameter) {
+        #pragma warning disable CS8603
         return null;
     }
 

@@ -56,10 +56,10 @@ public class SerialExporter : ExporterBase
             return;
         }
 
-        _exportQueue.Add(new SerialQueueItem {
-            SerialPort = serialPort,
-            Dto = dto
-        });
+        _exportQueue.Add(new SerialQueueItem(
+            serialPort,
+            dto
+        ));
     }
     
     private void ExportTask() {

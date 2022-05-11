@@ -8,7 +8,7 @@ public class GrpcExporterElem : ExporterElemBase
 {
     private readonly Type _exporterBaseType = typeof(GrpcExporter); 
     public readonly static List<GrpcExporterElem> GrpcExporters = new();
-    public string Group { get; set; }
+    public string? Group { get; set; }
     public CollectorClient? Client { get; set; }
     
     public override void ConfigureExporter(ExporterOptions exporter, ExporterBase exporterReference)

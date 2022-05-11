@@ -6,7 +6,7 @@ public class HttpExporterElem : ExporterElemBase
 {
     private readonly Type _exporterBaseType = typeof(HttpExporter); 
     public readonly static List<HttpExporterElem> HttpExporters = new();
-    public Uri Url { get; set; }
+    public Uri? Url { get; set; }
 
     public override void ConfigureExporter(ExporterOptions exporter, ExporterBase exporterReference)
     {

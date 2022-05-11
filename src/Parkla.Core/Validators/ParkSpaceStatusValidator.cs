@@ -25,6 +25,6 @@ public class ParkSpaceStatusValidator : AbstractValidator<ParkSpaceStatusDto>
     private void DateTime() => RuleFor(x => x.DateTime)
         .NotNull()
         .NotEmpty()
-        .Must(x => x.Kind == DateTimeKind.Utc)
+        .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .LessThanOrEqualTo(x => System.DateTime.UtcNow);
 }

@@ -41,7 +41,7 @@ public abstract class ReceiverBase
         var tasks = new List<Task>();
         
         foreach (var exporter in exporters) {
-            var task = exporter.ExporterReference.ExportAsync(results, exporter);
+            var task = exporter.ExporterReference!.ExportAsync(results, exporter);
             tasks.Add(task);
         }
 

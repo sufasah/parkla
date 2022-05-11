@@ -23,8 +23,8 @@ public class HttpReceiver : ReceiverBase
         var tasks = new List<Task>();
         foreach (var pipe in httpPipes)
         {
-            var receiver = (HttpReceiverElem) pipe.Receiver;
-            var handler = receiver.Handler;
+            var receiver = (HttpReceiverElem) pipe.Receiver!;
+            var handler = receiver.Handler!;
             var exporters = pipe.Exporters;
 
             var task = Task.Run(async () =>
