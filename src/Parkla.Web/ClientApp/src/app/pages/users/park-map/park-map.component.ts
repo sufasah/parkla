@@ -8,8 +8,6 @@ import { RouteUrl } from '@app/core/utils/route';
 import { mockParks } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 
-import SearchBox, { } from "@tomtom-international/web-sdk-plugin-searchbox";
-
 @Component({
   selector: 'app-park-map',
   templateUrl: './park-map.component.html',
@@ -24,9 +22,9 @@ export class ParkMapComponent implements OnInit, AfterViewInit {
   selectedPark: Park | null = null;
 
   get spaceCount() {
-    return this.selectedPark!.status.emptySpace +
-      this.selectedPark!.status.reservedSpace +
-      this.selectedPark!.status.occupiedSpace
+    return this.selectedPark!.emptySpace +
+      this.selectedPark!.reservedSpace +
+      this.selectedPark!.occupiedSpace
   }
 
   constructor(

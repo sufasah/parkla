@@ -1,6 +1,15 @@
+<app-verify
+  [loading]="tokenLoading"
+  [username]="verifyUsername"
+  [password]="verifyPassword"
+  (onCancel)="cancelVerify()"
+  *ngIf="verification"
+></app-verify>
+
 <form
   #registerForm="ngForm"
   (ngSubmit)="register(registerForm)"
+  *ngIf="!verification"
   >
 
   <div class="p-inputgroup">

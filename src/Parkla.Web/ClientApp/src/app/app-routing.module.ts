@@ -36,7 +36,8 @@ const routes: Routes = [
   {
     path: "register",
     component: RegisterComponent,
-    pathMatch: "full"
+    pathMatch: "full",
+    canActivate: [NoAuthGuard]
   },
   {
     path: "manager",

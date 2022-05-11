@@ -1,16 +1,17 @@
 import { ParkArea } from "./park-area";
-import { ParkAreaStatus } from "./park-area-status";
-
 export interface Park {
   id: number;
   name: string;
   lat: number;
   lng: number;
   location: string;
-  status: ParkAreaStatus;
-  areas: ParkArea[];
+  extras: string[];
+  statusUpdateTime: number;
+  emptySpace: number;
+  reservedSpace: number;
+  occupiedSpace: number;
   minPrice: number;
   maxPrice: number;
   avgPrice: number;
-  extras: string[];
+  areas: ParkArea[];
 }

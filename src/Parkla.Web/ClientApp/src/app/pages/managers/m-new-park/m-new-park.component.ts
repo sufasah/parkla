@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ttkey } from '@app/core/constants/private';
 import { RSRoute } from '@app/core/constants/ref-sharing';
 import { Park } from '@app/core/models/park';
+import { ParkService } from '@app/core/services/park.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { makeTomTomMap } from '@app/core/utils/tomtom';
@@ -41,7 +42,8 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
 
   constructor(
     private router: Router,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private parkService: ParkService) { }
 
   ngOnInit(): void {
 
@@ -56,11 +58,6 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   }
 
   addPark(form: NgForm) {
-    this.park.extras = this.extrasModel.map(x => x.val);
-
-    console.log(this.park);
-    console.log(form);
-
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {
@@ -69,9 +66,11 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    this.park.extras = this.extrasModel.map(x => x.val);
     this.adding = true;
+
     //add opeartion to the server and result
-    of(true).pipe(delay(2000)).subscribe(success => {
+    /*this.parkService.addPark().subscribe(success => {
       if(success){
         this.messageService.add({
           life:1500,
@@ -90,7 +89,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
         })
       }
       this.adding = false;
-    });
+    });*/
   }
 
   addExtra() {

@@ -85,6 +85,14 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { TimeRangeComponent } from './shared/components/time-range/time-range.component';
 import { EditAreaTemplateComponent } from './shared/components/edit-area-template/edit-area-template.component';
 import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.interceptor';
+import { CityService } from './core/services/city.service';
+import { DistrictService } from './core/services/district.service';
+import { ParkAreaService } from './core/services/park-area.service';
+import { ParkSpaceService } from './core/services/park-space.service';
+import { ParkService } from './core/services/park.service';
+import { PricingService } from './core/services/pricing.service';
+import { RealParkSpaceService } from './core/services/real-park-space.service';
+import { VerifyComponent } from './shared/components/verify/verify.component';
 
 @NgModule({
   declarations: [
@@ -115,7 +123,8 @@ import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.inter
     MEditParkComponent,
     MDashboardComponent,
     ParkAreasComponent,
-    AreaDataViewComponent
+    AreaDataViewComponent,
+    VerifyComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -199,7 +208,14 @@ import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.inter
     ConfirmationService,
     UserService,
     ReservationService,
-    RefSharingService
+    RefSharingService,
+    CityService,
+    DistrictService,
+    ParkAreaService,
+    ParkSpaceService,
+    ParkService,
+    PricingService,
+    RealParkSpaceService
   ],
   bootstrap: [
     AppComponent

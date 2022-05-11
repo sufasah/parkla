@@ -221,7 +221,7 @@ export class ProfileComponent implements OnInit {
   }
 
   goMap() {
-    this.router.navigateByUrl(RouteUrl.mParkMap());
+    this.router.navigateByUrl(RouteUrl.parkMap());
   }
 
 }

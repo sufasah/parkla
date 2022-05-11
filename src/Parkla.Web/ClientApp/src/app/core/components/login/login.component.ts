@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,17 +18,17 @@ export class LoginComponent implements OnInit, OnDestroy {
   username = "";
   password = "";
   asManager = false;
+  logging = false;
+
+  verifyUsername = "";
+  verifyPassword = "";
+  verification = false;
+
+  private authStateSubscription?: Subscription;
   tokenLoading:boolean = false;
   tokenLoadSuccess:boolean | null = null;
   tokenLoadFail:boolean | null = null;
   loginError:string | null = null;
-  verification = false;
-  verifCode = "";
-  verifying = false;
-  verifyUsername = "";
-  verifyPassword = "";
-
-  private authStateSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -67,9 +66,10 @@ export class LoginComponent implements OnInit, OnDestroy {
           detail: this.loginError!,
           icon: "pi-lock",
         })
+        this.verification = false;
+        this.logging = false;
       }
     });
-
   }
 
   login(form:NgForm) {
@@ -82,58 +82,37 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.authService.asManager = this.asManager;
+    this.logging = true;
 
-    this.tokenLoading = true;
+    let username = this.username;
+    let password = this.password;
 
     this.authService.login(
-      this.username,
-      this.password
+      username,
+      password
     ).subscribe({
       next: successful => {
         if(!successful) {
-          this.verifyUsername = this.username;
-          this.verifyPassword = this.password;
+          this.verifyUsername = username;
+          this.verifyPassword = password;
           this.verification = true;
         }
       }
     });
   }
 
-  verify(form:NgForm) {
-    if(form.invalid){
-      var keys = Object.keys(form.controls);
-      keys.forEach(e => {
-        form.controls[e].markAsDirty()
-      });
-      return;
-    }
-
-    this.verifying = true;
-
-    this.authService.verify(this.username, this.verifCode)
-      .subscribe({
-        next: () => {
-          this.messageService.add({
-            life:1500,
-            severity:'login',
-            summary: 'Verification',
-            detail: 'Email is verified',
-            icon:"pi-lock-open"
-          });
-          this.verifying = false;
-          this.authService.login(this.verifyUsername, this.verifyPassword).subscribe();
-        },
-        error: (err: HttpErrorResponse) => {
-          this.messageService.add({
-            life:5000,
-            severity:"error",
-            summary: "Verification",
-            detail: err.error.message,
-            icon: "pi-lock",
-          })
-          this.verifying = false;
-        }
-      });
+  cancelVerify() {
+    this.username = "";
+    this.password = "";
+    this.asManager = false;
+    this.logging = false;
+    this.verifyUsername = "";
+    this.verifyPassword = "";
+    this.verification = false;
+    this.tokenLoading = false;
+    this.tokenLoadSuccess = null;
+    this.tokenLoadFail = null;
+    this.loginError = null;
   }
 
   messageClose(message: Message) {

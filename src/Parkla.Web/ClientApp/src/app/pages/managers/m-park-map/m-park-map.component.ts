@@ -23,9 +23,9 @@ export class MParkMapComponent implements OnInit {
   selectedPark: Park | null = null;
 
   get spaceCount() {
-    return this.selectedPark!.status.emptySpace +
-      this.selectedPark!.status.reservedSpace +
-      this.selectedPark!.status.occupiedSpace
+    return this.selectedPark!.emptySpace +
+      this.selectedPark!.reservedSpace +
+      this.selectedPark!.occupiedSpace
   }
 
   constructor(

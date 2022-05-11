@@ -11,7 +11,6 @@ import { apiAuthScheme, apiLogin, apiRefreshToken, apiRegister, apiUrl, apiVerif
 import { TokenResponse } from '@app/core/server-models/token';
 import { NavigationEnd, Router } from '@angular/router';
 import { Gender } from '../enums/Gender';
-import { RegisterRequest } from '../server-models/register';
 
 @Injectable({
   providedIn: 'root'
@@ -93,9 +92,21 @@ export class AuthService implements OnDestroy{
     })
   }
 
-  register(data: RegisterRequest) {
+  register(user: AppUser, password: string) {
 
-    return this.httpClient.post(apiRegister,data);
+    return this.httpClient.post(apiRegister,{
+      username: user.username,
+      password: password,
+      email: user.email,
+      name: user.name,
+      surname: user.surname,
+      phone: user.phone!,
+      cityId: user.city ? user.city.id : null,
+      districtId: user.district ? user.district.id : null,
+      gender: user.gender ? Gender[user.gender] : null,
+      address: user.address ? user.address : null ,
+      birthdate: user.birthdate ? user.birthdate : null,
+    });
   }
 
   refreshTokens() {

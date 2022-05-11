@@ -15,9 +15,9 @@ export class MapMarkerComponent implements OnInit {
   park!:Park;
 
   get spaceCount() {
-    return this.park.status.emptySpace +
-      this.park.status.reservedSpace +
-      this.park.status.occupiedSpace
+    return this.park.emptySpace +
+      this.park.reservedSpace +
+      this.park.occupiedSpace
   }
 
   constructor() { }

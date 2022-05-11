@@ -86,7 +86,7 @@
     <div class="card mt-3">
       <p-table responsiveLayout="stack" [value]="[selectedPark!]">
         <ng-template pTemplate="caption">
-            <h5>Park Status <span style="color:red">{{selectedPark!.status.timestamp | date : "HH:mm dd-MM-yyyy"}}</span></h5>
+            <h5>Park Status <span style="color:red">{{selectedPark!.statusUpdateTime | date : "HH:mm dd-MM-yyyy"}}</span></h5>
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>
@@ -100,7 +100,7 @@
               <td>
                 <span class="p-column-title">Empty Spaces</span>
                 <p-knob
-                  [ngModel]="park.status.emptySpace"
+                  [ngModel]="park.emptySpace"
                   styleClass="empty"
                   valueColor="#0f0"
                   rangeColor="#777"
@@ -113,7 +113,7 @@
               <td>
                 <span class="p-column-title">Reserved Spaces</span>
                 <p-knob
-                  [ngModel]="park.status.reservedSpace"
+                  [ngModel]="park.reservedSpace"
                   styleClass="reserved"
                   valueColor="#f7b060"
                   rangeColor="#777"
@@ -126,7 +126,7 @@
               <td>
                 <span class="p-column-title">Occupied Spaces</span>
                 <p-knob
-                  [ngModel]="park.status.occupiedSpace"
+                  [ngModel]="park.occupiedSpace"
                   styleClass="occupied"
                   valueColor="#f00"
                   rangeColor="#777"

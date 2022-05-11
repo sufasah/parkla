@@ -11,6 +11,12 @@ import { City } from '@app/core/models/city';
 import { District } from '@app/core/models/district';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { apiCities, apiDistricts, apiLogin } from '@app/core/constants/http';
+import { CityService } from '@app/core/services/city.service';
+import { DistrictService } from '@app/core/services/district.service';
+import { AppUser } from '@app/core/models/app-user';
+import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectAuthState } from '@app/store/auth/auth.selectors';
 
 @Component({
   selector: 'app-register',
@@ -34,16 +40,26 @@ export class RegisterComponent implements OnInit, OnDestroy {
   address = "";
   birthdate: string | null = null;
 
-  city?: City;
+  city: City | null = null;
   citySuggestions: City[] = [];
   cityEmptyMessage = "";
 
-  district?: District;
+  district: District | null = null;
   districtSuggestions: District[] = [];
   districtEmptyMessage = "";
 
   submitted = false;
   registering = false;
+
+  verifyUsername = "";
+  verifyPassword = "";
+  verification = false;
+
+  authStateSubscription?: Subscription;
+  tokenLoading:boolean = false;
+  tokenLoadSuccess:boolean | null = null;
+  tokenLoadFail:boolean | null = null;
+  loginError:string | null = null;
 
   get maxBirthDate(){
     let date = new Date();
@@ -58,13 +74,44 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private messageService: MessageService,
     private router: Router,
-    private httpClient: HttpClient
+    private cityService: CityService,
+    private districtService: DistrictService,
+    private store: Store
   ) {
 
   }
 
   ngOnInit(): void {
+    this.authStateSubscription = this.store.select(selectAuthState).subscribe(state => {
+      this.tokenLoading = state.tokenLoading;
+      this.tokenLoadSuccess = state.tokenLoadSuccess;
+      this.tokenLoadFail = state.tokenLoadFail;
+      this.loginError = state.loginError;
 
+      if(this.tokenLoadSuccess) {
+        this.messageService.add({
+          life:1500,
+          severity:'success',
+          summary: 'Login',
+          detail: 'Logged in successfully',
+          icon:"pi-lock-open",
+          data: {
+            navigate: true,
+            navigateTo: RouteUrl.parkMap()
+          }
+        });
+      }
+      else if(this.tokenLoadFail) {
+        this.messageService.add({
+          life:5000,
+          severity:"error",
+          summary: "Login",
+          detail: this.loginError!,
+          icon: "pi-lock",
+        })
+        this.verification = false;
+      }
+    });
   }
 
   register(form:NgForm) {
@@ -77,20 +124,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
 
     this.registering = true;
+    let username = this.username;
+    let password = this.password;
+
     this.authService
-      .register({
-        username: this.username,
-        password: this.password,
+      .register(<AppUser>{
+        username: username,
         email: this.email,
         name: this.name,
         surname: this.surname,
         phone: this.phone!,
-        cityId: this.city ? this.city.id : null,
-        districtId: this.district ? this.district.id : null,
-        gender: this.gender.value ? this.gender.value : null,
+        city: this.city,
+        district: this.district,
+        gender: this.gender.value ? Gender[this.gender.value.toUpperCase()] : null,
         address: this.address ? this.address : null ,
         birthdate: this.birthdate ? this.birthdate : null,
-      })
+      }, password)
       .subscribe({
         next: () => {
           this.messageService.add({
@@ -100,14 +149,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
             detail: 'User registered successfully',
             icon:"pi-user-plus",
             data: {
-              navigate: true,
-              navigateTo: RouteUrl.parkMap()
-            }
+              verify: true,
+              username: username,
+              password: password
+            },
           })
           this.registering = false;
         },
         error: (err:HttpErrorResponse) => {
-          console.log(err);
           this.messageService.add({
             life:5000,
             severity:"register-error",
@@ -118,15 +167,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
           this.registering = false;
         },
       });
+  }
 
+  cancelVerify() {
+    this.router.navigateByUrl(RouteUrl.login());
   }
 
   searchCity(evt: any) {
-    this.httpClient.get<City[]>(apiCities+"/search", {
-      params: {
-        s: evt.query
-      }
-    }).subscribe({
+    this.cityService.search(evt.query).subscribe({
       next: cities => {
         this.citySuggestions = cities;
         this.cityEmptyMessage = "No city found"
@@ -139,11 +187,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   searchDistrict(evt: any) {
-    this.httpClient.get<District[]>(apiDistricts+"/search", {
-      params: {
-        s: evt.query
-      }
-    }).subscribe({
+    this.districtService.search(evt.query).subscribe({
       next: districts => {
         this.districtSuggestions = districts;
         this.districtEmptyMessage = "No city found"
@@ -161,13 +205,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
   }
 
-  setModel(pvm:any){
-    return pvm;
-  }
-
   messageClose(message: Message) {
-    if(message.data?.navigate){
-      this.router.navigateByUrl(message.data.navigateTo);
+    if(message.data?.verify){
+      this.verifyUsername = message.data?.username;
+      this.verifyPassword = message.data?.password;
+      this.verification = true;
+    }
+    if(message.data?.navigate) {
+      this.router.navigateByUrl(message.data?.navigateTo);
     }
   }
 
