@@ -131,7 +131,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(builder => {
     builder.MapGrpcService<CollectorService>();
-    builder.MapHub<CollectorHub>("/parkla");
+    builder.MapHub<ParklaHub>("/parkla");
 
     builder.MapControllerRoute(
         name: "default",

@@ -1,17 +1,21 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { mockParks } from '@app/mock-data/parking-lots';
-import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import { delay, ReplaySubject, Subject, Subscription } from 'rxjs';
 import { apiParks } from '../constants/http';
 import { ChangablePark, Park } from '../models/park';
 import { AuthService } from './auth.service';
+import { SignalrService } from './signalr.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ParkService {
+export class ParkService implements OnDestroy {
 
   private _parks = <{[id: number]: ChangablePark}>{};
+  private _signalrBeforeRequest = new Set<number>();
+  private _requestDone = false;
+  private unsubscribe: Subscription[] = [];
 
   parkInformer = new ReplaySubject<{
     park:ChangablePark,
@@ -21,31 +25,36 @@ export class ParkService {
 
   constructor(
     private httpClient: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private signalrService: SignalrService
   ) { }
 
   LoadParks() {
-    let signalrparkaddordelete = (park: Park, isDelete: boolean) => {
-      if(!park) return;
+    const sub = this.signalrService.registerParkChanges((park: Park, isDelete: boolean) => {
+      if(!park || !park.id) return;
+
+      if(!this._requestDone)
+        this._signalrBeforeRequest.add(park.id);
 
       if(isDelete)
         this.deleteMemoryPark(park);
       else
         this.setOrAddMemoryPark(park);
-    };
+    });
 
-    this.getAllParks().subscribe(parks => {
+    this.unsubscribe.push(sub);
+
+    this.getAllParks().pipe(delay(3000)).subscribe(parks => {
+      this._requestDone = true;
       parks.forEach(park => {
-        if(park)
+        if(park && park.id && !this._signalrBeforeRequest.has(park.id))
           this.addMemoryParkIfNotExist(park)
       });
-
+      this._signalrBeforeRequest.clear();
     });
   }
 
   private setOrAddMemoryPark(park: Park) {
-    if(!park.id) return;
-
     const curPark = this._parks[park.id]
     if(curPark)
       this.setMemoryPark(curPark, park)
@@ -66,7 +75,6 @@ export class ParkService {
   }
 
   private addMemoryPark(park: Park) {
-    if(!park.id) return;
     const cPark: ChangablePark = {
       ...park,
       subject: new Subject()
@@ -81,7 +89,6 @@ export class ParkService {
   }
 
   private deleteMemoryPark(park: Park) {
-    if(!park.id) return;
     const curPark = this._parks[park.id];
     if(curPark) {
       this.parkInformer.next({
@@ -126,5 +133,9 @@ export class ParkService {
     return this.httpClient.delete<Park>(apiParks, {body:{
       ...park
     }});
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.forEach(x => x.unsubscribe());
   }
 }

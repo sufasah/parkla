@@ -93,6 +93,7 @@ import { ParkService } from './core/services/park.service';
 import { PricingService } from './core/services/pricing.service';
 import { RealParkSpaceService } from './core/services/real-park-space.service';
 import { VerifyComponent } from './shared/components/verify/verify.component';
+import { SignalrService } from './core/services/signalr.service';
 
 @NgModule({
   declarations: [
@@ -213,6 +214,7 @@ import { VerifyComponent } from './shared/components/verify/verify.component';
     ReservationService,
     RefSharingService,
     CityService,
+    SignalrService,
     DistrictService,
     ParkAreaService,
     ParkSpaceService,

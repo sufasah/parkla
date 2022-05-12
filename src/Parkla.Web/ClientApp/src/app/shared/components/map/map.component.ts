@@ -85,6 +85,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
             this.markersOnTheMap[data.park.id] = mapMarker;
             this.featureCollection.features.push(mapMarker.feature)
           }
+
+          if(this.markerClusterLoaded)
+            this.setFeatureCollection()
         }
       });
       this.unsubscribe.push(sub);
@@ -99,13 +102,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
       mapMarker.marker.remove();
       mapMarker.marker.setLngLat({lat: newPark.latitude, lng: newPark.longitude});
       (<any>mapMarker.feature.geometry).coordinates = [newPark.longitude, newPark.latitude];
-      const source = <GeoJSONSource>this.appMap.getSource(clusterSourceId);
-      source.setData(this.featureCollection);
+      this.setFeatureCollection();
     }
-
 
     mapMarker.component.instance.park = {...mapMarker.park};
     mapMarker.component.changeDetectorRef.detectChanges();
+  }
+
+  setFeatureCollection() {
+    const source = <GeoJSONSource>this.appMap.getSource(clusterSourceId);
+    source.setData(this.featureCollection);
   }
 
   loadMap() {
@@ -173,8 +179,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
       const source = <any>this.appMap.getSource(clusterSourceId);
 
       if(!source.loaded()) {
-        /*this.setFeatures();
-        this.markerClusterLoaded = true;*/
+        this.markerClusterLoaded = true;
+        this.setFeatureCollection();
         return;
       };
 
