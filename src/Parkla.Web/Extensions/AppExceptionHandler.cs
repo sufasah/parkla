@@ -30,11 +30,11 @@ public static class AppExceptionHandler
                 if(error is ParklaException) {
                     await (error as ParklaException)!.HandleException(context);
                 }
-                else if(error is DbUpdateException) {
+                else if(error is DbUpdateException || error is DbUpdateConcurrencyException) {
                     await WriteMessage(
                         context,
-                        "An unknown internal error occured. If this error occurs frequently, please inform us via information channels.",
-                        HttpStatusCode.InsufficientStorage,
+                        "Error has been catched while updating the database data. Most probably the data inside request is not consistent.",
+                        HttpStatusCode.BadRequest,
                         logger,
                         error
                     ).ConfigureAwait(false);
@@ -42,7 +42,7 @@ public static class AppExceptionHandler
                 else {
                     await WriteMessage(
                         context,
-                        "An unknown internal error occured. If this error occurs frequently, please inform us via information channels.",
+                        "An undefined internal error occured. If this error occurs frequently, please inform us via information channels.",
                         HttpStatusCode.InternalServerError,
                         logger,
                         error

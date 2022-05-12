@@ -11,6 +11,7 @@ public class UserMap : IEntityTypeConfiguration<User> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")
+            .IsRequired()
             .UseIdentityAlwaysColumn();
         b.Property(x => x.Wallet)
             .HasColumnName("wallet")

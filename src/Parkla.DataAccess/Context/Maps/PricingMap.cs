@@ -11,6 +11,7 @@ public class PricingMap : IEntityTypeConfiguration<Pricing> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")
+            .IsRequired()
             .UseIdentityAlwaysColumn();
         b.Property(x => x.AreaId)
             .HasColumnName("area_id")

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Collector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -70,6 +71,7 @@ builder.WebHost.ConfigureServices(services => {
         options.JsonSerializerOptions.AllowTrailingCommas = true;
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     }).AddFluentValidation(config => {
         config.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     });

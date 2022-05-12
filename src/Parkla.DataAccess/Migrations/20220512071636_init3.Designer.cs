@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Parkla.DataAccess.Contexts;
@@ -11,9 +12,10 @@ using Parkla.DataAccess.Contexts;
 namespace Parkla.DataAccess.Migrations
 {
     [DbContext(typeof(ParklaDbContext))]
-    partial class ParklaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220512071636_init3")]
+    partial class init3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

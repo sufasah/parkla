@@ -10,6 +10,7 @@ public class DistrictMap : IEntityTypeConfiguration<District> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")
+            .IsRequired()
             .UseIdentityAlwaysColumn();
         b.Property(x => x.CityId)
             .HasColumnName("city_id")

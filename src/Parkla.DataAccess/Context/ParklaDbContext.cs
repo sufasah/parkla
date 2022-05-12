@@ -33,6 +33,8 @@ public class ParklaDbContext : DbContext
             b.EnableRetryOnFailure(30);
             b.SetPostgresVersion(13,6);
         });
+        
+        optionsBuilder.UseLazyLoadingProxies(false);
     }
 
     public DbSet<City> Cities { get; set; } 

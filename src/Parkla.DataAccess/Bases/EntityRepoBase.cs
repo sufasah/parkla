@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Parkla.Core.Entities;
 using Parkla.DataAccess.Abstract;
 using Parkla.Web.Helpers;
-
 namespace Parkla.DataAccess.Bases
 {
     public class EntityRepoBase<TEntity,TContext> : IEntityRepository<TEntity> 
@@ -37,6 +36,7 @@ namespace Parkla.DataAccess.Bases
         ) {
             using var context = new TContext();
             TEntity? result = await context.Set<TEntity>()
+                .AsNoTracking()
                 .SingleOrDefaultAsync(filter, cancellationToken)
                 .ConfigureAwait(false);
             return result;
@@ -49,13 +49,34 @@ namespace Parkla.DataAccess.Bases
             using var context = new TContext();
             IQueryable<TEntity> resultSet;
             if (filter == null)
-                resultSet = context.Set<TEntity>();
+                resultSet = context.Set<TEntity>().AsNoTracking();
             else
-                resultSet = context.Set<TEntity>().Where(filter);
+                resultSet = context.Set<TEntity>().AsNoTracking().Where(filter);
             
             var result = await resultSet.ToListAsync(cancellationToken).ConfigureAwait(false);
             return result;
         }
+
+        public async Task<List<TEntity>> GetListAsync(
+            Expression<Func<TEntity, object>>[] includeProps,
+            Expression<Func<TEntity, bool>>? filter = null, 
+            CancellationToken cancellationToken = default
+        ) {
+            using var context = new TContext();
+            var resultSet = context.Set<TEntity>().AsNoTracking();
+
+            if (filter != null)
+                resultSet = resultSet.Where(filter);
+            
+            foreach (var prop in includeProps)
+            {
+                resultSet = resultSet.Include(prop);
+            }
+
+            var result = await resultSet.ToListAsync(cancellationToken).ConfigureAwait(false);
+            return result;
+        }
+
         public async Task<PagedList<TEntity>> GetListAsync(
             int pageNumber, 
             int pageSize, 
@@ -65,9 +86,9 @@ namespace Parkla.DataAccess.Bases
             using var context = new TContext();
             IQueryable<TEntity> resultSet;
             if(filter == null)
-                resultSet = context.Set<TEntity>();
+                resultSet = context.Set<TEntity>().AsNoTracking();
             else
-                resultSet = context.Set<TEntity>().Where(filter);
+                resultSet = context.Set<TEntity>().AsNoTracking().Where(filter);
 
             var result = await ToPagedListAsync(resultSet, pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
             return result;

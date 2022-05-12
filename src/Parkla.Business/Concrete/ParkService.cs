@@ -23,6 +23,15 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         _validator = validator;
     }
 
+    public override async Task<List<Park>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var includeProps = new Expression<Func<Park,object>>[]{
+            x => x.User!
+        };
+
+        return await _parkRepo.GetListAsync(includeProps, null, cancellationToken);
+    }
+
     public override async Task<Park> AddAsync(Park entity, CancellationToken cancellationToken = default)
     {
         var result = await _validator.ValidateAsync(entity, o => o.IncludeRuleSets("add"), cancellationToken).ConfigureAwait(false);

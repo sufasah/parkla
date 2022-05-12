@@ -11,7 +11,11 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")
+            .IsRequired()
             .UseIdentityAlwaysColumn();
+        b.Property(x => x.UserId)
+            .HasColumnName("user_id")
+            .IsRequired();
         b.Property(x => x.Name)
             .HasColumnName("name")
             .HasMaxLength(50)
@@ -57,6 +61,8 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .HasColumnName("max_price")
             .HasDefaultValue(null)
             .HasPrecision(30,2);
+
+        b.HasOne(x => x.User).WithMany(x => x.Parks).HasForeignKey(x => x.UserId);
         
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
         b.HasCheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID","latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");

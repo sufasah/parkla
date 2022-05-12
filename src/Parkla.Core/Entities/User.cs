@@ -21,4 +21,5 @@ public class User : IEntity {
     public int? DistrictId { get; set; }
     public virtual District? District { get; set; }
     public virtual ICollection<Reservation>? Reservations { get; set; }
+    public virtual ICollection<Park>? Parks { get; set; }
 }

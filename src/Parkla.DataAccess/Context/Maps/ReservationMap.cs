@@ -11,6 +11,7 @@ public class ReservationMap : IEntityTypeConfiguration<Reservation> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")
+            .IsRequired()
             .UseIdentityAlwaysColumn();
         b.Property(x => x.UserId)
             .HasColumnName("user_id")

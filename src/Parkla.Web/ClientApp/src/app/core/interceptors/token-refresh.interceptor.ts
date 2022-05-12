@@ -5,7 +5,8 @@ import {
   HttpEvent,
   HttpInterceptor,
   HttpResponse,
-  HttpErrorResponse
+  HttpErrorResponse,
+  HttpHeaders
 } from '@angular/common/http';
 import { catchError, EMPTY, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
@@ -38,14 +39,11 @@ export class TokenRefreshInterceptor implements HttpInterceptor {
               return throwError(() => refreshTokenErr);
             }),
             switchMap(resp => {
-              let requestHeaders = request.headers;
-              let newRequest = request.clone({
+              const newRequest = request.clone({
                 setHeaders: {
-                  Authorization: apiAuthScheme + resp.accessToken,
-                  ...requestHeaders
+                  "Authorization": apiAuthScheme + resp.accessToken
                 }
               });
-
               return next.handle(newRequest);
           }),
         );

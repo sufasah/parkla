@@ -11,6 +11,7 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
         b.ToTable(@"real_park_spaces",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
+            .IsRequired()
             .HasColumnName("id")
             .UseIdentityAlwaysColumn();
         b.Property(x => x.ParkId)

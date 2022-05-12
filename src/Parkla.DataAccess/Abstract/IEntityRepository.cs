@@ -17,7 +17,11 @@ namespace Parkla.DataAccess.Abstract
             Expression<Func<T,bool>>? filter = null, 
             CancellationToken cancellationToken = default
         );
-        
+        Task<List<T>> GetListAsync(
+            Expression<Func<T, object>>[] includeProps,
+            Expression<Func<T, bool>>? filter = null, 
+            CancellationToken cancellationToken = default
+        );        
         Task<T?> GetAsync(
             Expression<Func<T,bool>> filter, 
             CancellationToken cancellationToken = default

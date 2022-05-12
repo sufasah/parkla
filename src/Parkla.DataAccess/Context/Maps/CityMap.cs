@@ -11,6 +11,7 @@ public class CityMap : IEntityTypeConfiguration<City> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .UseIdentityAlwaysColumn()
+            .IsRequired()
             .HasColumnName("id");
         b.Property(x => x.Name)
             .HasColumnName("name")

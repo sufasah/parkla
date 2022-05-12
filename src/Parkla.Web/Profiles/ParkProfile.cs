@@ -9,5 +9,8 @@ public class ParkProfile : Profile
     {
         CreateMap<ParkDto, Park>()
             .ReverseMap();
+        
+        CreateMap<Park, ParkAllDto>()
+            .ForPath(x => x.User, o => o.MapFrom(x => x.User));
     }
 }

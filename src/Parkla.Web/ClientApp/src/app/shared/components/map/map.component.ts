@@ -1,19 +1,20 @@
-import { AfterViewInit, Component, EmbeddedViewRef, EventEmitter, Input, OnInit, Output, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, EmbeddedViewRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewContainerRef } from '@angular/core';
 import { ttkey } from '@app/core/constants/private';
 import { Park } from '@app/core/models/park';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Feature, FeatureCollection } from 'geojson';
 import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map';
-import { FullscreenControl, GeolocateControl, Map, map, Marker, NavigationControl,  } from "@tomtom-international/web-sdk-maps";
+import { FullscreenControl, GeoJSONSource, GeolocateControl, Map, map, Marker, NavigationControl,  } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
+import { ParkService } from '@app/core/services/park.service';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit, AfterViewInit{
+export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
 
   @Input()
   searchBoxParent?: HTMLElement;
@@ -37,6 +38,9 @@ export class MapComponent implements OnInit, AfterViewInit{
     return this._parks;
   }
 
+  @Input()
+  showUserParks = false;
+
   @Output()
   markerOnClick = new EventEmitter<{event:any; element:MapMarkerComponent}>();
 
@@ -44,7 +48,17 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   searchMarker?: Marker;
 
-  constructor(private viewRef: ViewContainerRef) { }
+  featureCollection = <FeatureCollection>{
+    type: "FeatureCollection",
+    features: []
+  };
+
+  setFatureIntervalId?: NodeJS.Timer;
+
+  constructor(
+    private viewRef: ViewContainerRef,
+    private parkService: ParkService
+  ) { }
 
   ngOnInit(): void {
 
@@ -85,36 +99,61 @@ export class MapComponent implements OnInit, AfterViewInit{
     this.addMarkerClusterToMap();
   }
 
+  setFeatureCollection() {
+    let parks = (this.showUserParks ? this.parkService.userParks : this.parkService.allParks);
+    let values = Object.values(parks);
+
+    Object.values(this.markersOnTheMap).forEach(value => value.remove());
+    this.markersOnTheMap = {};
+
+    values.forEach(el => {
+      this.markersOnTheMap[el.id] = this.makeMarker(el);
+    });
+
+    this.featureCollection.features = values.map(park => (<Feature>{
+        id: park.id,
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [park.longitude,park.latitude],
+        },
+        properties: {
+          id: park.id
+        }
+    }));
+
+    console.log(this.featureCollection.features);
+
+
+    let source = <GeoJSONSource>this.appMap.getSource(clusterSourceId);
+    source.setData(this.featureCollection);
+  }
+
   addMarkerClusterToMap() {
     this.appMap.on("load", (e:any) => {
       this.appMap.addSource(clusterSourceId,{
         type:'geojson',
-        data: <FeatureCollection>{
-          type: "FeatureCollection",
-          features: this.parks.map(park => (<Feature>{
-            id: park.id,
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [park.longitude,park.latitude],
-            },
-            properties: {
-              ...park
-            }
-          }))
-        },
+        data: this.featureCollection,
         cluster: true,
         clusterMaxZoom: 14,
         clusterRadius: 200,
       });
+
+      this.appMap.getSource(clusterSourceId)
 
       this.appMap.addLayer(clusterCircleLayer);
 
       this.appMap.addLayer(clusterSymbolLayer);
     });
 
-    this.appMap.on("data", (e:any) => {
-      if(e.sourceId !== clusterSourceId || !(<any>this.appMap.getSource(clusterSourceId)).loaded()) return;
+    this.appMap.on("sourcedata", (e:any) => {
+      const source = (<any>this.appMap.getSource(clusterSourceId));
+      if(e.sourceId == clusterSourceId && !source.loaded()) {
+        this.setFatureIntervalId = setInterval(() => {
+          this.setFeatureCollection();
+        },3000);
+      }
+      if(e.sourceId !== clusterSourceId || !source.loaded()) return;
       this.refreshMarkers();
     });
 
@@ -139,9 +178,15 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.appMap.getCanvas().style.cursor = '';
     });
 
-    this.appMap.on('move', (e:any) => this.refreshMarkers());
-    this.appMap.on('moveend',(e:any) => this.refreshMarkers());
-    this.appMap.on('click',(e:any) => this.searchMarker?.remove())
+    this.appMap.on('move', (e:any) => {
+      this.refreshMarkers()
+    });
+    this.appMap.on('moveend',(e:any) => {
+      this.refreshMarkers()
+    });
+    this.appMap.on('click',(e:any) => {
+      this.searchMarker?.remove()
+    });
   }
 
   addSearchBoxToMap() {
@@ -187,7 +232,6 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   makeMarkerElement(park: Park) {
     let componentRef = this.viewRef.createComponent(MapMarkerComponent);
-
     componentRef.instance.onClick
       .subscribe((event:any) => {
         this.markerOnClick.emit({
@@ -203,17 +247,18 @@ export class MapComponent implements OnInit, AfterViewInit{
   }
 
   makeMarker(park: Park) {
-    return new Marker(this.makeMarkerElement(park))
+    let marker = new Marker(this.makeMarkerElement(park))
       .setLngLat({lat: park.latitude, lng: park.longitude})
       .remove()
+    return marker;
   }
 
   refreshMarkers() {
-    Object.keys(this.markersOnTheMap).forEach((id:any) => {
-      this.markersOnTheMap[id].remove();
+    Object.values(this.markersOnTheMap).forEach((value: Marker) => {
+      value.remove();
     });
 
-    this.appMap.querySourceFeatures(clusterSourceId).forEach((feature:any) => {
+    this.appMap.querySourceFeatures(clusterSourceId).forEach((feature: Feature) => {
       if (feature.properties && !feature.properties.cluster) {
         let id = parseInt(feature.properties.id, 10);
         let marker = this.markersOnTheMap[id];
@@ -222,4 +267,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     });
   }
 
+  ngOnDestroy(): void {
+    clearInterval(this.setFatureIntervalId!);
+  }
 }

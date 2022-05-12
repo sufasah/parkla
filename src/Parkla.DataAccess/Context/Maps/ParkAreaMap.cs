@@ -10,6 +10,7 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")
+            .IsRequired()
             .UseIdentityAlwaysColumn();
         b.Property(x => x.ParkId)
             .HasColumnName("park_id")
