@@ -111,6 +111,7 @@ export class ParkService implements OnDestroy {
   addPark(park: Park) {
     return this.httpClient.post<Park>(apiParks, {
       name: park.name,
+      userId: park.user.id,
       location: park.location,
       latitude: park.latitude,
       longitude: park.longitude,
@@ -121,6 +122,7 @@ export class ParkService implements OnDestroy {
   updatePark(park: Park) {
     return this.httpClient.put<Park>(apiParks, {
       id: park.id,
+      userId: park.user.id,
       name: park.name,
       location: park.location,
       latitude: park.latitude,

@@ -8,6 +8,7 @@ public class ParkValidator : AbstractValidator<Park>
     public ParkValidator()
     {
         Id();
+        UserId();
         Name();
         Location();
         Latitude();
@@ -25,6 +26,8 @@ public class ParkValidator : AbstractValidator<Park>
         RuleSet("add", RsAdd);
     }
     private void Id() => RuleFor(x => x.Id)
+        .NotNull();
+    private void UserId() => RuleFor(x => x.UserId)
         .NotNull();
     private void Name() => RuleFor(x => x.Name)
         .NotNull()
@@ -70,6 +73,7 @@ public class ParkValidator : AbstractValidator<Park>
 
     private void RsAdd() {
         Name();
+        UserId();
         Location();
         Latitude();
         Longitude();

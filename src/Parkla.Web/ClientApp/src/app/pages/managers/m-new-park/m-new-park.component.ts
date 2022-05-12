@@ -3,6 +3,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Park } from '@app/core/models/park';
+import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { makeTomTomMap } from '@app/core/utils/tomtom';
@@ -40,10 +41,11 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private messageService: MessageService,
-    private parkService: ParkService) { }
+    private parkService: ParkService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
-
+    this.park.user = <any>{id: this.authService.accessToken?.sub};
   }
 
   ngAfterViewInit(): void {
