@@ -122,9 +122,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
         }
     }));
 
-    console.log(this.featureCollection.features);
-
-
     let source = <GeoJSONSource>this.appMap.getSource(clusterSourceId);
     source.setData(this.featureCollection);
   }
