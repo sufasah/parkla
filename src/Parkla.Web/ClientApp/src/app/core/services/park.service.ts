@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { mockParks } from '@app/mock-data/parking-lots';
+import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 import { apiParks } from '../constants/http';
-import { Park } from '../models/park';
+import { ChangablePark, Park } from '../models/park';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -9,8 +11,13 @@ import { AuthService } from './auth.service';
 })
 export class ParkService {
 
-  allParks = <{[id: number]: Park}>{};
-  userParks = <{[id: number]: Park}>{};
+  private _parks = <{[id: number]: ChangablePark}>{};
+
+  parkInformer = new ReplaySubject<{
+    park:ChangablePark,
+    isUserPark: boolean,
+    isDeleted: boolean
+  }>(undefined, 60*1000);
 
   constructor(
     private httpClient: HttpClient,
@@ -19,31 +26,81 @@ export class ParkService {
 
   LoadParks() {
     let signalrparkaddordelete = (park: Park, isDelete: boolean) => {
-      if(!park.id) return;
+      if(!park) return;
 
-      if(isDelete) {
-        delete this.allParks[park.id];
-        delete this.userParks[park.id];
-      }
-
-      if(this.isUserPark(park)) {
-          this.userParks[park.id] = park;
-      }
-      this.allParks[park.id] = park;
+      if(isDelete)
+        this.deleteMemoryPark(park);
+      else
+        this.setOrAddMemoryPark(park);
     };
+
+    for(let i=0; i<10; i++) {
+      setTimeout(() => {
+        signalrparkaddordelete(mockParks[i], false)
+      }, i*1000);
+    }
 
     this.getAllParks().subscribe(parks => {
       parks.forEach(park => {
-        if(this.isUserPark(park)) {
-          this.userParks[park.id] = park;
-        }
-        this.allParks[park.id] = park;
+        if(park)
+          this.addMemoryParkIfNotExist(park)
       });
+
     });
   }
 
+  private setOrAddMemoryPark(park: Park) {
+    if(!park.id) return;
+
+    const curPark = this._parks[park.id]
+    if(curPark)
+      this.setMemoryPark(curPark, park)
+    else
+      this.addMemoryPark(park);
+  }
+
+  private addMemoryParkIfNotExist(park: Park) {
+    const curPark = this._parks[park.id];
+    if(!curPark)
+      this.addMemoryPark(park);
+  }
+
+  private setMemoryPark(target: ChangablePark, source: Park) {
+    delete (<any>source)['subject'];
+    Object.assign(target,source);
+    target.subject.next(undefined);
+  }
+
+  private addMemoryPark(park: Park) {
+    if(!park.id) return;
+    const cPark: ChangablePark = {
+      ...park,
+      subject: new Subject()
+    }
+
+    this._parks[park.id] = cPark;
+    this.parkInformer.next({
+      park: cPark,
+      isUserPark: this.isUserPark(park),
+      isDeleted: false
+    });
+  }
+
+  private deleteMemoryPark(park: Park) {
+    if(!park.id) return;
+    const curPark = this._parks[park.id];
+    if(curPark) {
+      this.parkInformer.next({
+        park: curPark,
+        isUserPark: this.isUserPark(curPark),
+        isDeleted: true
+      })
+      delete this._parks[park.id];
+    }
+  }
+
   private isUserPark(park: Park) {
-    return park.user.id && this.authService.isLoggedIn() && park.user.id == Number(this.authService.accessToken!.sub)
+    return !!park.user.id && this.authService.isLoggedIn() && park.user.id == Number(this.authService.accessToken!.sub)
   }
 
   getAllParks() {

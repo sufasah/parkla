@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import { AppUser } from "./app-user";
 import { ParkArea } from "./park-area";
 export interface Park {
@@ -17,3 +18,5 @@ export interface Park {
   avgPrice: number;
   areas: ParkArea[];
 }
+
+export type ChangablePark =  {subject: Subject<any>} & Park;
