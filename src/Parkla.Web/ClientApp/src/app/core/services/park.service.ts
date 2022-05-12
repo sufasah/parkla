@@ -34,12 +34,6 @@ export class ParkService {
         this.setOrAddMemoryPark(park);
     };
 
-    for(let i=0; i<10; i++) {
-      setTimeout(() => {
-        signalrparkaddordelete(mockParks[i], false)
-      }, i*1000);
-    }
-
     this.getAllParks().subscribe(parks => {
       parks.forEach(park => {
         if(park)

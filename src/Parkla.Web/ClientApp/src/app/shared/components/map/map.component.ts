@@ -4,7 +4,7 @@ import { ChangablePark, Park } from '@app/core/models/park';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Feature, FeatureCollection } from 'geojson';
 import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbolLayer} from '@app/core/constants/map';
-import { FullscreenControl, GeoJSONFeature, GeoJSONSource, GeoJSONSourceRaw, GeolocateControl, Map, map, Marker, NavigationControl,  } from "@tomtom-international/web-sdk-maps";
+import { FullscreenControl, GeoJSONFeature, GeoJSONSource, GeoJSONSourceRaw, GeolocateControl, Map, map, Marker, NavigationControl, TTEvent,  } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
 import { ParkService } from '@app/core/services/park.service';
@@ -99,8 +99,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
       mapMarker.marker.remove();
       mapMarker.marker.setLngLat({lat: newPark.latitude, lng: newPark.longitude});
       (<any>mapMarker.feature.geometry).coordinates = [newPark.longitude, newPark.latitude];
-      mapMarker.marker.addTo(this.appMap);
+      const source = <GeoJSONSource>this.appMap.getSource(clusterSourceId);
+      source.setData(this.featureCollection);
     }
+
 
     mapMarker.component.instance.park = {...mapMarker.park};
     mapMarker.component.changeDetectorRef.detectChanges();
