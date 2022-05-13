@@ -8,21 +8,27 @@ import { ChangablePark, Park } from '../models/park';
 import { AuthService } from './auth.service';
 import { SignalrService } from './signalr.service';
 
+export interface InformerItem{
+  park:ChangablePark,
+  isUserPark: boolean,
+  isDeleted: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ParkService implements OnDestroy {
 
-  private _parks = <{[id: number]: ChangablePark}>{};
+  private _parks = new Map<number, ChangablePark>();
   private _signalrBeforeStreamDone = new Set<number>();
   private _allParksStreamDone = false;
   private unsubscribe: Subscription[] = [];
 
-  parkInformer = new ReplaySubject<{
-    park:ChangablePark,
-    isUserPark: boolean,
-    isDeleted: boolean
-  }>(undefined, 60*1000);
+  get copyParks() {
+    return new Map(this._parks);
+  }
+
+  parkInformer = new Subject<InformerItem>();
 
   constructor(
     private httpClient: HttpClient,
@@ -73,7 +79,7 @@ export class ParkService implements OnDestroy {
   }
 
   private setOrAddMemoryPark(park: Park) {
-    const curPark = this._parks[park.id]
+    const curPark = this._parks.get(park.id)
     if(curPark)
       this.setMemoryPark(curPark, park)
     else
@@ -81,7 +87,7 @@ export class ParkService implements OnDestroy {
   }
 
   private addMemoryParkIfNotExist(park: Park) {
-    const curPark = this._parks[park.id];
+    const curPark = this._parks.get(park.id);
     if(!curPark)
       this.addMemoryPark(park);
   }
@@ -98,7 +104,7 @@ export class ParkService implements OnDestroy {
       subject: new Subject()
     }
 
-    this._parks[park.id] = cPark;
+    this._parks.set(park.id,cPark);
     this.parkInformer.next({
       park: cPark,
       isUserPark: this.isUserPark(park),
@@ -107,18 +113,18 @@ export class ParkService implements OnDestroy {
   }
 
   private deleteMemoryPark(park: Park) {
-    const curPark = this._parks[park.id];
+    const curPark = this._parks.get(park.id);
     if(curPark) {
       this.parkInformer.next({
         park: curPark,
         isUserPark: this.isUserPark(curPark),
         isDeleted: true
       })
-      delete this._parks[park.id];
+      this._parks.delete(park.id);
     }
   }
 
-  private isUserPark(park: Park) {
+  public isUserPark(park: Park) {
     return !!park.user.id && this.authService.isLoggedIn() && park.user.id == Number(this.authService.accessToken!.sub)
   }
 

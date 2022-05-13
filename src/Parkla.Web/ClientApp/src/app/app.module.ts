@@ -94,6 +94,7 @@ import { PricingService } from './core/services/pricing.service';
 import { RealParkSpaceService } from './core/services/real-park-space.service';
 import { VerifyComponent } from './shared/components/verify/verify.component';
 import { SignalrService } from './core/services/signalr.service';
+import { MapEffects } from './store/map/map.effects';
 
 @NgModule({
   declarations: [
@@ -169,7 +170,8 @@ import { SignalrService } from './core/services/signalr.service';
     HttpClientModule,
     ProgressSpinnerModule,
     EffectsModule.forRoot([
-      AuthEffects
+      AuthEffects,
+      MapEffects
     ]),
     StoreModule.forRoot(reducers,{
       initialState: initAppState,

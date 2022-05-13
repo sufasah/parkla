@@ -19,4 +19,4 @@ export interface Park {
   areas: ParkArea[];
 }
 
-export type ChangablePark =  {subject: Subject<any>} & Park;
+export type ChangablePark =  {subject: Subject<void>} & Park;

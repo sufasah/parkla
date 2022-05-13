@@ -7,7 +7,7 @@ import { clusterCircleLayer, clusterCircleLayerId, clusterSourceId, clusterSymbo
 import { FullscreenControl, GeoJSONFeature, GeoJSONSource, GeoJSONSourceRaw, GeolocateControl, Map, map, Marker, NavigationControl, TTEvent,  } from "@tomtom-international/web-sdk-maps";
 import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
-import { ParkService } from '@app/core/services/park.service';
+import { InformerItem, ParkService } from '@app/core/services/park.service';
 import { Subscription } from 'rxjs';
 
 interface MapMarker {
@@ -46,7 +46,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   };
 
   eventListenersAdded = false;
-  markerClusterLoaded = false;
 
   unsubscribe: Subscription[] = [];
 
@@ -64,34 +63,27 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.loadMap();
-
-      let sub = this.parkService.parkInformer.subscribe((data) => {
-        if(!this.isUserMap || true === data.isUserPark) {
-          if(data.isDeleted) {
-            const mapMarker = this.markersOnTheMap[data.park.id];
-
-            const featureIndex = this.featureCollection.features.indexOf(mapMarker.feature);
-            this.featureCollection.features.splice(featureIndex,1);
-
-            mapMarker.subscription.unsubscribe();
-            delete this.markersOnTheMap[data.park.id];
-          }
-          else {
-            const mapMarker: MapMarker = {
-              ...this.makeMarker(data.park),
-              subscription: data.park.subject.subscribe(() => this.handleDataChanged(mapMarker)),
-              feature: this.getFeature(data.park)
-            };
-            this.markersOnTheMap[data.park.id] = mapMarker;
-            this.featureCollection.features.push(mapMarker.feature)
-          }
-
-          if(this.markerClusterLoaded)
-            this.setFeatureCollection()
-        }
-      });
-      this.unsubscribe.push(sub);
     }, 0);
+  }
+
+  removeExistingPark(data: InformerItem) {
+    const mapMarker = this.markersOnTheMap[data.park.id];
+
+    const featureIndex = this.featureCollection.features.indexOf(mapMarker.feature);
+    this.featureCollection.features.splice(featureIndex,1);
+
+    mapMarker.subscription.unsubscribe();
+    delete this.markersOnTheMap[data.park.id];
+  }
+
+  addNewPark(data: InformerItem) {
+    const mapMarker: MapMarker = {
+      ...this.makeMarker(data.park),
+      subscription: data.park.subject.subscribe(() => this.handleDataChanged(mapMarker)),
+      feature: this.getFeature(data.park)
+    };
+    this.markersOnTheMap[data.park.id] = mapMarker;
+    this.featureCollection.features.push(mapMarker.feature)
   }
 
   handleDataChanged(mapMarker: MapMarker) {
@@ -107,6 +99,35 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
 
     mapMarker.component.instance.park = {...mapMarker.park};
     mapMarker.component.changeDetectorRef.detectChanges();
+  }
+
+  onMarkerClusterLoad() {
+    let sub = this.parkService.parkInformer.subscribe((data) => {
+      if(!this.isUserMap || true === data.isUserPark) {
+        if(data.isDeleted) {
+          this.removeExistingPark(data);
+        }
+        else {
+          this.addNewPark(data);
+        }
+
+        this.setFeatureCollection()
+      }
+    });
+
+    this.parkService.copyParks.forEach((park) => {
+      const data: InformerItem = {
+        park: park,
+        isDeleted: false,
+        isUserPark: this.parkService.isUserPark(park)
+      };
+
+      if(!this.isUserMap || true === data.isUserPark)
+        this.addNewPark(data);
+    })
+
+    this.unsubscribe.push(sub);
+    this.setFeatureCollection();
   }
 
   setFeatureCollection() {
@@ -179,8 +200,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
       const source = <any>this.appMap.getSource(clusterSourceId);
 
       if(!source.loaded()) {
-        this.markerClusterLoaded = true;
-        this.setFeatureCollection();
+        this.onMarkerClusterLoad();
         return;
       };
 

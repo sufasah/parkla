@@ -119,9 +119,8 @@ export class SignalrService {
     );
   }
 
-  async GetAllParksAsStream(callbacks: IStreamSubscriber<any>) {
-    await this._startProimse
-    this._connection.stream(signalAllParks).subscribe(callbacks);
+  GetAllParksAsStream(callbacks: IStreamSubscriber<any>) {
+    return this._connection.stream(signalAllParks).subscribe(callbacks);
   }
 
 }
