@@ -2,10 +2,12 @@ using System;
 using System.Linq.Expressions;
 using System.Net;
 using FluentValidation;
+using Microsoft.AspNetCore.SignalR;
 using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
+using Parkla.Core.Hubs;
 using Parkla.DataAccess.Abstract;
 
 namespace Parkla.Business.Concrete;
@@ -13,14 +15,17 @@ public class ParkService : EntityServiceBase<Park>, IParkService
 {
     private readonly IParkRepo _parkRepo;
     private readonly IValidator<Park> _validator;
+    private readonly IParklaHubService _parklaHubService;
 
     public ParkService(
         IParkRepo parkRepo, 
-        IValidator<Park> validator
+        IValidator<Park> validator,
+        IParklaHubService parklaHubService
     ) : base(parkRepo, validator)
     {
         _parkRepo = parkRepo;
         _validator = validator;
+        _parklaHubService = parklaHubService;
     }
 
     public override async Task<List<Park>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -46,7 +51,12 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         entity.AvaragePrice = -1;
         entity.MaxPrice = -1;
         
-        return await _parkRepo.AddAsync(entity, cancellationToken).ConfigureAwait(false);
+        var newPark = await _parkRepo.AddAsync(entity,cancellationToken).ConfigureAwait(false);
+
+        #pragma warning disable
+        HubParkChanges(newPark.Id, false);
+
+        return newPark;
     }
 
     public override async Task<Park> UpdateAsync(Park entity, CancellationToken cancellationToken = default)
@@ -64,7 +74,28 @@ public class ParkService : EntityServiceBase<Park>, IParkService
             x => x.AvaragePrice,
             x => x.MaxPrice,
         };
+
+        var newPark = await _parkRepo.UpdateAsync(entity, props, true, cancellationToken).ConfigureAwait(false);
+
+        #pragma warning disable
+        HubParkChanges(newPark.Id, false);
         
-        return await _parkRepo.UpdateAsync(entity, props, true, cancellationToken).ConfigureAwait(false);
+        return newPark;
+    }
+
+    public override async Task DeleteAsync(Park entity, CancellationToken cancellationToken = default)
+    {
+        await base.DeleteAsync(entity, cancellationToken).ConfigureAwait(false);   
+
+        #pragma warning disable
+        HubParkChanges(entity.Id, true);
+    }
+
+    private async Task HubParkChanges(int? id, bool isDelete) {
+        var newParkWithUser = await _parkRepo.GetAsync(
+            new Expression<Func<Park,object>>[]{x => x.User!},
+            x => x.Id == id)
+            .ConfigureAwait(false);
+        await _parklaHubService.ParkChanges(newParkWithUser!, isDelete).ConfigureAwait(false);
     }
 }

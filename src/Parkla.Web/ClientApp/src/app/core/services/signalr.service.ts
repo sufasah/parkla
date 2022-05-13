@@ -73,6 +73,9 @@ export class SignalrService {
   }
 
   registerParkChanges(callback: (park: Park, isDelete: boolean) => void) {
+    //this._connection.onreconnected() REGISTER AGAIN BECAUSE SERVER MAY CRASHES AND THE GROUP MAP RECORDS MAY BE LOST;
+    //SO REGISTER WILL BE BASE METHOD TO HANDLE REGISTERINGS AND RECONNECTIONS
+    //AND THIS REGISTERPARKCHANGES WILL ONLY PASS INVOKE ARGUMENTS INSTEAD OF HANDLING THESE REGISTERATIONS.
     this._connection.on(signalParkChanges, callback);
     this.addQueue({
       name: signalParkChangesRegister,

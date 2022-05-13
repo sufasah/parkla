@@ -40,6 +40,7 @@ public class ServiceCollectionHelper
         s.AddSingleton<IAuthService, AuthService>();
         s.AddSingleton<IUserService, UserService>();
         s.AddSingleton<IMailService, MailService>();
+        s.AddSingleton<IParklaHubService, ParklaHubService>();
         
         //----------------------------------------------------------------------------------- VALIDATORS
         s.AddTransient<IValidator<ParkSpaceStatusDto>, ParkSpaceStatusValidator>();

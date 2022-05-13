@@ -7,15 +7,14 @@ using Collector;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Parkla.Core.Helpers;
+using Parkla.Core.Hubs;
 using Parkla.Core.Options;
 using Parkla.DataAccess.Contexts;
 using Parkla.Web.Extensions;
 using Parkla.Web.Helper;
-using Parkla.Web.Hubs;
 using Parkla.Web.SerialCom;
 
 
@@ -41,7 +40,7 @@ builder.WebHost.ConfigureServices(services => {
         ValidateAudience = false,
         ValidateLifetime = true,
         ClockSkew = new TimeSpan(0,0,0)
-    };;
+    };
 
     services.AddAuthentication(cfg => {
         cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,7 +87,14 @@ builder.WebHost.ConfigureServices(services => {
 
     services.AddGrpc();
 
-    services.AddSignalR();
+    services.AddSignalR(c => {
+
+    }).AddJsonProtocol(c => {
+        c.PayloadSerializerOptions.AllowTrailingCommas = true;
+        c.PayloadSerializerOptions.PropertyNameCaseInsensitive = true;
+        c.PayloadSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+        c.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
     services.AddHostedService<SerialReceiver>();
 

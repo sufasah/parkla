@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using Parkla.Core.Entities;
-using Parkla.Web.Helpers;
+using Parkla.Core.Helpers;
 
 namespace Parkla.Business.Abstract;
 public interface IEntityService<TEntity> 

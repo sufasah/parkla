@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Parkla.Core.Entities;
+using Parkla.Core.Helpers;
 using Parkla.DataAccess.Abstract;
-using Parkla.Web.Helpers;
 namespace Parkla.DataAccess.Bases
 {
     public class EntityRepoBase<TEntity,TContext> : IEntityRepository<TEntity> 
@@ -107,16 +107,16 @@ namespace Parkla.DataAccess.Bases
 
         public async Task<TEntity> UpdateAsync(
             TEntity entity,
-            Expression<Func<TEntity, object?>>[] properties,
-            bool excludes = true,
+            Expression<Func<TEntity, object?>>[] updateProps,
+            bool updateOtherProps = true,
             CancellationToken cancellationToken = default
         ) {
             using var context = new TContext();
             var result = context.Entry(entity);
-            result.State = excludes ? EntityState.Modified : EntityState.Unchanged;
-            foreach (var prop in properties)
+            result.State = updateOtherProps ? EntityState.Modified : EntityState.Unchanged;
+            foreach (var prop in updateProps)
             {
-                result.Property(prop).IsModified = !excludes;
+                result.Property(prop).IsModified = !updateOtherProps;
             }
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return entity;
@@ -135,6 +135,57 @@ namespace Parkla.DataAccess.Bases
                 .ConfigureAwait(false);
             
             return new PagedList<TEntity>(items, pageNumber, pageSize, count);
+        }
+
+        public async Task<TEntity?> GetAsync(
+            Expression<Func<TEntity, object>>[] includeProps, 
+            Expression<Func<TEntity, bool>> filter, 
+            CancellationToken cancellationToken = default
+        ) {
+            using var context = new TContext();
+            var query = context.Set<TEntity>()
+                .AsNoTracking();
+            
+            foreach (var prop in includeProps)
+            {
+                query = query.Include(prop);
+            }
+            
+            var result = await query.SingleOrDefaultAsync(filter, cancellationToken)
+                .ConfigureAwait(false);
+            return result;
+        }
+
+        public async Task<TEntity> AddAsync(
+            TEntity entity, 
+            Expression<Func<TEntity, object?>>[] includeProps, 
+            CancellationToken cancellationToken = default
+        ) {
+            using var context = new TContext();
+            var result = context.Entry(entity);
+            result.State = EntityState.Added;
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var prop in includeProps)
+            {
+                await result.Reference(prop).LoadAsync(cancellationToken);
+            }
+            return entity;
+        }
+
+        public async Task<TEntity> UpdateAsync(
+            TEntity entity, 
+            Expression<Func<TEntity, object?>>[] includeProps, 
+            CancellationToken cancellationToken = default
+        ) {
+            using var context = new TContext();
+            var result = context.Entry(entity);
+            result.State = EntityState.Modified;
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var prop in includeProps)
+            {
+                await result.Reference(prop).LoadAsync(cancellationToken);
+            }
+            return entity;
         }
     }
 }

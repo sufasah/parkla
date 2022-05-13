@@ -1,4 +1,4 @@
-namespace Parkla.Web.Helpers;
+namespace Parkla.Core.Helpers;
 public class PagedList<T> : List<T>
 {
     const int maxPageSize = 50;

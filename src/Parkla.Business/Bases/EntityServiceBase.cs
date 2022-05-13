@@ -5,8 +5,8 @@ using FluentValidation;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
+using Parkla.Core.Helpers;
 using Parkla.DataAccess.Abstract;
-using Parkla.Web.Helpers;
 
 namespace Parkla.Business.Bases
 {

@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using Parkla.Core.Entities;
-using Parkla.Web.Helpers;
-
+using Parkla.Core.Helpers;
 namespace Parkla.DataAccess.Abstract
 {
     public interface IEntityRepository<T> 
@@ -27,20 +26,38 @@ namespace Parkla.DataAccess.Abstract
             CancellationToken cancellationToken = default
         );
 
+        Task<T?> GetAsync(
+            Expression<Func<T, object>>[] includeProps,
+            Expression<Func<T, bool>> filter, 
+            CancellationToken cancellationToken = default
+        );
+
         Task<T> AddAsync(
             T entity, 
             CancellationToken cancellationToken = default
         );
 
+        Task<T> AddAsync(
+            T entity, 
+            Expression<Func<T, object?>>[] includeProps,
+            CancellationToken cancellationToken = default
+        );
+
         Task<T> UpdateAsync(
             T entity, 
             CancellationToken cancellationToken = default
         );
 
         Task<T> UpdateAsync(
+            T entity, 
+            Expression<Func<T, object?>>[] includeProps,
+            CancellationToken cancellationToken = default
+        );
+
+        Task<T> UpdateAsync(
             T entity,
-            Expression<Func<T, object?>>[] properties,
-            bool excludes = true,
+            Expression<Func<T, object?>>[] updateProps,
+            bool updateOtherProps = false,
             CancellationToken cancellationToken = default
         );
 
