@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { mockParks } from '@app/mock-data/parking-lots';
+import { MessageService } from 'primeng/api';
 import { delay, ReplaySubject, Subject, Subscription } from 'rxjs';
 import { apiParks } from '../constants/http';
 import { ChangablePark, Park } from '../models/park';
@@ -13,8 +14,8 @@ import { SignalrService } from './signalr.service';
 export class ParkService implements OnDestroy {
 
   private _parks = <{[id: number]: ChangablePark}>{};
-  private _signalrBeforeRequest = new Set<number>();
-  private _requestDone = false;
+  private _signalrBeforeStreamDone = new Set<number>();
+  private _allParksStreamDone = false;
   private unsubscribe: Subscription[] = [];
 
   parkInformer = new ReplaySubject<{
@@ -26,15 +27,16 @@ export class ParkService implements OnDestroy {
   constructor(
     private httpClient: HttpClient,
     private authService: AuthService,
-    private signalrService: SignalrService
+    private signalrService: SignalrService,
+    private messageService: MessageService
   ) { }
 
   LoadParks() {
     const sub = this.signalrService.registerParkChanges((park: Park, isDelete: boolean) => {
       if(!park || !park.id) return;
 
-      if(!this._requestDone)
-        this._signalrBeforeRequest.add(park.id);
+      if(!this._allParksStreamDone)
+        this._signalrBeforeStreamDone.add(park.id);
 
       if(isDelete)
         this.deleteMemoryPark(park);
@@ -42,16 +44,32 @@ export class ParkService implements OnDestroy {
         this.setOrAddMemoryPark(park);
     });
 
-    this.unsubscribe.push(sub);
-
-    this.getAllParks().pipe(delay(3000)).subscribe(parks => {
-      this._requestDone = true;
-      parks.forEach(park => {
-        if(park && park.id && !this._signalrBeforeRequest.has(park.id))
-          this.addMemoryParkIfNotExist(park)
+    const sub2 = this.signalrService.connectedEvent.subscribe(() => {
+      this._allParksStreamDone = false;
+      this.signalrService.GetAllParksAsStream({
+        next: (park: Park) => {
+          if(park && park.id && !this._signalrBeforeStreamDone.has(park.id))
+            this.addMemoryParkIfNotExist(park)
+        },
+        error: (err:any) => {
+          this.messageService.add({
+            key: "global",
+            life:5000,
+            severity:"error",
+            summary: "Fetch Parks",
+            detail: err,
+            icon: "pi-lock",
+          });
+          console.log(err);
+        },
+        complete: () => {
+          this._allParksStreamDone = true;
+          this._signalrBeforeStreamDone.clear();
+        }
       });
-      this._signalrBeforeRequest.clear();
-    });
+    })
+
+    this.unsubscribe.push(sub, sub2);
   }
 
   private setOrAddMemoryPark(park: Park) {

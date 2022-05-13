@@ -7,6 +7,7 @@ using Parkla.Core.Entities;
 using Parkla.Core.Validators;
 using Parkla.DataAccess.Abstract;
 using Parkla.DataAccess.Concrete;
+using Parkla.Web.Hubs;
 
 namespace Parkla.Web.Helper;
 public class ServiceCollectionHelper
@@ -40,7 +41,7 @@ public class ServiceCollectionHelper
         s.AddSingleton<IAuthService, AuthService>();
         s.AddSingleton<IUserService, UserService>();
         s.AddSingleton<IMailService, MailService>();
-        s.AddSingleton<IParklaHubService, ParklaHubService>();
+        s.AddSingleton<IParklaHubService, ParklaHubService<ParklaHub>>();
         
         //----------------------------------------------------------------------------------- VALIDATORS
         s.AddTransient<IValidator<ParkSpaceStatusDto>, ParkSpaceStatusValidator>();

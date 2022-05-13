@@ -4,9 +4,7 @@ import {
   HttpHandler,
   HttpEvent,
   HttpInterceptor,
-  HttpResponse,
   HttpErrorResponse,
-  HttpHeaders
 } from '@angular/common/http';
 import { catchError, EMPTY, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
@@ -15,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { refreshTokenExpired } from '@app/store/auth/auth.actions';
 import { Router } from '@angular/router';
 import { RouteUrl } from '../utils/route';
+import { ParklaError } from '../models/parkla-error';
 
 @Injectable()
 export class TokenRefreshInterceptor implements HttpInterceptor {
@@ -32,10 +31,12 @@ export class TokenRefreshInterceptor implements HttpInterceptor {
         if (err.status == 401 && err.headers.get("Token-Expired") == "true") {
           return authService.refreshTokens().pipe(
             catchError((refreshTokenErr:HttpErrorResponse) => {
-              store.dispatch(refreshTokenExpired());
-              setTimeout(() => {
-                window.location.href = window.location.origin + "/"+ RouteUrl.login();
-              }, 3000);
+              if(refreshTokenErr.error instanceof ParklaError && refreshTokenErr.error.isServerError) {
+                store.dispatch(refreshTokenExpired());
+                setTimeout(() => {
+                  window.location.href = window.location.origin + "/"+ RouteUrl.login();
+                }, 3000);
+              }
               return throwError(() => refreshTokenErr);
             }),
             switchMap(resp => {

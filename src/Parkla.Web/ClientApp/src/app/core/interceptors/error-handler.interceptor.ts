@@ -25,13 +25,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
           url: err.url!,
         };
 
-        if(err.error instanceof Error) {
-          init.error = <ParklaError> {
-            innerError: err.error,
-            message: "Could not reached to the server. Check your network configurations or if the problem is not client side wait for the server until available"
-          };
-        }
-        else if(!(err.error instanceof ParklaError)) {
+        if(!(err.error instanceof ParklaError)) {
           init.error = new ParklaError(init.error);
         }
         return throwError(() => new HttpErrorResponse(init));

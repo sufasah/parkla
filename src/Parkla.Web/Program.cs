@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Parkla.Core.Helpers;
-using Parkla.Core.Hubs;
 using Parkla.Core.Options;
 using Parkla.DataAccess.Contexts;
 using Parkla.Web.Extensions;
 using Parkla.Web.Helper;
+using Parkla.Web.Hubs;
 using Parkla.Web.SerialCom;
 
 

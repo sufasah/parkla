@@ -2,12 +2,10 @@ using System;
 using System.Linq.Expressions;
 using System.Net;
 using FluentValidation;
-using Microsoft.AspNetCore.SignalR;
 using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
-using Parkla.Core.Hubs;
 using Parkla.DataAccess.Abstract;
 
 namespace Parkla.Business.Concrete;

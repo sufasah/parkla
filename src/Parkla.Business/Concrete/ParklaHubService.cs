@@ -1,18 +1,17 @@
-using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
 using Parkla.Business.Abstract;
+using Parkla.Core.Constants;
 using Parkla.Core.Entities;
-using Parkla.Core.Hubs;
-using static Parkla.Business.Abstract.IParklaHubService;
 
 namespace Parkla.Business.Concrete;
 
-public class ParklaHubService : IParklaHubService
+public class ParklaHubService<T> : IParklaHubService
+    where T: Hub
 {
-    private readonly IHubContext<ParklaHub> _hub;
+    private readonly IHubContext<T> _hub;
 
     public ParklaHubService(
-        IHubContext<ParklaHub> hub
+        IHubContext<T> hub
     ) {
         _hub = hub;
     }

@@ -1,19 +1,32 @@
-import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { ReplaySubject, Subject, Subscription } from 'rxjs';
-import { signalConnectionUrl, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister } from '../constants/signalr';
+import { EventEmitter, Injectable } from '@angular/core';
+import { HubConnection, HubConnectionBuilder, HubConnectionState, IStreamSubscriber } from '@microsoft/signalr';
+import { Subject, Subscription } from 'rxjs';
+import { signalAllParks, signalConnectionUrl, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister } from '../constants/signalr';
 import { Park } from '../models/park';
+
+interface QueueItem {
+  name: string;
+  args: any[]
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalrService {
 
-  private _connection: HubConnection;
-  private _queueAddInformer = new Subject<void>();
+  private readonly _connection: HubConnection;
+  private readonly _queueAddInformer = new Subject<void>();
+  private readonly _registerations = new Map<string,QueueItem>();
+  private readonly _queue = <QueueItem[]>[];
   private _subscription?: Subscription;
-  private _queue = <{name: string; args: any[]}[]>[];
-  private _connected = false;
+  private _startProimse!: Promise<void>;
+
+  connectedEvent = new EventEmitter<void>(true)
+
+
+  get isConnected() {
+    return this._connection.state == HubConnectionState.Connected;
+  }
 
   constructor() {
     this._connection = new HubConnectionBuilder()
@@ -27,7 +40,6 @@ export class SignalrService {
     });
 
     this._connection.onclose(() => {
-      this._connected = false;
       this._subscription?.unsubscribe();
       this.startConnection();
     });
@@ -36,9 +48,11 @@ export class SignalrService {
   }
 
   private startConnection() {
-    this._connection.start().then(()=>{
+    this._startProimse = this._connection.start();
+    this._startProimse.then(()=>{
       this.whenConnected();
-    }).catch(() => {
+    })
+    .catch(() => {
       setTimeout(() => {
         this.startConnection();
       }, 10000);
@@ -46,8 +60,11 @@ export class SignalrService {
   }
 
   private whenConnected() {
-    this._connected = true;
+    this._registerations.forEach(params => {
+      this._connection.invoke(params.name, ...params.args);
+    });
     this.handleQueue();
+    this.connectedEvent.emit();
   }
 
   private handleQueue() {
@@ -59,36 +76,52 @@ export class SignalrService {
 
     const queueLen = this._queue.length;
     for(let i=0; i<queueLen; i++) {
-      if(this._connected)
+      if(this.isConnected)
         this._queueAddInformer.next();
       else
         break;
     }
   }
 
-  private addQueue(item: {name: string; args: any[]}) {
+  private addQueue(item: QueueItem) {
     this._queue.push(item);
-    if(this._connected)
+    if(this.isConnected)
       this._queueAddInformer.next();
   }
 
-  registerParkChanges(callback: (park: Park, isDelete: boolean) => void) {
-    //this._connection.onreconnected() REGISTER AGAIN BECAUSE SERVER MAY CRASHES AND THE GROUP MAP RECORDS MAY BE LOST;
-    //SO REGISTER WILL BE BASE METHOD TO HANDLE REGISTERINGS AND RECONNECTIONS
-    //AND THIS REGISTERPARKCHANGES WILL ONLY PASS INVOKE ARGUMENTS INSTEAD OF HANDLING THESE REGISTERATIONS.
-    this._connection.on(signalParkChanges, callback);
-    this.addQueue({
-      name: signalParkChangesRegister,
-      args: []
-    });
+  private register(
+    name:string, // after register invoke, server will send messages about registeration to this name and this callback
+    callback: (...args: any[]) => void,
+    registerInvokeItem: QueueItem,
+    unregisterInvokeItem: QueueItem
+  ) {
+    if(!this._registerations.has(registerInvokeItem.name)) {
+      this._connection.on(name, callback);
+      this.addQueue(registerInvokeItem);
+      this._registerations.set(registerInvokeItem.name, registerInvokeItem);
+    }
 
     return new Subscription(() => {
-      this.addQueue({
-        name: signalParkChangesUnRegister,
-        args: []
-      });
-      this._connection.off(signalParkChanges, callback);
-    });
+      if(this._registerations.has(registerInvokeItem.name)) {
+        this._connection.off(name, callback);
+        this.addQueue(unregisterInvokeItem);
+        this._registerations.delete(registerInvokeItem.name);
+      }
+  });
+  }
+
+  registerParkChanges(callback: (park: Park, isDelete: boolean) => void) {
+    return this.register(
+      signalParkChanges,
+      callback,
+      {name: signalParkChangesRegister, args: []},
+      {name: signalParkChangesUnRegister, args: []}
+    );
+  }
+
+  async GetAllParksAsStream(callbacks: IStreamSubscriber<any>) {
+    await this._startProimse
+    this._connection.stream(signalAllParks).subscribe(callbacks);
   }
 
 }
