@@ -132,7 +132,7 @@
   </div>
 </form>
 
-<p-toast (onClose)="messageClose()"></p-toast>
+<p-toast (onClose)="messageClose($event.message)"></p-toast>
 
 <div [ngClass]="mapModalVisible ? 'd-absolute' : 'd-none'" class="fullscreen-modal">
   <div id="selectLatLngMap">

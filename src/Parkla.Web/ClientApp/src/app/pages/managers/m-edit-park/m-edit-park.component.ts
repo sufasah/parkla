@@ -1,12 +1,16 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Park } from '@app/core/models/park';
 import { RouteUrl } from '@app/core/utils/route';
 import { Map, Marker } from '@tomtom-international/web-sdk-maps';
-import { MessageService } from 'primeng/api';
+import { Message, MessageService } from 'primeng/api';
 import { delay, of } from 'rxjs';
 import { makeTomTomMap } from '@app/core/utils/tomtom';
+import { ParkService } from '@app/core/services/park.service';
+import { Route } from '@tomtom-international/web-sdk-services';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '@app/core/services/auth.service';
 
 @Component({
   selector: 'app-m-edit-park',
@@ -38,10 +42,35 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
 
   constructor(
     private router: Router,
-    private messageService: MessageService) { }
+    private route: ActivatedRoute,
+    private parkService: ParkService,
+    private messageService: MessageService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
-    // get park datas
+
+    this.route.paramMap.subscribe(params => {
+      const id = Number(params.get("parkid"));
+      this.parkService.getPark(id).subscribe({
+        next: (park) => {
+          this.park = park;
+        },
+        error: (err: HttpErrorResponse) => {
+          this.messageService.add({
+            life:5000,
+            severity:"error",
+            summary: "Fetching Park",
+            detail: err.error.message,
+            icon: "pi-lock",
+            data: {
+              navigate: true,
+              navigateTo: RouteUrl.mParkMap()
+            }
+          })
+        }
+      });
+    })
+
     this.park = <any>{
       id: 6,
       name: "parknamehere",
@@ -63,11 +92,7 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
   }
 
   editPark(form: NgForm) {
-    this.park.extras = this.extrasModel.map(x => x.val);
-
-    console.log(this.park);
-    console.log(form);
-
+    if(this.editing) return;
     if(form.invalid){
       var keys = Object.keys(form.controls);
       keys.forEach(e => {
@@ -76,27 +101,31 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    this.park.extras = this.extrasModel.map(x => x.val);
     this.editing = true;
-    //add opeartion to the server and result
-    of(true).pipe(delay(2000)).subscribe(success => {
-      if(success){
+    this.park.user = <any>{id: this.authService.accessToken?.sub};
+
+    this.parkService.updatePark(this.park).subscribe({
+      next: park => {
+        this.park = park;
         this.messageService.add({
           life:1500,
           severity:'success',
           summary: 'Edited',
           detail: 'Parking lot is edited successfully',
-        })
-      }
-      else {
+        });
+        this.editing = false;
+      },
+      error: (err: HttpErrorResponse) => {
         this.messageService.add({
           life:5000,
           severity:"error",
           summary: "Edit Fail",
-          detail: "Parking lot isn't edited successfully",
-          icon: "pi-lock",
+          detail: err.error.message,
+          icon: "pi-lock"
         })
+        this.editing = false;
       }
-      this.editing = false;
     });
   }
 
@@ -131,7 +160,10 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
     this.mapModalVisible = false;
   }
 
-  messageClose() {
+  messageClose(message: Message) {
+    if(message.data && message.data.navigate) {
+      this.router.navigateByUrl(message.data.navigateTo);
+    }
   }
 
 }

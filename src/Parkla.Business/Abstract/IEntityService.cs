@@ -21,6 +21,11 @@ public interface IEntityService<TEntity>
             CancellationToken cancellationToken = default
         );
 
+        Task<TEntity?> GetAsync(
+            int id,
+            CancellationToken cancellationToken = default
+        );
+
         Task<TEntity> AddAsync(
             TEntity entity,
             CancellationToken cancellationToken = default

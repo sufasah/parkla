@@ -132,6 +132,10 @@ export class ParkService implements OnDestroy {
     return this.httpClient.get<Park[]>(apiParks+"/all");
   }
 
+  getPark(id: number) {
+    return this.httpClient.get<Park>(apiParks+"/"+id);
+  }
+
   addPark(park: Park) {
     return this.httpClient.post<Park>(apiParks, {
       name: park.name,

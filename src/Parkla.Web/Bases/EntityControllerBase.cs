@@ -43,6 +43,20 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}")]
+    public virtual async Task<IActionResult> GetAsync(int? id, CancellationToken cancellationToken) {
+        var notFound = NotFound("Entity could not found with given id");
+        if(id == null)
+            return notFound;
+        
+        var result = await _service.GetAsync((int)id, cancellationToken);
+
+        if(result == null)
+            return notFound;
+
+        return Ok(result);
+    }
+
     [HttpPost("")]
     public virtual async Task<IActionResult> AddAsync(
         [FromBody] TEntityDto entityDto,

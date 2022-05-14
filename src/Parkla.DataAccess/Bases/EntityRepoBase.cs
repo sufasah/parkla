@@ -42,6 +42,32 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
 
+        public async Task<TEntity?> GetAsync<Tkey>(
+            Tkey id, 
+            CancellationToken cancellationToken = default
+        )   where Tkey: struct 
+        {
+            using var context = new TContext();
+            var pk = context.Model.FindEntityType(typeof(TEntity))!
+                .FindPrimaryKey()!
+                .Properties
+                .First(x => x.ClrType == typeof(Tkey) || x.ClrType == typeof(Tkey?));
+            
+            var param = Expression.Parameter(typeof(TEntity), "x");
+            var expression = Expression.Lambda<Func<TEntity,bool>>(
+                Expression.Equal(
+                    Expression.Convert(Expression.Constant(id), typeof(int?)),
+                    Expression.MakeMemberAccess(param, pk.PropertyInfo!)
+                ),
+                param
+            );
+            TEntity? result = await context.Set<TEntity>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(expression, cancellationToken)
+                .ConfigureAwait(false);
+            return result;
+        }
+
         public async Task<List<TEntity>> GetListAsync(
             Expression<Func<TEntity, bool>>? filter = null, 
             CancellationToken cancellationToken = default

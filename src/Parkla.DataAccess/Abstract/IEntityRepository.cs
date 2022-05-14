@@ -26,6 +26,11 @@ namespace Parkla.DataAccess.Abstract
             CancellationToken cancellationToken = default
         );
 
+        Task<T?> GetAsync<Tkey>(
+            Tkey id, 
+            CancellationToken cancellationToken = default
+        ) where Tkey: struct;
+
         Task<T?> GetAsync(
             Expression<Func<T, object>>[] includeProps,
             Expression<Func<T, bool>> filter, 

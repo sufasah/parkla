@@ -98,11 +98,21 @@ namespace Parkla.Business.Bases
             return await NoValidateUpdateAsync(entity, cancellationToken);
         }
 
-        public async Task<TEntity?> GetAsync(
+        public virtual async Task<TEntity?> GetAsync(
             Expression<Func<TEntity,bool>> filter,
             CancellationToken cancellationToken = default
         ) {
             return await _entityRepository.GetAsync(filter, cancellationToken);
+        }
+
+        public virtual async Task<TEntity?> GetAsync(
+            int id,
+            CancellationToken cancellationToken = default
+        ) {
+            return await _entityRepository.GetAsync(
+                id,
+                cancellationToken
+            );
         }
     }
 }
