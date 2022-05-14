@@ -94,6 +94,8 @@ import { PricingService } from './core/services/pricing.service';
 import { RealParkSpaceService } from './core/services/real-park-space.service';
 import { VerifyComponent } from './shared/components/verify/verify.component';
 import { SignalrService } from './core/services/signalr.service';
+import { ParkFormComponent } from './shared/components/park-form/park-form.component';
+import { ParkAreaFormComponent } from './shared/components/park-area-form/park-area-form.component';
 
 @NgModule({
   declarations: [
@@ -125,7 +127,9 @@ import { SignalrService } from './core/services/signalr.service';
     MDashboardComponent,
     ParkAreasComponent,
     AreaDataViewComponent,
-    VerifyComponent
+    VerifyComponent,
+    ParkFormComponent,
+    ParkAreaFormComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

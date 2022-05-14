@@ -5,10 +5,7 @@ import { Park } from '@app/core/models/park';
 import { RouteUrl } from '@app/core/utils/route';
 import { Map, Marker } from '@tomtom-international/web-sdk-maps';
 import { Message, MessageService } from 'primeng/api';
-import { delay, of } from 'rxjs';
-import { makeTomTomMap } from '@app/core/utils/tomtom';
 import { ParkService } from '@app/core/services/park.service';
-import { Route } from '@tomtom-international/web-sdk-services';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '@app/core/services/auth.service';
 
@@ -18,27 +15,9 @@ import { AuthService } from '@app/core/services/auth.service';
   styleUrls: ['./m-edit-park.component.scss']
 })
 export class MEditParkComponent implements OnInit, AfterViewInit {
-
-  selectLatLngMap! : Map;
-
-  park: Park = <any>{};
-
-  extrasModel: {val:string}[] = []
-
-  latLngMarker?: Marker;
+  park: Park = <any>{extras: []};
 
   editing = false;
-  mapModalVisible = false;
-
-  setLatLng(lat:number, lng:number) {
-    this.park.latitude = lat;
-    this.park.longitude = lng;
-
-    this.latLngMarker?.remove();
-    this.latLngMarker = new Marker()
-      .setLngLat([lng,lat])
-      .addTo(this.selectLatLngMap);
-  }
 
   constructor(
     private router: Router,
@@ -54,7 +33,6 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
       this.parkService.getPark(id).subscribe({
         next: (park) => {
           this.park = park;
-          this.extrasModel = this.park.extras.map(x => ({val:x}));
         },
         error: (err: HttpErrorResponse) => {
           this.messageService.add({
@@ -91,9 +69,9 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.park.extras = this.extrasModel.map(x => x.val);
     this.editing = true;
     this.park.user = <any>{id: this.authService.accessToken?.sub};
+    console.log(this.park);
 
     this.parkService.updatePark(this.park).subscribe({
       next: park => {
@@ -117,37 +95,6 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
         this.editing = false;
       }
     });
-  }
-
-  addExtra() {
-    this.extrasModel.push({val:""});
-  }
-
-  removeExtra(index: number) {
-    this.extrasModel.splice(index,1);
-  }
-
-  showMapModal() {
-    this.mapModalVisible = true;
-    if(!this.selectLatLngMap) {
-      setTimeout(() => {
-        this.selectLatLngMap = makeTomTomMap();
-        this.selectLatLngMap.on("click",(event) => {
-          this.setLatLng(event.lngLat.lat,event.lngLat.lng);
-        });
-      }, 0);
-    }
-  }
-
-  mapModalSelect() {
-    this.mapModalVisible = false;
-  }
-
-  mapModalCancel() {
-    this.park.latitude = <any>undefined;
-    this.park.longitude = <any>undefined;
-    this.latLngMarker?.remove();
-    this.mapModalVisible = false;
   }
 
   messageClose(message: Message) {

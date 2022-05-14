@@ -6,8 +6,6 @@ import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { makeTomTomMap } from '@app/core/utils/tomtom';
-import { Map, Marker } from '@tomtom-international/web-sdk-maps';
 import { Message, MessageService } from 'primeng/api';
 
 @Component({
@@ -17,26 +15,9 @@ import { Message, MessageService } from 'primeng/api';
 })
 export class MNewParkComponent implements OnInit, AfterViewInit {
 
-  selectLatLngMap! : Map;
-
-  park: Park = <any>{};
-
-  extrasModel: {val:string}[] = []
-
-  latLngMarker?: Marker;
+  park: Park = <any>{extras: []};
 
   adding = false;
-  mapModalVisible = false;
-
-  setLatLng(lat:number, lng:number) {
-    this.park.latitude = lat;
-    this.park.longitude = lng;
-
-    this.latLngMarker?.remove();
-    this.latLngMarker = new Marker()
-      .setLngLat([lng,lat])
-      .addTo(this.selectLatLngMap);
-  }
 
   constructor(
     private router: Router,
@@ -66,7 +47,6 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.park.extras = this.extrasModel.map(x => x.val);
     this.adding = true;
 
     this.parkService.addPark(this.park).subscribe({
@@ -93,37 +73,6 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
         this.adding = false;
       }
     });
-  }
-
-  addExtra() {
-    this.extrasModel.push({val:""});
-  }
-
-  removeExtra(index: number) {
-    this.extrasModel.splice(index,1);
-  }
-
-  showMapModal() {
-    this.mapModalVisible = true;
-    if(!this.selectLatLngMap) {
-      setTimeout(() => {
-        this.selectLatLngMap = makeTomTomMap();
-        this.selectLatLngMap.on("click",(event) => {
-          this.setLatLng(event.lngLat.lat,event.lngLat.lng);
-        });
-      }, 0);
-    }
-  }
-
-  mapModalSelect() {
-    this.mapModalVisible = false;
-  }
-
-  mapModalCancel() {
-    this.park.latitude = <any>undefined;
-    this.park.longitude = <any>undefined;
-    this.latLngMarker?.remove();
-    this.mapModalVisible = false;
   }
 
   messageClose(message: Message) {
