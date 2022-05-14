@@ -46,6 +46,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   };
 
   eventListenersAdded = false;
+  featureCollectionChanged = false;
 
   unsubscribe: Subscription[] = [];
 
@@ -75,7 +76,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
 
     const featureIndex = this.featureCollection.features.indexOf(mapMarker.feature);
     this.featureCollection.features.splice(featureIndex,1);
-    this.setFeatureCollection();
+    this.featureCollectionChanged = true;
   }
 
   addNewPark(data: InformerItem) {
@@ -86,7 +87,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
     };
     this.markersOnTheMap.set(data.park.id, mapMarker);
     this.featureCollection.features.push(mapMarker.feature)
-    this.setFeatureCollection();
+    this.featureCollectionChanged = true;
   }
 
   handleDataChanged(mapMarker: MapMarker) {
@@ -97,7 +98,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
       mapMarker.marker.remove();
       mapMarker.marker.setLngLat({lat: newPark.latitude, lng: newPark.longitude});
       (<any>mapMarker.feature.geometry).coordinates = [newPark.longitude, newPark.latitude];
-      this.setFeatureCollection();
+      this.featureCollectionChanged = true;
     }
 
     mapMarker.component.instance.park = {...mapMarker.park};
@@ -105,11 +106,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   onMarkerClusterLoad() {
+    setInterval(() => {
+      if(this.featureCollectionChanged){
+        this.setFeatureCollection();
+        this.featureCollectionChanged = false;
+      }
+    },2000);
+
     let sub = this.parkService.parkInformer.subscribe((data) => {
       if(!this.isUserMap || true === data.isUserPark) {
-        if(data.park.id == 57)
-          console.log(data);
-
         if(data.isDeleted) {
           this.removeExistingPark(data);
         }
@@ -210,10 +215,10 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
 
       this.refreshMarkers();
       if (!this.eventListenersAdded) {
+        this.eventListenersAdded = true;
         this.onMarkerClusterLoad();
         this.appMap.on('move',e => this.refreshMarkers());
         this.appMap.on('moveend',e => this.refreshMarkers);
-        this.eventListenersAdded = true;
       }
     });
 

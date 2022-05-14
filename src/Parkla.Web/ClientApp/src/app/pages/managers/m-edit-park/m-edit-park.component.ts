@@ -54,6 +54,7 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
       this.parkService.getPark(id).subscribe({
         next: (park) => {
           this.park = park;
+          this.extrasModel = this.park.extras.map(x => ({val:x}));
         },
         error: (err: HttpErrorResponse) => {
           this.messageService.add({
@@ -70,17 +71,6 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
         }
       });
     })
-
-    this.park = <any>{
-      id: 6,
-      name: "parknamehere",
-      location: "locahitonhere",
-      lat: 42,
-      lng: 16,
-      extras: ["extra1", "extra2", "extra3"]
-    };
-
-    this.extrasModel = this.park.extras.map(x => ({val:x}));
   }
 
   ngAfterViewInit(): void {
