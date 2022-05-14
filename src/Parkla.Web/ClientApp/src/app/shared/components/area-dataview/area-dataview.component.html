@@ -38,7 +38,7 @@
               <div class="area-name">{{area.name}}</div>
               <div class="area-description">{{area.description}}</div>
               <div class="area-reservable">{{area.reservationsEnabled}}</div>
-              <i class="pi pi-tag area-category-icon"></i><span class="area-category">{{area.status.timestamp}}-{{area.status.emptySpace}}-{{area.status.reservedSpace}}-{{area.status.occupiedSpace}}</span>
+              <i class="pi pi-tag area-category-icon"></i><span class="area-category">{{area.status}}-{{area.status.emptySpace}}-{{area.status.reservedSpace}}-{{area.status.occupiedSpace}}</span>
           </div>
           <div class="area-list-action">
               <span class="area-price">{{area.minPrice.balance}}-{{area.avgPrice.balance}}-{{area.maxPrice.balance}}</span>
@@ -56,9 +56,9 @@
           <div class="area-grid-item-top">
               <div>
                   <i class="pi pi-tag area-category-icon"></i>
-                  <span class="area-category">{{area.status.timestamp}}-{{area.status.emptySpace}}-{{area.status.reservedSpace}}-{{area.status.occupiedSpace}}</span>
+                  <span class="area-category">{{area.statusUpdateTime}}-{{area.emptySpace}}-{{area.reservedSpace}}-{{area.occupiedSpace}}</span>
               </div>
-              <span class="area-price">{{area.minPrice.balance}}-{{area.avgPrice.balance}}-{{area.maxPrice.balance}}</span>
+              <span class="area-price">{{area.minPrice}}-{{area.avgPrice}}-{{area.maxPrice}}</span>
           </div>
           <div class="area-grid-item-content">
               <p-image [src]="area.templateImg" [preview]="true"></p-image>

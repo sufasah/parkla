@@ -37,7 +37,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   @Output()
   markerOnClick = new EventEmitter<{event:any; element:MapMarkerComponent}>();
 
-  markersOnTheMap: {[key:number]: MapMarker}= {};
+  markersOnTheMap = new Map<number, MapMarker>();
   searchMarker?: Marker;
 
   featureCollection = <FeatureCollection>{
@@ -67,13 +67,15 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   removeExistingPark(data: InformerItem) {
-    const mapMarker = this.markersOnTheMap[data.park.id];
+    const mapMarker = this.markersOnTheMap.get(data.park.id)!;
+
+    mapMarker.marker.remove();
+    mapMarker.subscription.unsubscribe();
+    this.markersOnTheMap.delete(data.park.id);
 
     const featureIndex = this.featureCollection.features.indexOf(mapMarker.feature);
     this.featureCollection.features.splice(featureIndex,1);
-
-    mapMarker.subscription.unsubscribe();
-    delete this.markersOnTheMap[data.park.id];
+    this.setFeatureCollection();
   }
 
   addNewPark(data: InformerItem) {
@@ -82,8 +84,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
       subscription: data.park.subject.subscribe(() => this.handleDataChanged(mapMarker)),
       feature: this.getFeature(data.park)
     };
-    this.markersOnTheMap[data.park.id] = mapMarker;
+    this.markersOnTheMap.set(data.park.id, mapMarker);
     this.featureCollection.features.push(mapMarker.feature)
+    this.setFeatureCollection();
   }
 
   handleDataChanged(mapMarker: MapMarker) {
@@ -110,8 +113,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
         else {
           this.addNewPark(data);
         }
-
-        this.setFeatureCollection()
       }
     });
 
@@ -122,12 +123,12 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
         isUserPark: this.parkService.isUserPark(park)
       };
 
-      if(!this.isUserMap || true === data.isUserPark)
-        this.addNewPark(data);
+      if(!this.isUserMap || true === data.isUserPark) {
+          this.addNewPark(data);
+      }
     })
 
     this.unsubscribe.push(sub);
-    this.setFeatureCollection();
   }
 
   setFeatureCollection() {
@@ -199,13 +200,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
 
       const source = <any>this.appMap.getSource(clusterSourceId);
 
-      if(!source.loaded()) {
-        this.onMarkerClusterLoad();
+      if(!e.isSourceLoaded) {
+        source.load();
         return;
-      };
+      }
 
       this.refreshMarkers();
       if (!this.eventListenersAdded) {
+        this.onMarkerClusterLoad();
         this.appMap.on('move',e => this.refreshMarkers());
         this.appMap.on('moveend',e => this.refreshMarkers);
         this.eventListenersAdded = true;
@@ -318,9 +320,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
     const sourceFeatures = this.appMap.querySourceFeatures(clusterSourceId);
 
     sourceFeatures.forEach((feature: Feature) => {
-      if (feature.properties && feature.properties.parkPoint) {
+      if(feature.properties && feature.properties.parkPoint) {
         let id = parseInt(feature.properties.id, 10);
-        let marker = this.markersOnTheMap[id].marker;
+        let marker = this.markersOnTheMap.get(id)!.marker;
         marker.addTo(this.appMap);
       }
     });

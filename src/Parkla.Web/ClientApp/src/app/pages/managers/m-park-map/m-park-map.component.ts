@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing';
@@ -27,9 +28,11 @@ export class MParkMapComponent implements OnInit, OnDestroy {
   unsubscribe: Subscription[] = [];
 
   get spaceCount() {
-    return this.selectedPark!.emptySpace +
+    let total = this.selectedPark!.emptySpace +
       this.selectedPark!.reservedSpace +
-      this.selectedPark!.occupiedSpace
+      this.selectedPark!.occupiedSpace;
+
+    return total == 0 ? 1 : total;
   }
 
   constructor(
@@ -72,19 +75,31 @@ export class MParkMapComponent implements OnInit, OnDestroy {
 
   deletePark(park: Park) {
     this.confirmService.confirm({
-      message: 'Are you sure to delete xxx named park with xxx id?',
+      message: `Are you sure to delete the park with '${park.name}' name?`,
       accept: () => {
-        // TODO: DELETE PARK
+        this.parkService.deletePark(park.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              summary: "Park Deletion",
+              closable: true,
+              severity: "success",
+              life:1500,
+              detail: `The park with '${park.name}' name is deleted.`
+            });
+          },
+          error: (err: HttpErrorResponse) => {
+            this.messageService.add({
+              summary: "Park Deletion",
+              closable: true,
+              severity: "error",
+              life:5000,
+              detail: err.error.message
+            });
+          }
+        })
 
         this.dialogVisible = false;
 
-        this.messageService.add({
-          summary: "Park Deletion",
-          closable: true,
-          severity: "success",
-          life:1500,
-          detail: "The xxx id park with xx name is deleted."
-        })
       }
     });
   }

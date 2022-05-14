@@ -67,7 +67,6 @@ export class AreaDataViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.areas[0]
   }
 
   onSortChange(event:any) {

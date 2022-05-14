@@ -26,9 +26,11 @@ export class ParkMapComponent implements OnInit, AfterViewInit, OnDestroy {
   unsubscribe: Subscription[] = [];
 
   get spaceCount() {
-    return this.selectedPark!.emptySpace +
+    let total = this.selectedPark!.emptySpace +
       this.selectedPark!.reservedSpace +
-      this.selectedPark!.occupiedSpace
+      this.selectedPark!.occupiedSpace;
+
+    return total == 0 ? 1 : total;
   }
 
   constructor(
@@ -61,8 +63,6 @@ export class ParkMapComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   markerClick(event:{event:any; element:MapMarkerComponent}) {
-    console.log(event);
-
     let element = event.element;
     event = event.event;
 

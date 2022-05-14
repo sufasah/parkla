@@ -3,7 +3,7 @@
   height: 800px;
 }
 
-::ng-deep {
+:host ::ng-deep {
 
   p-knob .p-knob-text {
     font-size: 1.6rem;

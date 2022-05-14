@@ -63,19 +63,19 @@
               <td>
                 <span class="p-column-title">Minimum Price</span>
                 <span class="min-price">
-                  {{park.minPrice.balance | currency : park.minPrice.moneyUnit : "symbol" : "0.2-2"}}
+                  {{park.minPrice | currency : "TRY" : "symbol" : "0.2-2"}}
                 </span>
               </td>
               <td>
                 <span class="p-column-title">Avarage Price</span>
                 <span class="avg-price">
-                  {{park.avgPrice.balance | currency : park.avgPrice.moneyUnit : "symbol" : "0.2-2"}}
+                  {{park.avgPrice | currency : "TRY" : "symbol" : "0.2-2"}}
                 </span>
               </td>
               <td>
                 <span class="p-column-title">Maximum Price</span>
                 <span class="max-price">
-                  {{park.maxPrice.balance | currency : park.maxPrice.moneyUnit : "symbol" : "0.2-2"}}
+                  {{park.maxPrice | currency : "TRY" : "symbol" : "0.2-2"}}
                 </span>
               </td>
             </tr>

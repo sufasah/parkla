@@ -52,7 +52,7 @@ export class ParkService implements OnDestroy {
 
     const sub2 = this.signalrService.connectedEvent.subscribe(() => {
       this._allParksStreamDone = false;
-      this.signalrService.GetAllParksAsStream({
+      const sub3 = this.signalrService.GetAllParksAsStream({
         next: (park: Park) => {
           if(park && park.id && !this._signalrBeforeStreamDone.has(park.id))
             this.addMemoryParkIfNotExist(park)
@@ -66,11 +66,11 @@ export class ParkService implements OnDestroy {
             detail: err,
             icon: "pi-lock",
           });
-          console.log(err);
         },
         complete: () => {
           this._allParksStreamDone = true;
           this._signalrBeforeStreamDone.clear();
+          sub3.dispose();
         }
       });
     })
@@ -155,9 +155,9 @@ export class ParkService implements OnDestroy {
     });
   }
 
-  deletePark(park: Park) {
+  deletePark(id: number) {
     return this.httpClient.delete<Park>(apiParks, {body:{
-      ...park
+      id
     }});
   }
 

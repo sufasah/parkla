@@ -37,7 +37,7 @@ $infoHeight: 100px;
   100%   { transform: translate(0, 0px); }
 }
 
-::ng-deep {
+:host ::ng-deep {
 
   p-knob .p-knob-text {
     font-size: 1.6rem;

@@ -85,8 +85,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
     {
         await base.DeleteAsync(entity, cancellationToken).ConfigureAwait(false);   
 
-        #pragma warning disable
-        HubParkChanges(entity.Id, true);
+        _parklaHubService.ParkChanges(entity, true);
     }
 
     private async Task HubParkChanges(int? id, bool isDelete) {
