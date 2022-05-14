@@ -62,7 +62,7 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .HasDefaultValue(null)
             .HasPrecision(30,2);
 
-        b.HasOne(x => x.User).WithMany(x => x.Parks).HasForeignKey(x => x.UserId);
+        b.HasOne(x => x.User).WithMany(x => x.Parks).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
         b.HasCheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID","latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");

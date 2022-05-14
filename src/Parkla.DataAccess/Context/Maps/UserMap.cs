@@ -61,8 +61,8 @@ public class UserMap : IEntityTypeConfiguration<User> {
             .HasMaxLength(200);
         
             
-        b.HasOne(x => x.City).WithMany(x => x.Users).HasForeignKey(x => x.CityId);
-        b.HasOne(x => x.District).WithMany(x => x.Users).HasForeignKey(x => x.DistrictId);
+        b.HasOne(x => x.City).WithMany(x => x.Users).HasForeignKey(x => x.CityId).OnDelete(DeleteBehavior.SetNull);
+        b.HasOne(x => x.District).WithMany(x => x.Users).HasForeignKey(x => x.DistrictId).OnDelete(DeleteBehavior.SetNull);
 
         b.HasIndex(x => x.Username).IsUnique();
     }

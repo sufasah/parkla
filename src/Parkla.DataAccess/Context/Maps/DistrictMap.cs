@@ -23,6 +23,7 @@ public class DistrictMap : IEntityTypeConfiguration<District> {
         b.HasOne(x => x.City)
             .WithMany(x => x.Districts)
             .HasForeignKey(x => x.CityId)
-            .IsRequired();
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

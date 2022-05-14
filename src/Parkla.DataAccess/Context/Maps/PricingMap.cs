@@ -27,6 +27,6 @@ public class PricingMap : IEntityTypeConfiguration<Pricing> {
             .HasPrecision(30,2)
             .IsRequired();
             
-        b.HasOne(x => x.Area).WithMany(x => x.Pricings).HasForeignKey(x => x.AreaId);
+        b.HasOne(x => x.Area).WithMany(x => x.Pricings).HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Cascade);
     }
 }

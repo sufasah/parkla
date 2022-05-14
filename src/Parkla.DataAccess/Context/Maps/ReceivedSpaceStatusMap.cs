@@ -29,8 +29,8 @@ public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStat
             .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
             .IsRequired();
             
-        b.HasOne(x => x.RealSpace).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.RealSpaceId);
-        b.HasOne(x => x.Space).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.SpaceId);
+        b.HasOne(x => x.RealSpace).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.RealSpaceId).OnDelete(DeleteBehavior.SetNull);
+        b.HasOne(x => x.Space).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);
 
         b.HasCheckConstraint("CK_DATETIME_LESS_THAN_NOW_UTC","datetime < (now() at time zone 'utc')");
     }

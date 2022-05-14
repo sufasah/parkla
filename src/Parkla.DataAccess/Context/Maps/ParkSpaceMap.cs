@@ -45,8 +45,8 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
                     (x) => x.GetHashCode()))
             .IsRequired();
 
-        b.HasOne(x => x.Area).WithMany(x => x.Spaces).HasForeignKey(x => x.AreaId);
-        b.HasOne(x => x.RealSpace).WithOne(x => x.Space).HasForeignKey<RealParkSpace>(x => x.SpaceId);
+        b.HasOne(x => x.Area).WithMany(x => x.Spaces).HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Cascade);
+        b.HasOne(x => x.RealSpace).WithOne(x => x.Space).HasForeignKey<RealParkSpace>(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);
 
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
     }

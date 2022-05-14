@@ -54,7 +54,7 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
             .HasPrecision(30,2)
             .HasDefaultValue(null);
 
-        b.HasOne(x => x.Park).WithMany(x => x.Areas).HasForeignKey(x => x.ParkId);
+        b.HasOne(x => x.Park).WithMany(x => x.Areas).HasForeignKey(x => x.ParkId).OnDelete(DeleteBehavior.Cascade);
 
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
         b.HasCheckConstraint("CK_PRICES_VALID","min_price <= avarage_price and avarage_price <= max_price");
