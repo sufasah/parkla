@@ -1,51 +1,64 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { ParkArea } from '@app/core/models/park-area';
-import { Park } from '@app/core/models/park';
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockAreas } from '@app/mock-data/areas';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, LazyLoadEvent, MessageService } from 'primeng/api';
+import { ParkAreaService } from '@app/core/services/park-area.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-m-park-areas',
   templateUrl: './m-park-areas.component.html',
   styleUrls: ['./m-park-areas.component.scss']
 })
-export class MParkAreasComponent implements OnInit {
+export class MParkAreasComponent implements OnInit, OnDestroy {
+
+  readonly pageSize = 6;
+
+  pageNumber: number | null = null;
+  totalPages: number = 0;
 
   areas: ParkArea[] = [];
+  unsubscribe: Subscription[] = [];
 
   constructor(
-    private refSharingService: RefSharingService,
     private router: Router,
     private route: ActivatedRoute,
     private confirmService: ConfirmationService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private parkAreaService: ParkAreaService
+  ) { }
 
   ngOnInit(): void {
-    let park = this.refSharingService.getData<Park>(RSRoute.mapSelectedPark);
+    const paramMap = this.route.snapshot.queryParamMap;
 
-    if(!!park)
-      this.areas = park.areas;
-    else {
-      // get from server
-      this. areas = mockAreas;
+    if(paramMap.has("page")) {
+      const page = Number(paramMap.get("page"));
+      if(page == this.pageNumber) return;
+      this.pageNumber = page;
     }
+    else {
+      this.pageNumber = 1;
+    }
+
   }
 
   goMap() {
-    this.router.navigate([RouteUrl.mParkMap()]);
+    this.router.navigateByUrl(RouteUrl.mParkMap());
+  }
+
+  getParkId() {
+    return Number(this.route.snapshot.paramMap.get("parkid"));
   }
 
   newArea() {
-    let parkid = this.route.snapshot.params.parkid;
+    let parkid = this.getParkId();
     this.router.navigateByUrl(RouteUrl.mNewParkArea(parkid))
   }
 
   editArea(area: ParkArea) {
-    let parkid = this.route.snapshot.params.parkid;
+    let parkid = this.getParkId();
     this.router.navigateByUrl(RouteUrl.mEditParkArea(parkid,area.id))
   }
 
@@ -62,6 +75,39 @@ export class MParkAreasComponent implements OnInit {
           life:5000,
           detail: "The park area with xxx id and xxx name is deleted."
         })
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.forEach(x => x.unsubscribe());
+  }
+
+  loadData(evt: LazyLoadEvent) {
+    const pageNumber = (evt.first! / this.pageSize)+1;
+    this.parkAreaService.getAreasPage(pageNumber, this.pageSize).subscribe({
+      next: response => {
+        if(response.headers.has("x-total-pages"))
+          this.totalPages = Number(response.headers.get("x-total-pages"));
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            ...this.route.snapshot.queryParams,
+            page: pageNumber
+          }
+        });
+
+        this.areas = response.body!;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          summary: "Fetch Park Areas",
+          closable: true,
+          severity: "error",
+          life:5000,
+          detail: err.error.message
+        });
       }
     });
   }

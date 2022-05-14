@@ -3,6 +3,7 @@ import { mockSpaces } from "./spaces";
 
 export const mockAreas: ParkArea[] = [{
     id: 1,
+    parkId: 1,
     name: "basement1",
     description: "description1 description1 description1 description1 description1 ",
     reservationsEnabled: true,
@@ -19,6 +20,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 2,
+    parkId: 1,
     name: "basement2",
     reservationsEnabled: true,
     statusUpdateTime: Date.now(),
@@ -34,6 +36,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 3,
+    parkId: 1,
     name: "basement3",
     description: "description3 ",
     reservationsEnabled: false,
@@ -50,6 +53,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 4,
+    parkId: 2,
     name: "basement4",
     description: "description444444444444444444444444444444444",
     reservationsEnabled: false,
@@ -66,6 +70,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 5,
+    parkId: 2,
     name: "basement5",
     reservationsEnabled: false,
     statusUpdateTime: Date.now(),
@@ -81,6 +86,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 6,
+    parkId: 2,
     name: "basement6",
     reservationsEnabled: false,
     statusUpdateTime: Date.now(),
@@ -96,6 +102,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 7,
+    parkId: 2,
     name: "basement7",
     reservationsEnabled: false,
     statusUpdateTime: Date.now(),
@@ -111,6 +118,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 8,
+    parkId: 2,
     name: "basement8",
     description: "description8 description8 description8 description8 description8 description8 description8 description8 description8 description8",
     reservationsEnabled: false,
@@ -127,6 +135,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 9,
+    parkId: 2,
     name: "basement9",
     reservationsEnabled: false,
     statusUpdateTime: Date.now(),
@@ -142,6 +151,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 10,
+    parkId: 3,
     name: "basement10",
     reservationsEnabled: false,
     statusUpdateTime: Date.now(),
@@ -157,6 +167,7 @@ export const mockAreas: ParkArea[] = [{
   },
   {
     id: 11,
+    parkId: 3,
     name: "basement11",
     reservationsEnabled: false,
     statusUpdateTime: Date.now(),

@@ -32,14 +32,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
             x => x.User!
         };
 
-        return await _parkRepo.GetListAsync(includeProps, null, cancellationToken);
-    }
-
-    public override Task<Park?> GetAsync(
-        Expression<Func<Park, bool>> filter, 
-        CancellationToken cancellationToken = default
-    ) {
-        return base.GetAsync(filter, cancellationToken);
+        return await _parkRepo.GetListAsync(includeProps, null, cancellationToken).ConfigureAwait(false);
     }
 
     public override async Task<Park> AddAsync(Park entity, CancellationToken cancellationToken = default)
@@ -56,50 +49,59 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         entity.AvaragePrice = -1;
         entity.MaxPrice = -1;
         
+
         var newPark = await _parkRepo.AddAsync(entity,cancellationToken).ConfigureAwait(false);
 
-        #pragma warning disable
         HubParkChanges(newPark.Id, false);
 
         return newPark;
     }
 
-    public override async Task<Park> UpdateAsync(Park entity, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Park park, int userId, CancellationToken cancellationToken = default)
     {
-        var result = await _validator.ValidateAsync(entity, o => o.IncludeRuleSets("add","id"), cancellationToken).ConfigureAwait(false);
+        await ThrowIfUserNotMatch((int)park.Id!, userId, cancellationToken).ConfigureAwait(false);
+
+        await base.DeleteAsync(park, cancellationToken).ConfigureAwait(false);   
+
+        _parklaHubService.ParkChanges(park, true);
+    }
+
+    public async Task<Park> UpdateAsync(Park park, int userId, CancellationToken cancellationToken = default)
+    {
+        var result = await _validator.ValidateAsync(park, o => o.IncludeRuleSets("add","id"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
             throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
         
         var props = new Expression<Func<Park,object?>>[]{
-            x => x.StatusUpdateTime,
-            x => x.EmptySpace,
-            x => x.ReservedSpace,
-            x => x.OccupiedSpace,
-            x => x.MinPrice,
-            x => x.AvaragePrice,
-            x => x.MaxPrice,
+            x => x.Name,
+            x => x.Location,
+            x => x.Latitude,
+            x => x.Longitude,
+            x => x.Extras
         };
 
-        var newPark = await _parkRepo.UpdateAsync(entity, props, true, cancellationToken).ConfigureAwait(false);
+        await ThrowIfUserNotMatch((int)park.Id!, userId, cancellationToken).ConfigureAwait(false);
 
-        #pragma warning disable
+        var newPark = await _parkRepo.UpdateAsync(park, props, false, cancellationToken).ConfigureAwait(false);
+
         HubParkChanges(newPark.Id, false);
         
         return newPark;
     }
 
-    public override async Task DeleteAsync(Park entity, CancellationToken cancellationToken = default)
-    {
-        await base.DeleteAsync(entity, cancellationToken).ConfigureAwait(false);   
-
-        _parklaHubService.ParkChanges(entity, true);
+    private async Task ThrowIfUserNotMatch(int parkId, int userId, CancellationToken cancellationToken) {
+        var park = await _parkRepo.GetAsync(x => x.Id == parkId, cancellationToken).ConfigureAwait(false);
+        
+        if(park!.UserId != userId)
+            throw new ParklaException("User requested is not permitted to update or delete other user's park", HttpStatusCode.BadRequest);
     }
 
     private async Task HubParkChanges(int? id, bool isDelete) {
         var newParkWithUser = await _parkRepo.GetAsync(
             new Expression<Func<Park,object>>[]{x => x.User!},
-            x => x.Id == id)
-            .ConfigureAwait(false);
+            x => x.Id == id
+        ).ConfigureAwait(false);
+        
         await _parklaHubService.ParkChanges(newParkWithUser!, isDelete).ConfigureAwait(false);
     }
 }

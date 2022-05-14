@@ -40,6 +40,8 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
         CancellationToken cancellationToken
     ) {
         var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, cancellationToken).ConfigureAwait(false);
+        Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Pages");
+        Response.Headers.Add("X-Total-Pages", result.TotalPages.ToString());
         return Ok(result);
     }
 

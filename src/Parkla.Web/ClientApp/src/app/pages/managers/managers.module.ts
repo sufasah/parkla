@@ -13,6 +13,8 @@ import { MEditTemplateComponent } from './m-edit-template/m-edit-template.compon
 import { MDashboardComponent } from './m-dashboard/m-dashboard.component';
 import { MParkAreaQRComponent } from './m-park-area-qr/m-park-area-qr.component';
 import { FileUploadDirective } from './m-new-park-area/file-upload.directive';
+import { MNewAreaTemplateComponent } from './m-new-area-template/m-new-area-template.component';
+import { MEditAreaTemplateComponent } from './m-edit-area-template/m-edit-area-template.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,9 @@ import { FileUploadDirective } from './m-new-park-area/file-upload.directive';
          MEditTemplateComponent,
          MDashboardComponent,
          MParkAreaQRComponent,
-         FileUploadDirective
+         FileUploadDirective,
+         MNewAreaTemplateComponent,
+         MEditAreaTemplateComponent
   ],
   imports: [
 

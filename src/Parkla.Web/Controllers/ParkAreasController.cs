@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
 using Parkla.Web.Models;
@@ -18,5 +20,32 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
         _mapper = mapper;
     }
 
+    public override async Task<IActionResult> UpdateAsync(
+        [FromBody] ParkAreaDto dto,
+        CancellationToken cancellationToken
+    ) {
+        var parkArea = _mapper.Map<ParkArea>(dto);          
+        await _service.UpdateAsync(
+            parkArea, 
+            int.Parse(User.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value),
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        return Ok();
+    }
+
+    public override async Task<IActionResult> DeleteAsync(
+        [FromBody] ParkAreaDto dto,
+        CancellationToken cancellationToken
+    ) {
+        var parkArea = _mapper.Map<ParkArea>(dto);          
+        await _service.DeleteAsync(
+            parkArea, 
+            int.Parse(User.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value),
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        return Ok();
+    }
     
 }

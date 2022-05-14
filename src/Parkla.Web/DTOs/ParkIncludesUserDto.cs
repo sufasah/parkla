@@ -1,7 +1,7 @@
 using Parkla.Core.Entities;
 
 namespace Parkla.Web.Models;
-public class ParkAllDto
+public class ParkIncludesUserDto
 {
     public int? Id { get; set; }
     public int? UserId { get; set; }

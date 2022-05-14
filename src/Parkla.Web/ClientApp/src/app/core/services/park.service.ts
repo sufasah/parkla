@@ -150,7 +150,6 @@ export class ParkService implements OnDestroy {
   updatePark(park: Park) {
     return this.httpClient.put<Park>(apiParks, {
       id: park.id,
-      userId: park.user.id,
       name: park.name,
       location: park.location,
       latitude: park.latitude,
@@ -161,8 +160,7 @@ export class ParkService implements OnDestroy {
 
   deletePark(id: number) {
     return this.httpClient.delete<Park>(apiParks, {body:{
-      id: id,
-      userId: this.authService.accessToken?.sub
+      id: id
     }});
   }
 

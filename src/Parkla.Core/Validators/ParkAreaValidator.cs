@@ -23,6 +23,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         MaxPrice();
      
         RuleSet("id", Id);
+        RuleSet("update", RsUpdate);
     }
     private void Id() => RuleFor(x => x.Id)
         .NotNull();
@@ -36,6 +37,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         .MaximumLength(200);
     private void TemplateImage() => RuleFor(x => x.TemplateImage)
         .NotEmpty()
+        .Null()
         .MaximumLength(500);
     private void ReservationsEnabled() => RuleFor(x => x.ReservationsEnabled)
         .NotNull();
@@ -61,4 +63,10 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
     private void MaxPrice() => RuleFor(x => x.MaxPrice)
         .NotNull()
         .InclusiveBetween(0,precision30);
+
+    private void RsUpdate() {
+        Name();
+        Description();
+        ReservationsEnabled();
+    }
 }

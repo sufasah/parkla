@@ -22,41 +22,34 @@ public class ParksController : EntityControllerBase<Park, ParkDto>
 
     public override async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken) {        
         var result = await _service.GetAllAsync(cancellationToken).ConfigureAwait(false);
-        return Ok(_mapper.Map<List<ParkAllDto>>(result));
+        return Ok(_mapper.Map<List<ParkIncludesUserDto>>(result));
     }
 
     public override async Task<IActionResult> UpdateAsync(
         [FromBody] ParkDto dto,
         CancellationToken cancellationToken
     ) {
-        var badRequest = BadRequest($"User requested is not permitted to update or delete other user's park.");
-        
-        if(!IsUserPermitted(dto))
-            return badRequest;
-            
-        return await base.UpdateAsync(dto,cancellationToken).ConfigureAwait(false);
+        var park = _mapper.Map<Park>(dto);          
+        await _service.UpdateAsync(
+            park, 
+            int.Parse(User.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value),
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        return Ok();
     }
 
     public override async Task<IActionResult> DeleteAsync(
         [FromBody] ParkDto dto,
         CancellationToken cancellationToken
     ) {
-        var badRequest = BadRequest($"User requested is not permitted to update or delete other user's park.");
-        
-        if(!IsUserPermitted(dto))
-            return badRequest;
-            
-        return await base.DeleteAsync(dto,cancellationToken).ConfigureAwait(false);
-    }
+        var park = _mapper.Map<Park>(dto);          
+        await _service.DeleteAsync(
+            park, 
+            int.Parse(User.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value),
+            cancellationToken
+        ).ConfigureAwait(false);
 
-    private bool IsUserPermitted(ParkDto dto) {
-        if(dto.UserId == null)
-            return false;
-        
-        if(User.HasClaim(JwtRegisteredClaimNames.Sub, dto.UserId.ToString()!))
-            return false;
-
-        return true;
+        return Ok();
     }
-    
 }

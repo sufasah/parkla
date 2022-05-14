@@ -73,7 +73,6 @@ public class ParkValidator : AbstractValidator<Park>
 
     private void RsAdd() {
         Name();
-        UserId();
         Location();
         Latitude();
         Longitude();

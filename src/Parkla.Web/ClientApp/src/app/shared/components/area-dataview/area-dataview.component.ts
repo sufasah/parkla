@@ -1,12 +1,11 @@
-import { Component, ContentChild, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing';
 import { ParkArea } from '@app/core/models/park-area';
 import { AuthService } from '@app/core/services/auth.service';
 import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockAreas } from '@app/mock-data/areas';
-import { SelectItem } from 'primeng/api';
+import { LazyLoadEvent, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 
 @Component({
@@ -19,6 +18,25 @@ export class AreaDataViewComponent implements OnInit {
 
   @Input()
   areas!: ParkArea[];
+
+  @Input()
+  totalPages = 1;
+
+  @Input()
+  pageSize = 10;
+
+  @Input()
+  pageNumber = 1;
+
+  @Output()
+  onLazyLoad = new EventEmitter<LazyLoadEvent>();
+
+  get totalRecords() {
+    return this.totalPages * this.pageSize;
+  }
+  get first() {
+    return (this.pageNumber-1) * this.pageSize;
+  }
 
   sortOptions: SelectItem[];
 
@@ -96,5 +114,9 @@ export class AreaDataViewComponent implements OnInit {
       ? RouteUrl.mParkArea(parkid, area.id)
       : RouteUrl.parkArea(parkid,area.id)
     );
+  }
+
+  loadData(evt: LazyLoadEvent) {
+    this.onLazyLoad.emit(evt);
   }
 }

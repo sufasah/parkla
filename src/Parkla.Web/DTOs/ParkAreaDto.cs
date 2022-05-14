@@ -7,4 +7,11 @@ public class ParkAreaDto
     public string? Description { get; set; }
     public string? TemplateImage { get; set; }
     public bool? ReservationsEnabled { get; set; }
+    public DateTime? StatusUpdateTime { get; set; }
+    public int? EmptySpace { get; set; }
+    public int? ReservedSpace { get; set; }
+    public int? OccupiedSpace { get; set; }
+    public float? MinPrice { get; set; }
+    public float? AvaragePrice { get; set; }
+    public float? MaxPrice { get; set; }
 }

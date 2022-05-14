@@ -13,12 +13,13 @@ public class PagedList<T> : List<T>
         }  
         set {
             _pageSize = (value > maxPageSize) ? maxPageSize : value;
+            _pageSize = (value < 1) ? 10 : value;
         }
     }
     
-    public PagedList(List<T> items, int pageNumber, int pageSize, int totalPages)
+    public PagedList(List<T> items, int pageNumber, int pageSize, int count)
     {
-        TotalPages = totalPages;
+        TotalPages = count == 0 ? 0 : count / pageSize;
         PageSize = pageSize;
         PageNumber = pageNumber;
         AddRange(items);

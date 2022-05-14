@@ -55,7 +55,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
           life:1500,
           severity:'success',
           summary: 'Added',
-          detail: 'Parking lot is added successfully',
+          detail: 'Parking lot has been added successfully',
           data: {
             navigate: true,
             navigateTo: RouteUrl.mParkMap()

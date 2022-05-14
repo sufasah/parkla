@@ -1,7 +1,14 @@
 <p-dataView
-  #dv [value]="areas"
+  #dv
+  [value]="areas"
   [paginator]="true"
-  [rows]="10"
+  [rows]="pageSize"
+  [first]="first"
+  [totalRecords]="totalRecords"
+  [showCurrentPageReport]="true"
+  [showPageLinks]="true"
+  [lazy]="true"
+  (onLazyLoad)="loadData($event)"
   filterBy="name"
   [sortField]="sortField"
   [sortOrder]="sortOrder"
@@ -86,10 +93,5 @@
   </ng-template>
 
   <ng-template pTemplate="paginatorright">
-    <button type="button" pButton icon="pi-cloud-upload">upload</button>
-  </ng-template>
-
-  <ng-template let-item pTemplate="paginatordropdownitem">
-    item.value - per page
   </ng-template>
 </p-dataView>

@@ -1,0 +1,44 @@
+.fullscreen-modal {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: white;
+}
+
+:host ::ng-deep{
+  .p-fileupload-choose {
+    display: inline-block;
+
+    .p-button-label {
+      display: none;
+    }
+  }
+
+  .p-button-label {
+    transition: none;
+  }
+}
+
+.add-pricing {
+  background-color: rgb(70, 230, 55);
+  cursor: pointer;
+  border: none;
+  &:hover {
+    background-color: #00ff00;
+  }
+}
+
+.remove-pricing {
+  background-color: rgb(253, 70, 70);
+  border: 2px solid lightgray;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ff0000;
+  }
+}

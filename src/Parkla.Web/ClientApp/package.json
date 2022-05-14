@@ -61,7 +61,7 @@
     "moment": "^2.29.1",
     "oidc-client": "^1.11.5",
     "primeicons": "^5.0.0",
-    "primeng": "^13.2.0",
+    "primeng": "^13.4.0",
     "run-script-os": "^1.1.6",
     "rxjs": "^7.5.4",
     "tslib": "^2.3.1",

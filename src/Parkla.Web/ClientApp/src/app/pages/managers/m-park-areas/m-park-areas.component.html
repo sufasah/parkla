@@ -17,11 +17,26 @@
     >
   </app-user-avatar>
 </p-toolbar>
-<app-area-dataView [areas]="areas">
+<app-area-dataView
+  [areas]="areas"
+  [totalPages]="totalPages"
+  [pageSize]="pageSize"
+  [pageNumber]="pageNumber!"
+  (onLazyLoad)="loadData($event)"
+  >
   <ng-template let-area>
-    <p-button icon="pi pi-car" label="Edit Area" (click)="editArea(area)"></p-button>
-    <p-button icon="pi pi-car" label="Delete Area" (click)="deleteArea(area)"></p-button>
-
+    <p-button
+      icon="pi pi-car"
+      label="Edit Area"
+      (click)="editArea(area)"
+      >
+    </p-button>
+    <p-button
+      icon="pi pi-car"
+      label="Delete Area"
+      (click)="deleteArea(area)"
+      >
+    </p-button>
   </ng-template>
 </app-area-dataView>
 
