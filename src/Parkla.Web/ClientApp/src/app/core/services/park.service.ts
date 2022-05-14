@@ -161,7 +161,8 @@ export class ParkService implements OnDestroy {
 
   deletePark(id: number) {
     return this.httpClient.delete<Park>(apiParks, {body:{
-      id
+      id: id,
+      userId: this.authService.accessToken?.sub
     }});
   }
 
