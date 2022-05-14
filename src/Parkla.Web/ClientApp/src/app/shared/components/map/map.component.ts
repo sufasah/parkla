@@ -107,6 +107,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   onMarkerClusterLoad() {
     let sub = this.parkService.parkInformer.subscribe((data) => {
       if(!this.isUserMap || true === data.isUserPark) {
+        if(data.park.id == 57)
+          console.log(data);
+
         if(data.isDeleted) {
           this.removeExistingPark(data);
         }
@@ -313,7 +316,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   refreshMarkers() {
-    Object.values(this.markersOnTheMap).forEach((mapMarker: MapMarker) => {
+    this.markersOnTheMap.forEach((mapMarker: MapMarker) => {
       mapMarker.marker.remove();
     });
 
