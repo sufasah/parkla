@@ -38,9 +38,9 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
         [FromQuery] PageDto pageDto,
         CancellationToken cancellationToken
     ) {
-        var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, cancellationToken).ConfigureAwait(false);
-        Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Pages");
-        Response.Headers.Add("X-Total-Pages", result.TotalPages.ToString());
+        var result = await _service.GetPageAsync(pageDto.NextRecord, pageDto.PageSize, cancellationToken).ConfigureAwait(false);
+        Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Records");
+        Response.Headers.Add("X-Total-Records", result.TotalRecords.ToString());
         return Ok(result);
     }
 
@@ -52,9 +52,9 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
         CancellationToken cancellationToken,
         [FromQuery] bool asc = true
     ) {
-        var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, s, orderBy, asc, cancellationToken).ConfigureAwait(false);
-        Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Pages");
-        Response.Headers.Add("X-Total-Pages", result.TotalPages.ToString());
+        var result = await _service.GetPageAsync(pageDto.NextRecord, pageDto.PageSize, s, orderBy, asc, cancellationToken).ConfigureAwait(false);
+        Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Records");
+        Response.Headers.Add("X-Total-Records", result.TotalRecords.ToString());
         return Ok(result);
     }
 

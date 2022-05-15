@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Park } from '@app/core/models/park';
@@ -23,6 +23,7 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
     private router: Router,
     private messageService: MessageService,
     private parkService: ParkService,
+    private ngZone: NgZone,
     private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -77,7 +78,9 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
 
   messageClose(message: Message) {
     if(message.data?.navigate) {
-      this.router.navigateByUrl(message.data.navigateTo);
+      this.ngZone.run(() => {
+        this.router.navigateByUrl(message.data.navigateTo);
+      });
     }
   }
 }

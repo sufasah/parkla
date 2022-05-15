@@ -1,9 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { ParkArea } from '@app/core/models/park-area';
 import { AuthService } from '@app/core/services/auth.service';
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
+import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { LazyLoadEvent, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
@@ -15,30 +15,47 @@ import { DataView } from 'primeng/dataview';
 })
 export class AreaDataViewComponent implements OnInit {
 
-
-  @Input()
   areas!: ParkArea[];
 
-  @Input()
-  totalPages = 1;
+  totalRecords = 0;
 
   @Input()
   pageSize = 10;
 
+  nextRecord = 0;
+
   @Input()
-  pageNumber = 1;
+  loading = false;
 
   @Output()
-  onLazyLoad = new EventEmitter<LazyLoadEvent>();
+  onFetchError = new EventEmitter<string>();
 
-  get totalRecords() {
-    return this.totalPages * this.pageSize;
-  }
-  get first() {
-    return (this.pageNumber-1) * this.pageSize;
-  }
-
-  sortOptions: SelectItem[];
+  sortOptions: SelectItem[] = [
+    {
+      label: "Min Price Low to High",
+      value: "!minPrice"
+    },
+    {
+      label: "Min Price High to Low",
+      value: "minPrice"
+    },
+    {
+      label: "Avarage Price Low to High",
+      value: "!avaragePrice"
+    },
+    {
+      label: "Avarage Price High to Low",
+      value: "avaragePrice"
+    },
+    {
+      label: "Max Price Low to High",
+      value: "!maxPrice"
+    },
+    {
+      label: "Max Price High to Low",
+      value: "maxPrice"
+    },
+  ];;
 
   sortOrder!: number;
 
@@ -50,65 +67,48 @@ export class AreaDataViewComponent implements OnInit {
   @ContentChild(TemplateRef,{static:false})
   testTemplateRef!: TemplateRef<any>;
 
+  searchTOID?: NodeJS.Timeout;
+  lastSearchSeconds = -10;
+  lastSearchInput: string | null = null;
+
+  orderBy: string | null = null;
+  asc: boolean | null = null;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private refSharingService: RefSharingService,
-    private authService: AuthService) {
+    private parkAreaService: ParkAreaService,
+    private authService: AuthService
+  ) {
 
-    this.sortOptions = [
-      {
-        label: "Min Price Low to High",
-        value: "!minPrice.balance"
-      },
-      {
-        label: "Min Price High to Low",
-        value: "minPrice.balance"
-      },
-      {
-        label: "Avarage Price Low to High",
-        value: "!avgPrice.balance"
-      },
-      {
-        label: "Avarage Price High to Low",
-        value: "avgPrice.balance"
-      },
-      {
-        label: "Max Price Low to High",
-        value: "!maxPrice.balance"
-      },
-      {
-        label: "Max Price High to Low",
-        value: "maxPrice.balance"
-      },
-    ];
   }
 
   ngOnInit(): void {
+    const paramMap = this.route.snapshot.queryParamMap;
+
+    if(paramMap.has("page")) {
+      const page = Number(paramMap.get("page"));
+      if(page > 1)
+        this.nextRecord = page * this.pageSize - this.pageSize;
+    }
   }
 
   onSortChange(event:any) {
     let value = event.value;
-
     if (value.indexOf('!') === 0) {
-        this.sortOrder = 1;
-        this.sortField = value.substring(1, value.length);
+      this.sortOrder = 1;
+      this.sortField = value.substring(1, value.length);
     }
     else {
-        this.sortOrder = -1;
-        this.sortField = value;
+      this.sortOrder = -1;
+      this.sortField = value;
     }
-  }
-
-  onSearchInput(event:any) {
-    //contains"(Default), "startsWith", "endsWith", "equals", "notEquals", "in", "lt", "lte", "gt" and "gte"
-    this.dataView.filter(event.target.value,"contains");
+    console.log(event);
 
   }
 
   goArea(area:ParkArea) {
-    this.refSharingService.setData(RSRoute.areasSelectedArea,area);
-    let parkid = this.route.snapshot.params["parkid"];
+    let parkid = this.getParkId();
 
     this.router.navigateByUrl( this.authService.asManager
       ? RouteUrl.mParkArea(parkid, area.id)
@@ -116,7 +116,97 @@ export class AreaDataViewComponent implements OnInit {
     );
   }
 
+  getParkId() {
+    return Number(this.route.snapshot.paramMap.get("parkid"));
+  }
+
   loadData(evt: LazyLoadEvent) {
-    this.onLazyLoad.emit(evt);
+    if(this.loading) return;
+
+    const nextRecord = evt.first!;
+    const sortField = evt.sortField;
+    const asc = evt.sortOrder == 1 ? true : false;
+
+    if(
+      this.nextRecord == nextRecord &&
+      this.orderBy ==  sortField &&
+      this.asc == asc
+    ) return;
+
+    setTimeout(() => {
+      this.orderBy = sortField ?? null;
+      this.asc = asc;
+      this.nextRecord = nextRecord;
+
+      this.fetchAreas(
+        nextRecord,
+        this.lastSearchInput,
+        this.orderBy,
+        this.asc);
+    }, 0);
+  }
+
+  onSearchInput(evt: any) {
+      const seconds = Number.parseInt((evt.timeStamp/1000).toFixed(0));
+      const data = evt.target.value;
+
+      if(seconds - this.lastSearchSeconds < 2)
+        clearTimeout(this.searchTOID!);
+
+      this.searchTOID = setTimeout(() => {
+        this.fetchAreas(
+          this.nextRecord,
+          data,
+          this.orderBy,
+          this.asc
+        );
+      }, 1000);
+
+      this.lastSearchSeconds = seconds;
+      this.lastSearchInput = data;
+  }
+
+  refresh() {
+    this.fetchAreas(
+      this.nextRecord,
+      this.lastSearchInput,
+      this.orderBy,
+      this.asc
+    );
+  }
+
+  fetchAreas(
+    nextRecord: number,
+    search: string | null = null,
+    orderBy: string | null = null,
+    asc: boolean | null = null
+  ) {
+    this.loading = true;
+    this.parkAreaService.getAreasPage(
+      nextRecord,
+      this.pageSize,
+      search,
+      orderBy,
+      asc
+    ).subscribe({
+      next: response => {
+        if(response.headers.has("x-total-records"))
+          this.totalRecords = Number(response.headers.get("x-total-records"));
+
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            ...this.route.snapshot.queryParams,
+            page: (nextRecord + this.pageSize) / this.pageSize
+          }
+        });
+
+        this.areas = response.body!;
+        this.loading = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.onFetchError.emit(err.error.message);
+      }
+    });
   }
 }

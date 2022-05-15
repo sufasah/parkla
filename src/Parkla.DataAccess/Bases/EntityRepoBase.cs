@@ -104,7 +104,7 @@ namespace Parkla.DataAccess.Bases
         }
 
         public async Task<PagedList<TEntity>> GetListAsync(
-            int pageNumber, 
+            int nextRecord, 
             int pageSize, 
             Expression<Func<TEntity, bool>>? filter = null,
             Expression<Func<TEntity, object>>? orderBy = null,
@@ -124,7 +124,7 @@ namespace Parkla.DataAccess.Bases
                 else
                     resultSet = resultSet.OrderByDescending(orderBy);
 
-            var result = await ToPagedListAsync(resultSet, pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
+            var result = await ToPagedListAsync(resultSet, nextRecord, pageSize, cancellationToken).ConfigureAwait(false);
             return result;
         }
 
@@ -158,17 +158,17 @@ namespace Parkla.DataAccess.Bases
 
         private static async Task<PagedList<TEntity>> ToPagedListAsync(
             IQueryable<TEntity> source, 
-            int pageNumber, 
+            int nextRecord, 
             int pageSize, 
             CancellationToken cancellationToken = default
         ) {
             var count = source.Count();
-            var items = await source.Skip((pageNumber-1) * pageSize)
+            var items = await source.Skip(nextRecord)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
             
-            return new PagedList<TEntity>(items, pageNumber, pageSize, count);
+            return new PagedList<TEntity>(items, nextRecord, pageSize, count);
         }
 
         public async Task<TEntity?> GetAsync(

@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
@@ -26,6 +26,7 @@ export class MNewParkAreaComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
+    private ngZone: NgZone,
     private parkAreaService: ParkAreaService
   ) {
 
@@ -90,7 +91,9 @@ export class MNewParkAreaComponent implements OnInit {
 
   messageClose(message: Message) {
     if(message.data && message.data.navigate) {
-      this.router.navigateByUrl(RouteUrl.mParkAreas(this.getParkId()));
+      this.ngZone.run(() => {
+        this.router.navigateByUrl(RouteUrl.mParkAreas(this.getParkId()));
+      });
     }
   }
 

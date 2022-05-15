@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppUser } from '@app/core/models/app-user';
@@ -70,6 +70,7 @@ export class MProfileComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private messageService: MessageService,
+    private ngZone: NgZone,
     private router: Router) {
 
   }
@@ -210,7 +211,9 @@ export class MProfileComponent implements OnInit {
 
   messageClose(message: Message) {
     if(message.data?.navigate){
-      this.router.navigateByUrl(message.data.navigateTo);
+      this.ngZone.run(() => {
+        this.router.navigateByUrl(message.data.navigateTo);
+      });
     }
   }
 

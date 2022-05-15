@@ -14,12 +14,24 @@ export class ParkAreaService {
     return this.httpClient.get<ParkArea[]>(apiParkAreas+"/all");
   }
 
-  getAreasPage(pageNumber: number, pageSize: number) {
+  getAreasPage(
+    nextRecord: number,
+    pageSize: number,
+    search: string | null = null,
+    orderBy: string | null = null,
+    asc: boolean | null = null,
+  ) {
+    const params = <any>{
+      nextRecord,
+      pageSize,
+    };
+
+    if(search) params.s = search;
+    if(orderBy) params.orderBy = orderBy;
+    if(asc) params.asc = asc;
+
     return this.httpClient.get<ParkArea[]>(apiParkAreas, {
-      params: {
-        pageNumber,
-        pageSize
-      },
+      params,
       observe: "response"
     });
   }

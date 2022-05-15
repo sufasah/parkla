@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
@@ -33,6 +33,7 @@ export class MEditParkAreaComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private ngZone: NgZone,
     private messageService: MessageService
   ) {
   }
@@ -93,7 +94,9 @@ export class MEditParkAreaComponent implements OnInit {
 
   messageClose(message: Message) {
     if(message.data && message.data.navigate) {
-      this.router.navigateByUrl(RouteUrl.mParkAreas(this.getParkId()));
+      this.ngZone.run(() => {
+        this.router.navigateByUrl(RouteUrl.mParkAreas(this.getParkId()));
+      });
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private store:Store,
+    private ngZone: NgZone,
     private messageService: MessageService,
     private router: Router) { }
 
@@ -109,7 +109,9 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   messageClose(message: Message) {
     if(message.data?.navigate){
-      this.router.navigateByUrl(message.data.navigateTo);
+      this.ngZone.run(() => {
+        this.router.navigateByUrl(message.data.navigateTo);
+      });
     }
   }
 

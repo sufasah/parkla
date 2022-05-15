@@ -4,7 +4,7 @@ import { LoginComponent } from '@app/core/components/login/login.component';
 import { RegisterComponent } from '@app/core/components/register/register.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.component';
-import { ParkAreasComponent } from './pages/users/areas/park-areas.component';
+import { ParkAreasComponent } from './pages/users/park-areas/park-areas.component';
 import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';
 import { ParkMapComponent } from './pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from './pages/users/park-area/park-area.component';

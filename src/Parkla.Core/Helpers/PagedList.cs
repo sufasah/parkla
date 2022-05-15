@@ -2,11 +2,11 @@ namespace Parkla.Core.Helpers;
 public class PagedList<T> : List<T>
 {
     const int maxPageSize = 50;
-    public int PageNumber { get; set; } = 1;
+    public int NextRecord { get; set; } = 0;
     private int _pageSize = 10;
-    public int TotalPages { get; set; }
-    public bool HasPrevious => PageNumber > 1; 
-    public bool HasNext => PageNumber < TotalPages; 
+    public int TotalRecords { get; set; }
+    public bool HasPrevious => NextRecord >= _pageSize; 
+    public bool HasNext => NextRecord <= TotalRecords - _pageSize; 
     public int PageSize { 
         get {
             return _pageSize;
@@ -17,11 +17,11 @@ public class PagedList<T> : List<T>
         }
     }
     
-    public PagedList(List<T> items, int pageNumber, int pageSize, int count)
+    public PagedList(List<T> items, int nextRecord, int pageSize, int count)
     {
-        TotalPages = count == 0 ? 0 : count / pageSize;
+        TotalRecords = count;
         PageSize = pageSize;
-        PageNumber = pageNumber;
+        NextRecord = nextRecord;
         AddRange(items);
     }
 }

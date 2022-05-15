@@ -1,5 +1,5 @@
 import { Message } from 'primeng/api';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, NgForm } from '@angular/forms';
 import { AuthService } from '@app/core/services/auth.service';
 import { MessageService } from 'primeng/api';
@@ -68,6 +68,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private router: Router,
     private cityService: CityService,
+    private ngZone: NgZone,
     private districtService: DistrictService
   ) {
 
@@ -205,7 +206,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.verification = true;
     }
     if(message.data?.navigate) {
-      this.router.navigateByUrl(message.data?.navigateTo);
+      this.ngZone.run(() => {
+        this.router.navigateByUrl(message.data?.navigateTo);
+      });
     }
   }
 

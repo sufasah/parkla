@@ -34,7 +34,7 @@ export class TokenRefreshInterceptor implements HttpInterceptor {
         let refreshObservable = authService.refreshTokens();
         if(!refreshObservable) {
           return store.select(selectAuthState).pipe(
-            filter(x => authService.tokenRefreshing),
+            filter(x => !authService.tokenRefreshing),
             mergeMap(state => {
               if(!!state.accessToken)
                 return this.onRefreshSuccess(state.accessToken,request,next);

@@ -47,17 +47,17 @@ namespace Parkla.Business.Bases
         }
 
         public virtual async Task<PagedList<TEntity>> GetPageAsync(
-            int pageNumber, 
-            int pageSize,
+            int nextRecord, 
+            int pageSize, 
             CancellationToken cancellationToken = default
         ) {
-            var entities = _entityRepository.GetListAsync(pageNumber, pageSize, cancellationToken: cancellationToken);
+            var entities = _entityRepository.GetListAsync(nextRecord, pageSize, cancellationToken: cancellationToken);
             return await entities;
         }
 
         public async Task<PagedList<TEntity>> GetPageAsync(
-            int pageNumber, 
-            int pageSize, 
+            int nextRecord, 
+            int pageSize,  
             string? search, 
             string? orderBy, 
             bool ascending, 
@@ -120,7 +120,7 @@ namespace Parkla.Business.Bases
             }
 
             return await _entityRepository.GetListAsync(
-                pageNumber, 
+                nextRecord, 
                 pageSize,
                 Expression.Lambda<Func<TEntity, bool>>(eFilter, eParam),
                 eOrderBy,

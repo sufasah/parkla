@@ -18,11 +18,9 @@
   </app-user-avatar>
 </p-toolbar>
 <app-area-dataView
-  [areas]="areas"
-  [totalPages]="totalPages"
   [pageSize]="pageSize"
-  [pageNumber]="pageNumber!"
-  (onLazyLoad)="loadData($event)"
+  (onFetchError)="onError($event)"
+  [loading]="loading"
   >
   <ng-template let-area>
     <p-button

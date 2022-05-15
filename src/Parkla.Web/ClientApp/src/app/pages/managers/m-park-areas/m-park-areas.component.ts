@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
-import { RouteUrl } from '@app/core/utils/route';
-import { ConfirmationService, LazyLoadEvent, MessageService } from 'primeng/api';
 import { ParkAreaService } from '@app/core/services/park-area.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { RouteUrl } from '@app/core/utils/route';
+import { AreaDataViewComponent } from '@app/shared/components/area-dataview/area-dataview.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -14,12 +15,14 @@ import { Subscription } from 'rxjs';
 })
 export class MParkAreasComponent implements OnInit, OnDestroy {
 
+  @ViewChild(AreaDataViewComponent)
+  dataView!: AreaDataViewComponent;
+
   readonly pageSize = 6;
 
-  pageNumber: number | null = null;
-  totalPages: number = 0;
+  loading = false;
+  parkid!: number;
 
-  areas: ParkArea[] = [];
   unsubscribe: Subscription[] = [];
 
   constructor(
@@ -31,84 +34,65 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const paramMap = this.route.snapshot.queryParamMap;
-
-    if(paramMap.has("page")) {
-      const page = Number(paramMap.get("page"));
-      if(page == this.pageNumber) return;
-      this.pageNumber = page;
-    }
-    else {
-      this.pageNumber = 1;
-    }
-
+    this.route.paramMap.subscribe(paramMap => {
+        this.parkid = Number(paramMap.get("parkid"));
+    });
   }
 
   goMap() {
     this.router.navigateByUrl(RouteUrl.mParkMap());
   }
 
-  getParkId() {
-    return Number(this.route.snapshot.paramMap.get("parkid"));
-  }
-
   newArea() {
-    let parkid = this.getParkId();
-    this.router.navigateByUrl(RouteUrl.mNewParkArea(parkid))
+    this.router.navigateByUrl(RouteUrl.mNewParkArea(this.parkid))
   }
 
   editArea(area: ParkArea) {
-    let parkid = this.getParkId();
-    this.router.navigateByUrl(RouteUrl.mEditParkArea(parkid,area.id))
+    this.router.navigateByUrl(RouteUrl.mEditParkArea(this.parkid,area.id))
   }
 
   deleteArea(area: ParkArea) {
     this.confirmService.confirm({
-      message: 'Are you sure to delete xxx named park area with xxx id?',
+      message: `Are you sure to delete the park area with '${area.name}'?`,
       accept: () => {
-        // TODO: DELETE PARK AREA
+        this.parkAreaService.deleteArea(area.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              summary: "Park Area Deletion",
+              closable: true,
+              severity: "success",
+              life: 1500,
+              detail: `The park area with '${area.name}' is deleted`
+            });
+            this.dataView.refresh();
+          },
+          error: (err: HttpErrorResponse) => {
+            this.messageService.add({
+              summary: "Park Area Deletion",
+              closable: true,
+              severity: "error",
+              life:5000,
+              detail: err.error.message
+            });
+          }
+        });
 
-        this.messageService.add({
-          summary: "Park Area Deletion",
-          closable: true,
-          severity: "error",
-          life:5000,
-          detail: "The park area with xxx id and xxx name is deleted."
-        })
       }
     });
+  }
+
+  onError(error: string) {
+    this.messageService.add({
+      summary: "Fetch Park Areas",
+      closable: true,
+      severity: "error",
+      life:5000,
+      detail: error
+    });
+    this.loading = false;
   }
 
   ngOnDestroy(): void {
     this.unsubscribe.forEach(x => x.unsubscribe());
-  }
-
-  loadData(evt: LazyLoadEvent) {
-    const pageNumber = (evt.first! / this.pageSize)+1;
-    this.parkAreaService.getAreasPage(pageNumber, this.pageSize).subscribe({
-      next: response => {
-        if(response.headers.has("x-total-pages"))
-          this.totalPages = Number(response.headers.get("x-total-pages"));
-
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {
-            ...this.route.snapshot.queryParams,
-            page: pageNumber
-          }
-        });
-
-        this.areas = response.body!;
-      },
-      error: (err: HttpErrorResponse) => {
-        this.messageService.add({
-          summary: "Fetch Park Areas",
-          closable: true,
-          severity: "error",
-          life:5000,
-          detail: err.error.message
-        });
-      }
-    });
   }
 }

@@ -11,8 +11,8 @@ namespace Parkla.DataAccess.Abstract
             CancellationToken cancellationToken = default
         );
         public Task<PagedList<T>> GetListAsync(
-            int pageNumber, 
-            int pageSize, 
+            int nextRecord, 
+            int pageSize,
             Expression<Func<T, bool>>? filter = null,
             Expression<Func<T, object>>? orderBy = null,
             bool asc = true,

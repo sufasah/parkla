@@ -66,7 +66,7 @@ import { UserService } from './core/services/user.service';
 import { ReservationsComponent } from './pages/users/reservations/reservations.component';
 import { ReservationService } from './core/services/reservation.service';
 import { MapMarkerComponent } from './shared/components/map-marker/map-marker.component';
-import { ParkAreasComponent } from './pages/users/areas/park-areas.component';
+import { ParkAreasComponent } from './pages/users/park-areas/park-areas.component';
 import { AreaDataViewComponent } from './shared/components/area-dataview/area-dataview.component';
 import { RefSharingService } from './core/services/ref-sharing.service';
 import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';

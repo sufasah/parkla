@@ -11,14 +11,14 @@ public interface IEntityService<TEntity>
         );
 
         Task<PagedList<TEntity>> GetPageAsync(
-            int pageNumber, 
-            int PageSize,
+            int nextRecord, 
+            int pageSize, 
             CancellationToken cancellationToken = default
         );
 
         public Task<PagedList<TEntity>> GetPageAsync(
-            int pageNumber, 
-            int pageSize, 
+            int nextRecord, 
+            int pageSize,  
             string? search, 
             string? orderBy, 
             bool ascending, 
