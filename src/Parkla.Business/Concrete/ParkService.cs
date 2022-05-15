@@ -41,7 +41,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         if (!result.IsValid)
             throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
         
-        entity.StatusUpdateTime = new DateTime(0, DateTimeKind.Utc);
+        entity.StatusUpdateTime = null;
         entity.EmptySpace = 0;
         entity.ReservedSpace = 0;
         entity.OccupiedSpace = 0;

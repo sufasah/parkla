@@ -13,13 +13,13 @@ public class TestHandler : HandlerBase
                 ParkId = Guid.NewGuid(),
                 SpaceId = "FIRST OBJECT OF TESTHANDLER [00000]",
                 Status = SpaceStatus.EMPTY,
-                DateTime = DateTime.Now
+                DateTime = DateTime.UtcNow
             },
             new() {
                 ParkId = Guid.NewGuid(),
                 SpaceId = "SECOND OBJECT OF TESTHANDLER [00000]",
                 Status = SpaceStatus.EMPTY,
-                DateTime = DateTime.Now
+                DateTime = DateTime.UtcNow
             },
         };
     }

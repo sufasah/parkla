@@ -34,12 +34,25 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("")]
     public virtual async Task<IActionResult> GetPageAsync(
         [FromQuery] PageDto pageDto,
         CancellationToken cancellationToken
     ) {
         var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, cancellationToken).ConfigureAwait(false);
+        Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Pages");
+        Response.Headers.Add("X-Total-Pages", result.TotalPages.ToString());
+        return Ok(result);
+    }
+
+    [HttpGet("")]
+    public async Task<IActionResult> GetPageAsync(
+        [FromQuery] PageDto pageDto,
+        [FromQuery] string? s,
+        [FromQuery] string? orderBy,
+        CancellationToken cancellationToken,
+        [FromQuery] bool asc = true
+    ) {
+        var result = await _service.GetPageAsync(pageDto.PageNumber, pageDto.PageSize, s, orderBy, asc, cancellationToken).ConfigureAwait(false);
         Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Pages");
         Response.Headers.Add("X-Total-Pages", result.TotalPages.ToString());
         return Ok(result);

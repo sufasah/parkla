@@ -25,9 +25,7 @@ public class RealParkSpaceValidator : AbstractValidator<RealParkSpace>
         .NotEmpty()
         .NotNull();
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
-        .NotNull()
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
-        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void Status() => RuleFor(x => x.Status)
         .NotNull()

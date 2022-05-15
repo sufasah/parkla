@@ -24,7 +24,6 @@ public class ReservationValidator : AbstractValidator<Reservation>
     private void PricingId() => RuleFor(x => x.PricingId)
         .NotNull();
     private void StartTime() => RuleFor(x => x.StartTime)
-        .NotNull()
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .GreaterThanOrEqualTo(DateTime.UtcNow.Subtract(new TimeSpan(0,15,0)))
         .Must((y, x) => x < y.EndTime);

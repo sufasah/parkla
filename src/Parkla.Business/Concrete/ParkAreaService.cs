@@ -5,6 +5,7 @@ using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
+using Parkla.Core.Helpers;
 using Parkla.DataAccess.Abstract;
 
 namespace Parkla.Business.Concrete;
@@ -51,7 +52,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
         
         entity.TemplateImage = null;
-        entity.StatusUpdateTime = new DateTime(0, DateTimeKind.Utc);
+        entity.StatusUpdateTime = null;
         entity.EmptySpace = 0;
         entity.ReservedSpace = 0;
         entity.OccupiedSpace = 0;

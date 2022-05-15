@@ -25,9 +25,7 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
             .HasMaxLength(30)
             .IsRequired();
         b.Property(x => x.StatusUpdateTime)
-            .HasColumnName("status_update_time")
-            .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
-            .IsRequired();
+            .HasColumnName("status_update_time");
         b.Property(x => x.Status)
             .HasColumnName("status")
             .HasDefaultValue(SpaceStatus.OCCUPIED)

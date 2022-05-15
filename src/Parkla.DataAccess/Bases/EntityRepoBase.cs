@@ -106,7 +106,9 @@ namespace Parkla.DataAccess.Bases
         public async Task<PagedList<TEntity>> GetListAsync(
             int pageNumber, 
             int pageSize, 
-            Expression<Func<TEntity, bool>>? filter = null, 
+            Expression<Func<TEntity, bool>>? filter = null,
+            Expression<Func<TEntity, object>>? orderBy = null,
+            bool asc = true,
             CancellationToken cancellationToken = default
         ) {
             using var context = new TContext();
@@ -115,6 +117,12 @@ namespace Parkla.DataAccess.Bases
                 resultSet = context.Set<TEntity>().AsNoTracking();
             else
                 resultSet = context.Set<TEntity>().AsNoTracking().Where(filter);
+
+            if(orderBy != null)
+                if(asc)
+                    resultSet = resultSet.OrderBy(orderBy);
+                else
+                    resultSet = resultSet.OrderByDescending(orderBy);
 
             var result = await ToPagedListAsync(resultSet, pageNumber, pageSize, cancellationToken).ConfigureAwait(false);
             return result;

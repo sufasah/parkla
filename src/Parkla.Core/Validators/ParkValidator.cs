@@ -49,9 +49,7 @@ public class ParkValidator : AbstractValidator<Park>
         .NotNull()
         .Must(x => x!.Length <= 10);
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
-        .NotNull()
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
-        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void EmptySpace() => RuleFor(x => x.EmptySpace)
         .NotNull();

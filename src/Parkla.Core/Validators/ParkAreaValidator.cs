@@ -42,9 +42,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
     private void ReservationsEnabled() => RuleFor(x => x.ReservationsEnabled)
         .NotNull();
     private void StatusUpdateTime() => RuleFor(x => x.StatusUpdateTime)
-        .NotNull()
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
-        .GreaterThanOrEqualTo(new DateTime(0L, DateTimeKind.Utc))
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void EmptySpace() => RuleFor(x => x.EmptySpace)
         .NotNull();

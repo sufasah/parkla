@@ -25,9 +25,7 @@ public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStat
             .HasDefaultValue(SpaceStatus.OCCUPIED)
             .IsRequired();
         b.Property(x => x.DateTime)
-            .HasColumnName("datetime")
-            .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
-            .IsRequired();
+            .HasColumnName("datetime");
             
         b.HasOne(x => x.RealSpace).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.RealSpaceId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(x => x.Space).WithMany(x => x.ReceivedSpaceStatuses).HasForeignKey(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);

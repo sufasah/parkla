@@ -37,9 +37,7 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .IsRequired()
             .HasMaxLength(10);
         b.Property(x => x.StatusUpdateTime)
-            .HasColumnName("status_update_time")
-            .HasDefaultValue(new DateTime(0L, DateTimeKind.Utc))
-            .IsRequired();
+            .HasColumnName("status_update_time");
         b.Property(x => x.EmptySpace)
             .HasColumnName("empty_space")
             .IsRequired();

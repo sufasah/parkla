@@ -23,8 +23,6 @@ public class ParkSpaceStatusValidator : AbstractValidator<ParkSpaceStatusDto>
         .NotNull()
         .IsInEnum();
     private void DateTime() => RuleFor(x => x.DateTime)
-        .NotNull()
-        .NotEmpty()
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .LessThanOrEqualTo(x => System.DateTime.UtcNow);
 }

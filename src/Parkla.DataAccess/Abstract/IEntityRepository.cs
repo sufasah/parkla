@@ -10,10 +10,12 @@ namespace Parkla.DataAccess.Abstract
             Expression<Func<T,bool>>? filter = null, 
             CancellationToken cancellationToken = default
         );
-        Task<PagedList<T>> GetListAsync(
+        public Task<PagedList<T>> GetListAsync(
             int pageNumber, 
             int pageSize, 
-            Expression<Func<T,bool>>? filter = null, 
+            Expression<Func<T, bool>>? filter = null,
+            Expression<Func<T, object>>? orderBy = null,
+            bool asc = true,
             CancellationToken cancellationToken = default
         );
         Task<List<T>> GetListAsync(

@@ -22,7 +22,6 @@ public class ReceivedSpaceStatusValidator : AbstractValidator<ReceivedSpaceStatu
         .NotNull()
         .IsInEnum();
     private void DateTime() => RuleFor(x => x.DateTime)
-        .NotNull()
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .LessThanOrEqualTo(System.DateTime.UtcNow);
 }

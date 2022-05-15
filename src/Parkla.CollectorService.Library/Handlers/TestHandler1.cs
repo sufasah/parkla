@@ -13,7 +13,7 @@ public class TestHandler1 : HandlerBase
                     ParkId = Guid.NewGuid(),
                     SpaceId = "testhandler1 object is here [111111111]",
                     Status = SpaceStatus.EMPTY,
-                    DateTime = DateTime.Now
+                    DateTime = DateTime.UtcNow
                 },
             };
         });

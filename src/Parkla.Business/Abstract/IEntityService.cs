@@ -16,6 +16,15 @@ public interface IEntityService<TEntity>
             CancellationToken cancellationToken = default
         );
 
+        public Task<PagedList<TEntity>> GetPageAsync(
+            int pageNumber, 
+            int pageSize, 
+            string? search, 
+            string? orderBy, 
+            bool ascending, 
+            CancellationToken cancellationToken = default
+        );
+
         Task<TEntity?> GetAsync(
             Expression<Func<TEntity,bool>> filter,
             CancellationToken cancellationToken = default
