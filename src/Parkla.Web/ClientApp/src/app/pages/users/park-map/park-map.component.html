@@ -59,7 +59,7 @@
               <td>
                 <span class="p-column-title">Avarage Price</span>
                 <span class="avg-price">
-                  {{park.avgPrice | currency : "TRY" : "symbol" : "0.2-2"}}
+                  {{park.avaragePrice | currency : "TRY" : "symbol" : "0.2-2"}}
                 </span>
               </td>
               <td>
@@ -76,7 +76,7 @@
     <div class="card mt-3">
       <p-table responsiveLayout="stack" [value]="[selectedPark!]">
         <ng-template pTemplate="caption">
-            <h5>Park Status <span style="color:red">{{selectedPark!.statusUpdateTime | date : "HH:mm dd-MM-yyyy"}}</span></h5>
+            <h5>Park Status <span style="color:red">{{selectedPark!.statusUpdateTime | date : "yyyy-MM-dd HH:mm:ss}}</span></h5>
           </ng-template>
           <ng-template pTemplate="header" let-columns>
             <tr>

@@ -11,6 +11,7 @@ public class ParkProfile : Profile
             .ReverseMap();
         
         CreateMap<Park, ParkIncludesUserDto>()
-            .ForPath(x => x.User, o => o.MapFrom(x => x.User));
+            .ForPath(x => x.User, o => o.MapFrom(x => x.User))
+            .ForPath(x => x.User!.Password, o => o.Ignore());
     }
 }

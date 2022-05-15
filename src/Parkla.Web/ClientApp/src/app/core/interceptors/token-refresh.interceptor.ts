@@ -6,7 +6,7 @@ import {
   HttpInterceptor,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { catchError, EMPTY, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, EMPTY, filter, mergeMap, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { apiAuthScheme } from '../constants/http';
 import { Store } from '@ngrx/store';
@@ -14,6 +14,8 @@ import { refreshTokenExpired } from '@app/store/auth/auth.actions';
 import { Router } from '@angular/router';
 import { RouteUrl } from '../utils/route';
 import { ParklaError } from '../models/parkla-error';
+import { TokenResponse } from '../server-models/token';
+import { selectAuthState } from '@app/store/auth/auth.selectors';
 
 @Injectable()
 export class TokenRefreshInterceptor implements HttpInterceptor {
@@ -28,28 +30,60 @@ export class TokenRefreshInterceptor implements HttpInterceptor {
     let store = this.injector.get<Store>(Store);
 
     return next.handle(request).pipe(catchError((err: HttpErrorResponse) => {
-        if (err.status == 401 && err.headers.get("Token-Expired") == "true") {
-          return authService.refreshTokens().pipe(
-            catchError((refreshTokenErr:HttpErrorResponse) => {
-              if(refreshTokenErr.error instanceof ParklaError && refreshTokenErr.error.isServerError) {
-                store.dispatch(refreshTokenExpired());
-                setTimeout(() => {
-                  window.location.href = window.location.origin + "/"+ RouteUrl.login();
-                }, 3000);
+      if (err.status == 401 && err.headers.get("Token-Expired") == "true") {
+        let refreshObservable = authService.refreshTokens();
+        if(!refreshObservable) {
+          return store.select(selectAuthState).pipe(
+            filter(x => authService.tokenRefreshing),
+            mergeMap(state => {
+              if(!!state.accessToken)
+                return this.onRefreshSuccess(state.accessToken,request,next);
+              else {
+                this.onRefreshFail(store);
+                return throwError(() => new HttpErrorResponse({
+                  error: new ParklaError("Token is not refreshed")
+                }));
               }
-              return throwError(() => refreshTokenErr);
-            }),
-            switchMap(resp => {
-              const newRequest = request.clone({
-                setHeaders: {
-                  "Authorization": apiAuthScheme + resp.accessToken
-                }
-              });
-              return next.handle(newRequest);
-          }),
-        );
+            })
+          );
+        }
+        else return this.refreshLogic(refreshObservable, store, request, next);
       }
       return throwError(() => err);
     }));
+  }
+
+  private refreshLogic(refreshObservable: Observable<TokenResponse>, store: Store, request: HttpRequest<unknown>, next: HttpHandler) {
+    return refreshObservable.pipe(
+      catchError(
+        (httpError:HttpErrorResponse) => {
+          if(httpError.error instanceof ParklaError && httpError.error.isServerError) {
+            this.onRefreshFail(store);
+          }
+          return throwError(() => httpError)
+        }
+      ),
+      switchMap(
+        resp => {
+          return this.onRefreshSuccess(resp.accessToken, request,next);
+        }
+      ),
+    );
+  }
+
+  private onRefreshSuccess(accessToken: string, request: HttpRequest<unknown>, next:HttpHandler) {
+    const newRequest = request.clone({
+      setHeaders: {
+        "Authorization": apiAuthScheme + accessToken
+      }
+    });
+    return next.handle(newRequest);
+  }
+
+  private onRefreshFail(store: Store) {
+    store.dispatch(refreshTokenExpired());
+    setTimeout(() => {
+      window.location.href = window.location.origin + "/"+ RouteUrl.login();
+    }, 3000);
   }
 }

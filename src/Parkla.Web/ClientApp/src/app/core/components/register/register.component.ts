@@ -54,12 +54,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   verifyPassword = "";
   verification = false;
 
-  authStateSubscription?: Subscription;
-  tokenLoading:boolean = false;
-  tokenLoadSuccess:boolean | null = null;
-  tokenLoadFail:boolean | null = null;
-  loginError:string | null = null;
-
   get maxBirthDate(){
     let date = new Date();
     return date.setFullYear(date.getFullYear()-18);
@@ -74,43 +68,39 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private router: Router,
     private cityService: CityService,
-    private districtService: DistrictService,
-    private store: Store
+    private districtService: DistrictService
   ) {
 
   }
 
   ngOnInit(): void {
-    this.authStateSubscription = this.store.select(selectAuthState).subscribe(state => {
-      this.tokenLoading = state.tokenLoading;
-      this.tokenLoadSuccess = state.tokenLoadSuccess;
-      this.tokenLoadFail = state.tokenLoadFail;
-      this.loginError = state.loginError;
+  }
 
-      if(this.tokenLoadSuccess) {
-        this.messageService.add({
-          life:1500,
-          severity:'success',
-          summary: 'Login',
-          detail: 'Logged in successfully',
-          icon:"pi-lock-open",
-          data: {
-            navigate: true,
-            navigateTo: RouteUrl.parkMap()
-          }
-        });
-      }
-      else if(this.tokenLoadFail) {
-        this.messageService.add({
-          life:5000,
-          severity:"error",
-          summary: "Login",
-          detail: this.loginError!,
-          icon: "pi-lock",
-        })
-        this.verification = false;
-      }
-    });
+  onLogin(event: {successful: boolean, error: string | null}) {
+    if(event.successful) {
+      this.messageService.add({
+        life:1500,
+        severity:'success',
+        summary: 'Login',
+        detail: 'Logged in successfully',
+        icon:"pi-lock-open",
+        data: {
+          navigate: true,
+          navigateTo: RouteUrl.parkMap()
+        }
+      });
+    }
+    else {
+      this.messageService.add({
+        life:5000,
+        severity:"error",
+        summary: "Login",
+        detail: event.error!,
+        icon: "pi-lock",
+      })
+      this.verification = false;
+      this.registering = false;
+    }
   }
 
   register(form:NgForm) {
@@ -126,6 +116,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.registering = true;
     let username = this.username;
     let password = this.password;
+
+    console.log(username,password);
+
 
     this.authService
       .register(<AppUser>{

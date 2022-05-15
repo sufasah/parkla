@@ -25,10 +25,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   verification = false;
 
   private authStateSubscription?: Subscription;
-  tokenLoading:boolean = false;
-  tokenLoadSuccess:boolean | null = null;
-  tokenLoadFail:boolean | null = null;
-  loginError:string | null = null;
 
   constructor(
     private authService: AuthService,
@@ -37,39 +33,35 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router) { }
 
   ngOnInit(): void {
-    this.authStateSubscription = this.store.select(selectAuthState).subscribe(state => {
-      this.tokenLoading = state.tokenLoading;
-      this.tokenLoadSuccess = state.tokenLoadSuccess;
-      this.tokenLoadFail = state.tokenLoadFail;
-      this.loginError = state.loginError;
+  }
 
-      if(this.tokenLoadSuccess) {
-        this.messageService.add({
-          life:1500,
-          severity:'login',
-          summary: 'Login',
-          detail: 'Logged in successfully',
-          icon:"pi-lock-open",
-          data: {
-            navigate: true,
-            navigateTo: this.asManager
-              ? RouteUrl.mParkMap()
-              : RouteUrl.parkMap()
-          }
-        });
-      }
-      else if(this.tokenLoadFail) {
-        this.messageService.add({
-          life:5000,
-          severity:"error",
-          summary: "Login",
-          detail: this.loginError!,
-          icon: "pi-lock",
-        })
-        this.verification = false;
-        this.logging = false;
-      }
-    });
+  onLogin(event: {successful: boolean, error: string | null}) {
+    if(event.successful) {
+      this.messageService.add({
+        life:1500,
+        severity:'login',
+        summary: 'Login',
+        detail: 'Logged in successfully',
+        icon:"pi-lock-open",
+        data: {
+          navigate: true,
+          navigateTo: this.asManager
+            ? RouteUrl.mParkMap()
+            : RouteUrl.parkMap()
+        }
+      });
+    }
+    else {
+      this.messageService.add({
+        life:5000,
+        severity:"error",
+        summary: "Login",
+        detail: event.error!,
+        icon: "pi-lock",
+      })
+      this.verification = false;
+      this.logging = false;
+    }
   }
 
   login(form:NgForm) {
@@ -98,6 +90,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.verifyPassword = password;
           this.verification = true;
         }
+        else {
+          this.onLogin({successful: true, error: null});
+        }
       }
     });
   }
@@ -110,10 +105,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.verifyUsername = "";
     this.verifyPassword = "";
     this.verification = false;
-    this.tokenLoading = false;
-    this.tokenLoadSuccess = null;
-    this.tokenLoadFail = null;
-    this.loginError = null;
   }
 
   messageClose(message: Message) {

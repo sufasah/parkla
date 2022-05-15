@@ -1,8 +1,8 @@
 <app-verify
-  [loading]="tokenLoading"
   [username]="verifyUsername"
   [password]="verifyPassword"
   (onCancel)="cancelVerify()"
+  (onLogin)="onLogin($event)"
   *ngIf="verification"
 ></app-verify>
 

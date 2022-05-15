@@ -17,7 +17,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -39,7 +39,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -61,7 +61,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -84,7 +84,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -107,7 +107,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -130,7 +130,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -153,7 +153,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -175,7 +175,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",
@@ -198,7 +198,7 @@ export const mockParks: Park[] = [
     reservedSpace: 4,
     minPrice: 10,
     maxPrice: 50,
-    avgPrice: 20,
+    avaragePrice: 20,
     extras: [
       "extra1",
       "extra2",

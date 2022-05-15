@@ -27,6 +27,9 @@ export class VerifyComponent implements OnInit, OnDestroy {
   @Input()
   password = "";
 
+  @Output()
+  onLogin = new EventEmitter<{successful: boolean, error: string | null}>();
+
   verifCode = "";
   verifying = false;
 
@@ -34,14 +37,9 @@ export class VerifyComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private store: Store,
     private messageService: MessageService) { }
 
   ngOnInit(): void {
-    this.authStateSubscription = this.store.select(selectAuthState).subscribe(state => {
-      if(state.tokenLoadSuccess || state.tokenLoadFail)
-      this.verifying = false;
-    });
   }
 
   verify(form:NgForm) {
@@ -67,7 +65,16 @@ export class VerifyComponent implements OnInit, OnDestroy {
             detail: 'Email is verified',
             icon:"pi-lock-open"
           });
-          this.authService.login(this.username, this.password).subscribe();
+          this.authService.login(this.username, this.password).subscribe({
+            next: () => {
+              this.verifying = false;
+              this.onLogin.emit({successful: true, error: null});
+            },
+            error: (err: HttpErrorResponse) => {
+              this.verifying = false;
+              this.onLogin.emit({successful: false, error: err.error.message});
+            }
+          });
         },
         error: (err: HttpErrorResponse) => {
           this.messageService.add({

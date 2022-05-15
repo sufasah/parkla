@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { AccessToken } from '@app/core/models/access-token';
 import { AppUser } from '@app/core/models/app-user';
-import { loginFailure, loginSuccess, refreshTokens } from '@app/store/auth/auth.actions';
+import { refreshTokens } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
@@ -23,6 +23,7 @@ export class AuthService implements OnDestroy{
   private routeSubscription?:Subscription;
 
   asManager: boolean = false;
+  tokenRefreshing = false;
 
   get accessToken(){
     return this._accessToken;
@@ -65,15 +66,11 @@ export class AuthService implements OnDestroy{
         password: password
       }
     ).pipe(
-      catchError((err:HttpErrorResponse) => {
-        this.store.dispatch(loginFailure({error: err.error.message}))
-        return throwError(() => err);
-      }),
       map(result => {
         let isStr = typeof result === "string";
         if(!isStr) {
           let tokens = <TokenResponse> result;
-          this.store.dispatch(loginSuccess({
+          this.store.dispatch(refreshTokens({
             accessToken: tokens.accessToken,
             refreshToken: tokens.refreshToken,
             expires: tokens.expires
@@ -93,7 +90,6 @@ export class AuthService implements OnDestroy{
   }
 
   register(user: AppUser, password: string) {
-
     return this.httpClient.post(apiRegister,{
       username: user.username,
       password: password,
@@ -110,17 +106,26 @@ export class AuthService implements OnDestroy{
   }
 
   refreshTokens() {
+    if(this.tokenRefreshing) return;
+    this.tokenRefreshing = true;
     return this.httpClient.get<TokenResponse>(apiRefreshToken, {
       headers: {
         "Authorization": apiAuthScheme + this.refreshToken
       }
-    }).pipe(tap(resp => {
-      this.store.dispatch(refreshTokens({
-        accessToken: resp.accessToken,
-        refreshToken: resp.refreshToken,
-        expires: resp.expires
-      }))
-    }));
+    }).pipe(
+      tap(resp => {
+        this.tokenRefreshing = false;
+        this.store.dispatch(refreshTokens({
+          accessToken: resp.accessToken,
+          refreshToken: resp.refreshToken,
+          expires: resp.expires
+        }));
+      }),
+      catchError((err:any) => {
+        this.tokenRefreshing = false;
+        return throwError(() => err);
+      })
+    );
   }
 
   isLoggedIn() {

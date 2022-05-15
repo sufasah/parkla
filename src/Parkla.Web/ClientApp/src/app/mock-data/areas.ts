@@ -15,7 +15,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.realserve.com.au/wp-content/uploads/CarParkingPlans/CAR-PARKING-PLAN-SERVICE-BY.jpg",
     minPrice: 10,
     maxPrice: 20,
-    avgPrice: 15,
+    avaragePrice: 15,
     pricings: []
   },
   {
@@ -31,7 +31,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 20,
     maxPrice: 50,
-    avgPrice: 25,
+    avaragePrice: 25,
     pricings: []
   },
   {
@@ -48,7 +48,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 23,
     maxPrice: 32,
-    avgPrice: 29,
+    avaragePrice: 29,
     pricings: []
   },
   {
@@ -65,7 +65,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 24,
     maxPrice: 31,
-    avgPrice: 30,
+    avaragePrice: 30,
     pricings: []
   },
   {
@@ -81,7 +81,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 25,
     maxPrice: 30,
-    avgPrice: 28,
+    avaragePrice: 28,
     pricings: []
   },
   {
@@ -97,7 +97,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 41,
     maxPrice: 45,
-    avgPrice: 43,
+    avaragePrice: 43,
     pricings: []
   },
   {
@@ -113,7 +113,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 33,
     maxPrice: 35,
-    avgPrice: 34,
+    avaragePrice: 34,
     pricings: []
   },
   {
@@ -130,7 +130,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 32,
     maxPrice: 44,
-    avgPrice: 43,
+    avaragePrice: 43,
     pricings: []
   },
   {
@@ -146,7 +146,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 21,
     maxPrice: 23,
-    avgPrice: 22,
+    avaragePrice: 22,
     pricings: []
   },
   {
@@ -162,7 +162,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 22,
     maxPrice: 26,
-    avgPrice: 24,
+    avaragePrice: 24,
     pricings: []
   },
   {
@@ -178,7 +178,7 @@ export const mockAreas: ParkArea[] = [{
     templateImg: "https://www.atlanticenter.com/wp-content/uploads/2019/04/floor-plan-first-basement-floor-indoor-parking-spaces-to-rent-milan-1.jpg",
     minPrice: 23,
     maxPrice: 25,
-    avgPrice: 24,
+    avaragePrice: 24,
     pricings: [],
   }
 ];
