@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
+import { RealParkSpaceService } from '@app/core/services/real-park-space.service';
 import { ConfirmationService } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { EditAreaTemplateComponent } from '../edit-area-template/edit-area-template.component';
@@ -75,7 +76,8 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
 
   constructor(
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private realSpaceService: RealParkSpaceService
   ) { }
 
   ngOnInit(): void {
@@ -111,13 +113,16 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
     input.click()
   }
 
-  setTemplateImage(event: Event) {
+  setTemplateImage(event: any) {
     const input = <HTMLInputElement>event.target;
+    if (input.files?.length == 0) return;
+
     const fr = new FileReader();
     fr.readAsDataURL(input.files![0]);
     fr.onload = (event) => {
-      this.area = {...this.area, templateImg: <string>fr.result};
-    }
+      this.area.templateImage = <string>fr.result;
+      this.editAreaTemplateRef.parkAreaChanges(this.area);
+    };
   }
 
   clearTemplateSpace() {
@@ -148,7 +153,6 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
         if(index != -1) {
           this.area.spaces.splice(index,1);
           this.editAreaTemplateRef.drawCanvas();
-
         }
         this.spaceModalVisible = false;
       }

@@ -6,12 +6,13 @@ public interface IParkAreaService : IEntityService<ParkArea>
     Task<ParkArea> UpdateAsync(
         ParkArea parkArea,
         int userId,
+        bool templateMode,
         CancellationToken cancellationToken = default
     );
 
     public Task DeleteAsync(
-        ParkArea parkArea, 
-        int userId, 
+        ParkArea parkArea,
+        int userId,
         CancellationToken cancellationToken = default
     );
 }

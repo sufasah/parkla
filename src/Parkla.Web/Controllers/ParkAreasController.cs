@@ -21,14 +21,24 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
         _mapper = mapper;
     }
 
-    public override async Task<IActionResult> UpdateAsync(
+    [NonAction]
+    public override Task<IActionResult> UpdateAsync(ParkAreaDto dto, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPut("")]
+    public async Task<IActionResult> UpdateAsync(
         [FromBody] ParkAreaDto dto,
-        CancellationToken cancellationToken
-    ) {
-        var parkArea = _mapper.Map<ParkArea>(dto);          
+        CancellationToken cancellationToken,
+        [FromQuery] bool templateMode = false
+    )
+    {
+        var parkArea = _mapper.Map<ParkArea>(dto);
         var result = await _service.UpdateAsync(
-            parkArea, 
+            parkArea,
             int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value),
+            templateMode,
             cancellationToken
         ).ConfigureAwait(false);
 
@@ -38,15 +48,16 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
     public override async Task<IActionResult> DeleteAsync(
         [FromBody] ParkAreaDto dto,
         CancellationToken cancellationToken
-    ) {
-        var parkArea = _mapper.Map<ParkArea>(dto);          
+    )
+    {
+        var parkArea = _mapper.Map<ParkArea>(dto);
         await _service.DeleteAsync(
-            parkArea, 
+            parkArea,
             int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value),
             cancellationToken
         ).ConfigureAwait(false);
 
         return Ok();
     }
-    
+
 }

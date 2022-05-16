@@ -18,5 +18,5 @@ public class PricingsController : EntityControllerBase<Pricing, PricingDto>
         _mapper = mapper;
     }
 
-    
+
 }

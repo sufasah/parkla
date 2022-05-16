@@ -75,7 +75,8 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
   spacePathPoint = 0;
   spacePath: SpacePath = [[0,0],[0,0],[0,0],[0,0]];
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
     this.zoomBehavior.on("zoom",(e) => {
@@ -85,9 +86,10 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
     this.ParkImage.onload = () => {
       this.imageLoading = false;
+      this.imageError = false;
+      this.selection = select(".park-body");
+      this.selection.call(this.zoomBehavior);
       this.initCanvas();
-      this.canvas.onclick = (e) => this.canvasOnClick(<PointerEvent>e);
-      this.canvas.oncontextmenu = (e) => this.canvasOnRightClick(<PointerEvent>e);
       this.drawCanvas();
     };
 
@@ -99,10 +101,9 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.canvas = this.canvasRef.nativeElement;
+    this.canvas.onclick = (e) => this.canvasOnClick(<PointerEvent>e);
+    this.canvas.oncontextmenu = (e) => this.canvasOnRightClick(<PointerEvent>e);
     this.ctx = this.canvas.getContext('2d')!;
-
-    this.selection = select(".park-body");
-    this.selection.call(this.zoomBehavior);
   }
 
   initCanvas() {
@@ -115,6 +116,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     let phStr = this.selection.style("height");
     let pWidth = Number(pwStr.substring(0,pwStr.length-2));
     let pHeight = Number(phStr.substring(0,phStr.length-2));
+
     let wRatio = pWidth / this.canvas.width;
     let hRatio = pHeight / this.canvas.height;
     let ratio = Math.min(wRatio,hRatio);
@@ -215,6 +217,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   canvasOnClick(e: PointerEvent) {
     if(this.selectingSpacePath) {
+
       this.spacePath[this.spacePathPoint] = [e.offsetX, e.offsetY];
       this.spacePathPoint++;
 
@@ -250,6 +253,6 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   parkAreaChanges(value: ParkArea) {
     this.imageLoading = true;
-    this.ParkImage.src = value.templateImg;
+    this.ParkImage.src = value.templateImage;
   }
 }

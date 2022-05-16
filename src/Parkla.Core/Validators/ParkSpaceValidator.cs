@@ -13,8 +13,9 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
         StatusUpdateTime();
         Status();
         SpacePath();
-     
+
         RuleSet("id", Id);
+        RuleSet("add", RsAdd);
     }
     private void Id() => RuleFor(x => x.Id)
         .NotNull();
@@ -34,4 +35,11 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
     private void SpacePath() => RuleFor(x => x.SpacePath)
         .NotNull()
         .Must(x => x!.Length == 4 && x.Aggregate(true, (prev, y) => y.Length == 2 && prev));
+    private void RsAdd()
+    {
+        AreaId();
+        RealSpaceId();
+        Name();
+        SpacePath();
+    }
 }

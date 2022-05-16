@@ -11,8 +11,8 @@ public interface IParkService : IEntityService<Park>
     );
 
     public Task DeleteAsync(
-        Park park, 
-        int userId, 
+        Park park,
+        int userId,
         CancellationToken cancellationToken = default
     );
 }

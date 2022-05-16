@@ -58,8 +58,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
     this.ParkImage.onload = () => {
       this.imageLoading = false;
+      this.selection = select(".park-body");
+      this.selection.call(this.zoomBehavior);
       this.initCanvas();
-      this.canvas.onclick = (e) => this.canvasOnClick(e);
       this.drawCanvas();
     };
 
@@ -73,8 +74,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     this.canvas = this.canvasRef.nativeElement;
     this.ctx = this.canvas.getContext('2d')!;
 
-    this.selection = select(".park-body");
-    this.selection.call(this.zoomBehavior);
+    this.canvas.onclick = (e) => this.canvasOnClick(e);
   }
 
   initCanvas() {
@@ -203,7 +203,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   parkAreaChanges(value: ParkArea) {
     this.imageLoading = true;
-    this.ParkImage.src = value.templateImg;
+    this.ParkImage.src = value.templateImage;
   }
 
 }

@@ -51,13 +51,26 @@ export class ParkAreaService {
     });
   }
 
-  updateArea(area: ParkArea) {
-    return this.httpClient.put<ParkArea>(apiParkAreas, {
+  updateArea(area: ParkArea, templateMode: boolean = false) {
+    let data:any = {
       id: area.id,
       name: area.name,
       description: area.description,
       reservationsEnabled: area.reservationsEnabled,
       pricings: area.pricings
+    };
+
+    if(templateMode) {
+      data = {
+        id: area.id,
+        templateImage: area.templateImage,
+        spaces: area.spaces
+      };
+    }
+    return this.httpClient.put<ParkArea>(apiParkAreas, data, {
+      params: {
+        templateMode
+      }
     });
   }
 

@@ -46,4 +46,22 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return area;
         }
+
+    public async Task<ParkArea> UpdateTemplateAsync(
+        ParkArea area, 
+        CancellationToken cancellationToken = default
+    ) {
+        using var context = new TContext();
+        var entry = context.Attach(area);
+        entry.State = EntityState.Unchanged;
+        var newSpaces = area.Spaces;
+
+        entry.Property(x => x.TemplateImage).IsModified = true;
+        
+        await entry.Collection(x => x.Spaces!).LoadAsync(cancellationToken);
+        area.Spaces = newSpaces;
+
+        await context.SaveChangesAsync(cancellationToken);
+        return area;
+    }
 }

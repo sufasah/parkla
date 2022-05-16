@@ -80,9 +80,14 @@ export class MEditAreaTemplateComponent implements OnInit {
   }
 
   editTemplate(form: NgForm) {
-    console.log(form);
-
     if(this.editing) return;
+    if(form.invalid){
+      var keys = Object.keys(form.controls);
+      keys.forEach(e => {
+        form.controls[e].markAsDirty()
+      });
+      return;
+    }
     for(let i=0; i < this.area.spaces.length; i++) {
       let space = this.area.spaces[i];
       if(!space.name || !space.realSpace || space.name.length == 0 || space.name.length > 30) {
@@ -91,6 +96,30 @@ export class MEditAreaTemplateComponent implements OnInit {
     }
 
     this.editing = true;
+    this.areaService.updateArea({
+      ...this.area,
+      templateImage: this.dataURItoBase64(this.area.templateImage) /******************************************WHAT IF TEMPLATE IMAGE IS NULL */
+    }, true).subscribe({
+      next: area => {
+        this.area = area;
+        this.messageService.add(
+          {life:1500,
+          severity:'success',
+          summary: 'Template Update',
+          detail: 'Area template and spaces has been updated successfully'
+        });
+        this.editing = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add(
+          {life:5000,
+          severity:'error',
+          summary: 'Template Update Fail',
+          detail: err.error.message
+        });
+        this.editing = false;
+      }
+    });
   }
 
   goArea() {
@@ -113,5 +142,25 @@ export class MEditAreaTemplateComponent implements OnInit {
         this.router.navigateByUrl(message.data.navigateTo);
       });
     }
+  }
+
+  dataURItoBase64(dataURI:string) {
+    return dataURI.split(',')[1];
+  }
+
+  dataURItoBlob(dataURI:string) {
+    const split = dataURI.split(',');
+    const value = split[1];
+    const mime = split[0].split(";")[0].split(":")[1]
+
+    const byteString = window.atob(value);
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+
+    for (let i = 0; i < byteString.length; i++)
+        ia[i] = byteString.charCodeAt(i);
+
+    var blob = new Blob([ab], {type: mime});
+    return blob;
   }
 }

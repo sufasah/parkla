@@ -20,7 +20,8 @@ public class ParkSpacesController : EntityControllerBase<ParkSpace, ParkSpaceDto
     }
 
     [NonAction]
-    public override Task<IActionResult> GetAllAsync(CancellationToken cancellationToken) {
+    public override Task<IActionResult> GetAllAsync(CancellationToken cancellationToken)
+    {
         throw new NotImplementedException();
     }
 
@@ -29,7 +30,8 @@ public class ParkSpacesController : EntityControllerBase<ParkSpace, ParkSpaceDto
         [FromQuery] int? areaId,
         CancellationToken cancellationToken,
         [FromQuery] bool includeReservations = false
-    ) {        
+    )
+    {
         var result = await _service.GetAllAsync(
             areaId,
             includeReservations,
@@ -37,5 +39,5 @@ public class ParkSpacesController : EntityControllerBase<ParkSpace, ParkSpaceDto
         ).ConfigureAwait(false);
         return Ok(result);
     }
-    
+
 }

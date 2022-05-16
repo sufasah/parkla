@@ -61,7 +61,7 @@ export class MNewParkAreaComponent implements OnInit {
           life:1500,
           severity:'success',
           summary: 'Area Added',
-          detail: 'Park area has beenadded successfully',
+          detail: 'Park area has been added successfully',
           data: {
             navigate: true,
             navigateTo: RouteUrl.mParkAreas(this.getParkId())
@@ -88,21 +88,5 @@ export class MNewParkAreaComponent implements OnInit {
         this.router.navigateByUrl(RouteUrl.mParkAreas(this.getParkId()));
       });
     }
-  }
-
-  dataURItoBlob(dataURI:string) {
-    const split = dataURI.split(',');
-    const value = split[1];
-    const mime = split[0].split(";")[0].split(":")[1]
-
-    const byteString = window.atob(value);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-
-    for (let i = 0; i < byteString.length; i++)
-        ia[i] = byteString.charCodeAt(i);
-
-    var blob = new Blob([ab], {type: mime});
-    return blob;
   }
 }
