@@ -205,6 +205,7 @@ export class AreaDataViewComponent implements OnInit {
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {
+        this.loading = false;
         this.onFetchError.emit(err.error.message);
       }
     });

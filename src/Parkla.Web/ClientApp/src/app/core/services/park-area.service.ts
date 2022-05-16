@@ -46,7 +46,8 @@ export class ParkAreaService {
       parkId: area.parkId,
       name: area.name,
       description: area.description,
-      reservationsEnabled: area.reservationsEnabled
+      reservationsEnabled: area.reservationsEnabled,
+      pricings: area.pricings
     });
   }
 
@@ -55,7 +56,8 @@ export class ParkAreaService {
       id: area.id,
       name: area.name,
       description: area.description,
-      reservationsEnabled: area.reservationsEnabled
+      reservationsEnabled: area.reservationsEnabled,
+      pricings: area.pricings
     });
   }
 

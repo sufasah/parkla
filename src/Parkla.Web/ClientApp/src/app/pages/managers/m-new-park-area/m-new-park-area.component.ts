@@ -16,8 +16,7 @@ export class MNewParkAreaComponent implements OnInit {
 
   area: ParkArea = <any>{
     reservationsEnabled: true,
-    pricings:[],
-    spaces: []
+    pricings:[]
   };
 
   adding = false;
@@ -52,12 +51,6 @@ export class MNewParkAreaComponent implements OnInit {
         form.controls[e].markAsDirty()
       });
       return;
-    }
-    for(let i=0; i < this.area.spaces.length; i++) {
-      let space = this.area.spaces[i];
-      if(!space.name || !space.realSpace || space.name.length == 0 || space.name.length > 30) {
-        return;
-      }
     }
 
     this.adding = true;

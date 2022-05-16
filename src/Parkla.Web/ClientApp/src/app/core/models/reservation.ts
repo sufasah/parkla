@@ -1,6 +1,7 @@
 import { Pricing } from "./pricing";
 
 export interface Reservation {
+  id: number;
   parkId: number;
   parkName: string;
   areaName: string;

@@ -1,15 +1,12 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
-import { ParkSpace, SpacePath } from '@app/core/models/park-space';
-import { ParkSpaceReal } from '@app/core/models/park-space-real';
+import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockAreas } from '@app/mock-data/areas';
 import { EditAreaTemplateComponent } from '@app/shared/components/edit-area-template/edit-area-template.component';
-import { ConfirmationService, Message, MessageService } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { delay, of } from 'rxjs';
+import { Message, MessageService } from 'primeng/api';
 @Component({
   selector: 'app-m-edit-park-area',
   templateUrl: './m-edit-park-area.component.html',
@@ -24,8 +21,7 @@ export class MEditParkAreaComponent implements OnInit {
   editAreaTemplateRef!: EditAreaTemplateComponent
 
   area: ParkArea = <any>{
-    pricings:[],
-    spaces: []
+    pricings:[]
   };
 
   editing = false;
@@ -34,13 +30,26 @@ export class MEditParkAreaComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private ngZone: NgZone,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private areaService: ParkAreaService,
   ) {
   }
 
   ngOnInit(): void {
-    // get park from service with parkid
-    this.area = mockAreas[0];
+    this.areaService.getArea(this.getAreaId()).subscribe({
+      next: parkArea => {
+        this.area = parkArea;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          life:5000,
+          severity:"error",
+          summary: "Fetch Park Area",
+          detail: err.error.message,
+          icon: "pi-lock",
+        });
+      }
+    });
   }
 
   goAreas() {
@@ -52,6 +61,10 @@ export class MEditParkAreaComponent implements OnInit {
     return Number(this.route.snapshot.paramMap.get("parkid"));
   }
 
+  getAreaId() {
+    return Number(this.route.snapshot.paramMap.get("areaid"));
+  }
+
   editArea(form: NgForm) {
     if(this.editing) return;
     if(form.invalid){
@@ -61,34 +74,30 @@ export class MEditParkAreaComponent implements OnInit {
       });
       return;
     }
-    for(let i=0; i < this.area.spaces.length; i++) {
-      let space = this.area.spaces[i];
-      if(!space.name || !space.realSpace || space.name.length == 0 || space.name.length > 30) {
-        return;
-      }
-    }
 
     this.editing = true;
-    //add opeartion to the server and result
-    of(true).pipe(delay(2000)).subscribe(success => {
-      if(success){
+    this.area.parkId = this.getParkId();
+    this.areaService.updateArea(this.area).subscribe({
+      next: area => {
+        this.area = area;
         this.messageService.add({
           life:1500,
           severity:'success',
           summary: 'Edited',
           detail: 'Park area is edited successfully',
-        })
-      }
-      else {
+        });
+        this.editing = false;
+      },
+      error: (err: HttpErrorResponse) => {
         this.messageService.add({
           life:5000,
           severity:"error",
           summary: "Edit Fail",
-          detail: "Park area isn't edited successfully",
+          detail: err.error.message,
           icon: "pi-lock",
-        })
+        });
+        this.editing = false;
       }
-      this.editing = false;
     });
   }
 

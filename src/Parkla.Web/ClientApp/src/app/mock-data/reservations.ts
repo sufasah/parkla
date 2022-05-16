@@ -3,13 +3,16 @@ import { Reservation } from "@app/core/models/reservation";
 
 export const mockReservations: Reservation[] = [
   {
+    id: 1,
     parkId: 1,
     parkName: "seapark",
     areaName: "basement5",
     pricing: {
+      id:1,
+      areaId: 2,
       type: "truck",
-      timeUnit: TimeUnit.MINUTE,
-      timeAmount: 30,
+      unit: TimeUnit.MINUTE,
+      amount: 30,
       price: 50
     },
     timeFrom: new Date(),

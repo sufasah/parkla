@@ -96,6 +96,7 @@ import { VerifyComponent } from './shared/components/verify/verify.component';
 import { SignalrService } from './core/services/signalr.service';
 import { ParkFormComponent } from './shared/components/park-form/park-form.component';
 import { ParkAreaFormComponent } from './shared/components/park-area-form/park-area-form.component';
+import { AreaTemplateFormComponent } from './shared/components/area-template-form/area-template-form.component';
 
 @NgModule({
   declarations: [
@@ -129,7 +130,8 @@ import { ParkAreaFormComponent } from './shared/components/park-area-form/park-a
     AreaDataViewComponent,
     VerifyComponent,
     ParkFormComponent,
-    ParkAreaFormComponent
+    ParkAreaFormComponent,
+    AreaTemplateFormComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

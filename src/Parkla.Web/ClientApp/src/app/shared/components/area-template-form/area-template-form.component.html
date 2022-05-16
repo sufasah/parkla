@@ -1,0 +1,168 @@
+<div>
+  <img
+    #templateImageRef
+    [hidden]="imageLoading"
+    [src]="area.templateImg"
+    width="300"
+    height="300"
+    />
+  <p-skeleton
+    *ngIf="imageLoading"
+    shape="square"
+    size="300px"
+    styleClass="d-inline-block m-1"
+    >
+  </p-skeleton>
+
+  <button
+    type="button"
+    pButton
+    pRipple
+    label="Edit Template"
+    (click)="showTemplateModal()"
+    ></button>
+</div>
+
+<div
+  *ngIf="templateModalVisible && !spaceModalVisible"
+  class="fullscreen-modal"
+  >
+  <div class="d-flex justify-content-between p-3">
+    <button
+      pButton
+      pRipple
+      label="Done"
+      [disabled]="spaceAdding"
+      (click)="editTemplateDone()"
+      >
+    </button>
+    <div class="p-buttonset d-inline-block">
+      <button
+        pButton
+        pRipple
+        [icon]="'pi ' + (spaceAdding ? 'pi-times' : 'pi-plus')"
+        [ngClass]="'p-button ' + (spaceAdding ? 'p-button-danger': 'p-button-success')"
+        (click)="addTemplateSpace()"
+        >
+      </button>
+      <button
+        pButton
+        pRipple
+        icon="pi pi-image"
+        (click)="setTemplateImageButton($event)"
+        [disabled]="spaceAdding"
+        >
+      </button>
+
+      <input
+        type="file"
+        hidden="true"
+        accept="image/*"
+        (change)="setTemplateImage($event)"
+        class="d-none"
+        />
+
+      <button
+        pButton
+        pRipple
+        icon="pi pi-trash"
+        class="p-button p-button-danger"
+        (click)="clearTemplateSpace()"
+        [disabled]="spaceAdding"
+        >
+      </button>
+    </div>
+  </div>
+
+  <app-edit-area-template
+    #editAreaTemplateRef
+    [parkArea]="area"
+    (spaceClicked)="spaceClicked($event)"
+    (spaceRightClicked)="spaceRightClicked($event)"
+    [(selectingSpacePath)]="spaceAdding"
+    (spacePathSelected)="addTemplateSpaceDone($event)"
+    >
+  </app-edit-area-template>
+</div>
+
+<div
+  *ngIf="spaceModalVisible"
+  class="fullscreen-modal"
+  >
+  <div class="p-2 d-flex" style="height: 80px;">
+    <button
+      pButton
+      pRipple
+      label="Done"
+      (click)="spaceModalDone()"
+      class="me-1"
+      >
+    </button>
+    <input
+      pInputText
+      name="id"
+      type="text"
+      maxlength="30"
+      [(ngModel)]="editingSpace.name"
+      required
+      class="flex-grow-1"
+      placeholder="Space name"
+      />
+  </div>
+  <div
+    style="height: calc( 100vh - 80px );"
+    class="overflow-auto"
+    >
+    <p-table
+      #dt
+      [value]="realSpaces"
+      selectionMode="single"
+      [(selection)]="selectedRealSpace"
+      dataKey="id"
+      responsiveLayout="stack"
+      [globalFilterFields]="['id', 'name']"
+      >
+      <ng-template pTemplate="caption">
+        <div class="d-flex justify-content-between">
+            <button
+              pButton
+              label="Clear"
+              class="p-button-outlined"
+              icon="pi pi-filter-slash"
+              (click)="clearTable(dt,searchInput)"
+              >
+            </button>
+            <span class="p-input-icon-left ml-auto">
+                <i class="pi pi-search"></i>
+                <input
+                  #searchInput
+                  pInputText
+                  type="text"
+                  (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                  placeholder="Search" />
+            </span>
+        </div>
+    </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-space>
+        <tr [pSelectableRow]="space">
+          <td>
+            <span class="p-column-title">Id</span>
+            {{space.id}}
+          </td>
+          <td>
+            <span class="p-column-title">Name</span>
+            {{space.name}}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

@@ -1,8 +1,10 @@
 import { TimeUnit } from "../enums/TimeUnit";
 
 export interface Pricing {
+  id: number;
+  areaId: number;
   type: string;
-  timeUnit: TimeUnit;
-  timeAmount: number;
+  unit: TimeUnit;
+  amount: number;
   price: number;
 }
