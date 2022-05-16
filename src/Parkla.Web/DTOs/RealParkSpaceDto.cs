@@ -10,6 +10,5 @@ public class RealParkSpaceDto
     public int? SpaceId { get; set; }
     public string? Name { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public SpaceStatus? Status { get; set; }
 }

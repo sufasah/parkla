@@ -26,13 +26,13 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
         CancellationToken cancellationToken
     ) {
         var parkArea = _mapper.Map<ParkArea>(dto);          
-        await _service.UpdateAsync(
+        var result = await _service.UpdateAsync(
             parkArea, 
             int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value),
             cancellationToken
         ).ConfigureAwait(false);
 
-        return Ok();
+        return Ok(result);
     }
 
     public override async Task<IActionResult> DeleteAsync(

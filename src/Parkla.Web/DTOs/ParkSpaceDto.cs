@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 
 namespace Parkla.Web.Models;
@@ -10,7 +9,6 @@ public class ParkSpaceDto
     public int? RealSpaceId { get; set; }
     public string? Name { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public SpaceStatus? Status { get; set; }
     public int[][]? SpacePath { get; set; }
 }
