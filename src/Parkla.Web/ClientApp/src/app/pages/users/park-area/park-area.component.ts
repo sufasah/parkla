@@ -7,7 +7,6 @@ import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace } from '@app/core/models/park-space';
 import { SpaceReservation } from '@app/core/models/space-reservation';
 import { AuthService } from '@app/core/services/auth.service';
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
@@ -69,7 +68,6 @@ export class ParkAreaComponent implements OnInit {
   reservationsOfDay: SpaceReservation[] & {isReserved: boolean}[] = [];
 
   constructor(
-    private refSharingService: RefSharingService,
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
@@ -77,14 +75,7 @@ export class ParkAreaComponent implements OnInit {
     private authService: AuthService) { }
 
   ngOnInit(): void {
-    let area = this.refSharingService.getData<ParkArea>(RSRoute.areasSelectedArea);
-
-    if(!!area)
-      this.selectedArea = area;
-    else {
-      //get from server
-      this.selectedArea = mockAreas[0];
-    }
+    this.selectedArea = mockAreas[0];
   }
 
   timeRangeChange(timeRange: [Date?, Date?]) {
@@ -132,7 +123,6 @@ export class ParkAreaComponent implements OnInit {
 
   goAreas() {
     let parkid = this.route.snapshot.params["parkid"];
-    this.refSharingService.removeData(RSRoute.areasSelectedArea);
 
     this.router.navigateByUrl(this.authService.asManager
       ? RouteUrl.mParkAreas(parkid)

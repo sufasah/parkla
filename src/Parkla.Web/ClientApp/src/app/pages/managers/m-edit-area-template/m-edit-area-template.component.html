@@ -1,1 +1,16 @@
-<p>m-edit-area-template works!</p>
+<p-toolbar>
+  <div>
+    <button pButton pRipple (click)="goArea()" label="Go Area"></button>
+  </div>
+  <app-user-avatar class="p-toolbar-group-right">
+  </app-user-avatar>
+</p-toolbar>
+
+<app-area-template-form
+  [(area)]="area"
+  (formSubmit)="editTemplate($event)"
+  [loading]="editing"
+  >
+</app-area-template-form>
+
+<p-toast (onClose)="messageClose($event.message)"></p-toast>

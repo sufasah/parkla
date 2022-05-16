@@ -47,6 +47,10 @@ export class MEditParkAreaComponent implements OnInit {
           summary: "Fetch Park Area",
           detail: err.error.message,
           icon: "pi-lock",
+          data: {
+            navigate: true,
+            navigateTo: RouteUrl.mParkAreas(this.getParkId())
+          }
         });
       }
     });

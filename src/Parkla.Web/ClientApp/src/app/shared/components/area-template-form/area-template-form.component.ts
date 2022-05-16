@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
@@ -23,13 +23,13 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   @Output()
   formSubmit = new EventEmitter<NgForm>();
 
-  @ViewChild("templateImageRef")
-  templateImage!: ElementRef<HTMLImageElement>
+  @Input()
+  loading = false;
 
   @ViewChild(EditAreaTemplateComponent)
   editAreaTemplateRef!: EditAreaTemplateComponent
 
-  templateModalVisible = false;
+  editing = false;
   spaceModalVisible = false;
   imageLoading = true;
   spaceAdding = false;
@@ -82,38 +82,14 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.templateImage.nativeElement.onload = (event) => {
-      this.imageLoading = false;
-    };
-
-    this.templateImage.nativeElement.onerror = (event) => {
-      this.templateImage.nativeElement.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
-    }
-
-    this.templateImage.nativeElement.src = this.area.templateImg;
-  }
-
-  /* while adding or editin validate spaces
-
-    for(let i=0; i < this.area.spaces.length; i++) {
-      let space = this.area.spaces[i];
-      if(!space.name || !space.realSpace || space.name.length == 0 || space.name.length > 30) {
-        return;
-      }
-    }
-  */
-
-  showTemplateModal() {
-    this.templateModalVisible = true;
   }
 
   spaceModalDone() {
     this.spaceModalVisible = false;
   }
 
-  editTemplateDone() {
-    this.spaceAdding = false;
-    this.templateModalVisible = false;
+  submit(form: NgForm) {
+    this.formSubmit.emit(form);
   }
 
   addTemplateSpace() {

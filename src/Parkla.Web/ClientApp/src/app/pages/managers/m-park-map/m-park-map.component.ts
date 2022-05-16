@@ -1,11 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { mockParks } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
@@ -37,7 +35,6 @@ export class MParkMapComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private refSharingService: RefSharingService,
     private authService: AuthService,
     private confirmService: ConfirmationService,
     private messageService: MessageService,
@@ -51,7 +48,6 @@ export class MParkMapComponent implements OnInit, OnDestroy {
   }
 
   navigateToParkAreas(park:Park) {
-    this.refSharingService.setData(RSRoute.mapSelectedPark,park);
 
     this.router.navigateByUrl(this.authService.asManager
       ? RouteUrl.mParkAreas(park.id)

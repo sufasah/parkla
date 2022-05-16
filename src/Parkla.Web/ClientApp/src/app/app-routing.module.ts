@@ -20,6 +20,7 @@ import { MEditParkAreaComponent } from './pages/managers/m-edit-park-area/m-edit
 import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.component';
 import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { MNewParkComponent } from './pages/managers/m-new-park/m-new-park.component';
+import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-template/m-edit-area-template.component';
 
 const routes: Routes = [
   {
@@ -89,6 +90,12 @@ const routes: Routes = [
                   {
                     path: ":areaid/edit",
                     component: MEditParkAreaComponent,
+                    pathMatch: "full",
+                    canActivate: [AuthGuard]
+                  },
+                  {
+                    path: ":areaid/edit/template",
+                    component: MEditAreaTemplateComponent,
                     pathMatch: "full",
                     canActivate: [AuthGuard]
                   },

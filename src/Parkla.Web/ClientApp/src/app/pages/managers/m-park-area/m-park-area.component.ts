@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace } from '@app/core/models/park-space';
 import { SpaceReservation } from '@app/core/models/space-reservation';
 import { AuthService } from '@app/core/services/auth.service';
-import { RefSharingService } from '@app/core/services/ref-sharing.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
@@ -73,20 +71,12 @@ export class MParkAreaComponent implements OnInit {
   reservationsOfDay: SpaceReservation[] & {isReserved: boolean}[] = [];
 
   constructor(
-    private refSharingService: RefSharingService,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService) { }
 
   ngOnInit(): void {
-    let area = this.refSharingService.getData<ParkArea>(RSRoute.areasSelectedArea);
-
-    if(!!area)
-      this.selectedArea = area;
-    else {
-      //get from server
-      this.selectedArea = mockAreas[0];
-    }
+    this.selectedArea = mockAreas[0];
   }
 
   spaceClicked(space: ParkSpace) {
@@ -98,12 +88,17 @@ export class MParkAreaComponent implements OnInit {
 
   goAreas() {
     let parkid = this.route.snapshot.params["parkid"];
-    this.refSharingService.removeData(RSRoute.areasSelectedArea);
-
     this.router.navigateByUrl(this.authService.asManager
       ? RouteUrl.mParkAreas(parkid)
       : RouteUrl.parkAreas(parkid)
     );
+  }
+
+  goEditTemplate() {
+    const parkid = Number(this.route.snapshot.paramMap.get("parkid"));
+    const areaid = Number(this.route.snapshot.paramMap.get("areaid"));
+
+    this.router.navigateByUrl(RouteUrl.mEditParkAreaTemplate(parkid, areaid));
   }
 
   showReserveModal() {

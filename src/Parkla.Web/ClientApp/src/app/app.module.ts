@@ -68,7 +68,6 @@ import { ReservationService } from './core/services/reservation.service';
 import { MapMarkerComponent } from './shared/components/map-marker/map-marker.component';
 import { ParkAreasComponent } from './pages/users/park-areas/park-areas.component';
 import { AreaDataViewComponent } from './shared/components/area-dataview/area-dataview.component';
-import { RefSharingService } from './core/services/ref-sharing.service';
 import { LoadMoneyComponent } from './pages/users/load-money/load-money.component';
 import { MapComponent } from './shared/components/map/map.component';
 import { MParkMapComponent } from './pages/managers/m-park-map/m-park-map.component';
@@ -97,6 +96,7 @@ import { SignalrService } from './core/services/signalr.service';
 import { ParkFormComponent } from './shared/components/park-form/park-form.component';
 import { ParkAreaFormComponent } from './shared/components/park-area-form/park-area-form.component';
 import { AreaTemplateFormComponent } from './shared/components/area-template-form/area-template-form.component';
+import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-template/m-edit-area-template.component';
 
 @NgModule({
   declarations: [
@@ -123,6 +123,7 @@ import { AreaTemplateFormComponent } from './shared/components/area-template-for
     MNewParkAreaComponent,
     MNewParkComponent,
     MEditParkAreaComponent,
+    MEditAreaTemplateComponent,
     EditAreaTemplateComponent,
     MEditParkComponent,
     MDashboardComponent,
@@ -218,7 +219,6 @@ import { AreaTemplateFormComponent } from './shared/components/area-template-for
     ConfirmationService,
     UserService,
     ReservationService,
-    RefSharingService,
     CityService,
     SignalrService,
     DistrictService,
