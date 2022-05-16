@@ -23,6 +23,19 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         _validator = validator;
     }
 
+    public override async Task<ParkArea?> GetAsync(
+        int id,
+        CancellationToken cancellationToken = default
+    ) {
+        return await _parkAreaRepo.GetAsync(
+            id,
+            new Expression<Func<ParkArea, object>>[]{
+                x => x.Pricings!
+            },
+            cancellationToken
+        );
+    }
+
     public async Task DeleteAsync(ParkArea parkArea, int userId, CancellationToken cancellationToken = default)
     {
         await ThrowIfUserNotMatch((int)parkArea.Id!, userId, cancellationToken).ConfigureAwait(false);
@@ -59,8 +72,12 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         entity.MinPrice = -1;
         entity.AvaragePrice = -1;
         entity.MaxPrice = -1;
+        entity.Spaces = null;
         
-        return await _parkAreaRepo.AddAsync(entity,cancellationToken).ConfigureAwait(false);
+        return await _parkAreaRepo.AddAsync(
+            entity,
+            cancellationToken
+        ).ConfigureAwait(false);
     }
 
     private async Task ThrowIfUserNotMatch(int parkAreaId, int userId, CancellationToken cancellationToken) {

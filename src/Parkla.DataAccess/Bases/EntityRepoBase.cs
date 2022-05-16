@@ -41,13 +41,12 @@ namespace Parkla.DataAccess.Bases
                 .ConfigureAwait(false);
             return result;
         }
-
-        public async Task<TEntity?> GetAsync<Tkey>(
-            Tkey id, 
-            CancellationToken cancellationToken = default
-        )   where Tkey: struct 
+        
+        private Expression<Func<TEntity,bool>> GetIdEqualExpression<Tkey>(
+            Tkey id,
+            TContext context
+        )  where Tkey: struct
         {
-            using var context = new TContext();
             var pk = context.Model.FindEntityType(typeof(TEntity))!
                 .FindPrimaryKey()!
                 .Properties
@@ -61,11 +60,45 @@ namespace Parkla.DataAccess.Bases
                 ),
                 param
             );
+
+            return expression;
+        }
+
+        public async Task<TEntity?> GetAsync<Tkey>(
+            Tkey id, 
+            CancellationToken cancellationToken = default
+        )   where Tkey: struct 
+        {
+            using var context = new TContext();
+
+            var expression = GetIdEqualExpression(id, context);
             TEntity? result = await context.Set<TEntity>()
                 .AsNoTracking()
                 .SingleOrDefaultAsync(expression, cancellationToken)
                 .ConfigureAwait(false);
+
             return result;
+        }
+
+        public async Task<TEntity?> GetAsync<Tkey>(
+            Tkey id, 
+            Expression<Func<TEntity, object>>[] includeProps, 
+            CancellationToken cancellationToken = default
+        ) where Tkey : struct
+        {
+            using var context = new TContext();
+
+            var expression = GetIdEqualExpression(id, context);
+            var query = context.Set<TEntity>().AsQueryable();
+            
+            foreach (var prop in includeProps)
+            {
+                query = query.Include(prop);
+            }
+
+            return await query.AsNoTracking()
+                .SingleOrDefaultAsync(expression, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public async Task<List<TEntity>> GetListAsync(

@@ -21,6 +21,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         MinPrice();
         AvaragePrice();
         MaxPrice();
+        Pricings();
      
         RuleSet("id", Id);
         RuleSet("update", RsUpdate);
@@ -62,9 +63,13 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         .NotNull()
         .InclusiveBetween(0,precision30);
 
+    private void Pricings() => RuleForEach(x => x.Pricings)
+        .SetValidator(new PricingValidator(), "add");
+
     private void RsUpdate() {
         Name();
         Description();
         ReservationsEnabled();
+        Pricings();
     }
 }

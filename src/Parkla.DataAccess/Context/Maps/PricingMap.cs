@@ -16,6 +16,9 @@ public class PricingMap : IEntityTypeConfiguration<Pricing> {
         b.Property(x => x.AreaId)
             .HasColumnName("area_id")
             .IsRequired();
+        b.Property(x => x.Type)
+            .HasMaxLength(30)
+            .IsRequired();
         b.Property(x => x.Unit)
             .HasColumnName("unit")
             .IsRequired();

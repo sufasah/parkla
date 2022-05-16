@@ -10,7 +10,7 @@ namespace Parkla.DataAccess.Abstract
             Expression<Func<T,bool>>? filter = null, 
             CancellationToken cancellationToken = default
         );
-        public Task<PagedList<T>> GetListAsync(
+        Task<PagedList<T>> GetListAsync(
             int nextRecord, 
             int pageSize,
             Expression<Func<T, bool>>? filter = null,
@@ -30,6 +30,12 @@ namespace Parkla.DataAccess.Abstract
 
         Task<T?> GetAsync<Tkey>(
             Tkey id, 
+            CancellationToken cancellationToken = default
+        ) where Tkey: struct;
+
+        Task<T?> GetAsync<Tkey>(
+            Tkey id, 
+            Expression<Func<T, object>>[] includeProps,
             CancellationToken cancellationToken = default
         ) where Tkey: struct;
 

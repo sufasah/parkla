@@ -71,6 +71,7 @@ builder.WebHost.ConfigureServices(services => {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(null, false));
     }).AddFluentValidation(config => {
         config.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     });
@@ -94,6 +95,7 @@ builder.WebHost.ConfigureServices(services => {
         c.PayloadSerializerOptions.PropertyNameCaseInsensitive = true;
         c.PayloadSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
         c.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        c.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter(null, false));
     });
 
     services.AddHostedService<SerialReceiver>();
