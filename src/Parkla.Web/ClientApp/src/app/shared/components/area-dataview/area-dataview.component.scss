@@ -73,6 +73,7 @@
 
       img {
           width: 75%;
+          height: 300px;
           box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
           margin: 2rem 0;
       }
@@ -126,4 +127,12 @@
     width: 100%;
   }
 }
+}
+
+@media screen and (max-width: 1500px) {
+  .area-grid-item-bottom {
+    display: flex;
+    flex-direction: column;
+  }
+
 }

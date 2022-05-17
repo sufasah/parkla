@@ -36,4 +36,4 @@ export const apiReservations = `${apiUrl}/Reservations`;
 
 export const apiUsers = `${apiUrl}/Users`;
 
-export const tmeplateNoImageUrl = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
+export const templateNoImageUrl = `${templatesUrl}/no-image.jpg`;

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
@@ -6,8 +7,8 @@ import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace } from '@app/core/models/park-space';
 import { SpaceReservation } from '@app/core/models/space-reservation';
 import { AuthService } from '@app/core/services/auth.service';
+import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
 import { MenuItem } from 'primeng/api';
 
@@ -73,10 +74,26 @@ export class MParkAreaComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private parkAreaService: ParkAreaService
+  ) {
+
+  }
 
   ngOnInit(): void {
-    this.selectedArea = mockAreas[0];
+    this.parkAreaService.getArea(this.getAreaId()).subscribe({
+      next: area => {
+        this.selectedArea = area;
+        this.selectedArea.spaces = area.spaces ?? [];
+      },
+      error: (err: HttpErrorResponse) => {
+
+      }
+    })
+  }
+
+  getAreaId() {
+    return Number(this.route.snapshot.paramMap.get("areaid"));
   }
 
   spaceClicked(space: ParkSpace) {

@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { ParkArea } from '@app/core/models/park-area';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkAreaService } from '@app/core/services/park-area.service';
@@ -208,5 +209,13 @@ export class AreaDataViewComponent implements OnInit {
         this.onFetchError.emit(err.error.message);
       }
     });
+  }
+
+  getImageUrl(area: ParkArea) {
+    return area.templateImage ? `${templatesUrl}/${area.templateImage}` : templateNoImageUrl
+  }
+
+  onImageError(image: HTMLImageElement) {
+    image.src = templateNoImageUrl;
   }
 }

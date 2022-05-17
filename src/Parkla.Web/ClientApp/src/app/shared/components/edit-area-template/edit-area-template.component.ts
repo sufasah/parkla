@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { templatesUrl, tmeplateNoImageUrl } from '@app/core/constants/http';
+import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { Point } from '@app/core/types/parkmap';
@@ -71,7 +71,6 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   dialogVisible = false;
 
-
   parkAreaChangedAtLeastOnce = false;
 
   spacePathPoint = 0;
@@ -95,7 +94,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     };
 
     this.ParkImage.onerror = () => {
-      this.ParkImage.src = tmeplateNoImageUrl;
+      this.ParkImage.src = templateNoImageUrl;
     }
   }
 
@@ -258,7 +257,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     this.imageLoading = true;
 
     if(!value.templateImage) {
-      this.ParkImage.src = tmeplateNoImageUrl;
+      this.ParkImage.src = templateNoImageUrl;
       return;
     }
 

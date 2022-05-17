@@ -1,7 +1,8 @@
-<div #canvasParent class="park-body">
-  <app-spinner *ngIf="imageLoading">
-
-  </app-spinner>
+<div #canvasParent class="park-body d-flex">
+  <div *ngIf="imageLoading" class="align-self-center m-auto">
+    <app-spinner>
+    </app-spinner>
+  </div>
   <canvas [hidden]="imageLoading"
     #canvas
     class="canvas"

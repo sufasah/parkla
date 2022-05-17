@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { templatesUrl, tmeplateNoImageUrl } from '@app/core/constants/http';
+import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
@@ -45,11 +45,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   imageLoading = true;
 
-  imageError = false;
-
   dialogVisible = false;
 
-
+  parkAreaChangedAtLeastOnce = false;
 
   constructor() { }
 
@@ -68,8 +66,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     };
 
     this.ParkImage.onerror = () => {
-      this.imageError = true;
-      this.ParkImage.src = tmeplateNoImageUrl;
+      this.ParkImage.src = templateNoImageUrl;
     }
   }
 
@@ -123,8 +120,6 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
       this.ParkImage.width,
       this.ParkImage.height
     );
-
-    if(this.imageError) return;
 
     this.parkArea.spaces.forEach(space => {
       if(this.parkArea.reservationsEnabled && space.reservations){
@@ -205,10 +200,15 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   }
 
   parkAreaChanges(value: ParkArea) {
+    if(!this.parkAreaChangedAtLeastOnce) {
+      this.parkAreaChangedAtLeastOnce = true;
+      return;
+    }
+
     this.imageLoading = true;
 
     if(!value.templateImage) {
-      this.ParkImage.src = tmeplateNoImageUrl;
+      this.ParkImage.src = templateNoImageUrl;
       return;
     }
 

@@ -41,7 +41,7 @@
   <ng-template let-area pTemplate="listItem">
     <div class="col-12">
       <div class="area-list-item">
-          <p-image [src]="area.templateImg" [preview]="true"></p-image>
+          <img #img1 [src]="getImageUrl(area)" onerror="onImageError(img1)"/>
           <div class="area-list-detail">
               <div class="area-name">{{area.name}}</div>
               <div class="area-description">{{area.description}}</div>
@@ -74,7 +74,7 @@
               <span class="area-price">{{area.minPrice}}-{{area.avaragePrice}}-{{area.maxPrice}}</span>
           </div>
           <div class="area-grid-item-content">
-              <p-image [src]="area.templateImg" [preview]="true"></p-image>
+              <img #img2 [src]="getImageUrl(area)" onerror="onImageError(img2)"/>
               <div class="area-name">{{area.name}}</div>
               <div class="area-description">{{area.description}}</div>
               <div class="area-reservable">{{area.reservationsEnabled}}</div>
