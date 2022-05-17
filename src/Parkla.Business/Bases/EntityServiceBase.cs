@@ -63,15 +63,8 @@ namespace Parkla.Business.Bases
             bool ascending, 
             CancellationToken cancellationToken = default
         ) {
-            if(search != null)
-                search = search.Trim();
-            if(string.IsNullOrWhiteSpace(search))
-                search = null;
-            
-            if(orderBy != null)
-                orderBy = orderBy.Trim();
-            if(string.IsNullOrWhiteSpace(orderBy))
-                orderBy = null;
+            NullOrTrim(ref search);
+            NullOrTrim(ref orderBy);
             
             var entityType = typeof(TEntity);
             var stringType = typeof(string);
@@ -92,8 +85,10 @@ namespace Parkla.Business.Bases
                     var notNull = Expression.NotEqual(property, Expression.Constant(null));
                     
                     Expression convert = property;
-                    if(prop.PropertyType != stringType)
-                        convert = Expression.Call(property, prop.PropertyType.GetMethod("ToString", Type.EmptyTypes)!);
+
+                    if(prop.PropertyType != stringType) {
+                        convert = Expression.Convert(Expression.Convert(property, typeof(object)),stringType);
+                    }
                     
                     var lowerConvert = Expression.Call(convert, stringType.GetMethod("ToLower", Type.EmptyTypes)!);
                     var contains = Expression.Call(lowerConvert, stringType.GetMethod("Contains",new Type[]{stringType})!, searchConstant);
@@ -102,6 +97,28 @@ namespace Parkla.Business.Bases
                     eFilter = Expression.OrElse(eFilter, notNullAndContains);
                 }
             }
+
+            return await _entityRepository.GetListAsync(
+                nextRecord, 
+                pageSize,
+                Expression.Lambda<Func<TEntity, bool>>(eFilter, eParam),
+                GetPropertyLambdaExpression(orderBy),
+                ascending,
+                cancellationToken
+            ).ConfigureAwait(false);
+        }
+
+        protected void NullOrTrim(ref string? value) {
+            if(string.IsNullOrWhiteSpace(value)) {
+                value = null;
+                return;
+            }
+            value = value.Trim();
+        }
+
+        protected Expression<Func<TEntity,object>>? GetPropertyLambdaExpression(string? orderBy) {
+            var entityType = typeof(TEntity);
+            var eParam = Expression.Parameter(entityType, "x");
 
             Expression<Func<TEntity,object>>? eOrderBy = null;
             if(orderBy != null) {
@@ -119,14 +136,7 @@ namespace Parkla.Business.Bases
                 }
             }
 
-            return await _entityRepository.GetListAsync(
-                nextRecord, 
-                pageSize,
-                Expression.Lambda<Func<TEntity, bool>>(eFilter, eParam),
-                eOrderBy,
-                ascending,
-                cancellationToken
-            ).ConfigureAwait(false);
+            return eOrderBy;
         }
 
         public virtual async Task<TEntity> NoValidateUpdateAsync(

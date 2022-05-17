@@ -1,10 +1,11 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
 import { RealParkSpaceService } from '@app/core/services/real-park-space.service';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { EditAreaTemplateComponent } from '../edit-area-template/edit-area-template.component';
 
@@ -30,8 +31,11 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   @ViewChild(EditAreaTemplateComponent)
   editAreaTemplateRef!: EditAreaTemplateComponent
 
+  @Output()
+  onRealSpaceFetchError = new EventEmitter<HttpErrorResponse>();
+
   editing = false;
-  spaceModalVisible = false;
+  spaceModalVisible = true;
   imageLoading = true;
   spaceAdding = false;
   editingSpace: ParkSpace = <any>{};
@@ -45,35 +49,21 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
     return this._selectedRealSpace;
   }
 
-  realSpaces: ParkSpaceReal[] = <any>[{
-    id: 1,
-    name: "realspace"
-  }, {
-    id: 2,
-    name: "x park y area space"
-  }, {
-    id: 3,
-    name: "wireless spacecode2512"
-  },{
-    id: 4,
-    name: "realspace"
-  }, {
-    id: 5,
-    name: "x park y area space"
-  }, {
-    id: 6,
-    name: "wireless spacecode2512"
-  },{
-    id: 7,
-    name: "realspace"
-  }, {
-    id: 8,
-    name: "x park y area space"
-  }, {
-    id: 9,
-    name: "wireless spacecode2512"
-  }];
+  realSpaces: ParkSpaceReal[] = [];
 
+  newRealSpaceName = "";
+
+  totalRecords = 0;
+
+  @Input()
+  realSpacesPageSize = 10;
+
+  nextRecord = 0;
+
+  searchTOID?: NodeJS.Timeout;
+  lastSearchSeconds = -10;
+  lastSearchInput: string | null = null;
+  realSpacesLoading = false;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -160,7 +150,63 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   }
 
   clearTable(table: Table, searchInput: HTMLInputElement) {
-    table.clear();
+    //table.clear();
     searchInput.value = "";
+    setTimeout(() => {
+      this.nextRecord = 0;
+      this.fetchRealSpaces(this.nextRecord);
+    }, 0);
   }
+
+  loadRealSpaces(evt: LazyLoadEvent) {
+    if(this.realSpacesLoading) return;
+
+    const nextRecord = evt.first!;
+
+    if(this.nextRecord == nextRecord) return;
+
+    setTimeout(() => {
+      this.nextRecord = nextRecord;
+
+      this.fetchRealSpaces(
+        nextRecord,
+        this.lastSearchInput
+      );
+    }, 0);
+  }
+
+  fetchRealSpaces(nextRecord: number, search: string | null = null) {
+    this.realSpaceService.getPage(nextRecord, this.realSpacesPageSize, search).subscribe({
+      next: response => {
+        if(response.headers.has("x-total-records"))
+          this.totalRecords = Number(response.headers.get("x-total-records"));
+
+        this.realSpaces = response.body!;
+        this.realSpacesLoading = false;
+      },
+      error: (err:HttpErrorResponse) => {
+        this.realSpacesLoading = false;
+        this.onRealSpaceFetchError.emit(err);
+      }
+    });
+  }
+
+  onSearchInput(evt: any) {
+    const seconds = Number.parseInt((evt.timeStamp/1000).toFixed(0));
+    const data = evt.target.value;
+
+    if(seconds - this.lastSearchSeconds < 2)
+      clearTimeout(this.searchTOID!);
+
+    this.searchTOID = setTimeout(() => {
+      this.fetchRealSpaces(
+        this.nextRecord,
+        data,
+      );
+    }, 1000);
+
+    this.lastSearchSeconds = seconds;
+    this.lastSearchInput = data;
+}
+
 }

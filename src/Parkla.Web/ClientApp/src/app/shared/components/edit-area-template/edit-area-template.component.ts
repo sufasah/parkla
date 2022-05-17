@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { templatesUrl, tmeplateNoImageUrl } from '@app/core/constants/http';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { Point } from '@app/core/types/parkmap';
@@ -70,7 +71,8 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
   dialogVisible = false;
 
-  imageError = false;
+
+  parkAreaChangedAtLeastOnce = false;
 
   spacePathPoint = 0;
   spacePath: SpacePath = [[0,0],[0,0],[0,0],[0,0]];
@@ -86,7 +88,6 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
 
     this.ParkImage.onload = () => {
       this.imageLoading = false;
-      this.imageError = false;
       this.selection = select(".park-body");
       this.selection.call(this.zoomBehavior);
       this.initCanvas();
@@ -94,8 +95,7 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
     };
 
     this.ParkImage.onerror = () => {
-      this.imageError = true;
-      this.ParkImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
+      this.ParkImage.src = tmeplateNoImageUrl;
     }
   }
 
@@ -150,8 +150,6 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
       this.ParkImage.width,
       this.ParkImage.height
     );
-
-    if(this.imageError) return;
 
     this.parkArea.spaces.forEach(space => {
       if(space.name && space.realSpace && space.name.length > 0 && space.name.length <= 30)
@@ -252,7 +250,21 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
   }
 
   parkAreaChanges(value: ParkArea) {
+    if(!this.parkAreaChangedAtLeastOnce) {
+      this.parkAreaChangedAtLeastOnce = true;
+      return;
+    }
+
     this.imageLoading = true;
-    this.ParkImage.src = value.templateImage;
+
+    if(!value.templateImage) {
+      this.ParkImage.src = tmeplateNoImageUrl;
+      return;
+    }
+
+    if(!value.templateImage.startsWith("data:"))
+      this.ParkImage.src = `${templatesUrl}/${value.templateImage}`;
+    else
+      this.ParkImage.src = value.templateImage;
   }
 }

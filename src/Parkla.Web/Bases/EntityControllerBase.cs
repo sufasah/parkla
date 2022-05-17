@@ -45,7 +45,7 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetPageAsync(
+    public virtual async Task<IActionResult> GetPageAsync(
         [FromQuery] PageDto pageDto,
         [FromQuery] string? s,
         [FromQuery] string? orderBy,

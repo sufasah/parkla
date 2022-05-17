@@ -103,8 +103,6 @@ export class AreaDataViewComponent implements OnInit {
       this.sortOrder = -1;
       this.sortField = value;
     }
-    console.log(event);
-
   }
 
   goArea(area:ParkArea) {
@@ -185,6 +183,7 @@ export class AreaDataViewComponent implements OnInit {
     this.parkAreaService.getAreasPage(
       nextRecord,
       this.pageSize,
+      this.getParkId(),
       search,
       orderBy,
       asc

@@ -17,6 +17,7 @@ export class ParkAreaService {
   getAreasPage(
     nextRecord: number,
     pageSize: number,
+    parkId: number,
     search: string | null = null,
     orderBy: string | null = null,
     asc: boolean | null = null,
@@ -24,6 +25,7 @@ export class ParkAreaService {
     const params = <any>{
       nextRecord,
       pageSize,
+      parkId
     };
 
     if(search) params.s = search;

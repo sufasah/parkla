@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { templatesUrl, tmeplateNoImageUrl } from '@app/core/constants/http';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
@@ -48,6 +49,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   dialogVisible = false;
 
+
+
   constructor() { }
 
   ngOnInit(): void {
@@ -66,7 +69,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
     this.ParkImage.onerror = () => {
       this.imageError = true;
-      this.ParkImage.src = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";
+      this.ParkImage.src = tmeplateNoImageUrl;
     }
   }
 
@@ -203,7 +206,16 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   parkAreaChanges(value: ParkArea) {
     this.imageLoading = true;
-    this.ParkImage.src = value.templateImage;
+
+    if(!value.templateImage) {
+      this.ParkImage.src = tmeplateNoImageUrl;
+      return;
+    }
+
+    if(!value.templateImage.startsWith("data:"))
+      this.ParkImage.src = `${templatesUrl}/${value.templateImage}`;
+    else
+      this.ParkImage.src = value.templateImage;
   }
 
 }

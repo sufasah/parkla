@@ -1,4 +1,8 @@
-export const apiUrl = "https://localhost:7070/api/v1";
+export const serverUrl = "https://localhost:7070";
+
+export const templatesUrl = `${serverUrl}/templates`;
+
+export const apiUrl = `${serverUrl}/api/v1`;
 
 export const apiLogin = `${apiUrl}/auth/login`;
 
@@ -32,3 +36,4 @@ export const apiReservations = `${apiUrl}/Reservations`;
 
 export const apiUsers = `${apiUrl}/Users`;
 
+export const tmeplateNoImageUrl = "https://nebosan.com.tr/wp-content/uploads/2018/06/no-image.jpg";

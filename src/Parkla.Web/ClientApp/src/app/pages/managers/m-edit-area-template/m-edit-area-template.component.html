@@ -10,6 +10,8 @@
   [(area)]="area"
   (formSubmit)="editTemplate($event)"
   [loading]="editing"
+  [realSpacesPageSize]="10"
+  (onRealSpaceFetchError)="onRealSpaceFetchError($event)"
   >
 </app-area-template-form>
 

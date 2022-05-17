@@ -98,7 +98,7 @@ export class MEditAreaTemplateComponent implements OnInit {
     this.editing = true;
     this.areaService.updateArea({
       ...this.area,
-      templateImage: this.dataURItoBase64(this.area.templateImage) /******************************************WHAT IF TEMPLATE IMAGE IS NULL */
+      templateImage: this.extractDataURI(this.area.templateImage)
     }, true).subscribe({
       next: area => {
         this.area = area;
@@ -111,8 +111,8 @@ export class MEditAreaTemplateComponent implements OnInit {
         this.editing = false;
       },
       error: (err: HttpErrorResponse) => {
-        this.messageService.add(
-          {life:5000,
+        this.messageService.add({
+          life:5000,
           severity:'error',
           summary: 'Template Update Fail',
           detail: err.error.message
@@ -120,6 +120,15 @@ export class MEditAreaTemplateComponent implements OnInit {
         this.editing = false;
       }
     });
+  }
+
+  onRealSpaceFetchError(err: HttpErrorResponse) {
+    this.messageService.add({
+      life:5000,
+      severity:'error',
+      summary: 'Fetch Real Spaces',
+      detail: err.error.message
+    })
   }
 
   goArea() {
@@ -144,8 +153,15 @@ export class MEditAreaTemplateComponent implements OnInit {
     }
   }
 
-  dataURItoBase64(dataURI:string) {
-    return dataURI.split(',')[1];
+  extractDataURI(dataURI:string | null) {
+    if(!dataURI) return null;
+
+    const split = dataURI.split(',');
+    const value = split[1];
+    const mime = split[0].split(";")[0].split(":")[1]
+
+    if(!value || ! mime) return null;
+    return `${mime},${value}`;
   }
 
   dataURItoBlob(dataURI:string) {

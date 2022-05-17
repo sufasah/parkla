@@ -9,6 +9,8 @@ using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
 using Parkla.DataAccess.Abstract;
 using System;
+using Parkla.Core.Helpers;
+using System.Reflection;
 
 namespace Parkla.Business.Concrete;
 public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
@@ -31,8 +33,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     public override async Task<ParkArea?> GetAsync(
         int id,
         CancellationToken cancellationToken = default
-    )
-    {
+    ) {
         return await _parkAreaRepo.GetAsync(
             id,
             new Expression<Func<ParkArea, object>>[]{
@@ -71,12 +72,16 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                 var mime = split[0];
                 var b64 = split[1];
                 var extension = MimeTypesMap.GetExtension(mime);
-                var fileName = $"{DateTime.UtcNow:yymmssffff}_{Path.GetRandomFileName()}.${extension}";
+                var fileName = $"{DateTime.UtcNow:yymmssffff}_{Path.GetRandomFileName()}.{extension}";
                 var path = Path.Combine(www, "Templates", fileName);
+                var fileData = Convert.FromBase64String(b64);
 
-                parkArea.TemplateImage = path;
-                await SaveTemplateFile(path, b64, cancellationToken);
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                using var stream = new FileStream(path, FileMode.CreateNew);
+                await stream.WriteAsync(fileData, cancellationToken).ConfigureAwait(false);
+
                 try {
+                    parkArea.TemplateImage = fileName;
                     return await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
                 }
                 catch(Exception) {
@@ -84,7 +89,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                     throw;
                 }
             }
-            
+
             return await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
         }
         else
@@ -134,11 +139,40 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             throw new ParklaException("User requested is not permitted to update or delete other user's parkArea", HttpStatusCode.BadRequest);
     }
 
-    private static async Task SaveTemplateFile(string path, string b64Data, CancellationToken cancellationToken) {
-        var fileData = Convert.FromBase64String(b64Data);
-        using var stream = new FileStream(path, FileMode.CreateNew);
+    public async Task<PagedList<ParkArea>> GetPageAsync(
+        int parkId, 
+        int nextRecord, 
+        int pageSize, 
+        string? search, 
+        string? orderBy, 
+        bool ascending, 
+        CancellationToken cancellationToken = default
+    ) {
+        NullOrTrim(ref search);
+        NullOrTrim(ref orderBy);
 
-        stream.Position = 0;
-        await stream.WriteAsync(fileData, cancellationToken).ConfigureAwait(false);
+        Expression eFilter = (ParkArea x) => x.ParkId == parkId;
+        if(search != null) {
+            eFilter = (ParkArea x) => (
+                x.Name!.ToLower().Contains(search) ||
+                x.MinPrice.ToString()!.ToLower().Contains(search) ||
+                x.AvaragePrice.ToString()!.ToLower().Contains(search) ||
+                x.MaxPrice.ToString()!.ToLower().Contains(search) ||
+                x.EmptySpace.ToString()!.ToLower().Contains(search) ||
+                x.OccupiedSpace.ToString()!.ToLower().Contains(search) ||
+                x.ReservedSpace.ToString()!.ToLower().Contains(search) ||
+                x.Description!.ToLower().Contains(search) || 
+                x.StatusUpdateTime.ToString()!.ToLower().Contains(search)
+            ) && x.ParkId == parkId;
+        }
+
+        return await _parkAreaRepo.GetListAsync(
+            nextRecord,
+            pageSize,
+            (Expression<Func<ParkArea,bool>>)eFilter,
+            GetPropertyLambdaExpression(orderBy),
+            ascending,
+            cancellationToken
+        );
     }
 }

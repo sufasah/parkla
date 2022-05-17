@@ -80,7 +80,7 @@
       </button>
       <input
         pInputText
-        name="id"
+        name="name"
         type="text"
         maxlength="30"
         [(ngModel)]="editingSpace.name"
@@ -96,11 +96,19 @@
       <p-table
         #dt
         [value]="realSpaces"
+        [paginator]="true"
+        [rows]="realSpacesPageSize"
+        [first]="nextRecord"
+        [totalRecords]="totalRecords"
+        [showCurrentPageReport]="true"
+        [showPageLinks]="true"
+        [lazy]="true"
+        [loading]="realSpacesLoading"
+        (onLazyLoad)="loadRealSpaces($event)"
         selectionMode="single"
         [(selection)]="selectedRealSpace"
         dataKey="id"
         responsiveLayout="stack"
-        [globalFilterFields]="['id', 'name']"
         >
         <ng-template pTemplate="caption">
           <div class="d-flex justify-content-between">
@@ -113,13 +121,20 @@
                 (click)="clearTable(dt,searchInput)"
                 >
               </button>
+              <button
+                type="button"
+                pButton
+                class="p-button-outlined"
+                icon="pi pi-plus"
+                >
+              </button>
               <span class="p-input-icon-left ml-auto">
                   <i class="pi pi-search"></i>
                   <input
                     #searchInput
                     pInputText
-                    type="text"
-                    (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                    type="search"
+                    (input)="onSearchInput($event)"
                     placeholder="Search" />
               </span>
           </div>
@@ -128,6 +143,7 @@
           <tr>
             <th>Id</th>
             <th>Name</th>
+            <th>Space Id</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-space>
@@ -140,8 +156,28 @@
               <span class="p-column-title">Name</span>
               {{space.name}}
             </td>
+            <td>
+              <span class="p-column-title">Name</span>
+              {{space.spaceId ?? '-'}}
+            </td>
           </tr>
         </ng-template>
+        <ng-template pTemplate="footer" let-columns>
+          <tr>
+              <td colspan="2">
+                <input
+                  pInputText
+                  name="realSpaceName"
+                  type="text"
+                  maxlength="30"
+                  [(ngModel)]="newRealSpaceName"
+                  novalidate
+                  class="w-100"
+                  placeholder="New real space name"
+                  />
+              </td>
+          </tr>
+      </ng-template>
       </p-table>
     </div>
   </div>
