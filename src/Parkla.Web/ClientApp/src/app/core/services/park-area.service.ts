@@ -66,7 +66,7 @@ export class ParkAreaService {
       data = {
         id: area.id,
         templateImage: area.templateImage,
-        spaces: area.spaces
+        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id}))
       };
     }
     return this.httpClient.put<ParkArea>(apiParkAreas, data, {

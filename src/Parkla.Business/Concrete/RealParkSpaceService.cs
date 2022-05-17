@@ -1,8 +1,10 @@
 using System.Linq.Expressions;
+using System.Net;
 using FluentValidation;
 using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
+using Parkla.Core.Exceptions;
 using Parkla.Core.Helpers;
 using Parkla.DataAccess.Abstract;
 
@@ -33,7 +35,7 @@ public class RealParkSpaceService : EntityServiceBase<RealParkSpace>, IRealParkS
         NullOrTrim(ref search);
         NullOrTrim(ref orderBy);
 
-        Expression eFilter = (ParkArea x) => x.ParkId == parkId;
+        Expression eFilter = (RealParkSpace x) => x.ParkId == parkId;
         if(search != null) {
             eFilter = (RealParkSpace x) => (
                 x.Name!.ToLower().Contains(search) ||
@@ -50,5 +52,14 @@ public class RealParkSpaceService : EntityServiceBase<RealParkSpace>, IRealParkS
             ascending,
             cancellationToken
         );
+    }
+
+    public override async Task<RealParkSpace> AddAsync(RealParkSpace entity, CancellationToken cancellationToken = default)
+    {
+        var result = await _validator.ValidateAsync(entity, o => o.IncludeRuleSets("update"), cancellationToken).ConfigureAwait(false);
+        if (!result.IsValid)
+            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+
+        return await _realParkSpaceRepo.AddAsync(entity, cancellationToken);
     }
 }

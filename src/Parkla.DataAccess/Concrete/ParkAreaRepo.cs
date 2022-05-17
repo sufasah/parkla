@@ -25,36 +25,37 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
     }
 
     public async Task<ParkArea> UpdateAsync(
-            ParkArea area,
-            Expression<Func<ParkArea, object?>>[] updateProps,
-            bool updateOtherProps = true,
-            CancellationToken cancellationToken = default
-        ) {
-            using var context = new TContext();
-            var newPricings = new List<Pricing>(area.Pricings!);
-            var result = context.Attach(area);
-      
-            await result.Collection(x => x.Pricings!).LoadAsync(cancellationToken);
-            result.State = updateOtherProps ? EntityState.Modified : EntityState.Unchanged;
+        ParkArea area,
+        Expression<Func<ParkArea, object?>>[] updateProps,
+        bool updateOtherProps = true,
+        CancellationToken cancellationToken = default
+    ) {
+        using var context = new TContext();
+        var newPricings = new List<Pricing>(area.Pricings!);
+        var result = context.Attach(area);
+    
+        await result.Collection(x => x.Pricings!).LoadAsync(cancellationToken);
+        result.State = updateOtherProps ? EntityState.Modified : EntityState.Unchanged;
 
-            foreach (var prop in updateProps)
-            {
-                result.Property(prop).IsModified = !updateOtherProps;
-            }
-
-            area.Pricings  = newPricings;
-            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            return area;
+        foreach (var prop in updateProps)
+        {
+            result.Property(prop).IsModified = !updateOtherProps;
         }
+
+        area.Pricings  = newPricings;
+        //result.Collection(x => x.Pricings).IsModified = true;
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        return area;
+    }
 
     public async Task<ParkArea> UpdateTemplateAsync(
         ParkArea area, 
         CancellationToken cancellationToken = default
     ) {
         using var context = new TContext();
+        var newSpaces = area.Spaces != null ? new List<ParkSpace>(area.Spaces) : new();
         var entry = context.Attach(area);
         entry.State = EntityState.Unchanged;
-        var newSpaces = area.Spaces;
 
         entry.Property(x => x.TemplateImage).IsModified = true;
         

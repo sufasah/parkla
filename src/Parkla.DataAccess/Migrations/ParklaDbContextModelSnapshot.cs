@@ -264,11 +264,6 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("real_space_id");
 
-                    b.Property<string>("SpacePath")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("space_path");
-
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
@@ -278,6 +273,11 @@ namespace Parkla.DataAccess.Migrations
                     b.Property<DateTime?>("StatusUpdateTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("status_update_time");
+
+                    b.Property<string>("TemplatePath")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("space_path");
 
                     b.HasKey("Id");
 

@@ -66,7 +66,9 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         await ThrowIfUserNotMatch((int)parkArea.Id!, userId, cancellationToken).ConfigureAwait(false);
 
         if (templateMode) {
-            if(parkArea.TemplateImage != null) {
+            var templateImageB64Validation = _validator.Validate(parkArea, o => o.IncludeRuleSets("template"));
+
+            if(parkArea.TemplateImage != null && templateImageB64Validation.IsValid) {
                 var www = _hostEnvironment.WebRootPath;
                 var split = parkArea.TemplateImage!.Split(',');
                 var mime = split[0];

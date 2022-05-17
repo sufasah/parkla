@@ -30,6 +30,8 @@ public class ParkSpaceService : EntityServiceBase<ParkSpace>, IParkSpaceService
         if(includeReservations)
             include.Add(x => x.Reservations!);
         
+        include.Add(x => x.RealSpace!);
+        
         return await _parkSpaceRepo.GetListAsync(
             include.ToArray(),
             areaId == null ? null : (ParkSpace x) => x.AreaId == areaId,

@@ -72,7 +72,6 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
 
     this.editing = true;
     this.park.user = <any>{id: this.authService.accessToken?.sub};
-    console.log(this.park);
 
     this.parkService.updatePark(this.park).subscribe({
       next: park => {

@@ -11,7 +11,7 @@ public class ParkSpace : IEntity {
     public string? Name { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
     public virtual SpaceStatus? Status { get; set; }
-    public int[][]? SpacePath { get; set; }
+    public int[][]? TemplatePath { get; set; }
     public virtual ICollection<Reservation>? Reservations { get; set; }
     public virtual ICollection<ReceivedSpaceStatus>? ReceivedSpaceStatuses { get; set; }
 }

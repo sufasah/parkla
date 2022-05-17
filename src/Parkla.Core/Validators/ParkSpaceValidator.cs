@@ -32,7 +32,7 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
     private void Status() => RuleFor(x => x.Status)
         .NotNull()
         .IsInEnum();
-    private void SpacePath() => RuleFor(x => x.SpacePath)
+    private void SpacePath() => RuleFor(x => x.TemplatePath)
         .NotNull()
         .Must(x => x!.Length == 4 && x.Aggregate(true, (prev, y) => y.Length == 2 && prev));
     private void RsAdd()

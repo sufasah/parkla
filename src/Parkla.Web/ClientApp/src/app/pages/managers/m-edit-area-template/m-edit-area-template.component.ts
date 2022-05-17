@@ -3,6 +3,7 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
+import { ParkSpaceReal } from '@app/core/models/park-space-real';
 import { ParkAreaService } from '@app/core/services/park-area.service';
 import { ParkSpaceService } from '@app/core/services/park-space.service';
 import { RouteUrl } from '@app/core/utils/route';
@@ -16,6 +17,8 @@ import { Message, MessageService } from 'primeng/api';
 export class MEditAreaTemplateComponent implements OnInit {
 
   area: ParkArea = <any>{
+    id: this.getAreaId(),
+    parkId: this.getParkId(),
     spaces: []
   };
 
@@ -39,7 +42,7 @@ export class MEditAreaTemplateComponent implements OnInit {
   getData() {
     this.areaService.getArea(this.getAreaId()).subscribe({
       next: area => {
-        this.area = area;
+        Object.assign(this.area, area);
         this.getAreaSpaces();
       },
       error: (err: HttpErrorResponse) => {
@@ -61,7 +64,7 @@ export class MEditAreaTemplateComponent implements OnInit {
   getAreaSpaces() {
     this.spaceService.getAreaParkSpaces(this.getAreaId(), false).subscribe({
       next: spaces => {
-        this.area.spaces = spaces;
+        this.area = {...this.area, spaces: spaces ?? []};
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
@@ -98,10 +101,12 @@ export class MEditAreaTemplateComponent implements OnInit {
     this.editing = true;
     this.areaService.updateArea({
       ...this.area,
-      templateImage: this.extractDataURI(this.area.templateImage)
+      templateImage: this.extractDataURI(this.area.templateImage) ?? this.area.templateImage
     }, true).subscribe({
       next: area => {
         this.area = area;
+        this.area.parkId = this.getParkId();
+
         this.messageService.add(
           {life:1500,
           severity:'success',
@@ -131,6 +136,24 @@ export class MEditAreaTemplateComponent implements OnInit {
     })
   }
 
+  onRealSpaceAddError(err: HttpErrorResponse) {
+    this.messageService.add({
+      life:5000,
+      severity:'error',
+      summary: 'Add Real Space',
+      detail: err.error.message
+    });
+  }
+
+  onRealSpaceDeleteError(err: HttpErrorResponse) {
+    this.messageService.add({
+      life:5000,
+      severity:'error',
+      summary: 'Delete Real Space',
+      detail: err.error.message
+    });
+  }
+
   goArea() {
     const parkid = this.getParkId();
     const areaid = this.getAreaId();
@@ -154,29 +177,10 @@ export class MEditAreaTemplateComponent implements OnInit {
   }
 
   extractDataURI(dataURI:string | null) {
-    if(!dataURI) return null;
-
+    if(!dataURI || !dataURI.match(/data:.+\/.+;base64,.+/)) return null;
     const split = dataURI.split(',');
     const value = split[1];
     const mime = split[0].split(";")[0].split(":")[1]
-
-    if(!value || ! mime) return null;
     return `${mime},${value}`;
-  }
-
-  dataURItoBlob(dataURI:string) {
-    const split = dataURI.split(',');
-    const value = split[1];
-    const mime = split[0].split(";")[0].split(":")[1]
-
-    const byteString = window.atob(value);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-
-    for (let i = 0; i < byteString.length; i++)
-        ia[i] = byteString.charCodeAt(i);
-
-    var blob = new Blob([ab], {type: mime});
-    return blob;
   }
 }

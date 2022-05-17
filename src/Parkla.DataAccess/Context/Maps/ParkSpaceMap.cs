@@ -31,7 +31,7 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
             .HasColumnName("status")
             .HasDefaultValue(SpaceStatus.OCCUPIED)
             .IsRequired();
-        b.Property(x => x.SpacePath)
+        b.Property(x => x.TemplatePath)
             .HasColumnName("space_path")
             .HasConversion(
                 x => $"{x![0][0]}:{x[0][1]},{x[1][0]}:{x[1][1]},{x[2][0]}:{x[2][1]},{x[3][0]}:{x[3][1]}",

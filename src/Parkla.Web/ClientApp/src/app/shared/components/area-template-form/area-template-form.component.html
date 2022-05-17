@@ -68,12 +68,15 @@
     *ngIf="spaceModalVisible"
     class="fullscreen-modal"
     >
-    <div class="p-2 d-flex" style="height: 80px;">
+    <div
+      class="p-2 d-flex"
+      style="height: 80px; border-bottom: 1px solid black;"
+      >
       <button
         type="button"
         pButton
         pRipple
-        label="Done"
+        [label]="(editingSpace.id ? editingSpace.id + ' - ' : '') + 'Done'"
         (click)="spaceModalDone()"
         class="me-1"
         >
@@ -88,6 +91,14 @@
         class="flex-grow-1"
         placeholder="Space name"
         />
+      <div
+        *ngIf="editingSpace.realSpace"
+        style="background-color: var(--gray-100); height:100%; border-radius: 5px; padding:5px"
+        class="mx-1 text-center align-self-center fw-bold"
+        >
+        <div>Selected Real Space</div>
+        <div>{{editingSpace.realSpace.id}} - {{editingSpace.realSpace.name}}</div>
+      </div>
     </div>
     <div
       style="height: calc( 100vh - 80px );"
@@ -106,9 +117,10 @@
         [loading]="realSpacesLoading"
         (onLazyLoad)="loadRealSpaces($event)"
         selectionMode="single"
-        [(selection)]="selectedRealSpace"
+        [selection]="getSelectedRealSpace()"
+        (selectionChange)="setSelectedRealSpace($event)"
         dataKey="id"
-        responsiveLayout="stack"
+        responsiveLayout="scroll"
         >
         <ng-template pTemplate="caption">
           <div class="d-flex justify-content-between">
@@ -119,13 +131,6 @@
                 class="p-button-outlined"
                 icon="pi pi-filter-slash"
                 (click)="clearTable(dt,searchInput)"
-                >
-              </button>
-              <button
-                type="button"
-                pButton
-                class="p-button-outlined"
-                icon="pi pi-plus"
                 >
               </button>
               <span class="p-input-icon-left ml-auto">
@@ -141,30 +146,40 @@
       </ng-template>
         <ng-template pTemplate="header">
           <tr>
-            <th>Id</th>
-            <th>Name</th>
+            <th>Real Space Id</th>
+            <th>Real Space Name</th>
             <th>Space Id</th>
+            <th></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-space>
-          <tr [pSelectableRow]="space">
+          <tr [pSelectableRow]="space" [pContextMenuRow]="space" [style]="isRealSpaceSelected(space) ? 'background-color: #f0feff;' : space.id && space.spaceId === editingSpace.id ? 'background-color: #f0fff0;' : ''">
             <td>
-              <span class="p-column-title">Id</span>
               {{space.id}}
             </td>
             <td>
-              <span class="p-column-title">Name</span>
               {{space.name}}
             </td>
             <td>
-              <span class="p-column-title">Name</span>
               {{space.spaceId ?? '-'}}
+            </td>
+            <td>
+              <button
+                type="button"
+                pButton
+                class="p-button-outlined"
+                icon="pi pi-times"
+                (click)="deleteRealSpace(space)"
+                style="width: 30px; height: 30px;"
+                >
+              </button>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="footer" let-columns>
           <tr>
-              <td colspan="2">
+            <td colspan="4">
+              <div class="d-flex">
                 <input
                   pInputText
                   name="realSpaceName"
@@ -172,10 +187,20 @@
                   maxlength="30"
                   [(ngModel)]="newRealSpaceName"
                   novalidate
-                  class="w-100"
+                  class="flex-grow-1"
                   placeholder="New real space name"
                   />
-              </td>
+                <button
+                  type="button"
+                  pButton
+                  pRipple
+                  label="Add"
+                  (click)="addRealSpace()"
+                  class="mx-3"
+                  >
+                </button>
+              </div>
+            </td>
           </tr>
       </ng-template>
       </p-table>

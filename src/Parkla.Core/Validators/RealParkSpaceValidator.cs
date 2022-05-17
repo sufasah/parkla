@@ -14,6 +14,7 @@ public class RealParkSpaceValidator : AbstractValidator<RealParkSpace>
         Status();
      
         RuleSet("id", Id);
+        RuleSet("update", RsUpdate);
     }
     private void Id() => RuleFor(x => x.Id)
         .NotNull();
@@ -30,4 +31,8 @@ public class RealParkSpaceValidator : AbstractValidator<RealParkSpace>
     private void Status() => RuleFor(x => x.Status)
         .NotNull()
         .IsInEnum();
+    
+    private void RsUpdate() {
+        Name();
+    }
 }

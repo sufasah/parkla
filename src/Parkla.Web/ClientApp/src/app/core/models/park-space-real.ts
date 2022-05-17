@@ -1,5 +1,5 @@
 export interface ParkSpaceReal {
-  id: string;
+  id: number;
   parkid: number;
   areaid: number;
   spaceid?: number;

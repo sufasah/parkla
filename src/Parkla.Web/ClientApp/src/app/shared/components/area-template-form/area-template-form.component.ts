@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
@@ -34,20 +34,20 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   @Output()
   onRealSpaceFetchError = new EventEmitter<HttpErrorResponse>();
 
+  @Output()
+  onRealSpaceAddError = new EventEmitter<HttpErrorResponse>();
+
+  @Output()
+  onRealSpaceDeleteError = new EventEmitter<HttpErrorResponse>();
+
+  @Output()
+  onAddRealSpace = new EventEmitter<ParkSpaceReal>();
+
   editing = false;
-  spaceModalVisible = true;
+  spaceModalVisible = false;
   imageLoading = true;
   spaceAdding = false;
   editingSpace: ParkSpace = <any>{};
-
-  _selectedRealSpace?: ParkSpaceReal;
-  set selectedRealSpace(value: ParkSpaceReal | undefined) {
-    this._selectedRealSpace = value;
-    this.editingSpace.realSpace = value ? {...value} : undefined;
-  }
-  get selectedRealSpace() {
-    return this._selectedRealSpace;
-  }
 
   realSpaces: ParkSpaceReal[] = [];
 
@@ -78,6 +78,7 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
   spaceModalDone() {
     this.spaceModalVisible = false;
+    this.editAreaTemplateRef.drawCanvas();
   }
 
   submit(form: NgForm) {
@@ -90,6 +91,7 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
   addTemplateSpaceDone(spacePath: SpacePath) {
     this.area.spaces.push(<any>{
+      areaId: this.area.id,
       templatePath: [...spacePath],
     });
   }
@@ -121,7 +123,8 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
       header: "Clear",
       message: "Are you sure to clear all spaces on park area?",
       accept: () => {
-        this.area = {...this.area, spaces: []};
+        this.area.spaces = [];
+        this.editAreaTemplateRef.drawCanvas();
       },
       icon: "pi pi-trash"
     })
@@ -152,10 +155,7 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   clearTable(table: Table, searchInput: HTMLInputElement) {
     //table.clear();
     searchInput.value = "";
-    setTimeout(() => {
-      this.nextRecord = 0;
-      this.fetchRealSpaces(this.nextRecord);
-    }, 0);
+    this.fetchRealSpaces(this.nextRecord);
   }
 
   loadRealSpaces(evt: LazyLoadEvent) {
@@ -163,20 +163,16 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
     const nextRecord = evt.first!;
 
-    if(this.nextRecord == nextRecord) return;
+    this.nextRecord = nextRecord;
 
-    setTimeout(() => {
-      this.nextRecord = nextRecord;
-
-      this.fetchRealSpaces(
-        nextRecord,
-        this.lastSearchInput
-      );
-    }, 0);
-  }
+    this.fetchRealSpaces(
+      nextRecord,
+      this.lastSearchInput
+    );
+}
 
   fetchRealSpaces(nextRecord: number, search: string | null = null) {
-    this.realSpaceService.getPage(nextRecord, this.realSpacesPageSize, search).subscribe({
+    this.realSpaceService.getPage(this.area.parkId, nextRecord, this.realSpacesPageSize, search).subscribe({
       next: response => {
         if(response.headers.has("x-total-records"))
           this.totalRecords = Number(response.headers.get("x-total-records"));
@@ -207,6 +203,62 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
     this.lastSearchSeconds = seconds;
     this.lastSearchInput = data;
-}
+  }
 
+  addRealSpace() {
+    this.realSpaceService.addRealSpace(<any>{
+      parkId: this.area.parkId,
+      name: this.newRealSpaceName
+    }).subscribe({
+      next: realSpace => {
+        this.realSpaces.push(realSpace);
+      },
+      error: (err:HttpErrorResponse) => {
+        this.onRealSpaceAddError.emit(err);
+      }
+    });
+  }
+
+  deleteRealSpace(realSpace: ParkSpaceReal) {
+    this.confirmationService.confirm({
+      header: "Real Space Deletion",
+      message: `Are you sure to delete the realspace with '${realSpace.id}' id and '${realSpace.name}' name ?`,
+      accept: () => {
+        this.realSpaceService.deleteRealSpace(realSpace.id).subscribe({
+          next: () => {
+            this.realSpacesLoading = true;
+            this.area.spaces.forEach(space => {
+              if(space.realSpace && space.realSpace.id == realSpace.id)
+                space.realSpace = undefined;
+            });
+            this.fetchRealSpaces(this.nextRecord, this.lastSearchInput);
+          },
+          error: (err:HttpErrorResponse) => {
+            this.onRealSpaceDeleteError.emit(err);
+          }
+        });
+      },
+      icon: "pi pi-trash"
+    })
+  }
+
+  setSelectedRealSpace(realSpace: ParkSpaceReal) {
+    if(realSpace) {
+      for(let i=0; i<this.area.spaces.length; i++) {
+        const space = this.area.spaces[i];
+
+        if(space.realSpace && space.realSpace.id == realSpace.id && space != this.editingSpace)
+          return;
+      }
+    }
+    this.editingSpace.realSpace = realSpace;
+  }
+
+  getSelectedRealSpace() {
+    return this.editingSpace.realSpace;
+  }
+
+  isRealSpaceSelected(space: ParkSpaceReal) {
+    return !!this.area.spaces.find(x => x.realSpace && x.realSpace.id == space.id);
+  }
 }

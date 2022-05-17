@@ -27,6 +27,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         RuleSet("id", Id);
         RuleSet("update", RsUpdate);
         RuleSet("templateUpdate", RsTemplateUpdate);
+        RuleSet("template", RsTemplate);
     }
     private void Id() => RuleFor(x => x.Id)
         .NotNull();
@@ -81,6 +82,10 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
 
     private void RsTemplateUpdate()
     {
+        Spaces();
+    }
+
+    private void RsTemplate() {
         RuleFor(x => x.TemplateImage)
             .Must(x => {
                 if(x==null) return true;
@@ -88,7 +93,6 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
                 if(i == -1) return false;
                 var i2 = x.IndexOf(',',i+1);
                 return i2 != -1;
-            }).WithMessage("Template image must be 'mime/type,base64filedata' format");
-        Spaces();
+            });
     }
 }
