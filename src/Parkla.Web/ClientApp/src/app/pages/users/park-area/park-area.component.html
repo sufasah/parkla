@@ -38,8 +38,8 @@
   >
   <ng-template pTemplate="header">
     <div>
-      <h3>{{selectedSpace.name}}</h3>
-      <h4>{{selectedSpace.status}}</h4>
+      <h3>{{selectedSpace!.name}}</h3>
+      <h4>{{selectedSpace!.status}}</h4>
     </div>
   </ng-template>
 
@@ -126,7 +126,7 @@
 
   <ng-template pTemplate="footer" >
     <div class="mt-3">
-      <p-button type="button" icon="pi pi-calendar" label="Reserve" (onClick)="reserveSpace()" [disabled]="selectedSpace.status == SpaceStatusEnum.OCCUPIED || selectedSpace.isReserved"></p-button>
+      <p-button type="button" icon="pi pi-calendar" label="Reserve" (onClick)="reserveSpace()" [disabled]="selectedSpace!.status == SpaceStatusEnum.OCCUPIED || selectedSpace!.isReserved"></p-button>
       <p-button type="button" icon="pi pi-times" label="Close" [styleClass]="'pi-button-error'" (onClick)="dialogVisible = false"></p-button>
     </div>
   </ng-template>

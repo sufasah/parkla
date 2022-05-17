@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RSRoute } from '@app/core/constants/ref-sharing';
@@ -7,6 +8,8 @@ import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace } from '@app/core/models/park-space';
 import { SpaceReservation } from '@app/core/models/space-reservation';
 import { AuthService } from '@app/core/services/auth.service';
+import { ParkAreaService } from '@app/core/services/park-area.service';
+import { ParkSpaceService } from '@app/core/services/park-space.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
@@ -25,9 +28,12 @@ export class ParkAreaComponent implements OnInit {
 
   dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  selectedArea!: ParkArea;
+  selectedArea: ParkArea = <any>{
+    id: this.getAreaId(),
+    spaces: []
+  };;
 
-  selectedSpace!: ParkSpace;
+  selectedSpace?: ParkSpace;
 
   dialogVisible = false;
 
@@ -71,11 +77,52 @@ export class ParkAreaComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
+    private areaService: ParkAreaService,
+    private spaceService: ParkSpaceService,
     private confirmationService: ConfirmationService,
     private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.selectedArea = mockAreas[0];
+    this.getData();
+  }
+
+  getData() {
+    this.areaService.getArea(this.getAreaId()).subscribe({
+      next: area => {
+        Object.assign(this.selectedArea, area);
+        this.getAreaSpaces();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          life:5000,
+          severity:"error",
+          summary: "Fetch Park Area",
+          detail: err.error.message,
+          icon: "pi-lock"
+        });
+      }
+    });
+  }
+
+  getAreaSpaces() {
+    this.spaceService.getAreaParkSpaces(this.getAreaId(), true).subscribe({
+      next: spaces => {
+        this.selectedArea = {...this.selectedArea, spaces: spaces ?? []};
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          life:5000,
+          severity:"error",
+          summary: "Fetch Park Spaces",
+          detail: err.error.message,
+          icon: "pi-lock"
+        });
+      }
+    });
+  }
+
+  getAreaId() {
+    return Number(this.route.snapshot.paramMap.get("areaid"));
   }
 
   timeRangeChange(timeRange: [Date?, Date?]) {
@@ -134,7 +181,7 @@ export class ParkAreaComponent implements OnInit {
     this.generateSpaceReservationTable(this.weekDays[0]);
 
     const now = new Date();
-    if(this.selectedSpace.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+    if(this.selectedSpace!.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
       this.reservationsOfDay[0].isReserved = true;
 
     this.dialogVisible = true;
@@ -145,12 +192,12 @@ export class ParkAreaComponent implements OnInit {
     this.generateSpaceReservationTable(item);
 
     const now = new Date();
-    if(this.selectedSpace.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+    if(this.selectedSpace!.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
       this.reservationsOfDay[0].isReserved = true;
   }
 
   generateSpaceReservationTable(item: MenuItem) {
-    let spaceRes = this.selectedSpace.reservations;
+    let spaceRes = this.selectedSpace!.reservations;
     let resOfDay =  spaceRes.filter(res => this.isTimeRangesIntercept(
       res.startTime,
       res.endTime,
