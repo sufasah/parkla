@@ -1,8 +1,7 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { mockParks } from '@app/mock-data/parking-lots';
 import { MessageService } from 'primeng/api';
-import { delay, ReplaySubject, Subject, Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { apiParks } from '../constants/http';
 import { ChangablePark, Park } from '../models/park';
 import { AuthService } from './auth.service';
@@ -143,7 +142,8 @@ export class ParkService implements OnDestroy {
       location: park.location,
       latitude: park.latitude,
       longitude: park.longitude,
-      extras: park.extras
+      extras: park.extras,
+      xmin: park.xmin
     });
   }
 
@@ -154,7 +154,8 @@ export class ParkService implements OnDestroy {
       location: park.location,
       latitude: park.latitude,
       longitude: park.longitude,
-      extras: park.extras
+      extras: park.extras,
+      xmin: park.xmin
     });
   }
 

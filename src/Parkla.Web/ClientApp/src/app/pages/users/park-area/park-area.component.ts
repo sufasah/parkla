@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
@@ -11,7 +10,6 @@ import { AuthService } from '@app/core/services/auth.service';
 import { ParkAreaService } from '@app/core/services/park-area.service';
 import { ParkSpaceService } from '@app/core/services/park-space.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockAreas } from '@app/mock-data/areas';
 import { ParkTemplateComponent } from '@app/shared/components/area-template/area-template.component';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 

@@ -30,7 +30,16 @@ public static class AppExceptionHandler
                 if(error is ParklaException) {
                     await (error as ParklaException)!.HandleException(context);
                 }
-                else if(error is DbUpdateException || error is DbUpdateConcurrencyException) {
+                else if(error is DbUpdateConcurrencyException) {
+                    await WriteMessage(
+                        context,
+                        "Concurrent database record update detected. Please refresh the page an retry to update or delete again.",
+                        HttpStatusCode.Conflict,
+                        logger,
+                        error
+                    ).ConfigureAwait(false);
+                }
+                else if(error is DbUpdateException) {
                     await WriteMessage(
                         context,
                         "Error has been catched while updating the database data. Most probably the data inside request is not consistent.",

@@ -1,11 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { RSRoute } from '@app/core/constants/ref-sharing';
 import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockParks } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Subscription } from 'rxjs';
 
@@ -16,7 +14,7 @@ import { Subscription } from 'rxjs';
 })
 export class ParkMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  parks = mockParks;
+  parks = [];
 
   dialogVisible = false;
 

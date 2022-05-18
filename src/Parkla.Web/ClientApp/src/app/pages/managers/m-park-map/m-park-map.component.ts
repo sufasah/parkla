@@ -5,7 +5,6 @@ import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { mockParks } from '@app/mock-data/parking-lots';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
@@ -17,7 +16,7 @@ import { Subscription } from 'rxjs';
 })
 export class MParkMapComponent implements OnInit, OnDestroy {
 
-  parks = mockParks;
+  parks = [];
 
   dialogVisible = false;
 

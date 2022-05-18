@@ -36,8 +36,6 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .HasColumnName("extras")
             .IsRequired()
             .HasMaxLength(10);
-        b.Property(x => x.RowVersion)
-            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.EmptySpace)
@@ -61,6 +59,8 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .HasColumnName("max_price")
             .HasDefaultValue(null)
             .HasPrecision(30,2);
+
+        b.UseXminAsConcurrencyToken();
 
         b.HasOne(x => x.User).WithMany(x => x.Parks).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         

@@ -17,6 +17,7 @@ export interface Park {
   avaragePrice: number;
   maxPrice: number;
   areas: ParkArea[];
+  xmin: number;
 }
 
 export type ChangablePark =  {subject: Subject<void>} & Park;

@@ -54,7 +54,7 @@ namespace Parkla.Business.Bases
             return await entities;
         }
 
-        public async Task<PagedList<TEntity>> GetPageAsync(
+        public virtual async Task<PagedList<TEntity>> GetPageAsync(
             int nextRecord, 
             int pageSize,  
             string? search, 

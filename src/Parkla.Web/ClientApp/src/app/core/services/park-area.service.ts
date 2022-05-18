@@ -49,7 +49,8 @@ export class ParkAreaService {
       name: area.name,
       description: area.description,
       reservationsEnabled: area.reservationsEnabled,
-      pricings: area.pricings
+      pricings: area.pricings,
+      xmin: area.xmin
     });
   }
 
@@ -59,14 +60,16 @@ export class ParkAreaService {
       name: area.name,
       description: area.description,
       reservationsEnabled: area.reservationsEnabled,
-      pricings: area.pricings
+      pricings: area.pricings,
+      xmin: area.xmin
     };
 
     if(templateMode) {
       data = {
         id: area.id,
         templateImage: area.templateImage,
-        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id}))
+        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id})),
+        xmin: area.xmin
       };
     }
     return this.httpClient.put<ParkArea>(apiParkAreas, data, {

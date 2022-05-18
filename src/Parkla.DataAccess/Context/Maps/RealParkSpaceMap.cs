@@ -24,8 +24,6 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
             .HasColumnName("name")
             .HasMaxLength(30)
             .IsRequired();
-        b.Property(x => x.RowVersion)
-            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.Status)
@@ -33,6 +31,7 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
             .HasDefaultValue(SpaceStatus.UNKNOWN)
             .IsRequired();
         
+        b.UseXminAsConcurrencyToken();
             
         b.HasOne(x => x.Park).WithMany(x => x.RealSpaces).HasForeignKey(x => x.ParkId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(x => x.Space).WithOne(x => x.RealSpace).HasForeignKey<RealParkSpace>(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);

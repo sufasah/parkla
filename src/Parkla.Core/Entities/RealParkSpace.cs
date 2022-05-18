@@ -9,7 +9,7 @@ public class RealParkSpace : IEntity {
     public int? SpaceId { get; set; }
     public virtual ParkSpace? Space { get; set; }
     public string? Name { get; set; }
-    public byte[]? RowVersion { get; set; }
+    public virtual uint xmin { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
     public virtual SpaceStatus? Status { get; set; }
     public virtual ICollection<ReceivedSpaceStatus>? ReceivedSpaceStatuses { get; set; }

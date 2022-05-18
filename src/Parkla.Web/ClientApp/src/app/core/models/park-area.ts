@@ -17,4 +17,5 @@ export interface ParkArea {
   minPrice: number;
   avaragePrice: number;
   maxPrice: number;
+  xmin: number;
 }

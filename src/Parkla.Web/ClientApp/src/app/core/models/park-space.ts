@@ -7,11 +7,14 @@ export interface ParkSpace {
   id: number;
   areaId: number;
   name: string;
+  realSpaceId: number;
   realSpace?: ParkSpaceReal;
+  statusUpdateTime: number;
   status: SpaceStatus;
   templatePath: SpacePath;
   isReserved: boolean;
   reservations: SpaceReservation[];
+  xmin: number;
 }
 
 export type SpacePath = [Point,Point,Point,Point];

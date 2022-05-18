@@ -9,7 +9,7 @@ public class Park : IEntity {
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
     public string[]? Extras { get; set; }
-    public byte[]? RowVersion { get; set; }
+    public virtual uint xmin { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
     public int? EmptySpace { get; set; }
     public int? ReservedSpace { get; set; }

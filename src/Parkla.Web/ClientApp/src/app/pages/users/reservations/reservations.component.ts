@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReservationService } from '@app/core/services/reservation.service';
-import { mockReservations } from '@app/mock-data/reservations';
 
 @Component({
   selector: 'app-reservations',
@@ -10,7 +9,7 @@ import { mockReservations } from '@app/mock-data/reservations';
 })
 export class ReservationsComponent implements OnInit {
 
-  reservations = mockReservations;
+  reservations = [];
 
   constructor(
     private router:Router,

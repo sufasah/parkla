@@ -9,6 +9,7 @@ public class ParkAreaDto
     public string? Description { get; set; }
     public string? TemplateImage { get; set; }
     public bool? ReservationsEnabled { get; set; }
+    public uint xmin { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
     public int? EmptySpace { get; set; }
     public int? ReservedSpace { get; set; }

@@ -25,8 +25,6 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
             .HasColumnName("name")
             .HasMaxLength(30)
             .IsRequired();
-        b.Property(x => x.RowVersion)
-            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.Status)
@@ -44,6 +42,8 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
                     (x,y) => (x == null && y == null) || (x != null && y != null && x.SequenceEqual(y)),
                     (x) => x.GetHashCode()))
             .IsRequired();
+
+        b.UseXminAsConcurrencyToken();
 
         b.HasOne(x => x.Area).WithMany(x => x.Spaces).HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(x => x.RealSpace).WithOne(x => x.Space).HasForeignKey<RealParkSpace>(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);

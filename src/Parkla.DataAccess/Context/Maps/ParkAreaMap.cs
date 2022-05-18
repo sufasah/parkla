@@ -28,8 +28,6 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
         b.Property(x => x.ReservationsEnabled)
             .HasColumnName("reservations_enabled")
             .IsRequired();
-        b.Property(x => x.RowVersion)
-            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.EmptySpace)
@@ -53,6 +51,8 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
             .HasColumnName("max_price")
             .HasPrecision(30,2)
             .HasDefaultValue(null);
+
+        b.UseXminAsConcurrencyToken();
 
         b.HasOne(x => x.Park).WithMany(x => x.Areas).HasForeignKey(x => x.ParkId).OnDelete(DeleteBehavior.Cascade);
 

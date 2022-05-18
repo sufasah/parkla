@@ -9,7 +9,7 @@ namespace Parkla.DataAccess.Bases
         where TEntity :class, IEntity, new()
         where TContext:DbContext, new()
     {
-        public async Task<TEntity> AddAsync(
+        public virtual async Task<TEntity> AddAsync(
             TEntity entity, 
             CancellationToken cancellationToken = default
         ) {
@@ -20,7 +20,7 @@ namespace Parkla.DataAccess.Bases
             return entity;
         }
 
-        public async Task DeleteAsync(
+        public virtual async Task DeleteAsync(
             TEntity entity, 
             CancellationToken cancellationToken = default
         ) {
@@ -30,7 +30,7 @@ namespace Parkla.DataAccess.Bases
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<TEntity?> GetAsync(
+        public virtual async Task<TEntity?> GetAsync(
             Expression<Func<TEntity, bool>> filter, 
             CancellationToken cancellationToken = default
         ) {
@@ -64,7 +64,7 @@ namespace Parkla.DataAccess.Bases
             return expression;
         }
 
-        public async Task<TEntity?> GetAsync<Tkey>(
+        public virtual async Task<TEntity?> GetAsync<Tkey>(
             Tkey id, 
             CancellationToken cancellationToken = default
         )   where Tkey: struct 
@@ -80,7 +80,7 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
 
-        public async Task<TEntity?> GetAsync<Tkey>(
+        public virtual async Task<TEntity?> GetAsync<Tkey>(
             Tkey id, 
             Expression<Func<TEntity, object>>[] includeProps, 
             CancellationToken cancellationToken = default
@@ -101,7 +101,7 @@ namespace Parkla.DataAccess.Bases
                 .ConfigureAwait(false);
         }
 
-        public async Task<List<TEntity>> GetListAsync(
+        public virtual async Task<List<TEntity>> GetListAsync(
             Expression<Func<TEntity, bool>>? filter = null, 
             CancellationToken cancellationToken = default
         ) {
@@ -116,7 +116,7 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
 
-        public async Task<List<TEntity>> GetListAsync(
+        public virtual async Task<List<TEntity>> GetListAsync(
             Expression<Func<TEntity, object>>[] includeProps,
             Expression<Func<TEntity, bool>>? filter = null, 
             CancellationToken cancellationToken = default
@@ -136,7 +136,7 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
 
-        public async Task<PagedList<TEntity>> GetListAsync(
+        public virtual async Task<PagedList<TEntity>> GetListAsync(
             int nextRecord, 
             int pageSize, 
             Expression<Func<TEntity, bool>>? filter = null,
@@ -161,7 +161,7 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
 
-        public async Task<TEntity> UpdateAsync(
+        public virtual async Task<TEntity> UpdateAsync(
             TEntity entity, 
             CancellationToken cancellationToken = default
         ) {
@@ -172,7 +172,7 @@ namespace Parkla.DataAccess.Bases
             return entity;
         }
 
-        public async Task<TEntity> UpdateAsync(
+        public virtual async Task<TEntity> UpdateAsync(
             TEntity entity,
             Expression<Func<TEntity, object?>>[] updateProps,
             bool updateOtherProps = true,
@@ -204,7 +204,7 @@ namespace Parkla.DataAccess.Bases
             return new PagedList<TEntity>(items, nextRecord, pageSize, count);
         }
 
-        public async Task<TEntity?> GetAsync(
+        public virtual async Task<TEntity?> GetAsync(
             Expression<Func<TEntity, object>>[] includeProps, 
             Expression<Func<TEntity, bool>> filter, 
             CancellationToken cancellationToken = default
@@ -223,7 +223,7 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
 
-        public async Task<TEntity> AddAsync(
+        public virtual async Task<TEntity> AddAsync(
             TEntity entity, 
             Expression<Func<TEntity, object?>>[] includeProps, 
             CancellationToken cancellationToken = default
@@ -239,7 +239,7 @@ namespace Parkla.DataAccess.Bases
             return entity;
         }
 
-        public async Task<TEntity> UpdateAsync(
+        public virtual async Task<TEntity> UpdateAsync(
             TEntity entity, 
             Expression<Func<TEntity, object?>>[] includeProps, 
             CancellationToken cancellationToken = default
