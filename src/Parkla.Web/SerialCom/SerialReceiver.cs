@@ -109,6 +109,6 @@ public class SerialReceiver : BackgroundService
             );
         }
 
-        _cllectorService.CollectParkSpaceStatus(results);
+        _cllectorService.CollectParkSpaceStatusAsync(results);
     }
 }

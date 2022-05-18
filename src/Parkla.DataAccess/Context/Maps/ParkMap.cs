@@ -12,7 +12,7 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
         b.Property(x => x.Id)
             .HasColumnName("id")
             .IsRequired()
-            .UseIdentityAlwaysColumn();
+            .ValueGeneratedOnAdd();
         b.Property(x => x.UserId)
             .HasColumnName("user_id")
             .IsRequired();
@@ -36,6 +36,8 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .HasColumnName("extras")
             .IsRequired()
             .HasMaxLength(10);
+        b.Property(x => x.RowVersion)
+            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.EmptySpace)

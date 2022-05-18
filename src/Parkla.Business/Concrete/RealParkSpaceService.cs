@@ -24,7 +24,7 @@ public class RealParkSpaceService : EntityServiceBase<RealParkSpace>, IRealParkS
     }
 
     public async Task<PagedList<RealParkSpace>> GetPageAsync(
-        int parkId, 
+        Guid parkId, 
         int nextRecord, 
         int pageSize, 
         string? search, 

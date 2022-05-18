@@ -19,7 +19,7 @@ message Data {
 
 message ParkSpaceStatus {
     string ParkId = 1;
-    string SpaceId = 2;
+    int32 SpaceId = 2;
     int32 Status = 3;
     google.protobuf.Timestamp DateTime = 4;
 }

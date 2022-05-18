@@ -21,7 +21,8 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
         .NotNull();
     private void AreaId() => RuleFor(x => x.AreaId)
         .NotNull();
-    private void RealSpaceId() => RuleFor(x => x.RealSpaceId);
+    private void RealSpaceId() => RuleFor(x => x.RealSpaceId)
+        .NotNull();
     private void Name() => RuleFor(x => x.Name)
         .NotNull()
         .NotEmpty()

@@ -12,13 +12,9 @@ public class ParkSpaceStatusValidator : AbstractValidator<ParkSpaceStatusDto>
         DateTime();
     }
     private void ParkId() => RuleFor(x => x.ParkId)
-        .NotNull()
-        .NotEmpty();
+        .NotNull();
     private void SpaceId() => RuleFor(x => x.SpaceId)
-        .NotNull()
-        .NotEmpty()
-        .MinimumLength(1)
-        .MaximumLength(40);
+        .NotNull();
     private void Status() => RuleFor(x => x.Status)
         .NotNull()
         .IsInEnum();

@@ -10,7 +10,7 @@ export class RealParkSpaceService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getPage(parkId: number, nextRecord: number, pageSize: number, search: string | null = null) {
+  getPage(parkId: string, nextRecord: number, pageSize: number, search: string | null = null) {
     return this.httpClient.get<ParkSpaceReal[]>(apiRealParkSpaces, !!search ? {
       params: {
         nextRecord,

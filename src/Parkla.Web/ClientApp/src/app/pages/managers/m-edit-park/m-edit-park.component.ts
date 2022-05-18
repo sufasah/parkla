@@ -30,7 +30,7 @@ export class MEditParkComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
 
     this.route.paramMap.subscribe(params => {
-      const id = Number(params.get("parkid"));
+      const id = params.get("parkid")!;
       this.parkService.getPark(id).subscribe({
         next: (park) => {
           this.park = park;

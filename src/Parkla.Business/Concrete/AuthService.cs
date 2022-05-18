@@ -1,8 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
-using System.Security.Claims;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

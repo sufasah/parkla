@@ -59,7 +59,7 @@ public class DefaultSerialHandler : HandlerBase
                     try {
                         results.Add(JsonSerializer.Deserialize<ParkSpaceStatusDto>(jsonData, jsonSerializerOptions)!);
                     } catch(Exception e) {
-                        logger.LogInformation("DefaultSerialHandler: Invalid json format or unmet constraints received\n{}", e.Message);
+                        logger.LogInformation("DefaultSerialHandler: Data with invalid json format or unmet constraints received\n{}", e.Message);
                     }
                     jsonSerialPort.StringBuilder.Clear();
                 }

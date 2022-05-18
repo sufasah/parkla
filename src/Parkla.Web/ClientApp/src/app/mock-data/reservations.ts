@@ -4,7 +4,7 @@ import { Reservation } from "@app/core/models/reservation";
 export const mockReservations: Reservation[] = [
   {
     id: 1,
-    parkId: 1,
+    parkId: "1",
     parkName: "seapark",
     areaName: "basement5",
     pricing: {

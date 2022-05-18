@@ -4,3 +4,6 @@ export const signalAllParks = "AllParksStream";
 export const signalParkChanges = "ParkAddUpdateDelete";
 export const signalParkChangesRegister = "RegisterParkChanges";
 export const signalParkChangesUnRegister = "UnRegisterParkChanges";
+export const signalParkSpaceChanges = "ParkSpaceAddUpdateDelete";
+export const signalParkSpaceChangesRegister = "RegisterParkSpaceChanges";
+export const signalParkSpaceChangesUnRegister = "UnRegisterParkSpaceChanges";

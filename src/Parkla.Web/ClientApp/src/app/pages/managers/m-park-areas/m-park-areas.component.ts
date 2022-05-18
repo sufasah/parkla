@@ -21,7 +21,7 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
   readonly pageSize = 6;
 
   loading = false;
-  parkid!: number;
+  parkid!: string;
 
   unsubscribe: Subscription[] = [];
 
@@ -35,7 +35,7 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(paramMap => {
-        this.parkid = Number(paramMap.get("parkid"));
+        this.parkid = paramMap.get("parkid")!;
     });
   }
 

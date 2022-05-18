@@ -1,12 +1,9 @@
-﻿using System.Linq.Expressions;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
 using Parkla.Core.Options;
-using Parkla.DataAccess.Contexts;
 using Parkla.Web.Models;
 
 namespace Parkla.Web.Controllers;

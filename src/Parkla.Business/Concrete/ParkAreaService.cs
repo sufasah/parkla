@@ -142,7 +142,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     }
 
     public async Task<PagedList<ParkArea>> GetPageAsync(
-        int parkId, 
+        Guid parkId, 
         int nextRecord, 
         int pageSize, 
         string? search, 

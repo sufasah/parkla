@@ -3,7 +3,7 @@ import { Pricing } from "./pricing";
 
 export interface ParkArea {
   id: number;
-  parkId: number;
+  parkId: string;
   name: string;
   description?: string;
   templateImage: string | null;

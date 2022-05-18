@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using Parkla.Core.Enums;
 
 namespace Parkla.Web.Models;

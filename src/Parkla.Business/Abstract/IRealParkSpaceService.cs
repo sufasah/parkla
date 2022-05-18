@@ -5,7 +5,7 @@ namespace Parkla.Business.Abstract;
 public interface IRealParkSpaceService : IEntityService<RealParkSpace>
 {
     public Task<PagedList<RealParkSpace>> GetPageAsync(
-        int parkId,
+        Guid parkId,
         int nextRecord, 
         int pageSize,
         string? search, 

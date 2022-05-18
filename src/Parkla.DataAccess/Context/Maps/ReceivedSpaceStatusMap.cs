@@ -22,7 +22,7 @@ public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStat
             .IsRequired(false);
         b.Property(x => x.Status)
             .HasColumnName("status")
-            .HasDefaultValue(SpaceStatus.OCCUPIED)
+            .HasDefaultValue(SpaceStatus.UNKNOWN)
             .IsRequired();
         b.Property(x => x.DateTime)
             .HasColumnName("datetime");

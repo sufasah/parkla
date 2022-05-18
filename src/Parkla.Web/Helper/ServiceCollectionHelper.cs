@@ -26,6 +26,7 @@ public class ServiceCollectionHelper
         s.AddSingleton<IReceivedSpaceStatusRepo, ReceivedSpaceStatusRepo<TContext>>();
         s.AddSingleton<IReservationRepo, ReservationRepo<TContext>>();
         s.AddSingleton<IUserRepo, UserRepo<TContext>>();
+        s.AddSingleton<ICollectorRepo, CollectorRepo<TContext>>();
 
         //----------------------------------------------------------------------------------- SERVICES
         s.AddSingleton<ICollectorService, CollectorService>();

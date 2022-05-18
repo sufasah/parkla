@@ -54,5 +54,21 @@ public class ParklaHub : Hub
             Context.ConnectionAborted)
             .ConfigureAwait(false);
     }
+
+    public async Task RegisterParkSpaceChanges() {
+        await Groups.AddToGroupAsync(
+            Context.ConnectionId, 
+            HubConstants.EventParkSpaceChangesGroup, 
+            Context.ConnectionAborted)
+            .ConfigureAwait(false);
+    }
+    
+    public async Task UnRegisterParkSpaceChanges() {
+        await Groups.RemoveFromGroupAsync(
+            Context.ConnectionId, 
+            HubConstants.EventParkSpaceChangesGroup, 
+            Context.ConnectionAborted)
+            .ConfigureAwait(false);
+    }
     
 }

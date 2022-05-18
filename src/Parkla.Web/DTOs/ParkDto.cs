@@ -3,7 +3,7 @@ using Parkla.Core.Entities;
 namespace Parkla.Web.Models;
 public class ParkDto
 {
-    public int? Id { get; set; }
+    public Guid? Id { get; set; }
     public int? UserId { get; set; }
     public string? Name { get; set; }
     public string? Location { get; set; }

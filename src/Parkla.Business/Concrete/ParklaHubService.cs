@@ -22,4 +22,12 @@ public class ParklaHubService<T> : IParklaHubService
             .SendAsync(HubConstants.EventParkChanges, park, isDelete, cancellationToken)
             .ConfigureAwait(false);
     }
+
+    public async Task ParkSpaceChanges(ParkSpace space, bool isDelete, CancellationToken cancellationToken = default)
+    {
+        await _hub.Clients
+            .Group(HubConstants.EventParkSpaceChangesGroup)
+            .SendAsync(HubConstants.EventParkSpaceChanges, space, isDelete, cancellationToken)
+            .ConfigureAwait(false);
+    }
 }

@@ -28,6 +28,8 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
         b.Property(x => x.ReservationsEnabled)
             .HasColumnName("reservations_enabled")
             .IsRequired();
+        b.Property(x => x.RowVersion)
+            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.EmptySpace)

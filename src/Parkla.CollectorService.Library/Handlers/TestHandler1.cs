@@ -11,8 +11,8 @@ public class TestHandler1 : HandlerBase
             return new ParkSpaceStatusDto[] {
                     new() {
                     ParkId = Guid.NewGuid(),
-                    SpaceId = "testhandler1 object is here [111111111]",
-                    Status = SpaceStatus.EMPTY,
+                    SpaceId = 33333,
+                    Status = SpaceStatus.OCCUPIED,
                     DateTime = DateTime.UtcNow
                 },
             };

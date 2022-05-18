@@ -23,11 +23,11 @@ export namespace RouteUrl {
     return `user/profile`;
   };
 
-  export const parkArea = (parkid: number, areaid:number) => {
+  export const parkArea = (parkid: string, areaid:number) => {
     return `user/park/${parkid}/area/${areaid}`;
   };
 
-  export const parkAreas = (parkid: number) => {
+  export const parkAreas = (parkid: string) => {
     return `user/park/${parkid}/areas`;
   }
 
@@ -49,31 +49,31 @@ export namespace RouteUrl {
     return `manager/profile`;
   };
 
-  export const mParkArea = (parkid: number, areaid:number) => {
+  export const mParkArea = (parkid: string, areaid:number) => {
     return `manager/park/${parkid}/area/${areaid}`;
   };
 
-  export const mNewParkArea = (parkid: number) => {
+  export const mNewParkArea = (parkid: string) => {
     return `manager/park/${parkid}/area/add`;
   };
 
-  export const mEditParkArea = (parkid: number, areaid:number) => {
+  export const mEditParkArea = (parkid: string, areaid:number) => {
     return `manager/park/${parkid}/area/${areaid}/edit`;
   };
 
-  export const mEditParkAreaTemplate = (parkid: number, areaid:number) => {
+  export const mEditParkAreaTemplate = (parkid: string, areaid:number) => {
     return `manager/park/${parkid}/area/${areaid}/edit/template`;
   };
 
-  export const mParkAreaQR = (parkid: number, areaid:number) => {
+  export const mParkAreaQR = (parkid: string, areaid:number) => {
     return `manager/park/${parkid}/area/${areaid}`;
   };
 
-  export const mParkAreas = (parkid: number) => {
+  export const mParkAreas = (parkid: string) => {
     return `manager/park/${parkid}/areas`;
   }
 
-  export const mEditPark = (parkid: number) => {
+  export const mEditPark = (parkid: string) => {
     return `manager/park/${parkid}/edit`;
   }
 

@@ -8,4 +8,10 @@ public interface IParklaHubService
         bool isDelete, 
         CancellationToken cancellationToken = default
     );
+
+    public Task ParkSpaceChanges(
+        ParkSpace space,
+        bool isDelete,
+        CancellationToken cancellationToken = default
+    );
 }

@@ -41,7 +41,7 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
     [HttpGet("")]
     public async Task<IActionResult> GetPageAsync(
         [FromQuery] PageDto pageDto,
-        [FromQuery] int? parkId,
+        [FromQuery] Guid? parkId,
         [FromQuery] string? s,
         [FromQuery] string? orderBy,
         CancellationToken cancellationToken,

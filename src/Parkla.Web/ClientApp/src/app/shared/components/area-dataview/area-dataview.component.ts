@@ -116,7 +116,7 @@ export class AreaDataViewComponent implements OnInit {
   }
 
   getParkId() {
-    return Number(this.route.snapshot.paramMap.get("parkid"));
+    return this.route.snapshot.paramMap.get("parkid")!;
   }
 
   loadData(evt: LazyLoadEvent) {

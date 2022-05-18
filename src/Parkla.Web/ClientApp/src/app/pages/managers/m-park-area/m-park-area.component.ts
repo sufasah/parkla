@@ -138,8 +138,13 @@ export class MParkAreaComponent implements OnInit {
       this.showReserveModal();
   }
 
+  getParkId() {
+    return this.route.snapshot.paramMap.get("parkid")!;
+  }
+
+
   goAreas() {
-    let parkid = this.route.snapshot.params["parkid"];
+    let parkid = this.getParkId();
     this.router.navigateByUrl(this.authService.asManager
       ? RouteUrl.mParkAreas(parkid)
       : RouteUrl.parkAreas(parkid)
@@ -147,8 +152,8 @@ export class MParkAreaComponent implements OnInit {
   }
 
   goEditTemplate() {
-    const parkid = Number(this.route.snapshot.paramMap.get("parkid"));
-    const areaid = Number(this.route.snapshot.paramMap.get("areaid"));
+    const parkid = this.getParkId();
+    const areaid = this.getAreaId();
 
     this.router.navigateByUrl(RouteUrl.mEditParkAreaTemplate(parkid, areaid));
   }

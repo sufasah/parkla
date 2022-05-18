@@ -42,9 +42,9 @@ public class GrpcExporter : ExporterBase
             data.DataList.Add(Any.Pack(
                 new ParkSpaceStatus {
                     ParkId = dto.ParkId.ToString(),
-                    SpaceId = dto.SpaceId,
+                    SpaceId = dto.SpaceId!.Value,
                     Status = (int)dto.Status!,
-                    DateTime = Timestamp.FromDateTime(dto.DateTime!.Value.ToUniversalTime())
+                    DateTime = Timestamp.FromDateTime(dto.DateTime!.Value)
                 }
             ));
         }

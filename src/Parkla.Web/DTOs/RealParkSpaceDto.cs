@@ -6,7 +6,7 @@ namespace Parkla.Web.Models;
 public class RealParkSpaceDto
 {
     public int? Id { get; set; }
-    public int? ParkId { get; set; }
+    public Guid? ParkId { get; set; }
     public int? SpaceId { get; set; }
     public string? Name { get; set; }
     public DateTime? StatusUpdateTime { get; set; }

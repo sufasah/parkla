@@ -169,7 +169,7 @@ export class ParkAreaComponent implements OnInit {
   }
 
   goAreas() {
-    let parkid = this.route.snapshot.params["parkid"];
+    let parkid = this.route.snapshot.paramMap.get("parkid")!;
 
     this.router.navigateByUrl(this.authService.asManager
       ? RouteUrl.mParkAreas(parkid)

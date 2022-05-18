@@ -24,11 +24,13 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
             .HasColumnName("name")
             .HasMaxLength(30)
             .IsRequired();
+        b.Property(x => x.RowVersion)
+            .IsRowVersion();
         b.Property(x => x.StatusUpdateTime)
             .HasColumnName("status_update_time");
         b.Property(x => x.Status)
             .HasColumnName("status")
-            .HasDefaultValue(SpaceStatus.OCCUPIED)
+            .HasDefaultValue(SpaceStatus.UNKNOWN)
             .IsRequired();
         
             

@@ -59,7 +59,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
 
     public async Task DeleteAsync(Park park, int userId, CancellationToken cancellationToken = default)
     {
-        await ThrowIfUserNotMatch((int)park.Id!, userId, cancellationToken).ConfigureAwait(false);
+        await ThrowIfUserNotMatch(park.Id, userId, cancellationToken).ConfigureAwait(false);
 
         await base.DeleteAsync(park, cancellationToken).ConfigureAwait(false);   
 
@@ -80,7 +80,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
             x => x.Extras
         };
 
-        await ThrowIfUserNotMatch((int)park.Id!, userId, cancellationToken).ConfigureAwait(false);
+        await ThrowIfUserNotMatch(park.Id, userId, cancellationToken).ConfigureAwait(false);
 
         var newPark = await _parkRepo.UpdateAsync(park, props, false, cancellationToken).ConfigureAwait(false);
 
@@ -89,14 +89,17 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         return newPark;
     }
 
-    private async Task ThrowIfUserNotMatch(int parkId, int userId, CancellationToken cancellationToken) {
+    private async Task ThrowIfUserNotMatch(Guid?  parkId, int userId, CancellationToken cancellationToken) {
+        var notAllowed = new ParklaException("User requested is not permitted to update or delete other user's park", HttpStatusCode.BadRequest);
+
+        if(parkId == null) throw notAllowed;
+
         var park = await _parkRepo.GetAsync(x => x.Id == parkId, cancellationToken).ConfigureAwait(false);
         
-        if(park!.UserId != userId)
-            throw new ParklaException("User requested is not permitted to update or delete other user's park", HttpStatusCode.BadRequest);
+        if(park!.UserId != userId) throw notAllowed;
     }
 
-    private async Task HubParkChanges(int? id, bool isDelete) {
+    private async Task HubParkChanges(Guid? id, bool isDelete) {
         var newParkWithUser = await _parkRepo.GetAsync(
             new Expression<Func<Park,object>>[]{x => x.User!},
             x => x.Id == id

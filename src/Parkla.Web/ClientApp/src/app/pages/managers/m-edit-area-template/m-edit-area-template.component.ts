@@ -161,7 +161,7 @@ export class MEditAreaTemplateComponent implements OnInit {
   }
 
   getParkId() {
-    return Number(this.route.snapshot.paramMap.get("parkid"))
+    return this.route.snapshot.paramMap.get("parkid")!;
   }
 
   getAreaId() {

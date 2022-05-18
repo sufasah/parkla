@@ -11,14 +11,14 @@ public class TestHandler : HandlerBase
         return new ParkSpaceStatusDto[]{
             new() {
                 ParkId = Guid.NewGuid(),
-                SpaceId = "FIRST OBJECT OF TESTHANDLER [00000]",
+                SpaceId = 1111111111,
                 Status = SpaceStatus.EMPTY,
                 DateTime = DateTime.UtcNow
             },
             new() {
                 ParkId = Guid.NewGuid(),
-                SpaceId = "SECOND OBJECT OF TESTHANDLER [00000]",
-                Status = SpaceStatus.EMPTY,
+                SpaceId = 222222222,
+                Status = SpaceStatus.RESERVED,
                 DateTime = DateTime.UtcNow
             },
         };

@@ -17,7 +17,7 @@ export class ParkAreaService {
   getAreasPage(
     nextRecord: number,
     pageSize: number,
-    parkId: number,
+    parkId: string,
     search: string | null = null,
     orderBy: string | null = null,
     asc: boolean | null = null,
