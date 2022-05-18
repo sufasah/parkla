@@ -30,8 +30,8 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         _hostEnvironment = hostEnvironment;
     }
 
-    public override async Task<ParkArea?> GetAsync(
-        int id,
+    public override async Task<ParkArea?> GetAsync<TKey>(
+        TKey id,
         CancellationToken cancellationToken = default
     ) {
         return await _parkAreaRepo.GetAsync(

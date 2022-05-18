@@ -5,6 +5,7 @@ import { mockSpaceReservations } from "./spaceReservations";
 export const mockSpaces: ParkSpace[] = [
   {
     id: 1,
+    areaId: 1,
     name: "178",
     status: SpaceStatus.EMPTY,
     templatePath: [
@@ -18,6 +19,7 @@ export const mockSpaces: ParkSpace[] = [
   },
   {
     id: 2,
+    areaId: 1,
     name: "177",
     status: SpaceStatus.OCCUPIED,
     templatePath: [
@@ -31,6 +33,7 @@ export const mockSpaces: ParkSpace[] = [
   },
   {
     id: 3,
+    areaId: 1,
     name: "181",
     status: SpaceStatus.EMPTY,
     templatePath: [
@@ -44,6 +47,7 @@ export const mockSpaces: ParkSpace[] = [
   },
   {
     id: 4,
+    areaId: 1,
     name: "184",
     status: SpaceStatus.OCCUPIED,
     templatePath: [
@@ -57,6 +61,7 @@ export const mockSpaces: ParkSpace[] = [
   },
   {
     id: 5,
+    areaId: 1,
     name: "183",
     status: SpaceStatus.EMPTY,
     templatePath: [

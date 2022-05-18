@@ -1,10 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { selectAuthState } from '@app/store/auth/auth.selectors';
-import { Store } from '@ngrx/store';
 import { Message, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 
@@ -93,6 +92,17 @@ export class LoginComponent implements OnInit, OnDestroy {
         else {
           this.onLogin({successful: true, error: null});
         }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          life:5000,
+          severity:"error",
+          summary: "Login",
+          detail: err.error.message,
+          icon: "pi-lock",
+        })
+        this.verification = false;
+        this.logging = false;
       }
     });
   }

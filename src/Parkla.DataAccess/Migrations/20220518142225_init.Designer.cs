@@ -12,8 +12,8 @@ using Parkla.DataAccess.Contexts;
 namespace Parkla.DataAccess.Migrations
 {
     [DbContext(typeof(ParklaDbContext))]
-    [Migration("20220511212218_i2")]
-    partial class i2
+    [Migration("20220518142225_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,12 +73,10 @@ namespace Parkla.DataAccess.Migrations
 
             modelBuilder.Entity("Parkla.Core.Entities.Park", b =>
                 {
-                    b.Property<int?>("Id")
+                    b.Property<Guid?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int?>("Id"));
 
                     b.Property<float?>("AvaragePrice")
                         .HasPrecision(30, 2)
@@ -140,16 +138,19 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("reserved_space");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
+
                     b.Property<DateTime?>("StatusUpdateTime")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                         .HasColumnName("status_update_time");
 
                     b.Property<int?>("UserId")
                         .IsRequired()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
 
                     b.HasKey("Id");
 
@@ -209,9 +210,9 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("occupied_space");
 
-                    b.Property<int?>("ParkId")
+                    b.Property<Guid?>("ParkId")
                         .IsRequired()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("park_id");
 
                     b.Property<bool?>("ReservationsEnabled")
@@ -224,11 +225,13 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("reserved_space");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
+
                     b.Property<DateTime?>("StatusUpdateTime")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                         .HasColumnName("status_update_time");
 
                     b.Property<string>("TemplateImage")
@@ -271,23 +274,25 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("real_space_id");
 
-                    b.Property<string>("SpacePath")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("space_path");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(1)
+                        .HasDefaultValue(3)
                         .HasColumnName("status");
 
                     b.Property<DateTime?>("StatusUpdateTime")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                         .HasColumnName("status_update_time");
+
+                    b.Property<string>("TemplatePath")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("space_path");
 
                     b.HasKey("Id");
 
@@ -323,6 +328,11 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("real")
                         .HasColumnName("price");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
                     b.Property<int>("Unit")
                         .HasColumnType("integer")
                         .HasColumnName("unit");
@@ -349,10 +359,15 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("character varying(30)")
                         .HasColumnName("name");
 
-                    b.Property<int?>("ParkId")
+                    b.Property<Guid?>("ParkId")
                         .IsRequired()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("park_id");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("bytea");
 
                     b.Property<int?>("SpaceId")
                         .HasColumnType("integer")
@@ -361,14 +376,11 @@ namespace Parkla.DataAccess.Migrations
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(1)
+                        .HasDefaultValue(3)
                         .HasColumnName("status");
 
                     b.Property<DateTime?>("StatusUpdateTime")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                         .HasColumnName("status_update_time");
 
                     b.HasKey("Id");
@@ -393,10 +405,7 @@ namespace Parkla.DataAccess.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int?>("Id"));
 
                     b.Property<DateTime?>("DateTime")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                         .HasColumnName("datetime");
 
                     b.Property<int?>("RealSpaceId")
@@ -410,7 +419,7 @@ namespace Parkla.DataAccess.Migrations
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(1)
+                        .HasDefaultValue(3)
                         .HasColumnName("status");
 
                     b.HasKey("Id");
@@ -466,7 +475,7 @@ namespace Parkla.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("reservaions", "public");
+                    b.ToTable("reservations", "public");
 
                     b.HasCheckConstraint("CK_STARTTIME_LESS_THAN_ENDTIME", "start_time < end_time");
                 });
@@ -569,7 +578,7 @@ namespace Parkla.DataAccess.Migrations
                     b.HasOne("Parkla.Core.Entities.City", "City")
                         .WithMany("Districts")
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("City");
@@ -629,7 +638,8 @@ namespace Parkla.DataAccess.Migrations
 
                     b.HasOne("Parkla.Core.Entities.ParkSpace", "Space")
                         .WithOne("RealSpace")
-                        .HasForeignKey("Parkla.Core.Entities.RealParkSpace", "SpaceId");
+                        .HasForeignKey("Parkla.Core.Entities.RealParkSpace", "SpaceId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Park");
 
@@ -640,11 +650,13 @@ namespace Parkla.DataAccess.Migrations
                 {
                     b.HasOne("Parkla.Core.Entities.RealParkSpace", "RealSpace")
                         .WithMany("ReceivedSpaceStatuses")
-                        .HasForeignKey("RealSpaceId");
+                        .HasForeignKey("RealSpaceId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Parkla.Core.Entities.ParkSpace", "Space")
                         .WithMany("ReceivedSpaceStatuses")
-                        .HasForeignKey("SpaceId");
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("RealSpace");
 
@@ -682,11 +694,13 @@ namespace Parkla.DataAccess.Migrations
                 {
                     b.HasOne("Parkla.Core.Entities.City", "City")
                         .WithMany("Users")
-                        .HasForeignKey("CityId");
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Parkla.Core.Entities.District", "District")
                         .WithMany("Users")
-                        .HasForeignKey("DistrictId");
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("City");
 

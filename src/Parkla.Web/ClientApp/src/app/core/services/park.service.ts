@@ -19,8 +19,8 @@ export interface InformerItem{
 })
 export class ParkService implements OnDestroy {
 
-  private _parks = new Map<number, ChangablePark>();
-  private _signalrBeforeStreamDone = new Set<number>();
+  private _parks = new Map<string, ChangablePark>();
+  private _signalrBeforeStreamDone = new Set<string>();
   private _allParksStreamDone = false;
   private unsubscribe: Subscription[] = [];
 
@@ -132,7 +132,7 @@ export class ParkService implements OnDestroy {
     return this.httpClient.get<Park[]>(apiParks+"/all");
   }
 
-  getPark(id: number) {
+  getPark(id: string) {
     return this.httpClient.get<Park>(apiParks+"/"+id);
   }
 
@@ -158,7 +158,7 @@ export class ParkService implements OnDestroy {
     });
   }
 
-  deletePark(id: number) {
+  deletePark(id: string) {
     return this.httpClient.delete<Park>(apiParks, {body:{
       id: id
     }});

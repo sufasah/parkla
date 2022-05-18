@@ -56,12 +56,13 @@ public class EntityControllerBase<TEntity, TEntityDto> : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public virtual async Task<IActionResult> GetAsync(int? id, CancellationToken cancellationToken) {
+    public virtual async Task<IActionResult> GetAsync(string? id, CancellationToken cancellationToken) 
+    {
         var notFound = NotFound("Entity could not found with given id");
         if(id == null)
             return notFound;
         
-        var result = await _service.GetAsync((int)id, cancellationToken);
+        var result = await _service.GetAsync(int.Parse(id), cancellationToken);
 
         if(result == null)
             return notFound;

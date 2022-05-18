@@ -21,6 +21,24 @@ public class ParksController : EntityControllerBase<Park, ParkDto>
         _mapper = mapper;
     }
 
+    public override async Task<IActionResult> GetAsync(string? id, CancellationToken cancellationToken)
+    {
+        Guid gid;
+        try {
+            gid = Guid.Parse(id!);
+        }
+        catch {
+            return BadRequest("Given id must be a valid GUID type and not null");
+        }
+
+        var result = await _service.GetAsync(gid, cancellationToken);
+        
+        if(result == null)
+           return NotFound("Entity could not found with given id");
+        
+        return Ok(result);
+    }
+
     public override async Task<IActionResult> GetAllAsync(CancellationToken cancellationToken) {        
         var result = await _service.GetAllAsync(cancellationToken).ConfigureAwait(false);
         return Ok(_mapper.Map<List<ParkIncludesUserDto>>(result));
@@ -31,13 +49,13 @@ public class ParksController : EntityControllerBase<Park, ParkDto>
         CancellationToken cancellationToken
     ) {
         var park = _mapper.Map<Park>(dto);          
-        await _service.UpdateAsync(
+        var result = await _service.UpdateAsync(
             park, 
             int.Parse(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value),
             cancellationToken
         ).ConfigureAwait(false);
 
-        return Ok();
+        return Ok(result);
     }
 
     public override async Task<IActionResult> DeleteAsync(

@@ -473,7 +473,7 @@ namespace Parkla.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("reservaions", "public");
+                    b.ToTable("reservations", "public");
 
                     b.HasCheckConstraint("CK_STARTTIME_LESS_THAN_ENDTIME", "start_time < end_time");
                 });

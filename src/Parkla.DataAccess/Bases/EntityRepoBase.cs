@@ -42,7 +42,7 @@ namespace Parkla.DataAccess.Bases
             return result;
         }
         
-        private Expression<Func<TEntity,bool>> GetIdEqualExpression<Tkey>(
+        private static Expression<Func<TEntity,bool>> GetIdEqualExpression<Tkey>(
             Tkey id,
             TContext context
         )  where Tkey: struct
@@ -55,7 +55,7 @@ namespace Parkla.DataAccess.Bases
             var param = Expression.Parameter(typeof(TEntity), "x");
             var expression = Expression.Lambda<Func<TEntity,bool>>(
                 Expression.Equal(
-                    Expression.Convert(Expression.Constant(id), typeof(int?)),
+                    Expression.Convert(Expression.Constant(id), typeof(Tkey?)),
                     Expression.MakeMemberAccess(param, pk.PropertyInfo!)
                 ),
                 param

@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import { AppUser } from "./app-user";
 import { ParkArea } from "./park-area";
 export interface Park {
-  id: number;
+  id: string;
   user: AppUser,
   name: string;
   latitude: number;

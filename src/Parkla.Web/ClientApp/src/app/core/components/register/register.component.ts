@@ -13,9 +13,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { CityService } from '@app/core/services/city.service';
 import { DistrictService } from '@app/core/services/district.service';
 import { AppUser } from '@app/core/models/app-user';
-import { Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { selectAuthState } from '@app/store/auth/auth.selectors';
 
 @Component({
   selector: 'app-register',
@@ -117,9 +114,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.registering = true;
     let username = this.username;
     let password = this.password;
-
-    console.log(username,password);
-
 
     this.authService
       .register(<AppUser>{

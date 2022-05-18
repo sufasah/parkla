@@ -7,7 +7,7 @@ namespace Parkla.DataAccess.Context.Maps;
 public class ReservationMap : IEntityTypeConfiguration<Reservation> {
     public void Configure(EntityTypeBuilder<Reservation> b)
     {
-        b.ToTable(@"reservaions",@"public");
+        b.ToTable(@"reservations",@"public");
         b.HasKey(x => x.Id);
         b.Property(x => x.Id)
             .HasColumnName("id")

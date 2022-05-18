@@ -5,6 +5,7 @@ import { SpaceReservation } from "./space-reservation";
 
 export interface ParkSpace {
   id: number;
+  areaId: number;
   name: string;
   realSpace?: ParkSpaceReal;
   status: SpaceStatus;

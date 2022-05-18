@@ -97,8 +97,30 @@ public class CollectorRepo<TContext> : ICollectorRepo
             return new(true, space, park);
         } 
         catch(DbUpdateConcurrencyException e) {
-            var entries = e.Entries;
-            
+            foreach (var entry in e.Entries) {
+                var entity = entry.Entity;
+                if(entry.Entity is RealParkSpace) {
+                    /*
+                    var proposedValues = entry.CurrentValues;
+                    var databaseValues = entry.GetDatabaseValues();
+
+                    foreach (var property in proposedValues.Properties)
+                    {
+                        var proposedValue = proposedValues[property];
+                        var databaseValue = databaseValues[property];
+
+                        // TODO: decide which value should be written to database
+                        // proposedValues[property] = <value to be saved>;
+                    }
+
+                    // Refresh original values to bypass next concurrency check
+                    entry.OriginalValues.SetValues(databaseValues);
+                    */
+                }
+                else if(entry.Entity is ParkSpace) {
+
+                }
+            }
             /*if(entries.whichone.StatusUpdateTime != null and it is > dto.DateTime) {
                 await transaction.DisposeAsync();
                 return false;

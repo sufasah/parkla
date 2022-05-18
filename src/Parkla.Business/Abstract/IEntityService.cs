@@ -30,10 +30,10 @@ public interface IEntityService<TEntity>
             CancellationToken cancellationToken = default
         );
 
-        Task<TEntity?> GetAsync(
-            int id,
+        Task<TEntity?> GetAsync<TKey>(
+            TKey id,
             CancellationToken cancellationToken = default
-        );
+        ) where TKey: struct;
 
         Task<TEntity> AddAsync(
             TEntity entity,

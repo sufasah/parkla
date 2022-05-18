@@ -28,34 +28,6 @@ namespace Parkla.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "parks",
-                schema: "public",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    latitude = table.Column<double>(type: "double precision", precision: 2, scale: 15, nullable: false),
-                    longitude = table.Column<double>(type: "double precision", precision: 2, scale: 15, nullable: false),
-                    extras = table.Column<string[]>(type: "text[]", maxLength: 10, nullable: false),
-                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
-                    empty_space = table.Column<int>(type: "integer", nullable: false),
-                    reserved_space = table.Column<int>(type: "integer", nullable: false),
-                    occupied_space = table.Column<int>(type: "integer", nullable: false),
-                    min_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false),
-                    avarage_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false),
-                    max_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_parks", x => x.id);
-                    table.CheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID", "latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");
-                    table.CheckConstraint("CK_PRICES_VALID", "min_price <= avarage_price and avarage_price <= max_price");
-                    table.CheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "districts",
                 schema: "public",
                 columns: table => new
@@ -74,41 +46,7 @@ namespace Parkla.DataAccess.Migrations
                         principalSchema: "public",
                         principalTable: "cities",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "park_areas",
-                schema: "public",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    park_id = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    template_image = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    reservations_enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
-                    empty_space = table.Column<int>(type: "integer", nullable: false),
-                    reserved_space = table.Column<int>(type: "integer", nullable: false),
-                    occupied_space = table.Column<int>(type: "integer", nullable: false),
-                    min_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false),
-                    avarage_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false),
-                    max_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_park_areas", x => x.id);
-                    table.CheckConstraint("CK_PRICES_VALID", "min_price <= avarage_price and avarage_price <= max_price");
-                    table.CheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
-                    table.ForeignKey(
-                        name: "FK_park_areas_parks_park_id",
-                        column: x => x.park_id,
-                        principalSchema: "public",
-                        principalTable: "parks",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -141,13 +79,86 @@ namespace Parkla.DataAccess.Migrations
                         column: x => x.city_id,
                         principalSchema: "public",
                         principalTable: "cities",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_users_districts_district_id",
                         column: x => x.district_id,
                         principalSchema: "public",
                         principalTable: "districts",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "parks",
+                schema: "public",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    latitude = table.Column<double>(type: "double precision", precision: 2, scale: 15, nullable: false),
+                    longitude = table.Column<double>(type: "double precision", precision: 2, scale: 15, nullable: false),
+                    extras = table.Column<string[]>(type: "text[]", maxLength: 10, nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true),
+                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    empty_space = table.Column<int>(type: "integer", nullable: false),
+                    reserved_space = table.Column<int>(type: "integer", nullable: false),
+                    occupied_space = table.Column<int>(type: "integer", nullable: false),
+                    min_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: true),
+                    avarage_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: true),
+                    max_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_parks", x => x.id);
+                    table.CheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID", "latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");
+                    table.CheckConstraint("CK_PRICES_VALID", "min_price <= avarage_price and avarage_price <= max_price");
+                    table.CheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
+                    table.ForeignKey(
+                        name: "FK_parks_users_user_id",
+                        column: x => x.user_id,
+                        principalSchema: "public",
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "park_areas",
+                schema: "public",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    park_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    description = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    template_image = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    reservations_enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true),
+                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    empty_space = table.Column<int>(type: "integer", nullable: false),
+                    reserved_space = table.Column<int>(type: "integer", nullable: false),
+                    occupied_space = table.Column<int>(type: "integer", nullable: false),
+                    min_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: true),
+                    avarage_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: true),
+                    max_price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_park_areas", x => x.id);
+                    table.CheckConstraint("CK_PRICES_VALID", "min_price <= avarage_price and avarage_price <= max_price");
+                    table.CheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
+                    table.ForeignKey(
+                        name: "FK_park_areas_parks_park_id",
+                        column: x => x.park_id,
+                        principalSchema: "public",
+                        principalTable: "parks",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -160,8 +171,9 @@ namespace Parkla.DataAccess.Migrations
                     area_id = table.Column<int>(type: "integer", nullable: false),
                     real_space_id = table.Column<int>(type: "integer", nullable: true),
                     name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
-                    status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    RowVersion = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true),
+                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false, defaultValue: 3),
                     space_path = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -185,6 +197,7 @@ namespace Parkla.DataAccess.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     area_id = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     unit = table.Column<int>(type: "integer", nullable: false),
                     amount = table.Column<int>(type: "integer", nullable: false),
                     price = table.Column<float>(type: "real", precision: 30, scale: 2, nullable: false)
@@ -208,11 +221,12 @@ namespace Parkla.DataAccess.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    park_id = table.Column<int>(type: "integer", nullable: false),
+                    park_id = table.Column<Guid>(type: "uuid", nullable: false),
                     space_id = table.Column<int>(type: "integer", nullable: true),
                     name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)),
-                    status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1)
+                    RowVersion = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: true),
+                    status_update_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    status = table.Column<int>(type: "integer", nullable: false, defaultValue: 3)
                 },
                 constraints: table =>
                 {
@@ -223,7 +237,8 @@ namespace Parkla.DataAccess.Migrations
                         column: x => x.space_id,
                         principalSchema: "public",
                         principalTable: "park_spaces",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_real_park_spaces_parks_park_id",
                         column: x => x.park_id,
@@ -234,7 +249,7 @@ namespace Parkla.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "reservaions",
+                name: "reservations",
                 schema: "public",
                 columns: table => new
                 {
@@ -248,24 +263,24 @@ namespace Parkla.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_reservaions", x => x.id);
+                    table.PrimaryKey("PK_reservations", x => x.id);
                     table.CheckConstraint("CK_STARTTIME_LESS_THAN_ENDTIME", "start_time < end_time");
                     table.ForeignKey(
-                        name: "FK_reservaions_park_spaces_space_id",
+                        name: "FK_reservations_park_spaces_space_id",
                         column: x => x.space_id,
                         principalSchema: "public",
                         principalTable: "park_spaces",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_reservaions_pricings_pricing_id",
+                        name: "FK_reservations_pricings_pricing_id",
                         column: x => x.pricing_id,
                         principalSchema: "public",
                         principalTable: "pricings",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_reservaions_users_user_id",
+                        name: "FK_reservations_users_user_id",
                         column: x => x.user_id,
                         principalSchema: "public",
                         principalTable: "users",
@@ -282,8 +297,8 @@ namespace Parkla.DataAccess.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     space_id = table.Column<int>(type: "integer", nullable: true),
                     real_space_id = table.Column<int>(type: "integer", nullable: true),
-                    status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
-                    datetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
+                    status = table.Column<int>(type: "integer", nullable: false, defaultValue: 3),
+                    datetime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -294,13 +309,15 @@ namespace Parkla.DataAccess.Migrations
                         column: x => x.space_id,
                         principalSchema: "public",
                         principalTable: "park_spaces",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_received_space_statusses_real_park_spaces_real_space_id",
                         column: x => x.real_space_id,
                         principalSchema: "public",
                         principalTable: "real_park_spaces",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
@@ -320,6 +337,12 @@ namespace Parkla.DataAccess.Migrations
                 schema: "public",
                 table: "park_spaces",
                 column: "area_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_parks_user_id",
+                schema: "public",
+                table: "parks",
+                column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_pricings_area_id",
@@ -353,21 +376,21 @@ namespace Parkla.DataAccess.Migrations
                 column: "space_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_reservaions_pricing_id",
+                name: "IX_reservations_pricing_id",
                 schema: "public",
-                table: "reservaions",
+                table: "reservations",
                 column: "pricing_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_reservaions_space_id",
+                name: "IX_reservations_space_id",
                 schema: "public",
-                table: "reservaions",
+                table: "reservations",
                 column: "space_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_reservaions_user_id",
+                name: "IX_reservations_user_id",
                 schema: "public",
-                table: "reservaions",
+                table: "reservations",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
@@ -397,7 +420,7 @@ namespace Parkla.DataAccess.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "reservaions",
+                name: "reservations",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -409,15 +432,7 @@ namespace Parkla.DataAccess.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "users",
-                schema: "public");
-
-            migrationBuilder.DropTable(
                 name: "park_spaces",
-                schema: "public");
-
-            migrationBuilder.DropTable(
-                name: "districts",
                 schema: "public");
 
             migrationBuilder.DropTable(
@@ -425,11 +440,19 @@ namespace Parkla.DataAccess.Migrations
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "cities",
+                name: "parks",
                 schema: "public");
 
             migrationBuilder.DropTable(
-                name: "parks",
+                name: "users",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "districts",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "cities",
                 schema: "public");
         }
     }

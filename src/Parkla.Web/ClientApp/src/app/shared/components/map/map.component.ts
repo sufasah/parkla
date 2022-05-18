@@ -37,7 +37,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   @Output()
   markerOnClick = new EventEmitter<{event:any; element:MapMarkerComponent}>();
 
-  markersOnTheMap = new Map<number, MapMarker>();
+  markersOnTheMap = new Map<string, MapMarker>();
   searchMarker?: Marker;
 
   featureCollection = <FeatureCollection>{
@@ -329,7 +329,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
 
     sourceFeatures.forEach((feature: Feature) => {
       if(feature.properties && feature.properties.parkPoint) {
-        let id = parseInt(feature.properties.id, 10);
+        let id = feature.properties.id;
         let marker = this.markersOnTheMap.get(id)!.marker;
         marker.addTo(this.appMap);
       }

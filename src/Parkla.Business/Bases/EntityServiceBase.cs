@@ -189,10 +189,11 @@ namespace Parkla.Business.Bases
             return await _entityRepository.GetAsync(filter, cancellationToken);
         }
 
-        public virtual async Task<TEntity?> GetAsync(
-            int id,
+        public virtual async Task<TEntity?> GetAsync<TKey>(
+            TKey id,
             CancellationToken cancellationToken = default
-        ) {
+        ) where TKey: struct
+        {
             return await _entityRepository.GetAsync(
                 id,
                 cancellationToken

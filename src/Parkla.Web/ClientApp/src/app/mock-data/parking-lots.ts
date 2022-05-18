@@ -4,7 +4,7 @@ import { mockUser } from "./user";
 
 export const mockParks: Park[] = [
   {
-    id: 1,
+    id: "1",
     user: mockUser,
     name: "xotopar",
     latitude: 41.01293504282219,
@@ -26,7 +26,7 @@ export const mockParks: Park[] = [
     ]
   },
   {
-    id: 2,
+    id: "2",
     user: mockUser,
     name: "xotopar",
     latitude: 41.03293504282219,
@@ -48,7 +48,7 @@ export const mockParks: Park[] = [
     ]
   },
   {
-    id: 3,
+    id: "3",
     user: mockUser,
     name: "xotopar",
     latitude: 41.01746840384831,
@@ -71,7 +71,7 @@ export const mockParks: Park[] = [
   }
   ,
   {
-    id: 4,
+    id: "4",
     user: mockUser,
     name: "xotopar",
     latitude: 41.024850638335835,
@@ -94,7 +94,7 @@ export const mockParks: Park[] = [
   }
   ,
   {
-    id: 5,
+    id: "5",
     user: mockUser,
     name: "xotopar",
     latitude: 40.99648279881782,
@@ -117,7 +117,7 @@ export const mockParks: Park[] = [
   }
   ,
   {
-    id: 6,
+    id: "6",
     user: mockUser,
     name: "xotopar",
     latitude: 40.97536090806648,
@@ -140,7 +140,7 @@ export const mockParks: Park[] = [
   }
   ,
   {
-    id: 7,
+    id: "7",
     user: mockUser,
     name: "xotopar",
     latitude: 41.00490375179632,
@@ -162,7 +162,7 @@ export const mockParks: Park[] = [
     ]
   },
   {
-    id: 8,
+    id: "8",
     user: mockUser,
     name: "xotopar",
     latitude: 41.04738076198703,
@@ -185,7 +185,7 @@ export const mockParks: Park[] = [
   }
   ,
   {
-    id: 9,
+    id: "9",
     user: mockUser,
     name: "xotopar",
     latitude: 41.02446212030708,
