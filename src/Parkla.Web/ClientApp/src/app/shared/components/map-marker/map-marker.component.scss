@@ -17,8 +17,8 @@ $infoHeight: 100px;
 
 .marker-info {
   border: 1px solid rgba(110,110,109,0.3);
-  width: 200px;
-  height: 100px;
+  width: 250px;
+  height: fit-content;
   box-shadow: 0px 0px 16px rgb(0 0 0 / 25%);
   background-color: rgba(240, 240, 240, 0.9);
   padding: 5px 10px;

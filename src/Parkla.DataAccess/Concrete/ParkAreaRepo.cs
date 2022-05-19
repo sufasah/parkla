@@ -32,7 +32,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         var newMin = mmaResult[0].Min;
         var newAvarage = mmaResult[0].Avarage;
         var newMax = mmaResult[0].Max;
-        var count = mmaResult[0].Count;
+        var count = (float) mmaResult[0].Count;
         
         if(externalAvarage != null)
         newAvarage = count > 0 && newAvarage != null 
@@ -69,7 +69,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
     public new async Task<Tuple<ParkArea, Park>> AddAsync(ParkArea area, CancellationToken cancellationToken = default) {
         using var context = new TContext();
         var result = context.Add(area);        
-        var park = await context.FindAsync<Park>(area.ParkId,cancellationToken).ConfigureAwait(false);
+        var park = await context.FindAsync<Park>(new object?[]{area.ParkId}, cancellationToken: cancellationToken).ConfigureAwait(false);
         var parkNotFound = new ParklaException("Park of the adding area so also this area does not exist in database.", HttpStatusCode.BadRequest);
 
         if(park == null)
@@ -83,7 +83,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         (area.MinPrice, area.AvaragePrice, area.MaxPrice) = Pricing.FindMinAvgMax(area.Pricings);
         await FindParkMinAvgMaxAsync(context, area, park, cancellationToken).ConfigureAwait(false);
 
-        await RetryOnConcurrencyErrorAsync(async () => {            
+        await RetryOnConcurrencyErrorAsync(async () => {
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return false;
         }, 

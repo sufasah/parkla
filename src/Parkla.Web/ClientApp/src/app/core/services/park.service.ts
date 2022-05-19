@@ -19,8 +19,6 @@ export interface InformerItem{
 export class ParkService implements OnDestroy {
 
   private _parks = new Map<string, ChangablePark>();
-  private _signalrBeforeStreamDone = new Set<string>();
-  private _allParksStreamDone = false;
   private unsubscribe: Subscription[] = [];
 
   get copyParks() {
@@ -40,9 +38,6 @@ export class ParkService implements OnDestroy {
     const sub = this.signalrService.registerParkChanges((park: Park, isDelete: boolean) => {
       if(!park || !park.id) return;
 
-      if(!this._allParksStreamDone)
-        this._signalrBeforeStreamDone.add(park.id);
-
       if(isDelete)
         this.deleteMemoryPark(park);
       else
@@ -50,11 +45,10 @@ export class ParkService implements OnDestroy {
     });
 
     const sub2 = this.signalrService.connectedEvent.subscribe(() => {
-      this._allParksStreamDone = false;
       const sub3 = this.signalrService.GetAllParksAsStream({
         next: (park: Park) => {
-          if(park && park.id && !this._signalrBeforeStreamDone.has(park.id))
-            this.addMemoryParkIfNotExist(park)
+          if(park && park.id)
+            this.setOrAddMemoryPark(park)
         },
         error: (err:any) => {
           this.messageService.add({
@@ -67,8 +61,6 @@ export class ParkService implements OnDestroy {
           });
         },
         complete: () => {
-          this._allParksStreamDone = true;
-          this._signalrBeforeStreamDone.clear();
           sub3.dispose();
         }
       });
@@ -85,16 +77,12 @@ export class ParkService implements OnDestroy {
       this.addMemoryPark(park);
   }
 
-  private addMemoryParkIfNotExist(park: Park) {
-    const curPark = this._parks.get(park.id);
-    if(!curPark)
-      this.addMemoryPark(park);
-  }
-
   private setMemoryPark(target: ChangablePark, source: Park) {
-    delete (<any>source)['subject'];
-    Object.assign(target,source);
-    target.subject.next(undefined);
+    if(target.xmin < source.xmin) {
+      delete (<any>source)['subject'];
+      Object.assign(target,source);
+      target.subject.next(undefined);
+    }
   }
 
   private addMemoryPark(park: Park) {
@@ -113,7 +101,7 @@ export class ParkService implements OnDestroy {
 
   private deleteMemoryPark(park: Park) {
     const curPark = this._parks.get(park.id);
-    if(curPark) {
+    if(curPark && curPark.xmin < park.xmin) {
       this.parkInformer.next({
         park: curPark,
         isUserPark: this.isUserPark(curPark),

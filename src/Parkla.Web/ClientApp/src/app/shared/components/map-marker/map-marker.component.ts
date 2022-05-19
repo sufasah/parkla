@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ChangablePark, Park } from '@app/core/models/park';
+import { Park } from '@app/core/models/park';
 
 @Component({
   selector: 'app-map-marker',

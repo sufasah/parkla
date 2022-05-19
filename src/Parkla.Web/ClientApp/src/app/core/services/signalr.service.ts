@@ -22,6 +22,7 @@ export class SignalrService {
   private _startProimse!: Promise<void>;
 
   connectedEvent = new EventEmitter<void>(true)
+  disconnectedEvent = new EventEmitter<void>(true)
 
 
   get isConnected() {
@@ -41,6 +42,7 @@ export class SignalrService {
 
     this._connection.onclose(() => {
       this._subscription?.unsubscribe();
+      this.disconnectedEvent.emit();
       this.startConnection();
     });
 
