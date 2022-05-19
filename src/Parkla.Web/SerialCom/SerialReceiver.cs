@@ -13,7 +13,7 @@ public class SerialReceiver : BackgroundService
     private readonly object init = new();
     private readonly WebOptions _options;
     private readonly ILogger<SerialReceiver> _logger;
-    private readonly ICollectorService _cllectorService;
+    private readonly ICollectorService _collectorService;
     private CancellationTokenRegistration? Subscription;
     private readonly JsonSerializerOptions jsonSerializerOptions = new();
     private SerialPort? SerialPort { get; set; }
@@ -27,7 +27,7 @@ public class SerialReceiver : BackgroundService
     ) {
         _options = options.Value;
         _logger = logger;
-        _cllectorService = collectorService;
+        _collectorService = collectorService;
 
         jsonSerializerOptions.AllowTrailingCommas = true;
         jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
@@ -109,6 +109,6 @@ public class SerialReceiver : BackgroundService
             );
         }
 
-        _cllectorService.CollectParkSpaceStatusAsync(results);
+        _ = _collectorService.CollectParkSpaceStatusAsync(results);
     }
 }

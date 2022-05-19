@@ -44,7 +44,7 @@ public class CollectorService : CollectorBase
                 _logger.LogInformation("GrpcReceiver: Grpc message could not be deserialized\n{}", e.ToString());
             }
         }
-        _collectorService.CollectParkSpaceStatusAsync(result);
+        _ = _collectorService.CollectParkSpaceStatusAsync(result);
         return Task.FromResult(new Empty());
     }
 }

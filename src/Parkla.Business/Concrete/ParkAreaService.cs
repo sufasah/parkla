@@ -18,16 +18,19 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     private readonly IParkAreaRepo _parkAreaRepo;
     private readonly IValidator<ParkArea> _validator;
     private readonly IWebHostEnvironment _hostEnvironment;
+    private readonly IParklaHubService _parklaHubService;
 
     public ParkAreaService(
         IParkAreaRepo parkAreaRepo,
         IValidator<ParkArea> validator,
-        IWebHostEnvironment hostEnvironment
+        IWebHostEnvironment hostEnvironment,
+        IParklaHubService parklaHubService
     ) : base(parkAreaRepo, validator)
     {
         _parkAreaRepo = parkAreaRepo;
         _validator = validator;
         _hostEnvironment = hostEnvironment;
+        _parklaHubService = parklaHubService;
     }
 
     public override async Task<ParkArea?> GetAsync<TKey>(
@@ -118,15 +121,19 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         entity.EmptySpace = 0;
         entity.ReservedSpace = 0;
         entity.OccupiedSpace = 0;
-        entity.MinPrice = -1;
-        entity.AvaragePrice = -1;
-        entity.MaxPrice = -1;
+        entity.MinPrice = null;
+        entity.AvaragePrice = null;
+        entity.MaxPrice = null;
         entity.Spaces = null;
 
-        return await _parkAreaRepo.AddAsync(
+        var (areaResult, parkResult) = await _parkAreaRepo.AddAsync(
             entity,
             cancellationToken
         ).ConfigureAwait(false);
+
+        _ = _parklaHubService.ParkChangesAsync(parkResult, false);
+
+        return areaResult;
     }
 
     private async Task ThrowIfUserNotMatch(int parkAreaId, int userId, CancellationToken cancellationToken)
@@ -137,7 +144,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             cancellationToken
             ).ConfigureAwait(false);
 
-        if (parkArea!.Park!.UserId != userId)
+        if (parkArea != null && parkArea.Park!.UserId != userId)
             throw new ParklaException("User requested is not permitted to update or delete other user's parkArea", HttpStatusCode.BadRequest);
     }
 

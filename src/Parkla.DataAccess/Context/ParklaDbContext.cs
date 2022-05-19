@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Parkla.Core.Entities;
 using Parkla.DataAccess.Context.Maps;
 
@@ -7,6 +9,9 @@ namespace Parkla.DataAccess.Contexts;
 #pragma warning disable CS8618
 public class ParklaDbContext : DbContext
 {
+    public static readonly ILoggerFactory loggerFactory = LoggerFactory.Create(b => b.AddConsole());
+
+        
     private static readonly IConfiguration _configuration = new ConfigurationBuilder()
         .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "..", "Parkla.Web"))
         .AddJsonFile("appsettings.json")
@@ -34,7 +39,9 @@ public class ParklaDbContext : DbContext
             b.SetPostgresVersion(13,6);
         });
         
-        optionsBuilder.UseLazyLoadingProxies(false);
+        optionsBuilder
+            //.UseLoggerFactory(loggerFactory)
+            .UseLazyLoadingProxies(false);
     }
 
     public DbSet<City> Cities { get; set; } 

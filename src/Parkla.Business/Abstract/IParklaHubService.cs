@@ -3,15 +3,13 @@ using Parkla.Core.Entities;
 namespace Parkla.Business.Abstract;
 public interface IParklaHubService
 {
-    public Task ParkChanges(
+    public Task ParkChangesAsync(
         Park park, 
-        bool isDelete, 
-        CancellationToken cancellationToken = default
+        bool isDelete
     );
 
-    public Task ParkSpaceChanges(
+    public Task ParkSpaceChangesAsync(
         ParkSpace space,
-        bool isDelete,
-        CancellationToken cancellationToken = default
+        bool isDelete
     );
 }

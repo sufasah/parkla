@@ -33,7 +33,7 @@ public static class AppExceptionHandler
                 else if(error is DbUpdateConcurrencyException) {
                     await WriteMessage(
                         context,
-                        "Concurrent database record update detected. Please refresh the page an retry to update or delete again.",
+                        "Concurrent database record update detected.",
                         HttpStatusCode.Conflict,
                         logger,
                         error

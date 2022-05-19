@@ -36,9 +36,9 @@ public class CollectorService : ICollectorService
 
             if(result.Item1) {
                 if(result.Item2 != null)
-                    await _hubService.ParkSpaceChanges(result.Item2!, false);
+                    await _hubService.ParkSpaceChangesAsync(result.Item2!, false);
                 if(result.Item3 != null)
-                    await _hubService.ParkChanges(result.Item3!, false);
+                    await _hubService.ParkChangesAsync(result.Item3!, false);
             }
         } catch(Exception e) {
             _logger.LogWarning(e, "ParkSpaceStatus could not persist to the database.");

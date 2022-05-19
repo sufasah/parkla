@@ -57,6 +57,7 @@ export class ParkAreaService {
   updateArea(area: ParkArea, templateMode: boolean = false) {
     let data:any = {
       id: area.id,
+      parkId: area.parkId,
       name: area.name,
       description: area.description,
       reservationsEnabled: area.reservationsEnabled,
@@ -67,6 +68,7 @@ export class ParkAreaService {
     if(templateMode) {
       data = {
         id: area.id,
+        parkId: area.parkId,
         templateImage: area.templateImage,
         spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id})),
         xmin: area.xmin
@@ -79,9 +81,10 @@ export class ParkAreaService {
     });
   }
 
-  deleteArea(areaId: number) {
+  deleteArea(areaId: number, xmin: number) {
     return this.httpClient.delete(apiParkAreas,{body: {
-      id: areaId
+      id: areaId,
+      xmin
     }});
   }
 }

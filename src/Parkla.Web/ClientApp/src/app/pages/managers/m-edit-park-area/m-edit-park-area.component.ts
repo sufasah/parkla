@@ -83,6 +83,8 @@ export class MEditParkAreaComponent implements OnInit {
     this.area.parkId = this.getParkId();
     this.areaService.updateArea(this.area).subscribe({
       next: area => {
+        console.log(area);
+
         this.area = area;
         this.messageService.add({
           life:1500,

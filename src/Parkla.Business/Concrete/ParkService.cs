@@ -1,4 +1,3 @@
-using System;
 using System.Linq.Expressions;
 using System.Net;
 using FluentValidation;
@@ -45,14 +44,14 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         entity.EmptySpace = 0;
         entity.ReservedSpace = 0;
         entity.OccupiedSpace = 0;
-        entity.MinPrice = -1;
-        entity.AvaragePrice = -1;
-        entity.MaxPrice = -1;
+        entity.MinPrice = null;
+        entity.AvaragePrice = null;
+        entity.MaxPrice = null;
         
 
         var newPark = await _parkRepo.AddAsync(entity,cancellationToken).ConfigureAwait(false);
 
-        HubParkChanges(newPark.Id, false);
+        _ = _parklaHubService.ParkChangesAsync(newPark, false);
 
         return newPark;
     }
@@ -63,7 +62,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
 
         await base.DeleteAsync(park, cancellationToken).ConfigureAwait(false);   
 
-        _parklaHubService.ParkChanges(park, true);
+        _ = _parklaHubService.ParkChangesAsync(park, true);
     }
 
     public async Task<Park> UpdateAsync(Park park, int userId, CancellationToken cancellationToken = default)
@@ -84,7 +83,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
 
         var newPark = await _parkRepo.UpdateAsync(park, props, false, cancellationToken).ConfigureAwait(false);
 
-        HubParkChanges(newPark.Id, false);
+        _ = _parklaHubService.ParkChangesAsync(newPark, false);
         
         return newPark;
     }
@@ -97,14 +96,5 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         var park = await _parkRepo.GetAsync(x => x.Id == parkId, cancellationToken).ConfigureAwait(false);
         
         if(park!.UserId != userId) throw notAllowed;
-    }
-
-    private async Task HubParkChanges(Guid? id, bool isDelete) {
-        var newParkWithUser = await _parkRepo.GetAsync(
-            new Expression<Func<Park,object>>[]{x => x.User!},
-            x => x.Id == id
-        ).ConfigureAwait(false);
-        
-        await _parklaHubService.ParkChanges(newParkWithUser!, isDelete).ConfigureAwait(false);
     }
 }

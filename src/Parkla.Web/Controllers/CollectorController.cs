@@ -62,7 +62,7 @@ public class CollectorController : ControllerBase
             );
         }
 
-        _collectorService.CollectParkSpaceStatusAsync(results);
+        _ = _collectorService.CollectParkSpaceStatusAsync(results);
     }
     
 }

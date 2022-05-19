@@ -6,11 +6,12 @@ import { refreshTokens } from '@app/store/auth/auth.actions';
 import { selectAuthState } from '@app/store/auth/auth.selectors';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Store } from '@ngrx/store';
-import { catchError, filter, map, Subscription, tap, throwError } from 'rxjs';
+import { catchError, filter, map, Subscription, take, tap, throwError } from 'rxjs';
 import { apiAuthScheme, apiLogin, apiRefreshToken, apiRegister, apiUrl, apiVerification } from '../constants/http';
 import { TokenResponse } from '@app/core/server-models/token';
 import { NavigationEnd, Router } from '@angular/router';
 import { Gender } from '../enums/Gender';
+import { getStorageTokens } from '../utils/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -38,20 +39,36 @@ export class AuthService implements OnDestroy{
     private httpClient: HttpClient,
     private jwtHelper: JwtHelperService,
     private router: Router
-    ) {
-      this.authStateSubscription = store.select(selectAuthState).subscribe(state => {
-        this._accessToken = state.accessToken ? this.jwtHelper.decodeToken<AccessToken>(state.accessToken) : null;
-        this._refreshToken = state.refreshToken;
-      });
+  ) {
+    this.authStateSubscription = store.select(selectAuthState).subscribe(state => {
+      this.setTokens(state.accessToken, state.refreshToken);
+    });
 
-      this.routeSubscription = router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event) => {
-        let navEnd = <NavigationEnd> event;
-        this.asManager = navEnd.urlAfterRedirects.toLowerCase().includes("manager");
+    addEventListener("storage", event => {
+      store.select(selectAuthState).pipe(take(1)).subscribe(state => {
+        const tokens = getStorageTokens();
+        if(
+          state.accessToken != tokens.accessToken ||
+          state.refreshToken != tokens.refreshToken ||
+          state.expires != tokens.expires
+        ) {
+          this.setTokens(tokens.accessToken, tokens.refreshToken);
+        }
       });
-    }
+    });
 
+    this.routeSubscription = router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event) => {
+      let navEnd = <NavigationEnd> event;
+      this.asManager = navEnd.urlAfterRedirects.toLowerCase().includes("manager");
+    });
+  }
+
+  private setTokens(accessToken: string | null, refreshToken: string | null) {{
+    this._accessToken = accessToken ? this.jwtHelper.decodeToken<AccessToken>(accessToken) : null;
+    this._refreshToken = refreshToken;
+  }}
 
   ngOnDestroy(): void {
     this.authStateSubscription?.unsubscribe();
