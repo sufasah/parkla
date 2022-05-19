@@ -55,7 +55,7 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
     this.confirmService.confirm({
       message: `Are you sure to delete the park area with '${area.name}'?`,
       accept: () => {
-        this.parkAreaService.deleteArea(area.id, area.xmin).subscribe({
+        this.parkAreaService.deleteArea(area).subscribe({
           next: () => {
             this.messageService.add({
               summary: "Park Area Deletion",

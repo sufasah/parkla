@@ -81,10 +81,11 @@ export class ParkAreaService {
     });
   }
 
-  deleteArea(areaId: number, xmin: number) {
+  deleteArea(area: ParkArea) {
     return this.httpClient.delete(apiParkAreas,{body: {
-      id: areaId,
-      xmin
+      id: area.id,
+      parkId: area.parkId,
+      xmin: area.xmin
     }});
   }
 }

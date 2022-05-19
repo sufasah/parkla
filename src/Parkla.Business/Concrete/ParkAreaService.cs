@@ -8,9 +8,7 @@ using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
 using Parkla.DataAccess.Abstract;
-using System;
 using Parkla.Core.Helpers;
-using System.Reflection;
 
 namespace Parkla.Business.Concrete;
 public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
@@ -49,7 +47,11 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     public async Task DeleteAsync(ParkArea parkArea, int userId, CancellationToken cancellationToken = default)
     {
         await ThrowIfUserNotMatch((int)parkArea.Id!, userId, cancellationToken).ConfigureAwait(false);
-        await base.DeleteAsync(parkArea, cancellationToken).ConfigureAwait(false);
+        var park = await _parkAreaRepo.DeleteAsync(parkArea, cancellationToken).ConfigureAwait(false);
+
+        if(park != null)
+            _ = _parklaHubService.ParkChangesAsync(park, false);
+
     }
 
     public async Task<ParkArea> UpdateAsync(
@@ -105,7 +107,12 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                 x => x.ReservationsEnabled
             };
 
-            return await _parkAreaRepo.UpdateAsync(parkArea, props, false, cancellationToken).ConfigureAwait(false);
+            var (areaResult, parkResult) = await _parkAreaRepo.UpdateAsync(parkArea, props, false, cancellationToken).ConfigureAwait(false);
+
+            if(parkResult != null)
+                _ = _parklaHubService.ParkChangesAsync(parkResult, false);
+
+            return areaResult;
         }
 
     }
@@ -131,7 +138,8 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             cancellationToken
         ).ConfigureAwait(false);
 
-        _ = _parklaHubService.ParkChangesAsync(parkResult, false);
+        if(parkResult != null)
+            _ = _parklaHubService.ParkChangesAsync(parkResult, false);
 
         return areaResult;
     }
@@ -142,7 +150,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             new Expression<Func<ParkArea, object>>[] { x => x.Park! },
             x => x.Id == parkAreaId,
             cancellationToken
-            ).ConfigureAwait(false);
+        ).ConfigureAwait(false);
 
         if (parkArea != null && parkArea.Park!.UserId != userId)
             throw new ParklaException("User requested is not permitted to update or delete other user's parkArea", HttpStatusCode.BadRequest);
