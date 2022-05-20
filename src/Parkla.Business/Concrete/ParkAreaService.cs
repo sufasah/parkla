@@ -47,11 +47,13 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     public async Task DeleteAsync(ParkArea parkArea, int userId, CancellationToken cancellationToken = default)
     {
         await ThrowIfUserNotMatch((int)parkArea.Id!, userId, cancellationToken).ConfigureAwait(false);
-        var park = await _parkAreaRepo.DeleteAsync(parkArea, cancellationToken).ConfigureAwait(false);
-
+        var (newArea, park) = await _parkAreaRepo.DeleteAsync(parkArea, cancellationToken).ConfigureAwait(false);
+        
         if(park != null)
-            _ = _parklaHubService.ParkChangesAsync(park, false);
+            _ = _parklaHubService.ParkChangesAsync(park, false); 
 
+        if(newArea != null)
+            _ = _parklaHubService.ParkAreaChangesAsync(newArea, true);
     }
 
     public async Task<ParkArea> UpdateAsync(
@@ -89,7 +91,12 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
 
                 try {
                     parkArea.TemplateImage = fileName;
-                    return await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
+                    var (nArea, nPark) = await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
+
+                    if(nPark != null)
+                        _ = _parklaHubService.ParkChangesAsync(nPark, false);
+
+                    return nArea;
                 }
                 catch(Exception) {
                     File.Delete(path);
@@ -97,20 +104,23 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                 }
             }
 
-            return await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
+            var (newArea, newPark) = await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
+
+            if(newPark != null)
+                _ = _parklaHubService.ParkChangesAsync(newPark, false);
+
+            _ = _parklaHubService.ParkAreaChangesAsync(newArea, true);
+
+            return newArea;
         }
         else
         {
-            var props = new Expression<Func<ParkArea, object?>>[]{
-                x => x.Name,
-                x => x.Description,
-                x => x.ReservationsEnabled
-            };
-
-            var (areaResult, parkResult) = await _parkAreaRepo.UpdateAsync(parkArea, props, false, cancellationToken).ConfigureAwait(false);
+            var (areaResult, parkResult) = await _parkAreaRepo.UpdateAsync(parkArea, cancellationToken).ConfigureAwait(false);
 
             if(parkResult != null)
                 _ = _parklaHubService.ParkChangesAsync(parkResult, false);
+            
+            _ = _parklaHubService.ParkAreaChangesAsync(areaResult, true);
 
             return areaResult;
         }

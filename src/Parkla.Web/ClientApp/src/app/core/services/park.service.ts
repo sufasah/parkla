@@ -101,7 +101,7 @@ export class ParkService implements OnDestroy {
 
   private deleteMemoryPark(park: Park) {
     const curPark = this._parks.get(park.id);
-    if(curPark && curPark.xmin < park.xmin) {
+    if(curPark && curPark.xmin <= park.xmin) {
       this.parkInformer.next({
         park: curPark,
         isUserPark: this.isUserPark(curPark),

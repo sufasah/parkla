@@ -48,4 +48,12 @@ public class ParklaHubService<T> : IParklaHubService
             .SendAsync(HubConstants.EventParkSpaceChanges, space, isDelete)
             .ConfigureAwait(false);
     }
+
+    public async Task ParkAreaChangesAsync(ParkArea area, bool isDelete)
+    {
+        await _hub.Clients
+            .Group(HubConstants.EventParkAreaChangesGroup)
+            .SendAsync(HubConstants.EventParkAreaChanges, area)
+            .ConfigureAwait(false);
+    }
 }

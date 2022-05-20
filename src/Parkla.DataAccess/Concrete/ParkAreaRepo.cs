@@ -160,27 +160,65 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         updatingUsersWallet.AddRange(newUpdatingUsersWallet);
     }
 
+    private static async Task RetryDeletedSpacesAsync(
+        TContext context,
+        ParkArea area,
+        List<ParkSpace> deletingSpaces,
+        List<User> updatingUsersWallet,
+        CancellationToken cancellationToken = default
+    ) {
+        foreach (var item in deletingSpaces)
+            context.Entry(item).State = EntityState.Detached;
+        foreach (var item in updatingUsersWallet)
+            context.Entry(item).State = EntityState.Detached;
+        deletingSpaces.Clear();
+        updatingUsersWallet.Clear();
+        
+        var newDeletingSpaces = await context.Set<ParkSpace>()
+            .Where(x => x.AreaId == area.Id && !area.Spaces!.Contains(x))
+            .Include(x => x.Reservations!)
+            .ThenInclude(x => x.User)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);         
+        context.RemoveRange(newDeletingSpaces);
+
+        var resUsers = newDeletingSpaces.SelectMany(x => x.Reservations!.Select(y => new {
+            Reservation = y,
+            User = y.User!
+        }));
+
+        foreach (var resUser in resUsers) {
+            var reservation = resUser.Reservation;
+            var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
+            reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
+        }
+
+        var newUpdatingUsersWallet = resUsers.Select(x => x.User).ToList();
+
+        deletingSpaces.AddRange(newDeletingSpaces);
+        updatingUsersWallet.AddRange(newUpdatingUsersWallet);
+    }
+
     public new async Task<Tuple<ParkArea, Park?>> UpdateAsync(
         ParkArea area,
-        Expression<Func<ParkArea, object?>>[] updateProps,
-        bool updateOtherProps = true,
         CancellationToken cancellationToken = default
     ) {
         using var context = new TContext();
-        var result = context.Update(area);
+        var result = context.Update(area); // pricings are modified state with all props
 
-        result.State = updateOtherProps ? EntityState.Modified : EntityState.Unchanged;
-        foreach (var prop in updateProps)
-            result.Property(prop).IsModified = !updateOtherProps;
+        result.State = EntityState.Unchanged; // only 3 property of the area modified
+        result.Property(x => x.Name).IsModified = true;
+        result.Property(x => x.Description).IsModified = true;
+        result.Property(x => x.ReservationsEnabled).IsModified = true;
             
-        var park = await InitParkAndAreaMinAvgMax(context, area, cancellationToken).ConfigureAwait(false);
+        var park = await InitParkAndAreaMinAvgMax(context, area, cancellationToken).ConfigureAwait(false); // min avg max props modified of park and area
         
         var deletingPricings = new List<Pricing>();
         var updatingUsersWallet = new List<User>();
 
         var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
         {
-            await RetryDeletedPricingsAsync(context, area, deletingPricings, updatingUsersWallet, cancellationToken).ConfigureAwait(false);
+            await RetryDeletedPricingsAsync(context, area, deletingPricings, updatingUsersWallet, cancellationToken).ConfigureAwait(false); // area.pricings.[users.wallet] props modified
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return false;
         }, 
@@ -200,9 +238,9 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             }
             else if(entry.Entity is Park) 
             {
-                var changed = await ReloadParkCheckMinAvgMax(entry, cancellationToken).ConfigureAwait(false);
+                var changed = await ReloadParkCheckMinAvgMax(entry, cancellationToken).ConfigureAwait(false); // reloads but not modify park so park state unhanged
                 if(changed) 
-                    (park.MinPrice, park.AvaragePrice, park.MaxPrice) = await FindNewParkMinAvgMaxAsync(context, area, cancellationToken).ConfigureAwait(false);
+                    (park.MinPrice, park.AvaragePrice, park.MaxPrice) = await FindNewParkMinAvgMaxAsync(context, area, cancellationToken).ConfigureAwait(false); // park min avg max modified
             }
             else if(entry.Entity is User user) {
                 // wallet of user could not incremented it must be updated or deleted 
@@ -215,7 +253,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 var dbval = await entry.GetDatabaseValuesAsync(cancellationToken).ConfigureAwait(false);
                 if(dbval == null)
                     throw new ParklaConcurrentDeletionException("The park area trying to update is already updated by another user");
-                SetXMin(entry, dbval);
+                SetXMin(entry, dbval); // same area values there because no reload occurs. xmin is set and at this point so every prop of area except statusupdatetime, empty-reserved-occupied spces props
             }
             return true;
         }, cancellationToken).ConfigureAwait(false);
@@ -225,7 +263,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
     }
 
 
-    public override async Task<Park?> DeleteAsync(ParkArea area, CancellationToken cancellationToken = default)
+    public override async Task<Tuple<ParkArea?,Park?>> DeleteAsync(ParkArea area, CancellationToken cancellationToken = default)
     {
         using var context = new TContext();
 
@@ -235,9 +273,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             Pricings = Array.Empty<Pricing>()
         }, cancellationToken).ConfigureAwait(false);
 
+        ParkArea? result = null; 
+
         var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
         {
-            var result = await context.Set<ParkArea>().Where(x => x.Id == area.Id)
+            result = await context.Set<ParkArea>().Where(x => x.Id == area.Id)
                 .Include(x => x.Pricings!)
                 .ThenInclude(x => x.Reservations!)
                 .ThenInclude(x => x.User)
@@ -260,33 +300,29 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
             }
 
-            var emptySpaces = 0;
-            var reservedSpaces = 0;
-            var occupiedSpaces = 0;
-
-            foreach (var space in result.Spaces!) {
-                switch(space.Status) {
-                    case SpaceStatus.EMPTY:
-                        emptySpaces++;
-                        break;
-                    case SpaceStatus.RESERVED:
-                        reservedSpaces++;
-                        break;
-                    case SpaceStatus.OCCUPIED:
-                        occupiedSpaces++;
-                        break;
-                }
-            }
-
-            // restore changes before
+            // restore changes if park reloaded in concurrency error new db values restored or first values of park when this function was started
             var parkOriginals = (Park)context.Entry(park).OriginalValues.Clone().ToObject();
             park.EmptySpace = parkOriginals.EmptySpace;
             park.ReservedSpace = parkOriginals.ReservedSpace;
             park.OccupiedSpace = parkOriginals.OccupiedSpace;
 
-            park.EmptySpace -= emptySpaces;
-            park.ReservedSpace -= reservedSpaces;
-            park.OccupiedSpace -= occupiedSpaces;
+            foreach (var space in result.Spaces!) {
+                switch(space.Status) {
+                    case SpaceStatus.EMPTY:
+                        park.EmptySpace--;
+                        break;
+                    case SpaceStatus.RESERVED:
+                        park.ReservedSpace--;
+                        break;
+                    case SpaceStatus.OCCUPIED:
+                        park.OccupiedSpace--;
+                        break;
+                }
+            }
+
+            //new empty reserved occupied space values passed. If they are not changed, it is not problem to update time because at this time the values are correct.
+            //this value different from park space value because park space values represents real park space update time
+            park.StatusUpdateTime = DateTime.UtcNow;
             
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return false;
@@ -317,34 +353,41 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             return true;
         }, cancellationToken).ConfigureAwait(false);
 
-        if(cancelled) return null;
-        return park; //////////////////////////////////////// SEND PARK AREA WITH SIGNALR AS DELETED. USERS MAY WATCHIN PARK SPACE CHANGES SO UI NEED TO BE CATCH THIS 
+        if(cancelled) return new(result, null);
+        return new(result, park);
     }
 
-    public async Task<ParkArea> UpdateTemplateAsync(
+    public async Task<Tuple<ParkArea,Park?>> UpdateTemplateAsync(
         ParkArea area, 
         CancellationToken cancellationToken = default
     ) {
         using var context = new TContext();
-        var entry = context.Attach(area);
-        var area2 = context.Set<ParkArea>()
+        var dbArea = await context.Set<ParkArea>()
             .Include(x => x.Spaces!)
-            .ThenInclude(x => x.RealSpace);
+            .ThenInclude(x => x.RealSpace)
+            .Include(x => x.Spaces!)
+            .ThenInclude(x => x.Reservations)
+            .Where(x => x.Id == area.Id)
+            .SingleOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+        
+        if(dbArea == null)
+            throw new ParklaConcurrentDeletionException("The area of the updating template is deleted by another user");
 
-        entry.Property(x => x.TemplateImage).IsModified = true;
+        var result = context.Update(area); // updates area and its spaces
+        result.State = EntityState.Unchanged; // makes sure only modifying the template image prop of the area 
+        result.Property(x => x.TemplateImage).IsModified = true;
+        
+        var deletingSpaces = new List<ParkSpace>();
+        var updatingUsersWallet = new List<User>();
 
-        foreach (var space in area.Spaces!) {
-            var eSpace = context.Entry(space);
-            eSpace.State = space.Id == null ? EntityState.Added : EntityState.Modified;
-            if(space.RealSpaceId != null) {
+        var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
+        {
+            await RetryDeletedSpacesAsync(context, area, deletingSpaces, updatingUsersWallet, cancellationToken).ConfigureAwait(false);
 
-            }
-        }
-
-        var cancelled = await RetryOnConcurrencyErrorAsync(async () => {
-            var deletedSpaces = context.Set<ParkSpace>()
-                .Where(x => x.AreaId == area.Id && !area.Spaces!.Contains(x));
-            context.RemoveRange(deletedSpaces);
+            var realSpaces = context.Set<RealParkSpace>()
+                .Include(x => x.Space)
+                .Where(x => x.Space!.AreaId == area.Id)
 
             await context.SaveChangesAsync(cancellationToken);
             return false;
@@ -366,6 +409,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             return true;
         }, cancellationToken).ConfigureAwait(false);
 
-        return area;
+        if(cancelled) return new(area, null);
+        return new(area, park);
     }
 }

@@ -6,4 +6,6 @@ public static class HubConstants
     public static readonly string EventParkChangesGroup = "ParkAddUpdateDeleteGroup";
     public static readonly string EventParkSpaceChanges = "ParkSpaceAddUpdateDelete";
     public static readonly string EventParkSpaceChangesGroup = "ParkSpaceAddUpdateDeleteGroup";
+    public static readonly string EventParkAreaChanges = "ParkAreaAddUpdateDelete";
+    public static readonly string EventParkAreaChangesGroup = "ParkAreaAddUpdateDeleteGroup";
 }

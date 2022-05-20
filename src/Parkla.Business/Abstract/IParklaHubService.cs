@@ -12,4 +12,9 @@ public interface IParklaHubService
         ParkSpace space,
         bool isDelete
     );
+
+    public Task ParkAreaChangesAsync(
+        ParkArea space,
+        bool isDelete
+    );
 }

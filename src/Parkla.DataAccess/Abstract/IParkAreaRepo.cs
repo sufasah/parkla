@@ -12,17 +12,15 @@ public interface IParkAreaRepo : IEntityRepository<ParkArea>
 
     new Task<Tuple<ParkArea, Park?>> UpdateAsync(
         ParkArea area,
-        Expression<Func<ParkArea, object?>>[] updateProps,
-        bool updateOtherProps = true,
         CancellationToken cancellationToken = default
     );
     
-    Task<ParkArea> UpdateTemplateAsync(
+    Task<Tuple<ParkArea, Park?>> UpdateTemplateAsync(
         ParkArea area,
         CancellationToken cancellationToken = default
     );
 
-    new Task<Park?> DeleteAsync(
+    new Task<Tuple<ParkArea?,Park?>> DeleteAsync(
         ParkArea area, 
         CancellationToken cancellationToken = default
     );
