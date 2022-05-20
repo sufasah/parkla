@@ -60,7 +60,8 @@ public class UserMap : IEntityTypeConfiguration<User> {
             .HasColumnName("address")
             .HasMaxLength(200);
         
-            
+        b.UseXminAsConcurrencyToken();
+
         b.HasOne(x => x.City).WithMany(x => x.Users).HasForeignKey(x => x.CityId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(x => x.District).WithMany(x => x.Users).HasForeignKey(x => x.DistrictId).OnDelete(DeleteBehavior.SetNull);
 

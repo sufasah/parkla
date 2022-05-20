@@ -72,7 +72,7 @@ export class MParkMapComponent implements OnInit, OnDestroy {
     this.confirmService.confirm({
       message: `Are you sure to delete the park with '${park.name}' name?`,
       accept: () => {
-        this.parkService.deletePark(park.id).subscribe({
+        this.parkService.deletePark(park).subscribe({
           next: () => {
             this.messageService.add({
               summary: "Park Deletion",

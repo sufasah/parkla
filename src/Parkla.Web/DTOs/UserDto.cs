@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 
 namespace Parkla.Web.Models;
@@ -16,6 +14,7 @@ public class UserDto
     public string? Address { get; set; }
     public DateTime? Birthdate { get; set; }
     public Gender? Gender { get; set; }
+    public uint xmin { get; set; }
     public int? CityId { get; set; }
     public int? DistrictId { get; set; }
 }

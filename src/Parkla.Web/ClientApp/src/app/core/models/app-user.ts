@@ -15,4 +15,5 @@ export interface AppUser {
   birthdate: string | null;
   gender: Gender | null;
   address: string | null;
+  xmin: number;
 }

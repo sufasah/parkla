@@ -147,9 +147,10 @@ export class ParkService implements OnDestroy {
     });
   }
 
-  deletePark(id: string) {
+  deletePark(park: Park) {
     return this.httpClient.delete<Park>(apiParks, {body:{
-      id: id
+      id: park.id,
+      xmin: park.xmin
     }});
   }
 

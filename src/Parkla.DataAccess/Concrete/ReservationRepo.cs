@@ -8,5 +8,4 @@ namespace Parkla.DataAccess.Concrete;
 public class ReservationRepo<TContext> : EntityRepoBase<Reservation, TContext>, IReservationRepo 
     where TContext: DbContext, new()
 {
-    
 }

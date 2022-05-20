@@ -16,6 +16,7 @@ public class User : IEntity {
     public Gender? Gender { get; set; }
     public string? VerificationCode { get; set; }
     public string? RefreshTokenSignature { get; set; }
+    public uint xmin { get; set; }
     public int? CityId { get; set; }
     public virtual City? City { get; set; }
     public int? DistrictId { get; set; }

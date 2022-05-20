@@ -114,6 +114,7 @@ export class AuthService implements OnDestroy{
       name: user.name,
       surname: user.surname,
       phone: user.phone!,
+      xmin: user.xmin,
       cityId: user.city ? user.city.id : null,
       districtId: user.district ? user.district.id : null,
       gender: user.gender ? Gender[user.gender] : null,
