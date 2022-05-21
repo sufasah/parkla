@@ -3,6 +3,12 @@ using Parkla.Core.Enums;
 namespace Parkla.Core.Entities;
 
 public class ParkSpace : IEntity {
+    public ParkSpace()
+    {
+        ReceivedSpaceStatusses = new HashSet<ReceivedSpaceStatus>();
+        Reservations = new HashSet<Reservation>();
+    }
+
     public int? Id { get; set; }
     public int? AreaId { get; set; }
     public virtual ParkArea? Area { get; set; }
@@ -14,5 +20,5 @@ public class ParkSpace : IEntity {
     public virtual SpaceStatus? Status { get; set; }
     public int[][]? TemplatePath { get; set; }
     public virtual ICollection<Reservation>? Reservations { get; set; }
-    public virtual ICollection<ReceivedSpaceStatus>? ReceivedSpaceStatuses { get; set; }
+    public virtual ICollection<ReceivedSpaceStatus> ReceivedSpaceStatusses { get; set; }
 }

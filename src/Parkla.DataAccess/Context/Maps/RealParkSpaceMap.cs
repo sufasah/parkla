@@ -36,6 +36,6 @@ public class RealParkSpaceMap : IEntityTypeConfiguration<RealParkSpace> {
         b.HasOne(x => x.Park).WithMany(x => x.RealSpaces).HasForeignKey(x => x.ParkId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(x => x.Space).WithOne(x => x.RealSpace).HasForeignKey<RealParkSpace>(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);
 
-        b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC","status_update_time < (now() at time zone 'utc')");
+        b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_OR_EQUAL_NOW","status_update_time <= now()");
     }
 }

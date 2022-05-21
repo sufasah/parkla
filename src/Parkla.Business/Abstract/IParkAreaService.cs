@@ -1,5 +1,6 @@
 using Parkla.Core.Entities;
 using Parkla.Core.Helpers;
+using Parkla.Core.Models;
 
 namespace Parkla.Business.Abstract;
 public interface IParkAreaService : IEntityService<ParkArea>
@@ -17,10 +18,10 @@ public interface IParkAreaService : IEntityService<ParkArea>
         CancellationToken cancellationToken = default
     );
 
-    public Task<PagedList<ParkArea>> GetPageAsync(
-        Guid parkId,
+    Task<PagedList<InstantParkAreaReservedSpace>> GetPageAsync(
+        Guid parkId, 
         int nextRecord, 
-        int pageSize,
+        int pageSize, 
         string? search, 
         string? orderBy, 
         bool ascending, 

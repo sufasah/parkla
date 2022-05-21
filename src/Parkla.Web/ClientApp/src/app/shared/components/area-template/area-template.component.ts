@@ -126,16 +126,20 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
         if(space.isReserved) {
           if(space.status == SpaceStatus.EMPTY)
             this.drawEmptyReservedSpace(space.templatePath);
-          else
+          else if(space.status == SpaceStatus.OCCUPIED)
             this.drawOccupiedReservedSpace(space.templatePath);
+          else
+            this.drawUnknwonSpace(space.templatePath);
           return;
         }
       }
 
       if(space.status == SpaceStatus.EMPTY)
         this.drawEmptySpace(space.templatePath);
-      else
+      else if(space.status == SpaceStatus.OCCUPIED)
         this.drawOccupiedSpace(space.templatePath);
+      else
+        this.drawUnknwonSpace(space.templatePath);
     });
   }
 
@@ -160,6 +164,12 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
   drawOccupiedReservedSpace(path: SpacePath){
     this.ctx.fillStyle = "rgba(255, 153, 51, 0.40)";
     this.ctx.strokeStyle = "rgba(255, 153, 51, 0.80)";
+    this.drawSpace(path);
+  }
+
+  drawUnknwonSpace(path: SpacePath){
+    this.ctx.fillStyle = "rgba(100,100,100,0.25)";
+    this.ctx.strokeStyle = "rgba(100,100,100,0.75)";
     this.drawSpace(path);
   }
 

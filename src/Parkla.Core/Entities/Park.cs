@@ -1,7 +1,13 @@
 namespace Parkla.Core.Entities;
 
 public class Park : IEntity {
-    public Guid? Id { get; set; }
+    public Park()
+    {
+        Areas = new HashSet<ParkArea>();
+        RealSpaces = new HashSet<RealParkSpace>();
+    }
+
+     public Guid? Id { get; set; }
     public int? UserId { get; set; }
     public virtual User? User { get; set; }
     public string? Name { get; set; }
@@ -16,6 +22,6 @@ public class Park : IEntity {
     public float? MinPrice { get; set; }
     public float? AvaragePrice { get; set; }
     public float? MaxPrice { get; set; }
-    public virtual ICollection<ParkArea>? Areas { get; set; }
-    public virtual ICollection<RealParkSpace>? RealSpaces { get; set; }
+    public virtual ICollection<ParkArea> Areas { get; set; }
+    public virtual ICollection<RealParkSpace> RealSpaces { get; set; }
 }

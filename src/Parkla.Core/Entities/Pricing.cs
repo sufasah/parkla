@@ -3,6 +3,11 @@ using Parkla.Core.Enums;
 namespace Parkla.Core.Entities;
 
 public class Pricing : IEntity {
+    public Pricing()
+    {
+        Reservations = new HashSet<Reservation>();
+    }
+
     public int? Id { get; set; }
     public int? AreaId { get; set; }
     public virtual ParkArea? Area { get; set; }
@@ -10,7 +15,7 @@ public class Pricing : IEntity {
     public TimeUnit? Unit { get; set; }
     public int? Amount { get; set; }
     public float? Price { get; set; }
-    public virtual ICollection<Reservation>? Reservations { get; set; }
+    public virtual ICollection<Reservation> Reservations { get; set; }
 
     public static float GetPricePerHour(Pricing pricing) {
         var price = pricing.Price!.Value;

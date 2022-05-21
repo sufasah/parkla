@@ -6,6 +6,7 @@ using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 using Parkla.Core.Exceptions;
 using Parkla.Core.Helpers;
+using Parkla.Core.Models;
 using Parkla.DataAccess.Abstract;
 using Parkla.DataAccess.Bases;
 
@@ -14,6 +15,49 @@ namespace Parkla.DataAccess.Concrete;
 public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkAreaRepo 
     where TContext: DbContext, new()
 {
+    public async Task<PagedList<InstantParkAreaReservedSpace>> GetParkAreaPage(
+        int nextRecord, 
+        int pageSize, 
+        Expression<Func<ParkArea, bool>>? filter = null,
+        Expression<Func<ParkArea, object>>? orderBy = null,
+        bool asc = true,
+        CancellationToken cancellationToken = default
+    ) {
+        using var context = new TContext();
+        IQueryable<ParkArea> resultSet;
+        if(filter == null)
+            resultSet = context.Set<ParkArea>().AsNoTracking();
+        else
+            resultSet = context.Set<ParkArea>().AsNoTracking().Where(filter);
+        
+        resultSet = resultSet.Include(x => x.Spaces!)
+            .ThenInclude(x => x.Reservations);
+
+        if(orderBy != null)
+            if(asc)
+                resultSet = resultSet.OrderBy(orderBy);
+            else
+                resultSet = resultSet.OrderByDescending(orderBy);
+
+        var count = resultSet.Count();
+        var items = await resultSet.Skip(nextRecord)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+            
+        var result = items.Select(x => {
+            var obj = new InstantParkAreaReservedSpace(
+                x,
+                x.Spaces!.Sum(
+                    y => y.Reservations!.Count)
+            );
+            x.Spaces = null;
+            return obj;
+        }).ToList();
+
+        return new PagedList<InstantParkAreaReservedSpace>(result, nextRecord, pageSize, count);
+    }
+
     private static readonly ParklaException _parkNotFound = new("Park of the adding area so also this area does not exist in database.", HttpStatusCode.BadRequest);
 
     private static async Task<Tuple<float?,float?,float?>> FindNewParkMinAvgMaxAsync(
@@ -55,31 +99,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             : area.MaxPrice;
         
         return new(newMin, newAvarage, newMax);
-    }
-
-    public virtual async Task<PagedList<ParkArea>> GetParkAreaPage(
-        int nextRecord, 
-        int pageSize, 
-        Expression<Func<ParkArea, bool>>? filter = null,
-        Expression<Func<ParkArea, object>>? orderBy = null,
-        bool asc = true,
-        CancellationToken cancellationToken = default
-    ) {
-        using var context = new TContext();
-        IQueryable<ParkArea> resultSet;
-        if(filter == null)
-            resultSet = context.Set<ParkArea>().AsNoTracking();
-        else
-            resultSet = context.Set<ParkArea>().AsNoTracking().Where(filter);
-
-        if(orderBy != null)
-            if(asc)
-                resultSet = resultSet.OrderBy(orderBy);
-            else
-                resultSet = resultSet.OrderByDescending(orderBy);
-
-        var result = await ToPagedListAsync(resultSet, nextRecord, pageSize, cancellationToken).ConfigureAwait(false);
-        return result;
     }
     
     private static void SetXMin(EntityEntry entry, PropertyValues dbValues) 
@@ -185,46 +204,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         deletingPricings.AddRange(newDeletingPricings);
         updatingUsersWallet.AddRange(newUpdatingUsersWallet);
     }
-
-    private static async Task RetryDeletedSpacesAsync(
-        TContext context,
-        ParkArea area,
-        List<ParkSpace> deletingSpaces,
-        List<User> updatingUsersWallet,
-        CancellationToken cancellationToken = default
-    ) {
-        foreach (var item in deletingSpaces)
-            context.Entry(item).State = EntityState.Detached;
-        foreach (var item in updatingUsersWallet)
-            context.Entry(item).State = EntityState.Detached;
-        deletingSpaces.Clear();
-        updatingUsersWallet.Clear();
-        
-        var newDeletingSpaces = await context.Set<ParkSpace>()
-            .Where(x => x.AreaId == area.Id && !area.Spaces!.Contains(x))
-            .Include(x => x.Reservations!)
-            .ThenInclude(x => x.User)
-            .ToListAsync(cancellationToken)
-            .ConfigureAwait(false);         
-        context.RemoveRange(newDeletingSpaces);
-
-        var resUsers = newDeletingSpaces.SelectMany(x => x.Reservations!.Select(y => new {
-            Reservation = y,
-            User = y.User!
-        }));
-
-        foreach (var resUser in resUsers) {
-            var reservation = resUser.Reservation;
-            var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
-            reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
-        }
-
-        var newUpdatingUsersWallet = resUsers.Select(x => x.User).ToList();
-
-        deletingSpaces.AddRange(newDeletingSpaces);
-        updatingUsersWallet.AddRange(newUpdatingUsersWallet);
-    }
-
     public new async Task<Tuple<ParkArea, Park?>> UpdateAsync(
         ParkArea area,
         CancellationToken cancellationToken = default
@@ -389,7 +368,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         foreach (var item in spaces) { // these relations will not be updated
             item.RealSpace = null;
             item.Reservations = null;
-            item.ReceivedSpaceStatuses = null;
+            item.ReceivedSpaceStatusses = null!;
         }
 
         area.Spaces = Array.Empty<ParkSpace>();

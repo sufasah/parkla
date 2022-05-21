@@ -4,6 +4,8 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
+using Parkla.Core.Helpers;
+using Parkla.Core.Models;
 using Parkla.Web.Models;
 
 namespace Parkla.Web.Controllers;
@@ -53,7 +55,7 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
         var result = await _service.GetPageAsync(parkId.Value, pageDto.NextRecord, pageDto.PageSize, s, orderBy, asc, cancellationToken).ConfigureAwait(false);
         Response.Headers.Add("Access-Control-Expose-Headers", "X-Total-Records");
         Response.Headers.Add("X-Total-Records", result.TotalRecords.ToString());
-        return Ok(result);
+        return Ok(_mapper.Map<List<InstantParkAreaReservedSpace>,List<ParkAreaDto>>(result));
     }
 
     [HttpPut("")]

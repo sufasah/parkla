@@ -41,6 +41,8 @@ public class ParklaDbContext : DbContext
         
         optionsBuilder
             //.UseLoggerFactory(loggerFactory)
+            .EnableDetailedErrors()
+            .EnableSensitiveDataLogging()
             .UseLazyLoadingProxies(false);
     }
 

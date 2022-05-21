@@ -9,6 +9,7 @@ using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
 using Parkla.DataAccess.Abstract;
 using Parkla.Core.Helpers;
+using Parkla.Core.Models;
 
 namespace Parkla.Business.Concrete;
 public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
@@ -165,7 +166,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             throw new ParklaException("User requested is not permitted to update or delete other user's parkArea", HttpStatusCode.BadRequest);
     }
 
-    public async Task<PagedList<ParkArea>> GetPageAsync(
+    public async Task<PagedList<InstantParkAreaReservedSpace>> GetPageAsync(
         Guid parkId, 
         int nextRecord, 
         int pageSize, 
@@ -191,7 +192,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             ) && x.ParkId == parkId;
         }
 
-        return await _parkAreaRepo.GetListAsync(
+        return await _parkAreaRepo.GetParkAreaPage(
             nextRecord,
             pageSize,
             (Expression<Func<ParkArea,bool>>)eFilter,

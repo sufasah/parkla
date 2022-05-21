@@ -12,8 +12,8 @@ using Parkla.DataAccess.Contexts;
 namespace Parkla.DataAccess.Migrations
 {
     [DbContext(typeof(ParklaDbContext))]
-    [Migration("20220518142225_init")]
-    partial class init
+    [Migration("20220521120050_init1")]
+    partial class init1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -133,16 +133,6 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("occupied_space");
 
-                    b.Property<int?>("ReservedSpace")
-                        .IsRequired()
-                        .HasColumnType("integer")
-                        .HasColumnName("reserved_space");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
-
                     b.Property<DateTime?>("StatusUpdateTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("status_update_time");
@@ -151,6 +141,11 @@ namespace Parkla.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
 
                     b.HasKey("Id");
 
@@ -161,8 +156,6 @@ namespace Parkla.DataAccess.Migrations
                     b.HasCheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID", "latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");
 
                     b.HasCheckConstraint("CK_PRICES_VALID", "min_price <= avarage_price and avarage_price <= max_price");
-
-                    b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
                 });
 
             modelBuilder.Entity("Parkla.Core.Entities.ParkArea", b =>
@@ -220,16 +213,6 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("reservations_enabled");
 
-                    b.Property<int?>("ReservedSpace")
-                        .IsRequired()
-                        .HasColumnType("integer")
-                        .HasColumnName("reserved_space");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
-
                     b.Property<DateTime?>("StatusUpdateTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("status_update_time");
@@ -239,6 +222,11 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("template_image");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ParkId");
@@ -246,8 +234,6 @@ namespace Parkla.DataAccess.Migrations
                     b.ToTable("park_areas", "public");
 
                     b.HasCheckConstraint("CK_PRICES_VALID", "min_price <= avarage_price and avarage_price <= max_price");
-
-                    b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
                 });
 
             modelBuilder.Entity("Parkla.Core.Entities.ParkSpace", b =>
@@ -274,15 +260,10 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("real_space_id");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
-
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(3)
+                        .HasDefaultValue(2)
                         .HasColumnName("status");
 
                     b.Property<DateTime?>("StatusUpdateTime")
@@ -294,13 +275,16 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("text")
                         .HasColumnName("space_path");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AreaId");
 
                     b.ToTable("park_spaces", "public");
-
-                    b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
                 });
 
             modelBuilder.Entity("Parkla.Core.Entities.Pricing", b =>
@@ -364,11 +348,6 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("park_id");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
-
                     b.Property<int?>("SpaceId")
                         .HasColumnType("integer")
                         .HasColumnName("space_id");
@@ -376,12 +355,17 @@ namespace Parkla.DataAccess.Migrations
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(3)
+                        .HasDefaultValue(2)
                         .HasColumnName("status");
 
                     b.Property<DateTime?>("StatusUpdateTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("status_update_time");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
 
                     b.HasKey("Id");
 
@@ -391,8 +375,6 @@ namespace Parkla.DataAccess.Migrations
                         .IsUnique();
 
                     b.ToTable("real_park_spaces", "public");
-
-                    b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_NOW_UTC", "status_update_time < (now() at time zone 'utc')");
                 });
 
             modelBuilder.Entity("Parkla.Core.Entities.ReceivedSpaceStatus", b =>
@@ -419,7 +401,7 @@ namespace Parkla.DataAccess.Migrations
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasDefaultValue(3)
+                        .HasDefaultValue(2)
                         .HasColumnName("status");
 
                     b.HasKey("Id");
@@ -429,8 +411,6 @@ namespace Parkla.DataAccess.Migrations
                     b.HasIndex("SpaceId");
 
                     b.ToTable("received_space_statusses", "public");
-
-                    b.HasCheckConstraint("CK_DATETIME_LESS_THAN_NOW_UTC", "datetime < (now() at time zone 'utc')");
                 });
 
             modelBuilder.Entity("Parkla.Core.Entities.Reservation", b =>
@@ -561,6 +541,11 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("real")
                         .HasColumnName("wallet");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
@@ -649,12 +634,12 @@ namespace Parkla.DataAccess.Migrations
             modelBuilder.Entity("Parkla.Core.Entities.ReceivedSpaceStatus", b =>
                 {
                     b.HasOne("Parkla.Core.Entities.RealParkSpace", "RealSpace")
-                        .WithMany("ReceivedSpaceStatuses")
+                        .WithMany("ReceivedSpaceStatusses")
                         .HasForeignKey("RealSpaceId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Parkla.Core.Entities.ParkSpace", "Space")
-                        .WithMany("ReceivedSpaceStatuses")
+                        .WithMany("ReceivedSpaceStatusses")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -737,7 +722,7 @@ namespace Parkla.DataAccess.Migrations
                 {
                     b.Navigation("RealSpace");
 
-                    b.Navigation("ReceivedSpaceStatuses");
+                    b.Navigation("ReceivedSpaceStatusses");
 
                     b.Navigation("Reservations");
                 });
@@ -749,7 +734,7 @@ namespace Parkla.DataAccess.Migrations
 
             modelBuilder.Entity("Parkla.Core.Entities.RealParkSpace", b =>
                 {
-                    b.Navigation("ReceivedSpaceStatuses");
+                    b.Navigation("ReceivedSpaceStatusses");
                 });
 
             modelBuilder.Entity("Parkla.Core.Entities.User", b =>

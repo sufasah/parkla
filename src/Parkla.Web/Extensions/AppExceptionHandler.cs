@@ -16,7 +16,7 @@ public static class AppExceptionHandler
 
     ) {
         context.Response.StatusCode = (int)statusCode;
-        logger?.LogError(error, "AppExceptionHandler: An exception catched");
+        logger?.LogError(error, "AppExceptionHandler: An exception caught");
         await context.Response.WriteAsync(JsonSerializer.Serialize(message)).ConfigureAwait(false);
     }
     public static void UseAppExceptionHandler(this WebApplication app) {
@@ -42,7 +42,7 @@ public static class AppExceptionHandler
                 else if(error is DbUpdateException) {
                     await WriteMessage(
                         context,
-                        "Error has been catched while updating the database data. Most probably the data inside request is not consistent.",
+                        "Error has been caught while updating the database data. Most probably the data inside request is not consistent.",
                         HttpStatusCode.BadRequest,
                         logger,
                         error

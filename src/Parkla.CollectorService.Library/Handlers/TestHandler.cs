@@ -18,7 +18,7 @@ public class TestHandler : HandlerBase
             new() {
                 ParkId = Guid.NewGuid(),
                 SpaceId = 222222222,
-                Status = SpaceStatus.RESERVED,
+                Status = SpaceStatus.OCCUPIED,
                 DateTime = DateTime.UtcNow
             },
         };
