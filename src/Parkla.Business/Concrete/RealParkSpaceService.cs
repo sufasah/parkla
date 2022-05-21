@@ -58,7 +58,7 @@ public class RealParkSpaceService : EntityServiceBase<RealParkSpace>, IRealParkS
     {
         var result = await _validator.ValidateAsync(entity, o => o.IncludeRuleSets("update"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
-            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+            throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
 
         return await _realParkSpaceRepo.AddAsync(entity, cancellationToken);
     }

@@ -8,19 +8,18 @@
     class="marker-info floating"
     >
     <div
-      *ngIf="park.statusUpdateTime; else noStatusUpdateTime"
       class="text-dark
       text-center
       mb-1
       fw-bolder"
       >
-      {{park.statusUpdateTime | date : "yyyy-MM-dd HH:mm:ss}}
+      <span *ngIf="park.statusUpdateTime; else noStatusUpdateTime">
+          {{park.statusUpdateTime | date : "yyyy-MM-dd HH:mm:ss"}}
+      </span>
+      <ng-template #noStatusUpdateTime>
+        <span>Never Updated</span>
+      </ng-template>
     </div>
-    <ng-template #noStatusUpdateTime>
-      <div>
-        noupdatetime
-      </div>
-    </ng-template>
 
     <div style="font-size:12px;">
       <div class="d-flex align-items-center justify-content-evenly fw-bold" *ngIf="park.minPrice && park.avaragePrice && park.maxPrice; else noPrice">
@@ -35,8 +34,8 @@
         </span>
       </div>
       <ng-template #noPrice>
-        <div>
-          noprice
+        <div class="d-flex align-items-center justify-content-evenly fw-bold">
+          Undefined Pricing
         </div>
       </ng-template>
     </div>

@@ -35,7 +35,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
     {
         var result = await _validator.ValidateAsync(entity, o => o.IncludeRuleSets("add"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
-            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+            throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
         
         entity.StatusUpdateTime = null;
         entity.EmptySpace = 0;
@@ -65,7 +65,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
     {
         var result = await _validator.ValidateAsync(park, o => o.IncludeRuleSets("add","id"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
-            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+            throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
         
         var props = new Expression<Func<Park,object?>>[]{
             x => x.Name,

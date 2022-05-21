@@ -9,7 +9,7 @@ export interface ParkSpace {
   name: string;
   realSpaceId: number;
   realSpace?: ParkSpaceReal;
-  statusUpdateTime: number;
+  statusUpdateTime: Date;
   status: SpaceStatus;
   templatePath: SpacePath;
   isReserved: boolean;

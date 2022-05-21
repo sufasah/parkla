@@ -47,8 +47,6 @@ export class ParkService implements OnDestroy {
     const sub2 = this.signalrService.connectedEvent.subscribe(() => {
       const sub3 = this.signalrService.GetAllParksAsStream({
         next: (park: Park) => {
-      console.log(park);
-
           if(park && park.id)
             this.setOrAddMemoryPark(park)
         },
@@ -98,6 +96,8 @@ export class ParkService implements OnDestroy {
 
   private setMemoryPark(target: ChangablePark, source: Park) {
     if(target.xmin < source.xmin) {
+      if(source.statusUpdateTime) source.statusUpdateTime = new Date(source.statusUpdateTime);
+
       delete (<any>source)['subject'];
       Object.assign(target,source);
       target.subject.next(undefined);
@@ -105,6 +105,8 @@ export class ParkService implements OnDestroy {
   }
 
   private addMemoryPark(park: Park) {
+    if(park.statusUpdateTime) park.statusUpdateTime = new Date(park.statusUpdateTime);
+
     const cPark: ChangablePark = {
       ...park,
       subject: new Subject()

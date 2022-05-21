@@ -81,7 +81,7 @@ public class AuthService : IAuthService
     public async Task RegisterAsync(User user, CancellationToken cancellationToken = default) {
         var result = await _userValidatior.ValidateAsync(user, o => o.IncludeRuleSets("register"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
-            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+            throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
 
         var dbUser = await _userRepo.GetAsync(x => x.Username == user.Username, cancellationToken).ConfigureAwait(false);
         if (dbUser != null)

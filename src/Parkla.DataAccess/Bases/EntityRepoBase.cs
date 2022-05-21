@@ -267,7 +267,7 @@ namespace Parkla.DataAccess.Bases
                 } catch(DbUpdateConcurrencyException e) {
                     if(inError != null)
                     if(!await inError(e)) return false;
-                }
+                } catch(OperationCanceledException) {}
             }
             return true;
         }

@@ -27,7 +27,7 @@ public class CollectorService : ICollectorService
     {
         var validationResult = _parkSpaceStatusValidator.Validate(dto);
         if(!validationResult.IsValid) {
-            _logger.LogInformation("ParkSpaceStatus has not been validated.\n{}",validationResult.ToString());
+            _logger.LogInformation("ParkSpaceStatus has not been validated.\n{}",validationResult);
             return;
         }
 

@@ -8,7 +8,7 @@ export interface ParkArea {
   description?: string;
   templateImage: string | null;
   reservationsEnabled: boolean;
-  statusUpdateTime: number;
+  statusUpdateTime: Date;
   emptySpace: number;
   reservedSpace: number;
   occupiedSpace: number;

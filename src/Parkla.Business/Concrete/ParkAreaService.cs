@@ -69,7 +69,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             cancellationToken
         ).ConfigureAwait(false);
         if (!result.IsValid)
-            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+            throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
 
         await ThrowIfUserNotMatch((int)parkArea.Id!, userId, cancellationToken).ConfigureAwait(false);
 
@@ -132,7 +132,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     {
         var result = await _validator.ValidateAsync(entity, o => o.IncludeRuleSets("update").IncludeProperties(x => x.ParkId), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
-            throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+            throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
 
         entity.TemplateImage = null;
         entity.StatusUpdateTime = null;

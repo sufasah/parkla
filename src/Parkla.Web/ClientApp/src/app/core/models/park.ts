@@ -9,7 +9,7 @@ export interface Park {
   longitude: number;
   location: string;
   extras: string[];
-  statusUpdateTime: number;
+  statusUpdateTime: Date;
   emptySpace: number;
   reservedSpace: number;
   occupiedSpace: number;

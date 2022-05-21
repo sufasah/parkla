@@ -6,7 +6,7 @@ export interface ParkSpaceReal {
   areaid: number;
   spaceid?: number;
   name: string;
-  statusUpdateTime: number;
+  statusUpdateTime: Date;
   status: SpaceStatus;
   xmin: number;
 };

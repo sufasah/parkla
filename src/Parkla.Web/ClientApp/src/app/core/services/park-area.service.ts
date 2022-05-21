@@ -70,7 +70,7 @@ export class ParkAreaService {
         id: area.id,
         parkId: area.parkId,
         templateImage: area.templateImage,
-        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id})),
+        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id, realSpace: null})),
         xmin: area.xmin
       };
     }

@@ -148,7 +148,7 @@ namespace Parkla.Business.Bases
         private void ValidateAndThrow(TEntity entity) {
             var result = _validator.Validate(entity);
             if (!result.IsValid)
-                throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+                throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
         }
         
         private void ValidateAndThrow(ICollection<TEntity> entities) {
@@ -156,7 +156,7 @@ namespace Parkla.Business.Bases
             {
                 var result = _validator.Validate(entity);
                 if (!result.IsValid)
-                    throw new ParklaException(result.ToString(), HttpStatusCode.BadRequest);
+                    throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
             }
         }
 

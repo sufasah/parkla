@@ -69,6 +69,9 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
 
     private void Spaces() => RuleForEach(x => x.Spaces)
         .NotNull()
+        .Must(x => x.RealSpace == null).WithMessage("RealSpace field of spaces must be null")
+        .Must(x => x.Reservations == null || !x.Reservations.Any()).WithMessage("Reservations field of spaces must be null or empty")
+        .Must(x => x.ReceivedSpaceStatusses == null || !x.ReceivedSpaceStatusses.Any()).WithMessage("ReceivedSpaceStasusses field of spaces must be null or empty")
         .SetValidator(new ParkSpaceValidator(), "add");
 
     private void RsUpdate()
@@ -82,6 +85,10 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
     private void RsTemplateUpdate()
     {
         Spaces();
+        RuleFor(x => x.Spaces)
+            .Must(x => {
+                return x.DistinctBy(x => x.RealSpaceId).Count() == x.Count;
+            }).WithMessage("ParkSpaces must have distinct RealSpace id values. One RealSpace can only have one ParkSpace.");
     }
 
     private void RsTemplate() {

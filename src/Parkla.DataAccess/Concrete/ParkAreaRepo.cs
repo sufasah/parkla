@@ -58,7 +58,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         return new PagedList<InstantParkAreaReservedSpace>(result, nextRecord, pageSize, count);
     }
 
-    private static readonly ParklaException _parkNotFound = new("Park of the adding area so also this area does not exist in database.", HttpStatusCode.BadRequest);
+    private static readonly ParklaException _parkNotFound = new("Park of the area is deleted so also this area does not exist in database.", HttpStatusCode.BadRequest);
 
     private static async Task<Tuple<float?,float?,float?>> FindNewParkMinAvgMaxAsync(
         TContext context,
@@ -363,30 +363,35 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         CancellationToken cancellationToken = default
     ) {
         using var context = new TContext();
-        var spaces = area.Spaces!.AsEnumerable(); // these values come from user so last state of database will be this. user wins strategy.
         
-        foreach (var item in spaces) { // these relations will not be updated
-            item.RealSpace = null;
-            item.Reservations = null;
-            item.ReceivedSpaceStatusses = null!;
-        }
-
-        area.Spaces = Array.Empty<ParkSpace>();
         var result = context.Attach(area); // makes sure only template image is modified
         result.Property(x => x.TemplateImage).IsModified = true;
+        result.Collection(x => x.Spaces).IsModified = true;
         
         var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
         {
-            await result.Reference(x => x.Park).LoadAsync(cancellationToken).ConfigureAwait(false); // load necessary references
+            await result.Reference(x => x.Park).LoadAsync(cancellationToken).ConfigureAwait(false);
+
+            if(area.Park == null)
+                throw _parkNotFound;
+
             await result.Collection(x => x.Spaces!)
                 .Query()
-                .Include(x => x.RealSpace)
                 .Include(x => x.Reservations!)
                 .ThenInclude(x => x.User)
                 .LoadAsync(cancellationToken)
                 .ConfigureAwait(false);
+            
+            var realspaceIds = area.Spaces.Select(x => x.RealSpaceId).ToList();
 
-            var addingSpaces = spaces.Where(x => !area.Spaces.Any(y => y.Id == x.Id)).ToList();
+            await context.Set<RealParkSpace>()
+                .Where(x => realspaceIds.Contains(x.Id))
+                .LoadAsync(cancellationToken)
+                .ConfigureAwait(false);
+
+            var spaces = area.Spaces;
+
+            var addingSpaces = area.spaces.Where(x => !area.Spaces.Any(y => y.Id == x.Id)).ToList();
             foreach (var item in addingSpaces)
                 item.Id = null; // if space does not exist in area.spaces that means it also does not exist in database so mark them as adding (after updaterange)
             
@@ -394,30 +399,76 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             foreach (var item in deletingSpaces)
                 context.Remove(item); // updated park area doesn't have these db entities so they will be deleted. User wins strategy applied
 
-            context.UpdateRange(spaces); // updates(and adds null id ones). other spaces was marked as deleted state.
+            context.UpdateRange(spaces); // updates(and adds null id ones). other spaces was marked as deleted state. spaces at here must be initial ones and not tracked before. Tracked ones for next round will be overridden
 
-            foreach (var item in spaces) {
+            foreach (var item in spaces) { // spaces.RealSpace value set null initally so this will be set after update range with loaded realspaces. ALL SPACES HAS A REALSPACE ID INITALLY AND IT IS A MUST
+                if(item.RealSpace == null) {
+                    var realSpace = context.Set<RealParkSpace>().Local
+                        .Where(x => x.Id == item.RealSpaceId)
+                        .FirstOrDefault();
+                    
+                    if(realSpace == null)
+                        throw new ParklaException($"One of the spaces with {item.Name} name is binded to RealSpace which is not exist in database. Please select another one again.", HttpStatusCode.BadRequest);
+                    
+                    realSpace.Space = item;
+                }
+
+                if(item.Status != item.RealSpace!.Status) {
+                    switch(item.Status) {
+                        case SpaceStatus.EMPTY:
+                            area.EmptySpace--; // area is changing and for next round if db values changes in catch block it will be caught as a version missmatch 
+                            //so it will be reloaded and this area always up to date, 
+                            area.Park.EmptySpace--;
+                            break;
+                        case SpaceStatus.OCCUPIED:
+                            area.Park.OccupiedSpace--;
+                            area.OccupiedSpace--;
+                            break;
+                    }
+
+                    switch(item.RealSpace.Status) {
+                        case SpaceStatus.EMPTY:
+                            area.Park.EmptySpace++;
+                            area.EmptySpace++;
+                            break;
+                        case SpaceStatus.OCCUPIED:
+                            area.Park.OccupiedSpace++;
+                            area.OccupiedSpace++;
+                            break;
+                    }
+                }
+
                 item.Status = item.RealSpace!.Status;
                 item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
             }
 
+            area.Park.StatusUpdateTime = DateTime.UtcNow;
+
+            // these ones will be deleted also reservations will be deleted. So give the money of the user which paid for reservation.
+            foreach (var deletingSpace in deletingSpaces) {
+                foreach (var reservation in deletingSpace.Reservations!){
+                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
+                    reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
+                }
+            }*/
             
             await context.SaveChangesAsync(cancellationToken);
             return false;
         },
         async (err) => {
             var entry = err.Entries.Single();
-            var dbval = await entry.GetDatabaseValuesAsync(cancellationToken).ConfigureAwait(false);
-            
-            if(entry.Entity is ParkArea area) {
-                if(dbval == null)
-                    throw new ParklaException("The updating area was deleted by another user.", HttpStatusCode.NotFound);
-                
-                SetXMin(entry, dbval);
-                return true;
-            }
 
+            if(entry.Entity is ParkArea) {
+                var dbval = await entry.GetDatabaseValuesAsync(cancellationToken).ConfigureAwait(false);
+                if(dbval == null)
+                    throw new ParklaConcurrentDeletionException("Updating area is already deleted by another user.");
+                
+            }
             
+            /*spaces = spaces.Select(x => {
+                var initalClone = (ParkSpace)context.Entry(x).OriginalValues.Clone().ToObject();
+                return initalClone;
+            });*/
 
             return true;
         }, cancellationToken).ConfigureAwait(false);
