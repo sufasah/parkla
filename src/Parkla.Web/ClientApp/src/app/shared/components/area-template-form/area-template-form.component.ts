@@ -244,6 +244,8 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
   setSelectedRealSpace(realSpace: ParkSpaceReal) {
     if(realSpace) {
+      if(!!realSpace.spaceId && this.editingSpace.id != realSpace.id) return;
+
       for(let i=0; i<this.area.spaces.length; i++) {
         const space = this.area.spaces[i];
 
@@ -251,6 +253,7 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
           return;
       }
     }
+
     this.editingSpace.realSpace = realSpace;
   }
 

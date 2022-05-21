@@ -363,61 +363,81 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         CancellationToken cancellationToken = default
     ) {
         using var context = new TContext();
-        
-        var result = context.Attach(area); // makes sure only template image is modified
-        result.Property(x => x.TemplateImage).IsModified = true;
-        result.Collection(x => x.Spaces).IsModified = true;
+        ParkArea areaClone = area; 
         
         var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
         {
+            var result = context.Attach(areaClone);
+            result.Property(x => x.TemplateImage).IsModified = true;
+            result.Collection(x => x.Spaces).IsModified = true;
+            areaClone = (ParkArea)result.OriginalValues.Clone().ToObject(); // every turn everything is redone
+            areaClone.Spaces = area.Spaces.Select(x => (ParkSpace)context.Entry(x).OriginalValues.Clone().ToObject()).ToList();
+            
             await result.Reference(x => x.Park).LoadAsync(cancellationToken).ConfigureAwait(false);
 
             if(area.Park == null)
                 throw _parkNotFound;
 
-            await result.Collection(x => x.Spaces!)
+            var userSpaces = new List<ParkSpace>(area.Spaces); // every round it is userSpaces because in catch block whole state cleared like function started
+            
+            var allSpaces = await result.Collection(x => x.Spaces!)
                 .Query()
                 .Include(x => x.Reservations!)
                 .ThenInclude(x => x.User)
-                .LoadAsync(cancellationToken)
+                .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
             
-            var realspaceIds = area.Spaces.Select(x => x.RealSpaceId).ToList();
-
-            await context.Set<RealParkSpace>()
-                .Where(x => realspaceIds.Contains(x.Id))
-                .LoadAsync(cancellationToken)
-                .ConfigureAwait(false);
-
-            var spaces = area.Spaces;
-
-            var addingSpaces = area.spaces.Where(x => !area.Spaces.Any(y => y.Id == x.Id)).ToList();
-            foreach (var item in addingSpaces)
-                item.Id = null; // if space does not exist in area.spaces that means it also does not exist in database so mark them as adding (after updaterange)
-            
-            var deletingSpaces = area.Spaces.Where(x => !spaces.Any(y => y.Id == x.Id)).ToList();
+            var deletingSpaces = allSpaces.Except(userSpaces);
             foreach (var item in deletingSpaces)
                 context.Remove(item); // updated park area doesn't have these db entities so they will be deleted. User wins strategy applied
+            
+            foreach (var item in userSpaces)
+                context.Entry(item).State = EntityState.Detached;
+            
+            
+            var someOrAllOfUserSpaces = await context.Set<ParkSpace>()
+                .Where(x => x.AreaId == area.Id && userSpaces.Select(x => x.Id).Contains(x.Id))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            context.UpdateRange(spaces); // updates(and adds null id ones). other spaces was marked as deleted state. spaces at here must be initial ones and not tracked before. Tracked ones for next round will be overridden
+            foreach (var item in userSpaces) {
+                var dbitem = someOrAllOfUserSpaces.Where(x => x.Id == item.Id).FirstOrDefault(); 
+                if(dbitem != null)
+                {
+                    context.Entry(dbitem).State = EntityState.Detached;
+                    context.Update(item); // these are also in database so update them
+                }
+                else {
+                    item.Id = null; // database does not have these items because they are not in someorallofuserspaces retrieved from database
+                    context.Add(item); // so add them as a new space
+                }
+            }
+            
+            var realSpaces = await context.Set<RealParkSpace>()
+                .Where(x => area.Spaces.Select(x => x.RealSpaceId).Contains(x.Id))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            foreach (var item in spaces) { // spaces.RealSpace value set null initally so this will be set after update range with loaded realspaces. ALL SPACES HAS A REALSPACE ID INITALLY AND IT IS A MUST
+            foreach (var item in userSpaces) { 
+                // ALL SPACES HAS A REALSPACE ID INITALLY AND IT IS A MUST FIND THE REALSPACE OF THE SPACE 
                 if(item.RealSpace == null) {
-                    var realSpace = context.Set<RealParkSpace>().Local
+                    var realSpace = realSpaces
                         .Where(x => x.Id == item.RealSpaceId)
                         .FirstOrDefault();
                     
                     if(realSpace == null)
-                        throw new ParklaException($"One of the spaces with {item.Name} name is binded to RealSpace which is not exist in database. Please select another one again.", HttpStatusCode.BadRequest);
+                        throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which is not exist in database. Please select another one again", HttpStatusCode.BadRequest);
                     
-                    realSpace.Space = item;
+                    if(realSpace.SpaceId == null) {
+                        item.RealSpace = realSpace;
+                    }
+                    else throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which has already binded to another space. Please select another one again", HttpStatusCode.BadRequest);
                 }
 
-                if(item.Status != item.RealSpace!.Status) {
+                if(item.Status != item.RealSpace.Status) {
                     switch(item.Status) {
                         case SpaceStatus.EMPTY:
-                            area.EmptySpace--; // area is changing and for next round if db values changes in catch block it will be caught as a version missmatch 
-                            //so it will be reloaded and this area always up to date, 
+                            area.EmptySpace--;
                             area.Park.EmptySpace--;
                             break;
                         case SpaceStatus.OCCUPIED:
@@ -438,7 +458,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     }
                 }
 
-                item.Status = item.RealSpace!.Status;
+                item.Status = item.RealSpace.Status;
                 item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
             }
 
@@ -450,7 +470,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
                 }
-            }*/
+            }
             
             await context.SaveChangesAsync(cancellationToken);
             return false;
@@ -458,18 +478,16 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         async (err) => {
             var entry = err.Entries.Single();
 
-            if(entry.Entity is ParkArea) {
-                var dbval = await entry.GetDatabaseValuesAsync(cancellationToken).ConfigureAwait(false);
-                if(dbval == null)
-                    throw new ParklaConcurrentDeletionException("Updating area is already deleted by another user.");
+            if(entry.Entity is ParkArea entity) {
+                await entry.ReloadAsync(cancellationToken).ConfigureAwait(false);
+                if(entry.State == EntityState.Detached)
+                    throw new ParklaConcurrentDeletionException("The park area trying to update is already deleted by another user");
                 
+                entity.TemplateImage = areaClone.TemplateImage;
+                entity.Spaces = areaClone.Spaces;
             }
             
-            /*spaces = spaces.Select(x => {
-                var initalClone = (ParkSpace)context.Entry(x).OriginalValues.Clone().ToObject();
-                return initalClone;
-            });*/
-
+            context.ChangeTracker.Clear();
             return true;
         }, cancellationToken).ConfigureAwait(false);
 

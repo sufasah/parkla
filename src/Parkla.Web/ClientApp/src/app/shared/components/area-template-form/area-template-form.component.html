@@ -153,7 +153,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-space>
-          <tr [pSelectableRow]="space" [pContextMenuRow]="space" [style]="isRealSpaceSelected(space) ? 'background-color: #f0feff;' : space.id && space.spaceId === editingSpace.id ? 'background-color: #f0fff0;' : ''">
+          <tr [pSelectableRow]="space" [pContextMenuRow]="space" [style]="isRealSpaceSelected(space) ? 'background-color: #e0fee0;' : space.id && space.spaceId === editingSpace.id ? 'background-color: #fee0e0;' : ''">
             <td>
               {{space.id}}
             </td>
