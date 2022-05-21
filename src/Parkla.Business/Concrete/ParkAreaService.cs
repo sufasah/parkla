@@ -136,7 +136,6 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         entity.TemplateImage = null;
         entity.StatusUpdateTime = null;
         entity.EmptySpace = 0;
-        entity.ReservedSpace = 0;
         entity.OccupiedSpace = 0;
         entity.MinPrice = null;
         entity.AvaragePrice = null;
@@ -187,7 +186,6 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                 x.MaxPrice.ToString()!.ToLower().Contains(search) ||
                 x.EmptySpace.ToString()!.ToLower().Contains(search) ||
                 x.OccupiedSpace.ToString()!.ToLower().Contains(search) ||
-                x.ReservedSpace.ToString()!.ToLower().Contains(search) ||
                 x.Description!.ToLower().Contains(search) || 
                 x.StatusUpdateTime.ToString()!.ToLower().Contains(search)
             ) && x.ParkId == parkId;

@@ -64,6 +64,23 @@ export class ParkService implements OnDestroy {
           sub3.dispose();
         }
       });
+
+      const sub4 = this.signalrService.getAllParksReservationCountAsStream({
+        next: (item: {parkId: string, reservedCount: number}) => {
+          let park = this._parks.get(item.parkId)
+
+          if(park && park.reservedSpace != item.reservedCount) {
+            park.reservedSpace = item.reservedCount;
+            park.subject.next();
+          }
+        },
+        error: (err:any) => {
+          console.log(err);
+        },
+        complete: () => {
+          sub4.dispose();
+        }
+      });
     })
 
     this.unsubscribe.push(sub, sub2);

@@ -16,7 +16,6 @@ public class ParkValidator : AbstractValidator<Park>
         Extras();
         StatusUpdateTime();
         EmptySpace();
-        ReservedSpace();
         OccupiedSpace();
         MinPrice();
         AvaragePrice();
@@ -52,8 +51,6 @@ public class ParkValidator : AbstractValidator<Park>
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void EmptySpace() => RuleFor(x => x.EmptySpace)
-        .NotNull();
-    private void ReservedSpace() => RuleFor(x => x.ReservedSpace)
         .NotNull();
     private void OccupiedSpace() => RuleFor(x => x.OccupiedSpace)
         .NotNull();

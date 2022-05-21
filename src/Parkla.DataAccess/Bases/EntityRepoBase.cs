@@ -189,7 +189,7 @@ namespace Parkla.DataAccess.Bases
             return entity;
         }
 
-        private static async Task<PagedList<TEntity>> ToPagedListAsync(
+        public static async Task<PagedList<TEntity>> ToPagedListAsync(
             IQueryable<TEntity> source, 
             int nextRecord, 
             int pageSize, 

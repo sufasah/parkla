@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 using Parkla.Core.Exceptions;
+using Parkla.Core.Helpers;
 using Parkla.DataAccess.Abstract;
 using Parkla.DataAccess.Bases;
 
@@ -56,6 +57,31 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         return new(newMin, newAvarage, newMax);
     }
 
+    public virtual async Task<PagedList<ParkArea>> GetParkAreaPage(
+        int nextRecord, 
+        int pageSize, 
+        Expression<Func<ParkArea, bool>>? filter = null,
+        Expression<Func<ParkArea, object>>? orderBy = null,
+        bool asc = true,
+        CancellationToken cancellationToken = default
+    ) {
+        using var context = new TContext();
+        IQueryable<ParkArea> resultSet;
+        if(filter == null)
+            resultSet = context.Set<ParkArea>().AsNoTracking();
+        else
+            resultSet = context.Set<ParkArea>().AsNoTracking().Where(filter);
+
+        if(orderBy != null)
+            if(asc)
+                resultSet = resultSet.OrderBy(orderBy);
+            else
+                resultSet = resultSet.OrderByDescending(orderBy);
+
+        var result = await ToPagedListAsync(resultSet, nextRecord, pageSize, cancellationToken).ConfigureAwait(false);
+        return result;
+    }
+    
     private static void SetXMin(EntityEntry entry, PropertyValues dbValues) 
     {
         var pxmin = entry.Property("xmin")!;
@@ -303,16 +329,12 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             // restore changes if park reloaded in concurrency error new db values restored or first values of park when this function was started
             var parkOriginals = (Park)context.Entry(park).OriginalValues.Clone().ToObject();
             park.EmptySpace = parkOriginals.EmptySpace;
-            park.ReservedSpace = parkOriginals.ReservedSpace;
             park.OccupiedSpace = parkOriginals.OccupiedSpace;
 
             foreach (var space in result.Spaces!) {
                 switch(space.Status) {
                     case SpaceStatus.EMPTY:
                         park.EmptySpace--;
-                        break;
-                    case SpaceStatus.RESERVED:
-                        park.ReservedSpace--;
                         break;
                     case SpaceStatus.OCCUPIED:
                         park.OccupiedSpace--;
@@ -362,33 +384,45 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         CancellationToken cancellationToken = default
     ) {
         using var context = new TContext();
-        var dbArea = await context.Set<ParkArea>()
-            .Include(x => x.Spaces!)
-            .ThenInclude(x => x.RealSpace)
-            .Include(x => x.Spaces!)
-            .ThenInclude(x => x.Reservations)
-            .Where(x => x.Id == area.Id)
-            .SingleOrDefaultAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var spaces = area.Spaces!.AsEnumerable(); // these values come from user so last state of database will be this. user wins strategy.
         
-        if(dbArea == null)
-            throw new ParklaConcurrentDeletionException("The area of the updating template is deleted by another user");
+        foreach (var item in spaces) { // these relations will not be updated
+            item.RealSpace = null;
+            item.Reservations = null;
+            item.ReceivedSpaceStatuses = null;
+        }
 
-        var result = context.Update(area); // updates area and its spaces
-        result.State = EntityState.Unchanged; // makes sure only modifying the template image prop of the area 
+        area.Spaces = Array.Empty<ParkSpace>();
+        var result = context.Attach(area); // makes sure only template image is modified
         result.Property(x => x.TemplateImage).IsModified = true;
         
-        var deletingSpaces = new List<ParkSpace>();
-        var updatingUsersWallet = new List<User>();
-
         var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
         {
-            await RetryDeletedSpacesAsync(context, area, deletingSpaces, updatingUsersWallet, cancellationToken).ConfigureAwait(false);
+            await result.Reference(x => x.Park).LoadAsync(cancellationToken).ConfigureAwait(false); // load necessary references
+            await result.Collection(x => x.Spaces!)
+                .Query()
+                .Include(x => x.RealSpace)
+                .Include(x => x.Reservations!)
+                .ThenInclude(x => x.User)
+                .LoadAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            var realSpaces = context.Set<RealParkSpace>()
-                .Include(x => x.Space)
-                .Where(x => x.Space!.AreaId == area.Id)
+            var addingSpaces = spaces.Where(x => !area.Spaces.Any(y => y.Id == x.Id)).ToList();
+            foreach (var item in addingSpaces)
+                item.Id = null; // if space does not exist in area.spaces that means it also does not exist in database so mark them as adding (after updaterange)
+            
+            var deletingSpaces = area.Spaces.Where(x => !spaces.Any(y => y.Id == x.Id)).ToList();
+            foreach (var item in deletingSpaces)
+                context.Remove(item); // updated park area doesn't have these db entities so they will be deleted. User wins strategy applied
 
+            context.UpdateRange(spaces); // updates(and adds null id ones). other spaces was marked as deleted state.
+
+            foreach (var item in spaces) {
+                item.Status = item.RealSpace!.Status;
+                item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
+            }
+
+            
             await context.SaveChangesAsync(cancellationToken);
             return false;
         },
@@ -410,6 +444,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         }, cancellationToken).ConfigureAwait(false);
 
         if(cancelled) return new(area, null);
-        return new(area, park);
+        return new(area, area.Park);
     }
 }

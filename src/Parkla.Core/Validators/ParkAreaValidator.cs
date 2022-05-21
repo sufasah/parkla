@@ -17,7 +17,6 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         ReservationsEnabled();
         StatusUpdateTime();
         EmptySpace();
-        ReservedSpace();
         OccupiedSpace();
         MinPrice();
         AvaragePrice();
@@ -50,8 +49,6 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         .LessThanOrEqualTo(DateTime.UtcNow);
     private void EmptySpace() => RuleFor(x => x.EmptySpace)
         .NotNull();
-    private void ReservedSpace() => RuleFor(x => x.ReservedSpace)
-        .NotNull();
     private void OccupiedSpace() => RuleFor(x => x.OccupiedSpace)
         .NotNull();
     private void MinPrice() => RuleFor(x => x.MinPrice)
@@ -67,9 +64,11 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         .InclusiveBetween(0, precision30);
 
     private void Pricings() => RuleForEach(x => x.Pricings)
+        .NotNull()
         .SetValidator(new PricingValidator(), "add");
 
     private void Spaces() => RuleForEach(x => x.Spaces)
+        .NotNull()
         .SetValidator(new ParkSpaceValidator(), "add");
 
     private void RsUpdate()

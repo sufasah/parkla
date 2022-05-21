@@ -5,6 +5,7 @@ using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
+using Parkla.Core.Models;
 using Parkla.DataAccess.Abstract;
 
 namespace Parkla.Business.Concrete;
@@ -25,13 +26,9 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         _parklaHubService = parklaHubService;
     }
 
-    public override async Task<List<Park>> GetAllAsync(CancellationToken cancellationToken = default)
+    public new async Task<List<InstantParkReservedSpace>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var includeProps = new Expression<Func<Park,object>>[]{
-            x => x.User!
-        };
-
-        return await _parkRepo.GetListAsync(includeProps, null, cancellationToken).ConfigureAwait(false);
+        return await _parkRepo.GetAllParksAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public override async Task<Park> AddAsync(Park entity, CancellationToken cancellationToken = default)
@@ -42,7 +39,6 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         
         entity.StatusUpdateTime = null;
         entity.EmptySpace = 0;
-        entity.ReservedSpace = 0;
         entity.OccupiedSpace = 0;
         entity.MinPrice = null;
         entity.AvaragePrice = null;
@@ -96,5 +92,10 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         var park = await _parkRepo.GetAsync(x => x.Id == parkId, cancellationToken).ConfigureAwait(false);
         
         if(park!.UserId != userId) throw notAllowed;
+    }
+
+    public async Task<List<InstantParkIdReservedSpace>> GetAllParksReservedSpaceCount(CancellationToken cancellationToken = default)
+    {
+        return await _parkRepo.GetAllParksReservedSpaceCountAsync(cancellationToken).ConfigureAwait(false);
     }
 }

@@ -12,7 +12,6 @@ public class Park : IEntity {
     public virtual uint xmin { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
     public int? EmptySpace { get; set; }
-    public int? ReservedSpace { get; set; }
     public int? OccupiedSpace { get; set; }
     public float? MinPrice { get; set; }
     public float? AvaragePrice { get; set; }

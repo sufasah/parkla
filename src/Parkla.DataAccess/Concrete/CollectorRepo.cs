@@ -68,10 +68,6 @@ public class CollectorRepo<TContext> : ICollectorRepo
                         area.OccupiedSpace -= 1;
                         park.OccupiedSpace -= 1;
                         break;
-                    case SpaceStatus.RESERVED:
-                        area.ReservedSpace -= 1;
-                        park.ReservedSpace -= 1;
-                        break;
                     case SpaceStatus.UNKNOWN: break;
                 }
 
@@ -83,10 +79,6 @@ public class CollectorRepo<TContext> : ICollectorRepo
                     case SpaceStatus.OCCUPIED:
                         area.OccupiedSpace += 1;
                         park.OccupiedSpace += 1;
-                        break;
-                    case SpaceStatus.RESERVED:
-                        area.ReservedSpace += 1;
-                        park.ReservedSpace += 1;
                         break;
                     case SpaceStatus.UNKNOWN: break;
                 }

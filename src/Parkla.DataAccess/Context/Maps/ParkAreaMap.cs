@@ -33,9 +33,6 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
         b.Property(x => x.EmptySpace)
             .HasColumnName("empty_space")
             .IsRequired();
-        b.Property(x => x.ReservedSpace)
-            .HasColumnName("reserved_space")
-            .IsRequired();
         b.Property(x => x.OccupiedSpace)
             .HasColumnName("occupied_space")
             .IsRequired();

@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState, IStreamSubscriber } from '@microsoft/signalr';
 import { Subject, Subscription } from 'rxjs';
-import { signalAllParks, signalConnectionUrl, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister } from '../constants/signalr';
+import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister } from '../constants/signalr';
 import { Park } from '../models/park';
 
 interface QueueItem {
@@ -123,6 +123,10 @@ export class SignalrService {
 
   GetAllParksAsStream(callbacks: IStreamSubscriber<any>) {
     return this._connection.stream(signalAllParks).subscribe(callbacks);
+  }
+
+  getAllParksReservationCountAsStream(callbacks: IStreamSubscriber<any>) {
+    return this._connection.stream(signalAllParksReservedSpaceCount).subscribe(callbacks);
   }
 
 }

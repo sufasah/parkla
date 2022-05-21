@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Park } from '@app/core/models/park';
 
 @Component({
@@ -6,7 +6,7 @@ import { Park } from '@app/core/models/park';
   templateUrl: './map-marker.component.html',
   styleUrls: ['./map-marker.component.scss']
 })
-export class MapMarkerComponent implements OnInit {
+export class MapMarkerComponent implements OnInit, OnChanges {
 
   @Output()
   public onClick = new EventEmitter<any>();
@@ -14,15 +14,17 @@ export class MapMarkerComponent implements OnInit {
   @Input()
   park!:Park;
 
-  get spaceCount() {
-    let total = this.park.emptySpace +
-      this.park.reservedSpace +
-      this.park.occupiedSpace;
-
-    return total == 0 ? 1 : total;
-  }
+  spaceCount = 1;
 
   constructor() { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    let park: Park = changes.park.currentValue;
+
+    this.spaceCount = park.emptySpace + park.occupiedSpace;
+    this.spaceCount = this.spaceCount == 0 ? 1 : this.spaceCount;
+
+  }
 
   ngOnInit(): void {
   }
