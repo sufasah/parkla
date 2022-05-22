@@ -17,19 +17,35 @@ public class ReceivedSpaceStatusMap : IEntityTypeConfiguration<ReceivedSpaceStat
         b.Property(x => x.SpaceId)
             .HasColumnName("space_id")
             .IsRequired(false);
+        b.Property(x => x.SpaceName)
+            .HasColumnName("space_name")
+            .HasMaxLength(30);
         b.Property(x => x.RealSpaceId)
             .HasColumnName("real_space_id")
             .IsRequired(false);
-        b.Property(x => x.Status)
-            .HasColumnName("status")
-            .HasDefaultValue(SpaceStatus.UNKNOWN)
+        b.Property(x => x.RealSpaceName)
+            .HasColumnName("real_space_name")
+            .HasMaxLength(30)
             .IsRequired();
-        b.Property(x => x.DateTime)
-            .HasColumnName("datetime");
+        b.Property(x => x.OldSpaceStatus)
+            .HasColumnName("old_space_status");
+        b.Property(x => x.NewSpaceStatus)
+            .HasColumnName("new_space_status");
+        b.Property(x => x.OldRealSpaceStatus)
+            .HasColumnName("old_real_space_status")
+            .IsRequired();
+        b.Property(x => x.NewRealSpaceStatus)
+            .HasColumnName("new_real_space_status")
+            .IsRequired();
+        b.Property(x => x.ReceivedTime)
+            .HasColumnName("received_time");
+        b.Property(x => x.StatusDataTime)
+            .HasColumnName("status_data_time");
             
         b.HasOne(x => x.RealSpace).WithMany(x => x.ReceivedSpaceStatusses).HasForeignKey(x => x.RealSpaceId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(x => x.Space).WithMany(x => x.ReceivedSpaceStatusses).HasForeignKey(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);
 
-        b.HasCheckConstraint("CK_DATETIME_LESS_THAN_OR_EQUAL_NOW","datetime <= now()");
+        b.HasCheckConstraint("CK_RECEIVED_TIME_LESS_THAN_OR_EQUAL_NOW","received_time <= now()");
+        b.HasCheckConstraint("CK_STATUS_DATA_TIME_LESS_THAN_OR_EQUAL_NOW","status_data_time <= now()");
     }
 }

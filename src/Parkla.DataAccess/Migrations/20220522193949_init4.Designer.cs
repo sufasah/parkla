@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Parkla.DataAccess.Contexts;
@@ -11,9 +12,10 @@ using Parkla.DataAccess.Contexts;
 namespace Parkla.DataAccess.Migrations
 {
     [DbContext(typeof(ParklaDbContext))]
-    partial class parklaContextModelSnapshot : ModelSnapshot
+    [Migration("20220522193949_init4")]
+    partial class init4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -396,7 +398,7 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("new_real_space_status");
 
-                    b.Property<int?>("NewSpaceStatus")
+                    b.Property<int>("NewSpaceStatus")
                         .HasColumnType("integer")
                         .HasColumnName("new_space_status");
 
@@ -404,7 +406,7 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("old_real_space_status");
 
-                    b.Property<int?>("OldSpaceStatus")
+                    b.Property<int>("OldSpaceStatus")
                         .HasColumnType("integer")
                         .HasColumnName("old_space_status");
 
@@ -414,6 +416,7 @@ namespace Parkla.DataAccess.Migrations
 
                     b.Property<string>("RealSpaceName")
                         .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
                         .HasColumnName("real_space_name");
@@ -427,9 +430,11 @@ namespace Parkla.DataAccess.Migrations
                         .HasColumnName("space_id");
 
                     b.Property<string>("SpaceName")
+                        .IsRequired()
+                        .ValueGeneratedOnUpdateSometimes()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)")
-                        .HasColumnName("space_name");
+                        .HasColumnName("real_space_name");
 
                     b.Property<DateTime?>("StatusDataTime")
                         .HasColumnType("timestamp with time zone")

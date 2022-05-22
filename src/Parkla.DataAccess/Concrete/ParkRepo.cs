@@ -113,6 +113,6 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
         if(cancelled) return parkClone;
 
         var newPark = context.Find<Park>(parkClone.Id!.Value);
-        return newPark;
+        return newPark!;
     }
 }

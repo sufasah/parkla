@@ -16,116 +16,123 @@ public class CollectorRepo<TContext> : ICollectorRepo
         _logger = logger;
     }
 
-    public async Task<Tuple<bool,ParkSpace?, Park?>> CollectParkSpaceStatusAsync(ParkSpaceStatusDto dto)
+    public async Task<Tuple<ParkSpace, ParkArea, Park>?> CollectParkSpaceStatusAsync(ParkSpaceStatusDto dto)
     {
         using var context = new TContext();
-        using var transaction = context.Database.BeginTransaction();
+        while(true) {
+            try {
+                var realSpace = await context.Set<RealParkSpace>()
+                    .Include(x => x.Space)
+                    .ThenInclude(x => x!.Area)
+                    .ThenInclude(x => x!.Park)
+                    .ThenInclude(x => x!.User)
+                    .Where(x => x.Id == dto.SpaceId && x.ParkId == dto.ParkId)
+                    .SingleOrDefaultAsync()
+                    .ConfigureAwait(false);
+                
+                if(realSpace == null)
+                    throw new KeyNotFoundException();
 
-        var realSpace = await context.Set<RealParkSpace>()
-            .AsTracking()
-            .Where(x => x.Id == dto.SpaceId && x.ParkId == dto.ParkId)
-            .Include(x => x.Space!)
-            .ThenInclude(x => x.Area!)
-            .ThenInclude(x => x.Park)
-            .FirstOrDefaultAsync();
-        
-        if(realSpace == null) {
-            await transaction.DisposeAsync();
-            throw new InvalidDataException();
-        }
+                if (realSpace.StatusUpdateTime != null && realSpace.StatusUpdateTime > dto.DateTime)
+                    throw new TimeoutException();
 
-        if(realSpace.StatusUpdateTime != null && realSpace.StatusUpdateTime > dto.DateTime) {
-            await transaction.DisposeAsync();
-            return new(false, null, null);
-        }
+                var receivedStatus = new ReceivedSpaceStatus
+                {
+                    RealSpaceId = realSpace.Id,
+                    RealSpaceName = realSpace.Name,
+                    RealSpace = realSpace,
+                    OldRealSpaceStatus = realSpace.Status
+                };
+                
+                var isBounded = realSpace.Space != null;
+                ParkSpace? space = null;
+                ParkArea? area = null;
+                Park? park = null;
+                receivedStatus.Space = null;
+                receivedStatus.SpaceId = null;
+                receivedStatus.SpaceName = null;
+                receivedStatus.OldSpaceStatus = null;
+                receivedStatus.NewSpaceStatus = null;
+                
+                if(isBounded) {
+                    space = realSpace.Space;
+                    area = space!.Area;
+                    park = area!.Park;
 
-        try {
-            var currentStatus = realSpace.Status;
-            realSpace.Status = dto.Status;
-            realSpace.StatusUpdateTime = dto.DateTime;
-
-            if(realSpace.Space == null) {
-                await context.SaveChangesAsync();
-                await transaction.CommitAsync();
-                return new(false, null, null);
-            }
-
-            var space = realSpace.Space;
-            space.Status = dto.Status;
-            space.StatusUpdateTime = dto.DateTime;
-
-            var area = space.Area!;
-            var park = area.Park!;
-            park.StatusUpdateTime = area.StatusUpdateTime = DateTime.UtcNow;
-            
-            if(currentStatus != dto.Status) {
-                switch(currentStatus) {
-                    case SpaceStatus.EMPTY:
-                        area.EmptySpace -= 1;
-                        park.EmptySpace -= 1;
-                        break;
-                    case SpaceStatus.OCCUPIED:
-                        area.OccupiedSpace -= 1;
-                        park.OccupiedSpace -= 1;
-                        break;
-                    case SpaceStatus.UNKNOWN: break;
+                    receivedStatus.Space = space;
+                    receivedStatus.SpaceId = space.Id;
+                    receivedStatus.SpaceName = space.Name;
+                    receivedStatus.OldSpaceStatus = space.Status;
                 }
-
-                switch(dto.Status) {
-                    case SpaceStatus.EMPTY:
-                        area.EmptySpace += 1;
-                        park.EmptySpace += 1;
-                        break;
-                    case SpaceStatus.OCCUPIED:
-                        area.OccupiedSpace += 1;
-                        park.OccupiedSpace += 1;
-                        break;
-                    case SpaceStatus.UNKNOWN: break;
-                }
-            }
-
-            await context.SaveChangesAsync();
-            await transaction.CommitAsync();
-            return new(true, space, park);
-        } 
-        catch(DbUpdateConcurrencyException e) {
-            foreach (var entry in e.Entries) {
-                var entity = entry.Entity;
-                if(entry.Entity is RealParkSpace) {
-                    /*
-                    var proposedValues = entry.CurrentValues;
-                    var databaseValues = entry.GetDatabaseValues();
-
-                    foreach (var property in proposedValues.Properties)
-                    {
-                        var proposedValue = proposedValues[property];
-                        var databaseValue = databaseValues[property];
-
-                        // TODO: decide which value should be written to database
-                        // proposedValues[property] = <value to be saved>;
+                
+                if(isBounded && realSpace.Status != dto.Status) {
+                    switch(realSpace.Status) {
+                        case SpaceStatus.EMPTY:
+                            area!.EmptySpace--;
+                            park!.EmptySpace--;
+                            break;
+                        case SpaceStatus.OCCUPIED:
+                            area!.OccupiedSpace--;
+                            park!.OccupiedSpace--;
+                            break;
+                        case SpaceStatus.UNKNOWN:
+                            break;
                     }
 
-                    // Refresh original values to bypass next concurrency check
-                    entry.OriginalValues.SetValues(databaseValues);
-                    */
-                }
-                else if(entry.Entity is ParkSpace) {
+                    switch(dto.Status) {
+                        case SpaceStatus.EMPTY:
+                            area!.EmptySpace++;
+                            park!.EmptySpace++;
+                            break;
+                        case SpaceStatus.OCCUPIED:
+                            area!.EmptySpace++;
+                            park!.EmptySpace++;
+                            break;
+                        case SpaceStatus.UNKNOWN:
+                            break;
+                    }
 
+                    realSpace.Status = space!.Status = dto.Status;
+
+                    receivedStatus.NewRealSpaceStatus = realSpace.Status;
+                    receivedStatus.NewSpaceStatus = space!.Status;
                 }
+
+                realSpace.StatusUpdateTime = dto.DateTime;
+
+                receivedStatus.ReceivedTime = DateTime.UtcNow;
+                receivedStatus.StatusDataTime = dto.DateTime;
+
+                if(isBounded)
+                    space!.StatusUpdateTime = area!.StatusUpdateTime = park!.StatusUpdateTime = dto.DateTime;
+                
+                context.Add(receivedStatus);
+
+                await context.SaveChangesAsync().ConfigureAwait(false);
+                break;
             }
-            /*if(entries.whichone.StatusUpdateTime != null and it is > dto.DateTime) {
-                await transaction.DisposeAsync();
-                return false;
-            }*/
-
-            await transaction.RollbackAsync();
-            return await CollectParkSpaceStatusAsync(dto);
-        }
-        catch(Exception e) {
-            await transaction.RollbackAsync();
-            _logger.LogError(e, "ParkSpaceStatus collector transaction has been failed.");
-            return new(false, null, null);
+            catch(DbUpdateConcurrencyException) {
+                context.ChangeTracker.Clear();
+            }
         }
 
+        var result =  context.Set<RealParkSpace>().Local.Single();
+        if(result.Space == null)
+            return null;
+
+        var resSpace = result.Space;
+        var resArea = resSpace.Area!;
+        var resPark = resArea.Park!;
+
+        resSpace.Area = null;
+        resSpace.ReceivedSpaceStatusses = null!;
+        
+        resArea.Spaces = null!;
+        resArea.Park = null;
+
+        resPark.RealSpaces = null!;
+        resPark.Areas = null!;
+
+        return new(resSpace, resArea, resPark);
     }
 }

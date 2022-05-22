@@ -4,7 +4,7 @@ using Parkla.Core.Entities;
 namespace Parkla.DataAccess.Abstract;
 
 public interface ICollectorRepo {
-    Task<Tuple<bool, ParkSpace?, Park?>> CollectParkSpaceStatusAsync(
+    Task<Tuple<ParkSpace, ParkArea, Park>?> CollectParkSpaceStatusAsync(
         ParkSpaceStatusDto dto
     );
 }
