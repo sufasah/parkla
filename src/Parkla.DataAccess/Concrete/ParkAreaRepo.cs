@@ -444,7 +444,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             area.Spaces = userSpaces;
             
             var realSpaces = await context.Set<RealParkSpace>()
-                .Where(x => area.Spaces.Select(x => x.RealSpaceId).Contains(x.Id))
+                .Where(x => area.Spaces.Select(x => x.RealSpaceId).Contains(x.Id) || area.Spaces.Select(x => x.Id).Contains(x.SpaceId))
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
@@ -455,23 +455,44 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                         .Where(x => x.Id == item.RealSpaceId)
                         .FirstOrDefault();
                     
-
                     if(realSpace == null)
                         throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which is not exist in database. Please select another one again", HttpStatusCode.BadRequest);
                     
-                    if(realSpace.SpaceId == null) {
+                    var localOldRealSpace = context.Set<RealParkSpace>()
+                        .Local
+                        .Where(x => x.SpaceId == item.Id)
+                        .FirstOrDefault();
+                    
+                    if(localOldRealSpace != null && localOldRealSpace.SpaceId == item.Id) {
+                        localOldRealSpace.SpaceId = null;
+                        // maybe locally this space binded another space so fetching database may overwrite it
+                    } else {
                         var oldRealSpace = await context.Set<RealParkSpace>()
                             .Where(x => x.SpaceId == item.Id)
                             .FirstOrDefaultAsync(cancellationToken)
                             .ConfigureAwait(false);
-
+                        
                         if(oldRealSpace != null && oldRealSpace.Space == item) 
                             oldRealSpace.SpaceId = null;
+                    }
+                    
 
+                    if(realSpace.SpaceId == null) {
                         item.RealSpace = realSpace;
                     }
-                    else throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which has already binded to another space. Please select another one again", HttpStatusCode.BadRequest);
-                }
+                    else {
+                        //if realspace was binded before update is allowed only and only if it is binded changing ones.
+                        //Because other spaces is not changing right now and that means to unbind a realspace the realspaceid of the binded space must set null
+                        //or another available space. Also, this is an update operation and only userSpaces are changing right now so if realspace was not binded
+                        //one of them that means it cant be changed right now. 
+                        var oldSpace = userSpaces.Where(x => x.Id == realSpace.SpaceId).FirstOrDefault();
+                        if(oldSpace != null && oldSpace.RealSpaceId != realSpace.Id) {
+                            //oldspace exists which is changing and it is not binded this realspace any more. So this realspace is available
+                            item.RealSpace = realSpace;
+                        }
+                        else throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which has already binded to another space. Please select another one again", HttpStatusCode.BadRequest);
+                    }
+                }   
 
                 if(item.Status != item.RealSpace.Status) {
                     switch(item.Status) {
