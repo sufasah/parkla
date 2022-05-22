@@ -12,13 +12,16 @@ public class ParklaHubService<T> : IParklaHubService
 {
     private readonly IHubContext<T> _hub;
     private readonly IParkRepo _parkRepo;
+    private readonly IParkAreaRepo _areaRepo;
 
     public ParklaHubService(
         IHubContext<T> hub,
-        IParkRepo parkRepo
+        IParkRepo parkRepo,
+        IParkAreaRepo areaRepo
     ) {
         _hub = hub;
         _parkRepo = parkRepo;
+        _areaRepo = areaRepo;
     }
     
     private async Task<Park?> IncludeUserAsync(Park park) {
@@ -62,9 +65,12 @@ public class ParklaHubService<T> : IParklaHubService
 
     public async Task ParkAreaChangesAsync(ParkArea area, bool isDelete)
     {
+        var newArea = await _areaRepo.GetParkAreaAsync(x => x.Id == area.Id).ConfigureAwait(false);
+        if(newArea == null) return;
+
         await _hub.Clients
-            .Group(HubConstants.EventParkAreaChangesGroup(area.ParkId!.Value))
-            .SendAsync(HubConstants.EventParkAreaChanges, area)
+            .Group(HubConstants.EventParkAreaChangesGroup(newArea.ParkArea.ParkId!.Value))
+            .SendAsync(HubConstants.EventParkAreaChanges, newArea.ParkArea)
             .ConfigureAwait(false);
     }
 }

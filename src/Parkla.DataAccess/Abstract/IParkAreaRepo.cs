@@ -36,6 +36,11 @@ public interface IParkAreaRepo : IEntityRepository<ParkArea>
         CancellationToken cancellationToken = default
     );
 
+    Task<InstantParkAreaReservedSpace> GetParkAreaAsync(
+        Expression<Func<ParkArea, bool>>? filter = null,
+        CancellationToken cancellationToken = default
+    );
+
     Task<List<InstantParkAreaIdReservedSpace>> GetParkAreasReserverdSpaceCountAsync(
         int[] ids, 
         CancellationToken cancellationToken

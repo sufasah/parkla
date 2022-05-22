@@ -191,14 +191,12 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
             areaClone = (ParkArea)result.CurrentValues.Clone().ToObject();
             areaClone.Pricings = result.Entity.Pricings.Select(x => (Pricing)context.Entry(x).CurrentValues.Clone().ToObject()).ToList();
-            parkClone = (Park)context.Update(park).CurrentValues.Clone().ToObject();
+            parkClone = (Park)context.Update(parkClone).CurrentValues.Clone().ToObject();
 
             var userPricings = new List<Pricing>(area.Pricings);
             
             var allPricings = await result.Collection(x => x.Pricings!)
                 .Query()
-                .Include(x => x.Reservations!)
-                .ThenInclude(x => x.User)
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
             
@@ -232,14 +230,17 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
             area.Pricings = userPricings;
 
-            var resUsers = deletingPricings.SelectMany(x => x.Reservations!.Select(y => new {
-                Reservation = y,
-                User = y.User!
-            }));
+            var deletionTime = DateTime.UtcNow;
+            var deletingReservations = await context.Set<Reservation>()
+                .Include(x => x.User)
+                .Where(x => 
+                    x.EndTime > deletionTime &&
+                    deletingPricings.Select(y => y.Id).Contains(x.PricingId))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            foreach (var resUser in resUsers) {
-                var reservation = resUser.Reservation;
-                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
+            foreach (var reservation in deletingReservations) {
+                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
                 reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
             }
 
@@ -263,21 +264,17 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
                 if(entry.State == EntityState.Detached)
                     throw new ParklaConcurrentDeletionException("The park area trying to update is already updated by another user");
-                
-                entity.Name = areaClone.Name; // these are modified columns
-                entity.Description = areaClone.Description; // so apply these to the new park area with new version - last in wins
-                entity.ReservationsEnabled = areaClone.ReservationsEnabled;
-                entity.Pricings = areaClone.Pricings;
-                entity.MinPrice = areaClone.MinPrice;
-                entity.MaxPrice = areaClone.MaxPrice;
-                entity.AvaragePrice = areaClone.AvaragePrice;
+
+                areaClone.EmptySpace = entity.EmptySpace;
+                areaClone.OccupiedSpace = entity.OccupiedSpace;
+                areaClone.StatusUpdateTime = entity.StatusUpdateTime;
+                areaClone.TemplateImage = entity.TemplateImage;
+                areaClone.xmin = entity.xmin;
                 //entity.Spaces remove relations because may they have another realtions can cause attach an entity twice
                 //entity.spaces not used here but for exmaple assume entity.spaces[0].pricings[0].Id = 2
                 //also assume entity.pricings[0] = 2. both is different object in memory because areaClone is clone and its pricings assigned
                 //to entity.pricings. but entity.spaces are in context so entity.pricings[0] out of context and other one is in context.
                 //in next rounds they will be in new areaClone and cause error.
-
-                areaClone = entity; // entity will be detached after clear so it is like a clone now with new version and user modifies
             }
 
             context.ChangeTracker.Clear();
@@ -288,6 +285,9 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
         var areaResult = context.Find<ParkArea>(areaClone.Id)!;
         var parkResult = context.Find<Park>(parkClone.Id)!;
+
+        foreach (var pricing in areaResult.Pricings)
+            pricing.Reservations = null!;
         
         return new(areaResult, parkResult);
     }
@@ -311,8 +311,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             
             var result = await context.Set<ParkArea>().Where(x => x.Id == area.Id)
                 .Include(x => x.Pricings!)
-                .ThenInclude(x => x.Reservations!)
-                .ThenInclude(x => x.User)
                 .Include(x => x.Spaces!)
                 .SingleOrDefaultAsync(cancellationToken)
                 .ConfigureAwait(false);
@@ -323,14 +321,18 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             areaClone = (ParkArea)context.Entry(areaClone).CurrentValues.Clone().ToObject();
             context.Remove(result);
 
-            var resUsers = result.Pricings!.SelectMany(x => x.Reservations!.Select(y => new {
-                Reservation = y,
-                User = y.User!
-            }));
+            var deletionTime = DateTime.UtcNow;
+            var deletingReservations = await context.Set<Reservation>()
+                .Include(x => x.User)
+                .Where(x => 
+                    x.EndTime > deletionTime && (
+                        result.Spaces.Select(y => y.Id).Contains(x.SpaceId) ||
+                        result.Pricings.Select(y => y.Id).Contains(x.PricingId)))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
 
-            foreach (var resUser in resUsers) {
-                var reservation = resUser.Reservation;
-                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
+            foreach (var reservation in deletingReservations) {
+                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
                 reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
             }
 
@@ -399,8 +401,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             
             var allSpaces = await result.Collection(x => x.Spaces!)
                 .Query()
-                .Include(x => x.Reservations!)
-                .ThenInclude(x => x.User)
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
             
@@ -530,12 +530,20 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             //dont update like delete operation of the area
             //area.Park.StatusUpdateTime = DateTime.UtcNow;
 
-            // these ones will be deleted also reservations will be deleted. So give the money of the user which paid for reservation.
-            foreach (var deletingSpace in deletingSpaces) {
-                foreach (var reservation in deletingSpace.Reservations!){
-                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(reservation.StartTime!.Value).TotalHours;
-                    reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
-                }
+            // some spaces will be deleted also reservations will be deleted. So give the money of the user which paid for reservation.
+            var deletionTime = DateTime.UtcNow;
+            var deletingReservations = await context.Set<Reservation>()
+                .Include(x => x.User)
+                .Include(x => x.Pricing)
+                .Where(x => 
+                    x.EndTime > deletionTime && 
+                    deletingSpaces.Select(y => y.Id).Contains(x.SpaceId))
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
+
+            foreach (var reservation in deletingReservations) {
+                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
+                reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Pricing!) * (float)timeIntervalAsHour;
             }
             
             await context.SaveChangesAsync(cancellationToken);
@@ -589,5 +597,35 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             .ConfigureAwait(false);
 
         return result.Select(x => new InstantParkAreaIdReservedSpace(x.AreaId!.Value,x.ReservationCount)).ToList();
+    }
+
+    public async Task<InstantParkAreaReservedSpace?> GetParkAreaAsync(
+        Expression<Func<ParkArea, bool>>? filter = null, 
+        CancellationToken cancellationToken = default
+    ) {
+         using var context = new TContext();
+        IQueryable<ParkArea> resultSet;
+        if(filter == null)
+            resultSet = context.Set<ParkArea>().AsNoTracking();
+        else
+            resultSet = context.Set<ParkArea>().AsNoTracking().Where(filter);
+        
+        resultSet = resultSet.Include(x => x.Spaces!)
+            .ThenInclude(x => x.Reservations);
+
+        var item = await resultSet
+            .GroupBy(x => x.Id)
+            .Select(g => new {
+                ParkArea = g.First(x => x.Id == g.Key),
+                ReservationCount = g.Sum(
+                    x => x.Spaces.Sum(
+                        y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
+            })
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+        
+        if(item == null || item.ParkArea == null) return null;
+        item.ParkArea.Spaces = null!;
+        return new InstantParkAreaReservedSpace(item.ParkArea, item.ReservationCount);
     }
 }

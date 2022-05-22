@@ -97,6 +97,8 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                     if(nPark != null)
                         _ = _parklaHubService.ParkChangesAsync(nPark, false);
 
+                    _ = _parklaHubService.ParkAreaChangesAsync(nArea, false);
+
                     return nArea;
                 }
                 catch(Exception) {
@@ -110,7 +112,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             if(newPark != null)
                 _ = _parklaHubService.ParkChangesAsync(newPark, false);
 
-            _ = _parklaHubService.ParkAreaChangesAsync(newArea, true);
+            _ = _parklaHubService.ParkAreaChangesAsync(newArea, false);
 
             return newArea;
         }
@@ -121,7 +123,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             if(parkResult != null)
                 _ = _parklaHubService.ParkChangesAsync(parkResult, false);
             
-            _ = _parklaHubService.ParkAreaChangesAsync(areaResult, true);
+            _ = _parklaHubService.ParkAreaChangesAsync(areaResult, false);
 
             return areaResult;
         }
@@ -141,7 +143,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         entity.MinPrice = null;
         entity.AvaragePrice = null;
         entity.MaxPrice = null;
-        entity.Spaces = null;
+        entity.Spaces = null!;
 
         var (areaResult, parkResult) = await _parkAreaRepo.AddAsync(
             entity,

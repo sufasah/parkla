@@ -80,6 +80,7 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   unsubscribe: Subscription[] = [];
   parkReservationStreamSubscription?: ISubscription<any>;
+  parkAreaChangesSubscription?: Subscription;
 
   constructor(
     private router: Router,
@@ -92,7 +93,8 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.unsubscribe.forEach(x => x.unsubscribe());
-    this.parkReservationStreamSubscription?.dispose();
+    this.stopReservedCountStream();
+    this.unregisterParkAreaChanges();
   }
 
   ngOnInit(): void {
@@ -103,12 +105,16 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
       if(page > 1)
         this.nextRecord = page * this.pageSize - this.pageSize;
     }
+
     const sub = this.signalrService.connectedEvent.subscribe(() => {
       if(this.areas)
         this.startReservedCountStream(this.areas.map(x => x.id));
+        this.registerParkAreaChanges();
     });
+
     const sub2 = this.signalrService.disconnectedEvent.subscribe(() => {
       this.stopReservedCountStream();
+      this.unregisterParkAreaChanges();
     })
 
     this.unsubscribe.push(sub,sub2);
@@ -120,9 +126,6 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
       {
         next: (item: {areaId: number, reservedSpaceCount: number}) => {
           let area = this.areas.find(x => x.id == item.areaId);
-
-          console.log(item);
-
           if(area) {
             area.reservedSpace = item.reservedSpaceCount;
           }
@@ -135,10 +138,38 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
         }
       }
     );
+    console.log("start stream");
+
   }
 
   stopReservedCountStream() {
     this.parkReservationStreamSubscription?.dispose();
+    console.log("stop stream");
+  }
+
+  registerParkAreaChanges() {
+    this.parkAreaChangesSubscription = this.signalrService.registerParkAreaChanges(this.getParkId(), (area, isDelete) => {
+      const oldAreaIndex = this.areas.findIndex(x => x.id == area.id);
+      if(oldAreaIndex != -1) {
+        if(isDelete) {
+          this.areas.splice(oldAreaIndex, 1);
+        }
+        else {
+          if(this.areas[oldAreaIndex].xmin <= area.xmin)
+            this.areas[oldAreaIndex] = {...area};
+        }
+      }
+      console.log(area);
+
+      this.dataView.cd.detectChanges();
+    });
+    console.log("subscribe areachanges");
+  }
+
+  unregisterParkAreaChanges() {
+    console.log("unsubscribe areachanges");
+
+    this.parkAreaChangesSubscription?.unsubscribe();
   }
 
   onSortChange(event:any) {
@@ -255,7 +286,8 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
           });
         }
         this.loading = false;
-        this.startReservedCountStream(this.areas.map(x => x.id));
+        if(this.signalrService.isConnected)
+          this.startReservedCountStream(this.areas.map(x => x.id));
       },
       error: (err: HttpErrorResponse) => {
         this.loading = false;

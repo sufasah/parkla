@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState, IStreamSubscriber } from '@microsoft/signalr';
 import { Subject, Subscription } from 'rxjs';
-import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkAreasReservedSpaceCount, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister, signalParkSpaceChangesRegister, signalParkSpaceChangesUnRegister, signalReservationChangesRegister, signalReservationChangesUnRegister } from '../constants/signalr';
+import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkAreaChanges, signalParkAreaChangesRegister, signalParkAreaChangesUnRegister, signalParkAreasReservedSpaceCount, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister, signalParkSpaceChangesRegister, signalParkSpaceChangesUnRegister, signalReservationChangesRegister, signalReservationChangesUnRegister } from '../constants/signalr';
 import { Park } from '../models/park';
 import { ParkArea } from '../models/park-area';
 import { ParkSpace } from '../models/park-space';
@@ -133,7 +133,7 @@ export class SignalrService {
     );
   }
 
-  registerReservationChanges(callback: (reservation: Reservation, isDelete: boolean) => void, areaId: number) {
+  registerReservationChanges(areaId: number, callback: (reservation: Reservation, isDelete: boolean) => void) {
     return this.register(
       signalParkChanges,
       callback,
@@ -142,12 +142,12 @@ export class SignalrService {
     );
   }
 
-  registerParkAreaChanges(callback: (area: ParkArea, isDelete: boolean) => void, parkId: string) {
+  registerParkAreaChanges(parkId: string, callback: (area: ParkArea, isDelete: boolean) => void) {
     return this.register(
-      signalParkChanges,
+      signalParkAreaChanges,
       callback,
-      {name: signalReservationChangesRegister, args: [parkId]},
-      {name: signalReservationChangesUnRegister, args: [parkId]}
+      {name: signalParkAreaChangesRegister, args: [parkId]},
+      {name: signalParkAreaChangesUnRegister, args: [parkId]}
     );
   }
 
