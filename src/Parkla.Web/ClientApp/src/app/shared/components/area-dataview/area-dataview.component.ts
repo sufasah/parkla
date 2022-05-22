@@ -163,12 +163,9 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
       this.dataView.cd.detectChanges();
     });
-    console.log("subscribe areachanges");
   }
 
   unregisterParkAreaChanges() {
-    console.log("unsubscribe areachanges");
-
     this.parkAreaChangesSubscription?.unsubscribe();
   }
 
