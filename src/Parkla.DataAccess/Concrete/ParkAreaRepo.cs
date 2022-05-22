@@ -492,7 +492,16 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                         }
                         else throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which has already binded to another space. Please select another one again", HttpStatusCode.BadRequest);
                     }
-                }   
+                } else {
+                    // SPACES WANT TO BINDED TO REALSPACEID ONES WHICH IS DIFFERENT FROM REALSPACE PROP
+                    // SO THIS ALGORITHM CAN BE LIKE THAT FIND NEXT ONE ASSIGN IT TO REALSPACE
+                    item.RealSpace = context.Find<RealParkSpace>(item.RealSpaceId);
+                    if(item.RealSpace == null)
+                        throw new ParklaException($"One of the spaces with {item.Name} name has not binded to any RealSpace", HttpStatusCode.BadRequest);
+                    
+                    item.Status = item.RealSpace!.Status;
+                    item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
+                }
 
                 if(item.Status != item.RealSpace.Status) {
                     switch(item.Status) {
@@ -518,8 +527,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     }
                 }
 
-                item.Status = item.RealSpace.Status;
-                item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
             }
 
             //dont update like delete operation of the area
