@@ -56,9 +56,9 @@ public class ParkService : EntityServiceBase<Park>, IParkService
     {
         await ThrowIfUserNotMatch(park.Id, userId, cancellationToken).ConfigureAwait(false);
 
-        await base.DeleteAsync(park, cancellationToken).ConfigureAwait(false);   
+        var newPark = await _parkRepo.DeleteAsync(park, cancellationToken).ConfigureAwait(false);   
 
-        _ = _parklaHubService.ParkChangesAsync(park, true);
+        _ = _parklaHubService.ParkChangesAsync(newPark, true);
     }
 
     public async Task<Park> UpdateAsync(Park park, int userId, CancellationToken cancellationToken = default)
@@ -91,7 +91,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
 
         var park = await _parkRepo.GetAsync(x => x.Id == parkId, cancellationToken).ConfigureAwait(false);
         
-        if(park!.UserId != userId) throw notAllowed;
+        if(park != null && park!.UserId != userId) throw notAllowed;
     }
 
     public async Task<List<InstantParkIdReservedSpace>> GetAllParksReservedSpaceCount(CancellationToken cancellationToken = default)

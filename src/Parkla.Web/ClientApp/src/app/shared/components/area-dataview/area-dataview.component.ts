@@ -154,7 +154,7 @@ export class AreaDataViewComponent implements OnInit {
 
       this.searchTOID = setTimeout(() => {
         this.fetchAreas(
-          this.nextRecord,
+          0,
           data,
           this.orderBy,
           this.asc
@@ -190,18 +190,21 @@ export class AreaDataViewComponent implements OnInit {
       asc
     ).subscribe({
       next: response => {
-        if(response.headers.has("x-total-records"))
-          this.totalRecords = Number(response.headers.get("x-total-records"));
-
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {
-            ...this.route.snapshot.queryParams,
-            page: (nextRecord + this.pageSize) / this.pageSize
-          }
-        });
 
         this.areas = response.body!;
+
+        if(response.headers.has("x-total-records")) {
+          this.totalRecords = Number(response.headers.get("x-total-records"));
+          this.nextRecord = nextRecord;
+
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+              ...this.route.snapshot.queryParams,
+              page: (nextRecord + this.pageSize) / this.pageSize
+            }
+          });
+        }
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {

@@ -27,4 +27,9 @@ public interface IParkAreaService : IEntityService<ParkArea>
         bool ascending, 
         CancellationToken cancellationToken = default
     );
+
+    Task<List<InstantParkAreaIdReservedSpace>> GetParkAreasReserverdSpaceCountAsync(
+        int[] ids,
+        CancellationToken cancellationToken
+    );
 }

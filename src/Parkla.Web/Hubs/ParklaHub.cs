@@ -11,15 +11,18 @@ namespace Parkla.Web.Hubs;
 public class ParklaHub : Hub 
 {
     private readonly IParkService _parkService;
+    private readonly IParkAreaService _areaService;
     private readonly ILogger<ParklaHub> _logger;
     private readonly IMapper _mapper;
 
     public ParklaHub(
         IParkService parkService,
+        IParkAreaService areaService,
         ILogger<ParklaHub> logger,
         IMapper mapper
     ) {
         _parkService = parkService;
+        _areaService = areaService;
         _logger = logger;
         _mapper = mapper;
     }
@@ -70,6 +73,28 @@ public class ParklaHub : Hub
         }
     }
 
+    public async IAsyncEnumerable<InstantParkAreaIdReservedSpace> ParkAreasReservedSpaceCount(
+        int[] areaIds,
+        [EnumeratorCancellation]
+        CancellationToken cancellationToken
+    ) {
+        var linkedCancellationToken = CancellationTokenSource
+            .CreateLinkedTokenSource(cancellationToken, Context.ConnectionAborted).Token;
+        
+        while (true)
+        {
+            var parksWithReservedSpaceCount = await _areaService.GetParkAreasReserverdSpaceCountAsync(areaIds, linkedCancellationToken);
+
+            foreach (var item in parksWithReservedSpaceCount)
+            {
+                if(linkedCancellationToken.IsCancellationRequested) break;
+                yield return item;
+            }
+
+            await Task.Delay(1000, cancellationToken);
+        }
+    }
+
     public async Task RegisterParkChanges() {
         await Groups.AddToGroupAsync(
             Context.ConnectionId, 
@@ -86,36 +111,53 @@ public class ParklaHub : Hub
             .ConfigureAwait(false);
     }
 
-    public async Task RegisterParkSpaceChanges() {
+    public async Task RegisterParkSpaceChanges(int areaId) {
         await Groups.AddToGroupAsync(
             Context.ConnectionId, 
-            HubConstants.EventParkSpaceChangesGroup, 
+            HubConstants.EventParkSpaceChangesGroup(areaId), 
             Context.ConnectionAborted)
             .ConfigureAwait(false);
     }
     
-    public async Task UnRegisterParkSpaceChanges() {
+    public async Task UnRegisterParkSpaceChanges(int areaId) {
         await Groups.RemoveFromGroupAsync(
             Context.ConnectionId, 
-            HubConstants.EventParkSpaceChangesGroup, 
+            HubConstants.EventParkSpaceChangesGroup(areaId), 
             Context.ConnectionAborted)
             .ConfigureAwait(false);
     }
 
-    public async Task RegisterParkAreaChanges() {
+    public async Task RegisterParkAreaChanges(Guid parkId) {
         await Groups.AddToGroupAsync(
             Context.ConnectionId, 
-            HubConstants.EventParkAreaChangesGroup, 
+            HubConstants.EventParkAreaChangesGroup(parkId), 
             Context.ConnectionAborted)
             .ConfigureAwait(false);
     }
     
-    public async Task UnRegisterParkAreaChanges() {
+    public async Task UnRegisterParkAreaChanges(Guid parkId) {
         await Groups.RemoveFromGroupAsync(
             Context.ConnectionId, 
-            HubConstants.EventParkAreaChangesGroup, 
+            HubConstants.EventParkAreaChangesGroup(parkId), 
             Context.ConnectionAborted)
             .ConfigureAwait(false);
     }
+
+    public async Task RegisterReservationChanges(int areaId) {
+        await Groups.AddToGroupAsync(
+            Context.ConnectionId, 
+            HubConstants.EventReservationChangesGroup(areaId),
+            Context.ConnectionAborted)
+            .ConfigureAwait(false);
+    }
+    
+    public async Task UnRegisterReservationChanges(int areaId) {
+        await Groups.RemoveFromGroupAsync(
+            Context.ConnectionId, 
+            HubConstants.EventReservationChangesGroup(areaId),
+            Context.ConnectionAborted)
+            .ConfigureAwait(false);
+    }
+    
     
 }

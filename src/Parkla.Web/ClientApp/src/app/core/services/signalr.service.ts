@@ -1,8 +1,11 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState, IStreamSubscriber } from '@microsoft/signalr';
 import { Subject, Subscription } from 'rxjs';
-import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister } from '../constants/signalr';
+import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkAreasReservedSpaceCount, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister, signalParkSpaceChangesRegister, signalParkSpaceChangesUnRegister, signalReservationChangesRegister, signalReservationChangesUnRegister } from '../constants/signalr';
 import { Park } from '../models/park';
+import { ParkArea } from '../models/park-area';
+import { ParkSpace } from '../models/park-space';
+import { Reservation } from '../models/reservation';
 
 interface QueueItem {
   name: string;
@@ -121,12 +124,43 @@ export class SignalrService {
     );
   }
 
+  registerParkSpaceChanges(callback: (parkSpace: ParkSpace, isDelete: boolean) => void, areaId: number) {
+    return this.register(
+      signalParkChanges,
+      callback,
+      {name: signalParkSpaceChangesRegister, args: [areaId]},
+      {name: signalParkSpaceChangesUnRegister, args: [areaId]}
+    );
+  }
+
+  registerReservationChanges(callback: (reservation: Reservation, isDelete: boolean) => void, areaId: number) {
+    return this.register(
+      signalParkChanges,
+      callback,
+      {name: signalReservationChangesRegister, args: [areaId]},
+      {name: signalReservationChangesUnRegister, args: [areaId]}
+    );
+  }
+
+  registerParkAreaChanges(callback: (area: ParkArea, isDelete: boolean) => void, parkId: string) {
+    return this.register(
+      signalParkChanges,
+      callback,
+      {name: signalReservationChangesRegister, args: [parkId]},
+      {name: signalReservationChangesUnRegister, args: [parkId]}
+    );
+  }
+
   GetAllParksAsStream(callbacks: IStreamSubscriber<any>) {
     return this._connection.stream(signalAllParks).subscribe(callbacks);
   }
 
   getAllParksReservationCountAsStream(callbacks: IStreamSubscriber<any>) {
     return this._connection.stream(signalAllParksReservedSpaceCount).subscribe(callbacks);
+  }
+
+  getParkAreasReservedSpaceCountCountAsStream(callbacks: IStreamSubscriber<any>) {
+    return this._connection.stream(signalParkAreasReservedSpaceCount).subscribe(callbacks);
   }
 
 }

@@ -201,4 +201,9 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             cancellationToken
         );
     }
+
+    public async Task<List<InstantParkAreaIdReservedSpace>> GetParkAreasReserverdSpaceCountAsync(int[] ids, CancellationToken cancellationToken)
+    {
+        return await _parkAreaRepo.GetParkAreasReserverdSpaceCountAsync(ids, cancellationToken).ConfigureAwait(false);
+    }
 }

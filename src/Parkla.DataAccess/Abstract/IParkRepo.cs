@@ -11,4 +11,9 @@ public interface IParkRepo : IEntityRepository<Park> {
     Task<List<InstantParkReservedSpace>> GetAllParksAsync(
         CancellationToken cancellationToken = default
     );
+
+    new Task<Park> DeleteAsync(
+        Park park, 
+        CancellationToken cancellationToken
+    );
 }

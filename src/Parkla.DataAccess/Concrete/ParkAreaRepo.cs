@@ -42,17 +42,19 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         var count = resultSet.Count();
         var items = await resultSet.Skip(nextRecord)
             .Take(pageSize)
+            .GroupBy(x => x.Id)
+            .Select(g => new {
+                ParkArea = g.First(x => x.Id == g.Key),
+                ReservationCount = g.Sum(
+                    x => x.Spaces.Sum(
+                        y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
+            })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
             
         var result = items.Select(x => {
-            var obj = new InstantParkAreaReservedSpace(
-                x,
-                x.Spaces!.Sum(
-                    y => y.Reservations!.Count)
-            );
-            x.Spaces = null;
-            return obj;
+            x.ParkArea.Spaces = null!;
+            return new InstantParkAreaReservedSpace(x.ParkArea, x.ReservationCount);
         }).ToList();
 
         return new PagedList<InstantParkAreaReservedSpace>(result, nextRecord, pageSize, count);
@@ -101,13 +103,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         return new(newMin, newAvarage, newMax);
     }
     
-    private static void SetXMin(EntityEntry entry, PropertyValues dbValues) 
-    {
-        var pxmin = entry.Property("xmin")!;
-        pxmin.CurrentValue =  dbValues.GetValue<uint>("xmin");
-        pxmin.OriginalValue =  dbValues.GetValue<uint>("xmin");
-    }
-
     private static async Task<bool> ReloadParkCheckMinAvgMax(EntityEntry parkEntry, CancellationToken cancellationToken = default) {
         var park = (Park)parkEntry.Entity;
         var originals = (Park)parkEntry.OriginalValues.Clone().ToObject();
@@ -139,11 +134,15 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
     public new async Task<Tuple<ParkArea, Park?>> AddAsync(ParkArea area, CancellationToken cancellationToken = default) {
         using var context = new TContext();
-        var result = context.Add(area);        
         var park = await InitParkAndAreaMinAvgMax(context, area, cancellationToken).ConfigureAwait(false);
+        context.Entry(park).State = EntityState.Detached;
 
+        var parkClone = park;
         var cancelled = await RetryOnConcurrencyErrorAsync(async () => 
         {
+            var result = context.Add(area);
+            parkClone = (Park)context.Attach(park).CurrentValues.Clone().ToObject();
+
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return false;
         }, 
@@ -154,14 +153,15 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             if(entry.Entity is Park park) {
                 var changed = await ReloadParkCheckMinAvgMax(entry, cancellationToken).ConfigureAwait(false);
                 if(changed) 
-                    (park.MinPrice, park.AvaragePrice, park.MaxPrice) = await FindNewParkMinAvgMaxAsync(context, area, cancellationToken).ConfigureAwait(false);
+                    (parkClone.MinPrice, parkClone.AvaragePrice, parkClone.MaxPrice) = await FindNewParkMinAvgMaxAsync(context, area, cancellationToken).ConfigureAwait(false);
             }
             
+            context.ChangeTracker.Clear();
             return true;
         }, cancellationToken).ConfigureAwait(false);
 
         if(cancelled) return new(area, null);
-        return new(area, park);
+        return new(area, context.Find<Park>(parkClone.Id));
     }
 
     public new async Task<Tuple<ParkArea, Park?>> UpdateAsync(
@@ -220,7 +220,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 {
                     context.Entry(dbitem).State = EntityState.Detached;
                     //context.Update(item); same thing with add
-                    context.Attach(item).State = EntityState.Added; 
+                    context.Attach(item).State = EntityState.Modified; 
                     // these are also in database so update them
                 }
                 else {
@@ -526,9 +526,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                             break;
                     }
                 }
-
             }
-
             //dont update like delete operation of the area
             //area.Park.StatusUpdateTime = DateTime.UtcNow;
 
@@ -571,5 +569,24 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         
         var areaResult = context.Find<ParkArea>(areaClone.Id)!;
         return new(areaResult, areaResult.Park);
+    }
+
+    public async Task<List<InstantParkAreaIdReservedSpace>> GetParkAreasReserverdSpaceCountAsync(int[] ids, CancellationToken cancellationToken)
+    {
+       using var context = new TContext();
+        var result = await context.Set<ParkArea>()
+            .Include(x => x.Spaces)
+            .ThenInclude(x => x.Reservations)
+            .GroupBy(x => x.Id)
+            .Select(g => new {
+                AreaId = g.Key,
+                ReservationCount = g.Sum(
+                    x => x.Spaces.Sum(
+                        y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
+            })
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        return result.Select(x => new InstantParkAreaIdReservedSpace(x.AreaId!.Value,x.ReservationCount)).ToList();
     }
 }

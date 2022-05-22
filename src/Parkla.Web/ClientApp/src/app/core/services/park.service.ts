@@ -66,11 +66,11 @@ export class ParkService implements OnDestroy {
       });
 
       const sub4 = this.signalrService.getAllParksReservationCountAsStream({
-        next: (item: {parkId: string, reservedCount: number}) => {
+        next: (item: {parkId: string, reservedSpaceCount: number}) => {
           let park = this._parks.get(item.parkId)
 
-          if(park && park.reservedSpace != item.reservedCount) {
-            park.reservedSpace = item.reservedCount;
+          if(park && park.reservedSpace != item.reservedSpaceCount) {
+            park.reservedSpace = item.reservedSpaceCount;
             park.subject.next();
           }
         },

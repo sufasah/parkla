@@ -28,9 +28,9 @@ export class ParkAreaService {
       parkId
     };
 
-    if(search) params.s = search;
-    if(orderBy) params.orderBy = orderBy;
-    if(asc) params.asc = asc;
+    if(search != null) params.s = search;
+    if(orderBy != null) params.orderBy = orderBy;
+    if(asc != null) params.asc = asc;
 
     return this.httpClient.get<ParkArea[]>(apiParkAreas, {
       params,
