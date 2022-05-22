@@ -66,18 +66,10 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         var result = await _validator.ValidateAsync(park, o => o.IncludeRuleSets("add","id"), cancellationToken).ConfigureAwait(false);
         if (!result.IsValid)
             throw new ParklaException(result.Errors.First().ToString(), HttpStatusCode.BadRequest);
-        
-        var props = new Expression<Func<Park,object?>>[]{
-            x => x.Name,
-            x => x.Location,
-            x => x.Latitude,
-            x => x.Longitude,
-            x => x.Extras
-        };
 
         await ThrowIfUserNotMatch(park.Id, userId, cancellationToken).ConfigureAwait(false);
 
-        var newPark = await _parkRepo.UpdateAsync(park, props, false, cancellationToken).ConfigureAwait(false);
+        var newPark = await _parkRepo.UpdateAsync(park, cancellationToken).ConfigureAwait(false);
 
         _ = _parklaHubService.ParkChangesAsync(newPark, false);
         
