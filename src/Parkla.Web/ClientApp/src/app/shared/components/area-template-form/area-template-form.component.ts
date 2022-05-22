@@ -244,14 +244,25 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
   setSelectedRealSpace(realSpace: ParkSpaceReal) {
     if(realSpace) {
-      if(!!realSpace.spaceId && this.editingSpace.id != realSpace.id) return;
-
+      let collision = false;
+      let isRealSpaceBindedLocalSpace = false;
+      //collision locally between editing spaces or
+      //collision with db spaces
       for(let i=0; i<this.area.spaces.length; i++) {
         const space = this.area.spaces[i];
-
-        if(space.realSpace && space.realSpace.id == realSpace.id && space != this.editingSpace)
-          return;
+        if(space.realSpace && space.realSpace.id == realSpace.id && space != this.editingSpace) {
+          collision = true; //local collision
+          break;
+        }
+        else if(realSpace.spaceId == space.id ) {
+          isRealSpaceBindedLocalSpace = true; // realSpace not binded local space
+        }
       }
+      if(realSpace.spaceId && !isRealSpaceBindedLocalSpace) {
+        collision = true; // global collision
+      }
+
+      if(collision) return;
     }
 
     this.editingSpace.realSpace = realSpace;
