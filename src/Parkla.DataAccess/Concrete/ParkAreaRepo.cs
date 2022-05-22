@@ -455,10 +455,19 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                         .Where(x => x.Id == item.RealSpaceId)
                         .FirstOrDefault();
                     
+
                     if(realSpace == null)
                         throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which is not exist in database. Please select another one again", HttpStatusCode.BadRequest);
                     
                     if(realSpace.SpaceId == null) {
+                        var oldRealSpace = await context.Set<RealParkSpace>()
+                            .Where(x => x.SpaceId == item.Id)
+                            .FirstOrDefaultAsync(cancellationToken)
+                            .ConfigureAwait(false);
+
+                        if(oldRealSpace != null && oldRealSpace.Space == item) 
+                            oldRealSpace.SpaceId = null;
+
                         item.RealSpace = realSpace;
                     }
                     else throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which has already binded to another space. Please select another one again", HttpStatusCode.BadRequest);
