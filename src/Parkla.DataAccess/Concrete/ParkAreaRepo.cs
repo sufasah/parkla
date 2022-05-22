@@ -584,6 +584,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     x => x.Spaces.Sum(
                         y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
             })
+            .Where(x => ids.Any(y => y == x.AreaId!.Value))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 

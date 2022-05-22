@@ -3,8 +3,10 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkAreaService } from '@app/core/services/park-area.service';
+import { SignalrService } from '@app/core/services/signalr.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { AreaDataViewComponent } from '@app/shared/components/area-dataview/area-dataview.component';
+import { ISubscription } from '@microsoft/signalr';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Subscription } from 'rxjs';
 
@@ -30,13 +32,14 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private confirmService: ConfirmationService,
     private messageService: MessageService,
-    private parkAreaService: ParkAreaService
+    private parkAreaService: ParkAreaService,
   ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(paramMap => {
         this.parkid = paramMap.get("parkid")!;
     });
+
   }
 
   goMap() {

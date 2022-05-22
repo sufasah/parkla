@@ -159,8 +159,8 @@ export class SignalrService {
     return this._connection.stream(signalAllParksReservedSpaceCount).subscribe(callbacks);
   }
 
-  getParkAreasReservedSpaceCountCountAsStream(callbacks: IStreamSubscriber<any>) {
-    return this._connection.stream(signalParkAreasReservedSpaceCount).subscribe(callbacks);
+  getParkAreasReservedSpaceCountAsStream(areaIds: number[], callbacks: IStreamSubscriber<any>) {
+    return this._connection.stream(signalParkAreasReservedSpaceCount, areaIds).subscribe(callbacks);
   }
 
 }

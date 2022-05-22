@@ -1,20 +1,23 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ContentChild, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { ParkArea } from '@app/core/models/park-area';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkAreaService } from '@app/core/services/park-area.service';
+import { SignalrService } from '@app/core/services/signalr.service';
 import { RouteUrl } from '@app/core/utils/route';
+import { ISubscription } from '@microsoft/signalr';
 import { LazyLoadEvent, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-area-dataView',
   templateUrl: './area-dataview.component.html',
   styleUrls: ['./area-dataview.component.scss']
 })
-export class AreaDataViewComponent implements OnInit {
+export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   areas!: ParkArea[];
 
@@ -75,13 +78,21 @@ export class AreaDataViewComponent implements OnInit {
   orderBy: string | null = null;
   asc: boolean | null = null;
 
+  unsubscribe: Subscription[] = [];
+  parkReservationStreamSubscription?: ISubscription<any>;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private parkAreaService: ParkAreaService,
-    private authService: AuthService
+    private authService: AuthService,
+    private signalrService: SignalrService
   ) {
 
+  }
+  ngOnDestroy(): void {
+    this.unsubscribe.forEach(x => x.unsubscribe());
+    this.parkReservationStreamSubscription?.dispose();
   }
 
   ngOnInit(): void {
@@ -92,6 +103,42 @@ export class AreaDataViewComponent implements OnInit {
       if(page > 1)
         this.nextRecord = page * this.pageSize - this.pageSize;
     }
+    const sub = this.signalrService.connectedEvent.subscribe(() => {
+      if(this.areas)
+        this.startReservedCountStream(this.areas.map(x => x.id));
+    });
+    const sub2 = this.signalrService.disconnectedEvent.subscribe(() => {
+      this.stopReservedCountStream();
+    })
+
+    this.unsubscribe.push(sub,sub2);
+  }
+
+  startReservedCountStream(areaIds:number[]) {
+    this.parkReservationStreamSubscription = this.signalrService.getParkAreasReservedSpaceCountAsStream(
+      areaIds,
+      {
+        next: (item: {areaId: number, reservedSpaceCount: number}) => {
+          let area = this.areas.find(x => x.id == item.areaId);
+
+          console.log(item);
+
+          if(area) {
+            area.reservedSpace = item.reservedSpaceCount;
+          }
+        },
+        error: (err:any) => {
+          console.log(err);
+        },
+        complete: () => {
+          this.parkReservationStreamSubscription?.dispose();
+        }
+      }
+    );
+  }
+
+  stopReservedCountStream() {
+    this.parkReservationStreamSubscription?.dispose();
   }
 
   onSortChange(event:any) {
@@ -181,6 +228,8 @@ export class AreaDataViewComponent implements OnInit {
     asc: boolean | null = null
   ) {
     this.loading = true;
+    this.stopReservedCountStream();
+
     this.parkAreaService.getAreasPage(
       nextRecord,
       this.pageSize,
@@ -206,6 +255,7 @@ export class AreaDataViewComponent implements OnInit {
           });
         }
         this.loading = false;
+        this.startReservedCountStream(this.areas.map(x => x.id));
       },
       error: (err: HttpErrorResponse) => {
         this.loading = false;
