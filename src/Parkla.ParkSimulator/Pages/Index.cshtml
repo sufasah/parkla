@@ -3,6 +3,19 @@
 @{
     ViewData["Title"] = "Home page";
 }
+<div class="menu">
 
-
-@Html.DisplayFor(m => m)
+</div>
+<div class="template-body">
+    <div class="template">
+        <div class="spaces">
+            @foreach (var space in Model.RealSpaces)
+            {
+                <div class="space" >
+                    @space.Item1
+                    @space.Item2
+                </div>
+            }
+        </div>
+    </div>
+</div>

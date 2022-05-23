@@ -18,6 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <Protobuf Include="..\Parkla.Core\Protos\collector.proto" GrpcServices="Client"/>
+    <ProjectReference Include="../Parkla.Core/Parkla.Core.csproj"/>
   </ItemGroup>
 
 </Project>
