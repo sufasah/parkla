@@ -1,0 +1,9 @@
+@charset "UTF-8";
+@import url(c:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.Web\ClientApp\node_modules\primeng\resources\themes\lara-light-teal\theme.css);
+@import url(c:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.Web\ClientApp\node_modules\@tomtom-international\web-sdk-maps\dist\maps.css);
+@import url(c:\Users\nihaSWin\Desktop\Ders kaynakları\4. sınıf bahar\Bitirme Projesi\parkla\src\Parkla.Web\ClientApp\node_modules\@tomtom-international\web-sdk-plugin-searchbox\dist\SearchBox.css);
+.p-toolbar {
+  height: 80px;
+  padding: 0 20px;
+}
+/*# sourceMappingURL=styles.css.map */

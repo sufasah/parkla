@@ -1,0 +1,25 @@
+.fullscreen-modal {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: white;
+}
+
+:host ::ng-deep .p-fileupload-choose {
+  display: inline-block;
+}
+
+:host ::ng-deep .p-fileupload-choose .p-button-label {
+  display: none;
+}
+
+:host ::ng-deep .p-button-label {
+  -webkit-transition: none;
+  transition: none;
+}
+/*# sourceMappingURL=area-template-form.component.css.map */

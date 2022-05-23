@@ -1,0 +1,32 @@
+#appMap {
+  width: 100%;
+  height: 800px;
+}
+
+:host ::ng-deep p-knob .p-knob-text {
+  font-size: 1.6rem;
+}
+
+:host ::ng-deep p-knob .p-knob-range {
+  stroke-width: 3;
+}
+
+:host ::ng-deep p-knob .p-knob-value {
+  stroke-width: 10;
+}
+
+:host ::ng-deep .empty .p-knob-text {
+  fill: #0f0;
+  font-weight: bold;
+}
+
+:host ::ng-deep .reserved .p-knob-text {
+  fill: #f7b060;
+  font-weight: bold;
+}
+
+:host ::ng-deep .occupied .p-knob-text {
+  fill: #f00;
+  font-weight: bold;
+}
+/*# sourceMappingURL=map.component.css.map */

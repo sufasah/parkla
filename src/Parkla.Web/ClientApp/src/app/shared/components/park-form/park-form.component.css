@@ -1,0 +1,42 @@
+.add-extra {
+  background-color: #46e637;
+  cursor: pointer;
+  border: none;
+}
+
+.add-extra:hover {
+  background-color: #00ff00;
+}
+
+.remove-extra {
+  background-color: #fd4646;
+  border: 2px solid lightgray;
+  cursor: pointer;
+}
+
+.remove-extra:hover {
+  background-color: #ff0000;
+}
+
+.fullscreen-modal {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: white;
+}
+
+#selectLatLngMap {
+  width: 100vw;
+  height: calc(100vh - 80px);
+}
+
+:host ::ng-deep .p-button-label {
+  -webkit-transition: none;
+  transition: none;
+}
+/*# sourceMappingURL=park-form.component.css.map */

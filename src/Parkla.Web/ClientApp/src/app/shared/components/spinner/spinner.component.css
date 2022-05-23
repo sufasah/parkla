@@ -1,0 +1,117 @@
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+  -webkit-animation: spinner-dash 5s ease-in-out infinite, dark-spinner-color 4s ease-in-out infinite;
+          animation: spinner-dash 5s ease-in-out infinite, dark-spinner-color 4s ease-in-out infinite;
+}
+
+:host ::ng-deep p-blockui .custom-spinner .p-progress-spinner-circle {
+  -webkit-animation: spinner-dash 5s ease-in-out infinite, light-spinner-color 4s ease-in-out infinite;
+          animation: spinner-dash 5s ease-in-out infinite, light-spinner-color 4s ease-in-out infinite;
+}
+
+:host ::ng-deep .custom-spinner {
+  width: 50px;
+  height: 50px;
+}
+
+@-webkit-keyframes dark-spinner-color {
+  100%,
+  0% {
+    stroke: #a5bd1f;
+  }
+  30% {
+    stroke: #1c80a8;
+  }
+  60% {
+    stroke: #169153;
+  }
+  90% {
+    stroke: #ffa62b;
+  }
+}
+
+@keyframes dark-spinner-color {
+  100%,
+  0% {
+    stroke: #a5bd1f;
+  }
+  30% {
+    stroke: #1c80a8;
+  }
+  60% {
+    stroke: #169153;
+  }
+  90% {
+    stroke: #ffa62b;
+  }
+}
+
+@-webkit-keyframes light-spinner-color {
+  100%,
+  0% {
+    stroke: #f4f804;
+  }
+  30% {
+    stroke: #00ffff;
+  }
+  60% {
+    stroke: #00ff00;
+  }
+  90% {
+    stroke: #f7c966;
+  }
+}
+
+@keyframes light-spinner-color {
+  100%,
+  0% {
+    stroke: #f4f804;
+  }
+  30% {
+    stroke: #00ffff;
+  }
+  60% {
+    stroke: #00ff00;
+  }
+  90% {
+    stroke: #f7c966;
+  }
+}
+
+@-webkit-keyframes spinner-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  25% {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0px;
+  }
+  75% {
+    stroke-dasharray: 110, 200;
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dasharray: 160, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+
+@keyframes spinner-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  25% {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0px;
+  }
+  75% {
+    stroke-dasharray: 110, 200;
+    stroke-dashoffset: 0px;
+  }
+  100% {
+    stroke-dasharray: 160, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+/*# sourceMappingURL=spinner.component.css.map */

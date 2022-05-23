@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACE,KADG,CAAC,SAAS,CACb,qBAAqB,CAAC;EAClB,gBAAgB,EAAE,eAAe;EACjC,MAAM,EAAE,KAAK,CAAC,gBAAgB;EAC9B,YAAY,EAAE,SAAS;EACvB,KAAK,EAAE,gBAAgB;CAI1B;;AATH,AAMM,KAND,CAAC,SAAS,CACb,qBAAqB,CAKjB,mBAAmB,CAAC;EAChB,KAAK,EAAE,gBAAgB;CAC1B",
+    "sources": [
+        "profile.component.scss"
+    ],
+    "names": [],
+    "file": "profile.component.css"
+}

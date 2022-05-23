@@ -1,0 +1,8 @@
+.park-body {
+  height: calc(80% - 4px);
+  overflow: hidden;
+  border: 2px solid red;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+}
+/*# sourceMappingURL=edit-area-template.component.css.map */

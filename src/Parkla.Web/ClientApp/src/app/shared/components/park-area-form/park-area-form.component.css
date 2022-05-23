@@ -1,0 +1,20 @@
+.add-pricing {
+  background-color: #46e637;
+  cursor: pointer;
+  border: none;
+}
+
+.add-pricing:hover {
+  background-color: #00ff00;
+}
+
+.remove-pricing {
+  background-color: #fd4646;
+  border: 2px solid lightgray;
+  cursor: pointer;
+}
+
+.remove-pricing:hover {
+  background-color: #ff0000;
+}
+/*# sourceMappingURL=park-area-form.component.css.map */

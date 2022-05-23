@@ -1,0 +1,40 @@
+.add-pricing {
+  background-color: #46e637;
+  cursor: pointer;
+  border: none;
+}
+
+.add-pricing:hover {
+  background-color: #00ff00;
+}
+
+.remove-pricing {
+  background-color: #fd4646;
+  border: 2px solid lightgray;
+  cursor: pointer;
+}
+
+.remove-pricing:hover {
+  background-color: #ff0000;
+}
+
+.fullscreen-modal {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: white;
+}
+
+:host ::ng-deep .p-fileupload-choose {
+  display: inline-block;
+}
+
+:host ::ng-deep .p-fileupload-choose .p-button-label {
+  display: none;
+}
+/*# sourceMappingURL=m-edit-park-area.component.css.map */

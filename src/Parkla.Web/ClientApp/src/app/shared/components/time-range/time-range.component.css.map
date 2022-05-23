@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "time-range.component.scss"
+    ],
+    "names": [],
+    "file": "time-range.component.css"
+}

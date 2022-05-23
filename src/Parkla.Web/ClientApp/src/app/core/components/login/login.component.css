@@ -1,0 +1,22 @@
+:host ::ng-deep .p-toast-message-login {
+  background-color: var(--green-50);
+  border: solid var(--green-600);
+  border-width: 0 0 0 6px;
+  color: var(--green-800);
+}
+
+:host ::ng-deep .p-toast-message-login .p-toast-icon-close {
+  color: var(--green-600);
+}
+
+:host ::ng-deep .p-toast-message-login-error {
+  background: #ffe7e6;
+  border: solid #ff5757;
+  border-width: 0 0 0 6px;
+  color: #ff5757;
+}
+
+:host ::ng-deep .p-toast-message-login-error .p-toast-icon-close {
+  color: #fc4949;
+}
+/*# sourceMappingURL=login.component.css.map */

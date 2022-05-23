@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,UAAU,CAAC;EACT,MAAM,EAAE,eAAe;EACvB,QAAQ,EAAE,MAAM;EAChB,MAAM,EAAE,aAAa;EACrB,UAAU,EAAE,WAAW;CACxB",
+    "sources": [
+        "area-template.component.scss"
+    ],
+    "names": [],
+    "file": "area-template.component.css"
+}

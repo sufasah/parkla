@@ -1,0 +1,15 @@
+.qr-container {
+  width: 100%;
+  height: 100%;
+  border: 1vw solid greenyellow;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+/*# sourceMappingURL=m-park-area-qr.component.css.map */
