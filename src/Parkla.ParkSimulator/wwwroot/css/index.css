@@ -1,5 +1,6 @@
 * {
     box-sizing: border-box;
+    font-family: monospace;
 }
 
 .template-body {
@@ -7,24 +8,19 @@
     height: calc(100vh - 80px);
     display: flex;
     justify-content: center;
-    align-items: center;
-}
-
-.template {
-    width: 80%;
-    height: 50%;
-    box-shadow: 3px 1px 16px rgb(0 0 0 / 15%);
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-self: center;
 }
 
 .menu {
     width: 100vw;
     height: 80px;
-    box-shadow: 3px 1px 16px rgb(0 0 0 / 15%);
+    box-shadow: 3px 1px 16px rgb(0 0 0 / 7%);
     border-bottom: 1px solid rgb(0 0 0 / 15%);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.menu-item {
 }
 
 main {
@@ -39,12 +35,25 @@ main {
 
 .spaces {
     width: 100%;
-    height: 50%;
+    height: 150px;
     display: flex;
+    margin-top: 60px;
+    box-shadow: 3px 1px 16px rgb(0 0 0 / 7%);
 }
 
 .space {
-    background-color: rgba(194, 194, 194, 0.25);
-    border: 1px solid rgba(194, 194, 194, 0.25);
+    background-color: rgba(214, 211, 211, 0.2);
+    border: 1px solid rgba(214, 211, 211, 0.4);
     flex: 1 1 100%;
+    cursor: pointer;
+}
+
+.space-occupied {
+    background-color: rgba(199, 51, 51, 0.2);
+    border: 1px solid rgba(199, 51, 51, 0.4);
+}
+
+.space-empty {
+    background-color: rgba(51, 199, 58, 0.2);
+    border: 1px solid rgba(51, 199, 58, 0.4);
 }

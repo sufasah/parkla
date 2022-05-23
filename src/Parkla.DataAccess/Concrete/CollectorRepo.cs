@@ -64,7 +64,7 @@ public class CollectorRepo<TContext> : ICollectorRepo
                     receivedStatus.SpaceName = space.Name;
                     receivedStatus.OldSpaceStatus = space.Status;
                 }
-                
+
                 if(isBounded && realSpace.Status != dto.Status) {
                     switch(realSpace.Status) {
                         case SpaceStatus.EMPTY:
@@ -85,8 +85,8 @@ public class CollectorRepo<TContext> : ICollectorRepo
                             park!.EmptySpace++;
                             break;
                         case SpaceStatus.OCCUPIED:
-                            area!.EmptySpace++;
-                            park!.EmptySpace++;
+                            area!.OccupiedSpace++;
+                            park!.OccupiedSpace++;
                             break;
                         case SpaceStatus.UNKNOWN:
                             break;
@@ -94,6 +94,10 @@ public class CollectorRepo<TContext> : ICollectorRepo
 
                     realSpace.Status = space!.Status = dto.Status;
 
+                    receivedStatus.NewRealSpaceStatus = realSpace.Status;
+                    receivedStatus.NewSpaceStatus = space!.Status;
+                }
+                else if(isBounded) {
                     receivedStatus.NewRealSpaceStatus = realSpace.Status;
                     receivedStatus.NewSpaceStatus = space!.Status;
                 }

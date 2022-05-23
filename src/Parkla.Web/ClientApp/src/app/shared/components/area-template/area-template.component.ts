@@ -1,18 +1,20 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
+import { SignalrService } from '@app/core/services/signalr.service';
 import { Point } from '@app/core/types/parkmap';
 import { BaseType, select, Selection } from 'd3-selection';
 import { zoom, ZoomBehavior, ZoomTransform } from 'd3-zoom';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-area-template',
   templateUrl: './area-template.component.html',
   styleUrls: ['./area-template.component.scss']
 })
-export class ParkTemplateComponent implements OnInit, AfterViewInit {
+export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild("canvasParent")
   bodyRef!: ElementRef<HTMLDivElement>;
@@ -49,7 +51,15 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
 
   parkAreaChangedAtLeastOnce = false;
 
-  constructor() { }
+  spaceChangesSubscription?: Subscription;
+
+  constructor(
+    private signalrService: SignalrService
+  ) { }
+
+  ngOnDestroy(): void {
+    this.unregisterSpaceChanges();
+  }
 
   ngOnInit(): void {
     this.zoomBehavior.on("zoom",(e) => {
@@ -68,6 +78,37 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit {
     this.ParkImage.onerror = () => {
       this.ParkImage.src = templateNoImageUrl;
     }
+
+    this.signalrService.connectedEvent.subscribe(() => {
+      this.registerSpaceChanges();
+    });
+
+    this.signalrService.disconnectedEvent.subscribe(() => {
+      this.unregisterSpaceChanges();
+    });
+  }
+
+  registerSpaceChanges() {
+    this.spaceChangesSubscription = this.signalrService.registerParkSpaceChanges(this.parkArea.id,(space, isDelete) => {
+      const index = this.parkArea.spaces.findIndex(x => x.id == space.id);
+      const oldSpace = this.parkArea.spaces[index];
+      if(index == -1) return;
+
+      space.status = <any>SpaceStatus[space.status];
+
+      if(isDelete) {
+        this.parkArea.spaces.splice(index, 1);
+      }
+      else if(oldSpace.statusUpdateTime == null || oldSpace.statusUpdateTime < space.statusUpdateTime) {
+        this.parkArea.spaces[index] = space;
+      }
+
+      this.drawCanvas();
+    });
+  }
+
+  unregisterSpaceChanges() {
+    this.spaceChangesSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {

@@ -4,18 +4,21 @@
     ViewData["Title"] = "Home page";
 }
 <div class="menu">
-
-</div>
-<div class="template-body">
-    <div class="template">
-        <div class="spaces">
-            @foreach (var space in Model.RealSpaces)
-            {
-                <div class="space" >
-                    @space.Item1
-                    @space.Item2
-                </div>
-            }
-        </div>
+    <div class="menu-item">
+        ParkId: @Model.GetParkId
     </div>
 </div>
+<div class="template-body">
+    <div class="spaces">
+        @foreach (var space in Model.GetRealSpaces)
+        {
+            int spaceId = space.Item1;
+            string spaceName = space.Item2;
+
+            <div class="space" data-id="@spaceId">
+                @Html.Raw(spaceId +" "+ spaceName)
+            </div>
+        }
+    </div>
+</div>
+

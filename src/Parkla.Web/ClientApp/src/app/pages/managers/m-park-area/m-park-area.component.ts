@@ -111,7 +111,10 @@ export class MParkAreaComponent implements OnInit {
   getAreaSpaces() {
     this.spaceService.getAreaParkSpaces(this.getAreaId(), true).subscribe({
       next: spaces => {
-        this.selectedArea = {...this.selectedArea, spaces: spaces ?? []};
+        this.selectedArea = {...this.selectedArea, spaces: spaces.map(x => {
+          x.status = Number(SpaceStatus[x.status]);
+          return x;
+        }) ?? []};
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({

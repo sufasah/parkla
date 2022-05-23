@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState, IStreamSubscriber } from '@microsoft/signalr';
 import { Subject, Subscription } from 'rxjs';
-import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkAreaChanges, signalParkAreaChangesRegister, signalParkAreaChangesUnRegister, signalParkAreasReservedSpaceCount, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister, signalParkSpaceChangesRegister, signalParkSpaceChangesUnRegister, signalReservationChangesRegister, signalReservationChangesUnRegister } from '../constants/signalr';
+import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkAreaChanges, signalParkAreaChangesRegister, signalParkAreaChangesUnRegister, signalParkAreasReservedSpaceCount, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister, signalParkSpaceChanges, signalParkSpaceChangesRegister, signalParkSpaceChangesUnRegister, signalReservationChangesRegister, signalReservationChangesUnRegister } from '../constants/signalr';
 import { Park } from '../models/park';
 import { ParkArea } from '../models/park-area';
 import { ParkSpace } from '../models/park-space';
@@ -124,9 +124,9 @@ export class SignalrService {
     );
   }
 
-  registerParkSpaceChanges(callback: (parkSpace: ParkSpace, isDelete: boolean) => void, areaId: number) {
+  registerParkSpaceChanges(areaId: number, callback: (parkSpace: ParkSpace, isDelete: boolean) => void) {
     return this.register(
-      signalParkChanges,
+      signalParkSpaceChanges,
       callback,
       {name: signalParkSpaceChangesRegister, args: [areaId]},
       {name: signalParkSpaceChangesUnRegister, args: [areaId]}
