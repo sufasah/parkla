@@ -1,4 +1,4 @@
-﻿var simulating = false;
+﻿var randomIID;
 var server = "https://localhost:7072"
 const EMPTY_STATUS = "EMPTY";
 const OCCUPIED_STATUS = "OCCUPIED";
@@ -78,6 +78,20 @@ function spaceClick(event) {
     }
 }
 
+function randomClick(event) {
+    let elem = event.target;
+    if(randomIID) {
+        elem.innerHTML = "Start Simulation"
+        clearInterval(randomIID);
+    }
+    else {
+        elem.innerHTML = "Stop Simulation"
+        randomIID = setInterval(() => {
+            SetRandom();
+        }, 100);
+    }
+}
+
 (function () {
     const serverResetReq = new XMLHttpRequest();
     serverResetReq.open("GET", server+"/ResetServer");
@@ -88,4 +102,6 @@ function spaceClick(event) {
     spaces.forEach(elem => {
         elem.addEventListener("click", spaceClick);
     })
+
+    document.querySelector("#simulateButton").addEventListener("click", randomClick);
 })();
