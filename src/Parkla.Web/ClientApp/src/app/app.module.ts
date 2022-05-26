@@ -97,6 +97,7 @@ import { ParkFormComponent } from './shared/components/park-form/park-form.compo
 import { ParkAreaFormComponent } from './shared/components/park-area-form/park-area-form.component';
 import { AreaTemplateFormComponent } from './shared/components/area-template-form/area-template-form.component';
 import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-template/m-edit-area-template.component';
+import { UserFormComponent } from './shared/components/user-form/user-form.component';
 
 @NgModule({
   declarations: [
@@ -132,7 +133,8 @@ import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-templat
     VerifyComponent,
     ParkFormComponent,
     ParkAreaFormComponent,
-    AreaTemplateFormComponent
+    AreaTemplateFormComponent,
+    UserFormComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

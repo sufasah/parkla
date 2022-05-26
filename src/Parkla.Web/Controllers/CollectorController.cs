@@ -17,6 +17,11 @@ public class CollectorController : ControllerBase
         PropertyNameCaseInsensitive = true,
         ReadCommentHandling = JsonCommentHandling.Skip
     };
+
+    static CollectorController () {
+        jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    }
+
     private readonly ILogger<CollectorController> _logger;
     private readonly ICollectorService _collectorService;
     public CollectorController(
