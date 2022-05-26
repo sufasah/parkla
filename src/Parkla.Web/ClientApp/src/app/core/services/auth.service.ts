@@ -10,7 +10,6 @@ import { catchError, filter, map, Subscription, take, tap, throwError } from 'rx
 import { apiAuthScheme, apiLogin, apiRefreshToken, apiRegister, apiUrl, apiVerification } from '../constants/http';
 import { TokenResponse } from '@app/core/server-models/token';
 import { NavigationEnd, Router } from '@angular/router';
-import { Gender } from '../enums/Gender';
 import { getStorageTokens } from '../utils/storage';
 
 @Injectable({
@@ -117,7 +116,7 @@ export class AuthService implements OnDestroy{
       xmin: user.xmin,
       cityId: user.city ? user.city.id : null,
       districtId: user.district ? user.district.id : null,
-      gender: user.gender ? Gender[(<any>user.gender).toUpperCase()] : null,
+      gender: user.gender ?? null,
       address: user.address ? user.address : null ,
       birthdate: user.birthdate ? user.birthdate : null,
     });

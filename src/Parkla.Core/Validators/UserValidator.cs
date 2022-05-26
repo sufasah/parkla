@@ -26,6 +26,7 @@ public class UserValidator : AbstractValidator<User>
         
         RuleSet("id", Id);
         RuleSet("register", RsRegister);
+        RuleSet("update", RsUpdate);
     }
     private void Id() => RuleFor(x => x.Id)
         .NotNull();
@@ -76,6 +77,18 @@ public class UserValidator : AbstractValidator<User>
     private void RsRegister() {
         Username();
         Password();
+        Email();
+        Name();
+        Surname();
+        Phone();
+        Birthdate();
+        Gender();
+        CityId();
+        DistrictId();
+        Address();
+    }
+     private void RsUpdate() {
+        Username();
         Email();
         Name();
         Surname();

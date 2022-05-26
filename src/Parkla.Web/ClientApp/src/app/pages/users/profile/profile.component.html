@@ -10,8 +10,6 @@
 
 <app-user-form
   [appUser]="appUser"
-  [(password)]="password"
-  [(passwordAgain)]="passwordAgain"
   (formSubmit)="save($event)"
   [isEdit]="true"
   [loading]="updating"

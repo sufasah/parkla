@@ -1,13 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, NgForm } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Gender } from '@app/core/enums/Gender';
 import { AppUser } from '@app/core/models/app-user';
 import { City } from '@app/core/models/city';
 import { District } from '@app/core/models/district';
 import { CityService } from '@app/core/services/city.service';
 import { DistrictService } from '@app/core/services/district.service';
-import { capitalize } from '@app/core/utils/string';
+import { SelectButton } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-user-form',
@@ -15,6 +15,9 @@ import { capitalize } from '@app/core/utils/string';
   styleUrls: ['./user-form.component.scss']
 })
 export class UserFormComponent implements OnInit {
+
+  @ViewChild(SelectButton)
+  selectButtonElement!: SelectButton;
 
   @Output()
   formSubmit = new EventEmitter<{form: NgForm, user:AppUser, password: string}>();
@@ -29,7 +32,10 @@ export class UserFormComponent implements OnInit {
   submitLabel = "Submit";
 
   @Input()
-  appUser?: AppUser;
+  set appUser(value: AppUser) {
+    if(value)
+      this.user = value;
+  }
 
   id: number | null = null;
   xmin: number = 0;
@@ -40,14 +46,16 @@ export class UserFormComponent implements OnInit {
   passwordAgain = "";
   name = "";
   surname = "";
-  gender = new FormControl("");
-  genderOptions = [
-    capitalize(Gender[Gender.MALE]),
-    capitalize(Gender[Gender.FEMALE])
+
+  gender: Gender = <any>null;
+
+  genderOptions: any[] = [
+    "MALE",
+    "FEMALE"
   ];
   phone: string | null = null;
   address = "";
-  birthdate: string | null = null;
+  birthdate: Date | null = null;
 
   city: City | null = null;
   citySuggestions: City[] = [];
@@ -75,11 +83,11 @@ export class UserFormComponent implements OnInit {
       name: this.name,
       surname: this.surname,
       phone: this.phone!,
-      city: this.city,
-      district: this.district,
-      gender: this.gender.value,
+      cityId: this.city?.id ?? null,
+      districtId: this.district?.id ?? null,
+      gender: this.gender,
       address: this.address,
-      birthdate: this.birthdate,
+      birthdate: this.birthdate?.toISOString(),
       xmin: this.xmin
     };
   }
@@ -94,11 +102,10 @@ export class UserFormComponent implements OnInit {
     this.phone! = value.phone;
     this.city = value.city;
     this.district = value.district;
-    this.gender.setValue(value.gender);
+    this.gender = value.gender!;
     this.address = value.address ?? "";
-    this.birthdate = value.birthdate;
+    this.birthdate = value.birthdate ? new Date(value.birthdate) : null;
     this.xmin = value.xmin;
-
   }
 
   constructor(
@@ -109,12 +116,10 @@ export class UserFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.appUser)
-      this.user = this.appUser;
   }
 
   submit(form: NgForm) {
-    this.formSubmit.emit({form: form, user: this.user, this.password});
+    this.formSubmit.emit({form: form, user: this.user, password: this.password});
   }
 
   searchCity(evt: any) {
@@ -143,13 +148,8 @@ export class UserFormComponent implements OnInit {
     });
   }
 
-  genderClick(event:any){
-    if(event.option === this.gender.value){
-      this.gender.setValue("");
-    }
-  }
-
   ngOnDestroy(): void {
+
   }
 
 }

@@ -10,7 +10,9 @@ export interface AppUser {
   name: string;
   surname: string;
   phone: string;
+  cityId: number | null;
   city: City | null;
+  districtId: number | null;
   district: District | null;
   birthdate: string | null;
   gender: Gender | null;

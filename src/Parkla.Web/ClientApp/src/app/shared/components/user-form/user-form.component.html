@@ -47,6 +47,7 @@
 
   <div>
     <p-password
+      *ngIf="!isEdit"
       #pwm="ngModel"
       required
       minlength="6"
@@ -77,6 +78,7 @@
     </p-password>
 
     <p-password
+      *ngIf="!isEdit"
       #pwam="ngModel"
       required
       minlength="6"
@@ -170,8 +172,7 @@
     <p-selectButton
       name="gender"
       [options]="genderOptions"
-      [formControl]="gender"
-      (onOptionClick)="genderClick($event)"
+      [(ngModel)]="gender"
       ></p-selectButton>
   </div>
 

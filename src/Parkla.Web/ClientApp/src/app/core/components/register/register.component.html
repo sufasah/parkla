@@ -7,8 +7,7 @@
 ></app-verify>
 
 <app-user-form
-  [(password)]="password"
-  [(passwordAgain)]="passwordAgain"
+  *ngIf="!verification"
   (formSubmit)="register($event)"
   [isEdit]="false"
   [loading]="registering"

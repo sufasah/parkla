@@ -11,7 +11,7 @@ export interface AccessToken {
   family_name: string;
   email: string;
   email_verified: boolean;
-  gender: Gender;
+  gender: Gender | null;
   birthdate: Date;
   phone_number: string;
   address: TokenAddress;

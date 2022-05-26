@@ -19,9 +19,6 @@ export class MProfileComponent implements OnInit {
 
   updating = false;
 
-  password = "";
-  passwordAgain = "";
-
   constructor(
     private authService: AuthService,
     private userService: UserService,
@@ -40,7 +37,7 @@ export class MProfileComponent implements OnInit {
     })
   }
 
-  save({form, user}: {form: NgForm, user: AppUser}) {
+  save({form, user, password}: {form: NgForm, user: AppUser, password:string}) {
     if(this.updating) return;
     if(form.invalid){
       var keys = Object.keys(form.controls);
@@ -70,7 +67,7 @@ export class MProfileComponent implements OnInit {
           life:5000,
           severity:"error",
           summary: "Save",
-          detail: err.error,
+          detail: err.error.message,
           icon: "pi-lock",
         })
         this.updating = false;
