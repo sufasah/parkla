@@ -149,6 +149,8 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   registerParkAreaChanges() {
     this.parkAreaChangesSubscription = this.signalrService.registerParkAreaChanges(this.getParkId(), (area, isDelete) => {
+      console.log(area, isDelete);
+
       const oldAreaIndex = this.areas.findIndex(x => x.id == area.id);
       if(oldAreaIndex != -1) {
         if(isDelete) {
@@ -159,8 +161,6 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
             this.areas[oldAreaIndex] = {...area};
         }
       }
-      console.log(area);
-
       this.dataView.cd.detectChanges();
     });
   }

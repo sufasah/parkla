@@ -1,6 +1,6 @@
 <p-toolbar>
   <div>
-    <button pButton pRipple (click)="goBack()">Go Back</button>
+    <button pButton pRipple (click)="goProfile()">Go Profile</button>
   </div>
   <app-user-avatar
     class="p-toolbar-group-right"
@@ -68,6 +68,15 @@
     </p-inputMask>
   </div>
 
+  <p-inputNumber
+    name="amount"
+    [(ngModel)]="amount"
+    [max]="999999999999999999999999999999"
+    [required]="true"
+    placeholder="Amount"
+    >
+  </p-inputNumber>
+
   <button
     type="submit"
     pButton
@@ -76,3 +85,5 @@
     >
   </button>
 </form>
+
+<p-toast (onClose)="messageClose()"></p-toast>

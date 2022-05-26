@@ -37,5 +37,14 @@ public class UsersController : EntityControllerBase<User, UserDto>
         return Ok(result);
     }
 
+    [HttpPut("load-money")]
+    public async Task<IActionResult> LoadMoneyAsync(UserDto dto, CancellationToken cancellationToken) {
+        if(dto.Id == null || dto.Wallet == null)
+            return BadRequest("Id and wallet must be given");
+        
+        var result = await _service.LoadMoneyAsync(dto.Id.Value, dto.Wallet.Value, cancellationToken).ConfigureAwait(false);
+        return Ok(result);
+    }
+
     
 }

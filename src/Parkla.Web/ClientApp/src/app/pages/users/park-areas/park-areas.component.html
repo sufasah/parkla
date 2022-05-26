@@ -7,6 +7,12 @@
     >
   </app-user-avatar>
 </p-toolbar>
-<app-area-dataView>
+<app-area-dataView
+  [pageSize]="pageSize"
+  (onFetchError)="onError($event)"
+  [loading]="loading"
+  >
 
 </app-area-dataView>
+
+<p-toast></p-toast>

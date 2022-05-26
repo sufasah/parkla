@@ -22,6 +22,11 @@ public class UserService : EntityServiceBase<User>, IUserService
         _validator = validator;
     }
 
+    public async Task<User?> LoadMoneyAsync(int id, float amount, CancellationToken cancellationToken)
+    {
+        return await _userRepo.LoadMoneyAsync(id, amount, cancellationToken).ConfigureAwait(false);
+    }
+
     public override async Task<User> UpdateAsync(
         User user,
         CancellationToken cancellationToken = default

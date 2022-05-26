@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Parkla.Core.Entities;
+using Parkla.Core.Exceptions;
 using Parkla.DataAccess.Abstract;
 using Parkla.DataAccess.Bases;
 
@@ -24,6 +26,36 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
             .ConfigureAwait(false);
             
         return result;
+    }
+
+    public async Task<User?> LoadMoneyAsync(int id, float amount, CancellationToken cancellationToken)
+    {
+        using var context = new TContext();
+        
+        User? userClone = null;
+        while(!cancellationToken.IsCancellationRequested) {
+            var user = await context.Set<User>()
+                .Include(x => x.City)
+                .Include(x => x.District)
+                .SingleOrDefaultAsync(x => x.Id == id, cancellationToken)
+                .ConfigureAwait(false);
+
+            if(user == null)
+                throw new ParklaConcurrentDeletionException("The user to load money was deleted by another user");
+
+            var result = context.Entry(user);
+            userClone = (User)result.CurrentValues.Clone().ToObject();
+
+            user.Wallet += amount;
+
+            try {
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                return user;
+            } catch(DbUpdateConcurrencyException) {
+                context.ChangeTracker.Clear();
+            }
+        }
+        return userClone;
     }
 
     public override async Task<User> UpdateAsync(

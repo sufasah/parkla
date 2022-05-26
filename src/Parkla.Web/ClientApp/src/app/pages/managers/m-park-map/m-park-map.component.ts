@@ -62,6 +62,8 @@ export class MParkMapComponent implements OnInit, OnDestroy {
 
     this.selectedPark = element.park;
     this.dialogVisible = true;
+
+    $("#appMap div.mapboxgl-ctrl-top-right button.mapboxgl-ctrl-shrink").trigger("click");
   }
 
   editPark(park: Park) {

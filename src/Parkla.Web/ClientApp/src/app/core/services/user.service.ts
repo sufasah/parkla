@@ -20,4 +20,11 @@ export class UserService {
       ...user
     });
   }
+
+  loadMoney(userId: number, amount: number) {
+    return this.httpClient.put<AppUser>(apiUsers+"/load-money", {
+      id: userId,
+      wallet: amount
+    });
+  }
 }

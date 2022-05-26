@@ -8,6 +8,19 @@
   </app-user-avatar>
 </p-toolbar>
 
+<div>
+  {{appUser?.wallet}}
+  <button
+    pRipple
+    pButton
+    label="Load Money"
+    type="button"
+    (click)="loadMoney()"
+    >
+
+  </button>
+</div>
+
 <app-user-form
   [appUser]="appUser"
   (formSubmit)="save($event)"

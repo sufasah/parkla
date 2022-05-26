@@ -65,12 +65,20 @@ public class ParklaHubService<T> : IParklaHubService
 
     public async Task ParkAreaChangesAsync(ParkArea area, bool isDelete)
     {
-        var newArea = await _areaRepo.GetParkAreaAsync(x => x.Id == area.Id).ConfigureAwait(false);
-        if(newArea == null) return;
+        if(!isDelete) {
+            var newArea = await _areaRepo.GetParkAreaAsync(x => x.Id == area.Id).ConfigureAwait(false);
+            if(newArea == null) return;
+
+            await _hub.Clients
+                .Group(HubConstants.EventParkAreaChangesGroup(newArea.ParkArea.ParkId!.Value))
+                .SendAsync(HubConstants.EventParkAreaChanges, newArea.ParkArea, isDelete)
+                .ConfigureAwait(false);
+            return;
+        }
 
         await _hub.Clients
-            .Group(HubConstants.EventParkAreaChangesGroup(newArea.ParkArea.ParkId!.Value))
-            .SendAsync(HubConstants.EventParkAreaChanges, newArea.ParkArea)
-            .ConfigureAwait(false);
+                .Group(HubConstants.EventParkAreaChangesGroup(area.ParkId!.Value))
+                .SendAsync(HubConstants.EventParkAreaChanges, area, isDelete)
+                .ConfigureAwait(false);
     }
 }

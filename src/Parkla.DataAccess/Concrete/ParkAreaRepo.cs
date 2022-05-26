@@ -370,9 +370,8 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
         if(cancelled) return new(areaClone, null);
 
-        var areaResult = context.Find<ParkArea>(areaClone.Id)!;
         var parkResult = context.Find<Park>(parkClone.Id)!;
-        return new(areaResult, parkResult);
+        return new(areaClone, parkResult);
     }
 
     public async Task<Tuple<ParkArea,Park?>> UpdateTemplateAsync(

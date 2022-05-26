@@ -39,7 +39,6 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
     this.route.paramMap.subscribe(paramMap => {
         this.parkid = paramMap.get("parkid")!;
     });
-
   }
 
   goMap() {
