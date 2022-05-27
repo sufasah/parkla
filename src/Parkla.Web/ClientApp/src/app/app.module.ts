@@ -98,6 +98,7 @@ import { ParkAreaFormComponent } from './shared/components/park-area-form/park-a
 import { AreaTemplateFormComponent } from './shared/components/area-template-form/area-template-form.component';
 import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-template/m-edit-area-template.component';
 import { UserFormComponent } from './shared/components/user-form/user-form.component';
+import { ReservationModalComponent } from './shared/components/reservation-modal/reservation-modal.component';
 
 @NgModule({
   declarations: [
@@ -134,7 +135,8 @@ import { UserFormComponent } from './shared/components/user-form/user-form.compo
     ParkFormComponent,
     ParkAreaFormComponent,
     AreaTemplateFormComponent,
-    UserFormComponent
+    UserFormComponent,
+    ReservationModalComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
