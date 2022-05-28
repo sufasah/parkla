@@ -278,6 +278,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ConfigureAwait(false);
 
                 foreach (var reservation in deletingReservations) {
+                    context.Entry(reservation).State = EntityState.Deleted;
                     var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
                 }
@@ -349,6 +350,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ConfigureAwait(false);
 
                 foreach (var reservation in deletingReservations) {
+                    context.Entry(reservation).State = EntityState.Deleted;
                     var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
                 }
@@ -583,6 +585,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ConfigureAwait(false);
 
                 foreach (var reservation in deletingReservations) {
+                    context.Entry(reservation).State = EntityState.Deleted;
                     var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
                 }
