@@ -19,9 +19,7 @@ public class ReservationMap : IEntityTypeConfiguration<Reservation> {
         b.Property(x => x.SpaceId)
             .HasColumnName("space_id")
             .IsRequired();
-        b.Property(x => x.PricingId)
-            .HasColumnName("pricing_id")
-            .IsRequired();
+        
         b.Property(x => x.StartTime)
             .HasColumnName("start_time")
             .IsRequired();
@@ -31,7 +29,6 @@ public class ReservationMap : IEntityTypeConfiguration<Reservation> {
             
         b.HasOne(x => x.User).WithMany(x => x.Reservations).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(x => x.Space).WithMany(x => x.Reservations).HasForeignKey(x => x.SpaceId).OnDelete(DeleteBehavior.Cascade);
-        b.HasOne(x => x.Pricing).WithMany(x => x.Reservations).HasForeignKey(x => x.PricingId).OnDelete(DeleteBehavior.Cascade);
 
         b.HasCheckConstraint("CK_STARTTIME_LESS_THAN_ENDTIME","start_time < end_time");
     }

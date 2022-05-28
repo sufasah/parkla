@@ -81,38 +81,36 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
         return park;
     }
 
-    public override async Task<Park> UpdateAsync(Park park, CancellationToken cancellationToken) {
+    public override async Task<Park> UpdateAsync(Park parkParam, CancellationToken cancellationToken) {
         using var context = new TContext();
-        var parkClone = park;
+        var parkClone = parkParam;
 
-        var cancelled = await RetryOnConcurrencyErrorAsync(async () => {
-           var result = context.Attach(parkClone);
-           result.Property(x => x.Name).IsModified = true;
-           result.Property(x => x.Location).IsModified = true;
-           result.Property(x => x.Latitude).IsModified = true;
-           result.Property(x => x.Longitude).IsModified = true;
-           result.Property(x => x.Extras).IsModified = true;
-           parkClone = (Park)result.CurrentValues.Clone().ToObject();
-           var park = result.Entity;
+        while(!cancellationToken.IsCancellationRequested) {
+            try {
+                var result = context.Attach(parkClone);
+                result.Property(x => x.Name).IsModified = true;
+                result.Property(x => x.Location).IsModified = true;
+                result.Property(x => x.Latitude).IsModified = true;
+                result.Property(x => x.Longitude).IsModified = true;
+                result.Property(x => x.Extras).IsModified = true;
+                parkClone = (Park)result.CurrentValues.Clone().ToObject();
+                var park = result.Entity;
 
-           await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-           return false;
-        },
-        async (err) => {
-            var entry = err.Entries.Single();
-
-            if(entry.Entity is Park entity) {
-                await entry.ReloadAsync(cancellationToken).ConfigureAwait(false);
-                parkClone.xmin = entity.xmin;
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                return park;
             }
+            catch(DbUpdateConcurrencyException err) {
+                var entry = err.Entries.Single();
 
-            context.ChangeTracker.Clear();
-            return true;
-        }, cancellationToken).ConfigureAwait(false);
+                if(entry.Entity is Park entity) {
+                    await entry.ReloadAsync(cancellationToken).ConfigureAwait(false);
+                    parkClone.xmin = entity.xmin;
+                }
 
-        if(cancelled) return parkClone;
+                context.ChangeTracker.Clear();
+            }
+        }
 
-        var newPark = context.Find<Park>(parkClone.Id!.Value);
-        return newPark!;
+        return parkClone;
     }
 }

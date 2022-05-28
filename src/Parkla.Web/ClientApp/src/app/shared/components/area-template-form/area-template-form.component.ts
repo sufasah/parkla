@@ -1,9 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { TimeUnit } from '@app/core/enums/TimeUnit';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
+import { Pricing } from '@app/core/models/pricing';
+import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RealParkSpaceService } from '@app/core/services/real-park-space.service';
 import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
@@ -65,15 +68,43 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   lastSearchInput: string | null = null;
   realSpacesLoading = false;
 
+  pricingSuggestions: Pricing[] = [];
+  pricingEmptyMessage = "";
+
   constructor(
     private confirmationService: ConfirmationService,
-    private realSpaceService: RealParkSpaceService
+    private realSpaceService: RealParkSpaceService,
+    private areaService: ParkAreaService
   ) { }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit(): void {
+  }
+
+  searchPricing(evt: any) {
+    evt.query = evt.query.toLowerCase();
+    this.areaService.getAreaPricings(this.area.id).subscribe({
+      next: pricings => {
+        if(!!evt.query){
+          this.pricingSuggestions = pricings.filter(x =>
+            x.type.toLowerCase().includes(evt.query) ||
+            x.amount.toString().toLowerCase().includes(evt.query) ||
+            x.unit.toLowerCase().includes(evt.query)
+          );
+        }
+        else
+          this.pricingSuggestions = pricings;
+
+        this.pricingSuggestions.unshift(<any>null);
+        this.pricingEmptyMessage = "No Pricing Found"
+      },
+      error: (err: HttpErrorResponse) => {
+        this.pricingSuggestions = [null!];
+        this.pricingEmptyMessage = err.error.message;
+      }
+    });
   }
 
   spaceModalDone() {

@@ -22,7 +22,10 @@
     </div>
 
     <div style="font-size:12px;">
-      <div class="d-flex align-items-center justify-content-evenly fw-bold" *ngIf="park.minPrice && park.avaragePrice && park.maxPrice; else noPrice">
+      <div
+        class="d-flex align-items-center justify-content-evenly fw-bold"
+        *ngIf="park.minPrice != undefined && park.minPrice != null && park.avaragePrice != undefined && park.avaragePrice != null && park.maxPrice != undefined && park.maxPrice != null; else noPrice"
+        >
         <span class="min-price">
           {{park.minPrice | currency : "TRY" : "symbol" : "0.2-2"}}
         </span> -

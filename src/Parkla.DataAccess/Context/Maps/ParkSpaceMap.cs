@@ -31,6 +31,8 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
             .HasColumnName("status")
             .HasDefaultValue(SpaceStatus.UNKNOWN)
             .IsRequired();
+        b.Property(x => x.PricingId)
+            .HasColumnName("pricing_id");
         b.Property(x => x.TemplatePath)
             .HasColumnName("space_path")
             .HasConversion(
@@ -45,6 +47,7 @@ public class ParkSpaceMap : IEntityTypeConfiguration<ParkSpace> {
 
         b.UseXminAsConcurrencyToken();
 
+        b.HasOne(x => x.Pricing).WithMany(x => x.Spaces).HasForeignKey(x => x.PricingId).OnDelete(DeleteBehavior.SetNull);
         b.HasOne(x => x.Area).WithMany(x => x.Spaces).HasForeignKey(x => x.AreaId).OnDelete(DeleteBehavior.Cascade);
         b.HasOne(x => x.RealSpace).WithOne(x => x.Space).HasForeignKey<RealParkSpace>(x => x.SpaceId).OnDelete(DeleteBehavior.SetNull);
 

@@ -107,7 +107,7 @@
         label="Reserve"
         [loading]="reserveLoading"
         (onClick)="reserveSpace()"
-        [disabled]="selectedSpace!.status == SpaceStatusEnum.OCCUPIED || selectedSpace!.isReserved"
+        [disabled]="selectedSpace!.status.toUpperCase() == 'OCCUPIED' || selectedSpace!.isReserved"
         >
       </p-button>
       <p-button

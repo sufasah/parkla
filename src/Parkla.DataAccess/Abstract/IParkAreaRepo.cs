@@ -7,7 +7,7 @@ namespace Parkla.DataAccess.Abstract;
 
 public interface IParkAreaRepo : IEntityRepository<ParkArea>
 {
-    new Task<Tuple<ParkArea, Park?>> AddAsync(
+    new Task<ParkArea> AddAsync(
         ParkArea area, 
         CancellationToken cancellationToken = default
     );
@@ -36,7 +36,7 @@ public interface IParkAreaRepo : IEntityRepository<ParkArea>
         CancellationToken cancellationToken = default
     );
 
-    Task<InstantParkAreaReservedSpace> GetParkAreaAsync(
+    Task<InstantParkAreaReservedSpace?> GetParkAreaAsync(
         Expression<Func<ParkArea, bool>>? filter = null,
         CancellationToken cancellationToken = default
     );

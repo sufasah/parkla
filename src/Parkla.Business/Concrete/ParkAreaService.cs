@@ -145,15 +145,10 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         entity.MaxPrice = null;
         entity.Spaces = null!;
 
-        var (areaResult, parkResult) = await _parkAreaRepo.AddAsync(
+        return await _parkAreaRepo.AddAsync(
             entity,
             cancellationToken
         ).ConfigureAwait(false);
-
-        if(parkResult != null)
-            _ = _parklaHubService.ParkChangesAsync(parkResult, false);
-
-        return areaResult;
     }
 
     private async Task ThrowIfUserNotMatch(int parkAreaId, int userId, CancellationToken cancellationToken)
@@ -207,5 +202,20 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     public async Task<List<InstantParkAreaIdReservedSpace>> GetParkAreasReserverdSpaceCountAsync(int[] ids, CancellationToken cancellationToken)
     {
         return await _parkAreaRepo.GetParkAreasReserverdSpaceCountAsync(ids, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<List<Pricing>> GetAreaPricingsAsync(int areaId, CancellationToken cancellationToken)
+    {
+        var includes = new Expression<Func<ParkArea, object>>[] {
+            x => x.Pricings
+        };
+        
+        var result = await _parkAreaRepo.GetListAsync(
+            includes,
+            x => x.Id == areaId,
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        return result.SelectMany(x => x.Pricings).ToList();
     }
 }

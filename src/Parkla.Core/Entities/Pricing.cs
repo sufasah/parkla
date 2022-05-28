@@ -5,7 +5,7 @@ namespace Parkla.Core.Entities;
 public class Pricing : IEntity {
     public Pricing()
     {
-        Reservations = new HashSet<Reservation>();
+        Spaces = new HashSet<ParkSpace>();
     }
 
     public int? Id { get; set; }
@@ -15,7 +15,7 @@ public class Pricing : IEntity {
     public TimeUnit? Unit { get; set; }
     public int? Amount { get; set; }
     public float? Price { get; set; }
-    public virtual ICollection<Reservation> Reservations { get; set; }
+    public virtual ICollection<ParkSpace> Spaces { get; set; }
 
     public static float GetPricePerHour(Pricing pricing) {
         var price = pricing.Price!.Value;

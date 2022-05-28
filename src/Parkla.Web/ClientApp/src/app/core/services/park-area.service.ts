@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { apiParkAreas } from '../constants/http';
 import { ParkArea } from '../models/park-area';
+import { Pricing } from '../models/pricing';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,10 @@ export class ParkAreaService {
 
   getAreas() {
     return this.httpClient.get<ParkArea[]>(apiParkAreas+"/all");
+  }
+
+  getAreaPricings(areaId: number) {
+    return this.httpClient.get<Pricing[]>(apiParkAreas+`/pricings/${areaId}`);
   }
 
   getAreasPage(
@@ -70,7 +75,7 @@ export class ParkAreaService {
         id: area.id,
         parkId: area.parkId,
         templateImage: area.templateImage,
-        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id, realSpace: null})),
+        spaces: area.spaces.map(space => ({...space, realSpaceId: space.realSpace?.id, realSpace: null, pricingId: space.pricing?.id, pricing: null})),
         xmin: area.xmin
       };
     }

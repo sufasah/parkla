@@ -254,22 +254,5 @@ namespace Parkla.DataAccess.Bases
             }
             return entity;
         }
-
-        protected async Task<bool> RetryOnConcurrencyErrorAsync(
-            Func<Task<bool>>? inTry = null, 
-            Func<DbUpdateConcurrencyException, Task<bool>>? inError = null, 
-            CancellationToken cancellationToken = default
-        ) {
-            while(!cancellationToken.IsCancellationRequested) {
-                try {
-                    if(inTry != null)
-                    if(!await inTry()) return false;
-                } catch(DbUpdateConcurrencyException e) {
-                    if(inError != null)
-                    if(!await inError(e)) return false;
-                } catch(OperationCanceledException) {}
-            }
-            return true;
-        }
     }
 }

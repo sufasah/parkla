@@ -10,5 +10,6 @@ public class ParkSpaceDto
     public uint xmin { get; set; }
     public DateTime? StatusUpdateTime { get; set; }
     public SpaceStatus? Status { get; set; }
+    public int? PricingId { get; set; }
     public int[][]? SpacePath { get; set; }
 }

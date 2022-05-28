@@ -32,4 +32,9 @@ public interface IParkAreaService : IEntityService<ParkArea>
         int[] ids,
         CancellationToken cancellationToken
     );
+
+    Task<List<Pricing>> GetAreaPricingsAsync(
+        int areaId, 
+        CancellationToken cancellationToken
+    );
 }

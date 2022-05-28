@@ -91,4 +91,17 @@ public class ParkAreasController : EntityControllerBase<ParkArea, ParkAreaDto>
         return Ok();
     }
 
+    [HttpGet("pricings/{id}")]
+    public virtual async Task<IActionResult> GetAreaPricingsAsync(int id, CancellationToken cancellationToken) {
+        
+        var result = await _service.GetAreaPricingsAsync(id, cancellationToken).ConfigureAwait(false);
+
+        foreach (var item in result)
+        {
+            item.Area = null;
+        }
+
+        return Ok(result);
+    }
+
 }

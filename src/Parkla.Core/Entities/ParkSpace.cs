@@ -19,6 +19,8 @@ public class ParkSpace : IEntity {
     public DateTime? StatusUpdateTime { get; set; }
     public virtual SpaceStatus? Status { get; set; }
     public int[][]? TemplatePath { get; set; }
+    public int? PricingId { get; set; }
+    public virtual Pricing? Pricing { get; set; }
     public virtual ICollection<Reservation>? Reservations { get; set; }
     public virtual ICollection<ReceivedSpaceStatus> ReceivedSpaceStatusses { get; set; }
 
@@ -36,6 +38,8 @@ public class ParkSpace : IEntity {
             && RealSpace == space.RealSpace
             && Name == space.Name
             && xmin == space.xmin
+            && Pricing == space.Pricing
+            && PricingId == space.PricingId
             && StatusUpdateTime == space.StatusUpdateTime
             && Status == space.Status;
         

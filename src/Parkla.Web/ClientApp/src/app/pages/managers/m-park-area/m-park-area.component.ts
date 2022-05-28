@@ -28,7 +28,7 @@ export class MParkAreaComponent implements OnInit {
 
   selectedSpace?: ParkSpace;
 
-  showReservationModal = new EventEmitter<void>();
+  showReservationModal = new EventEmitter<void>(true);
 
   minDate = new Date();
 
@@ -70,10 +70,7 @@ export class MParkAreaComponent implements OnInit {
   getAreaSpaces() {
     this.spaceService.getAreaParkSpaces(this.getAreaId(), true).subscribe({
       next: spaces => {
-        this.selectedArea = {...this.selectedArea, spaces: spaces.map(x => {
-          x.status = Number(SpaceStatus[x.status]);
-          return x;
-        }) ?? []};
+        this.selectedArea = {...this.selectedArea, spaces: spaces ?? []};
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({

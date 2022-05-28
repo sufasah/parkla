@@ -26,11 +26,11 @@ export class ParkAreaFormComponent implements OnInit, AfterViewInit {
   @Input()
   submitLabel = "Submit";
 
-  timeUnitOptions = [
-    TimeUnit[TimeUnit.MINUTE],
-    TimeUnit[TimeUnit.HOUR],
-    TimeUnit[TimeUnit.DAY],
-    TimeUnit[TimeUnit.MONTH],
+  timeUnitOptions: TimeUnit[] = [
+    "MINUTE",
+    "HOUR",
+    "DAY",
+    "MONTH"
   ]
   constructor(
   ) { }

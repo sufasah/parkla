@@ -91,6 +91,29 @@
         class="flex-grow-1"
         placeholder="Space name"
         />
+      <p-autoComplete
+        name="pricing"
+        [(ngModel)]="editingSpace.pricing"
+        [suggestions]="pricingSuggestions"
+        placeholder="Pricing"
+        (completeMethod)="searchPricing($event)"
+        [dropdown]="true"
+        [showEmptyMessage]="true"
+        [emptyMessage]="pricingEmptyMessage"
+        field="type"
+        [dropdown]="true"
+        [forceSelection]="true"
+        >
+        <ng-template let-group pTemplate="item">
+          <div class="flex align-items-center">
+              <span *ngIf="group; else empty">{{group.type}} - {{group.amount}} - {{group.unit}}(s) - {{group.price}}</span>
+              <ng-template #empty>
+                <span>- Empty -</span>
+              </ng-template>
+
+          </div>
+        </ng-template>
+      </p-autoComplete>
       <div
         *ngIf="editingSpace.realSpace"
         style="background-color: var(--gray-100); height:100%; border-radius: 5px; padding:5px"

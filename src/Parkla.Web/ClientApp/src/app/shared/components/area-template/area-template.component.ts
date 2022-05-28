@@ -94,7 +94,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
       const oldSpace = this.parkArea.spaces[index];
       if(index == -1) return;
 
-      space.status = <any>SpaceStatus[space.status];
+      space.status = <any>space.status.toUpperCase();
 
       if(isDelete) {
         this.parkArea.spaces.splice(index, 1);
@@ -165,9 +165,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.parkArea.spaces.forEach(space => {
       if(this.parkArea.reservationsEnabled && space.reservations){
         if(space.isReserved) {
-          if(space.status == SpaceStatus.EMPTY)
+          if(space.status.toUpperCase() == "EMPTY")
             this.drawEmptyReservedSpace(space.templatePath);
-          else if(space.status == SpaceStatus.OCCUPIED)
+          else if(space.status.toUpperCase() == "OCCUPIED")
             this.drawOccupiedReservedSpace(space.templatePath);
           else
             this.drawUnknwonSpace(space.templatePath);
@@ -175,9 +175,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
-      if(space.status == SpaceStatus.EMPTY)
+      if(space.status.toUpperCase() == "EMPTY")
         this.drawEmptySpace(space.templatePath);
-      else if(space.status == SpaceStatus.OCCUPIED)
+      else if(space.status.toUpperCase() == "OCCUPIED")
         this.drawOccupiedSpace(space.templatePath);
       else
         this.drawUnknwonSpace(space.templatePath);

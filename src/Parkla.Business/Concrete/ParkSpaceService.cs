@@ -31,6 +31,7 @@ public class ParkSpaceService : EntityServiceBase<ParkSpace>, IParkSpaceService
             include.Add(x => x.Reservations!);
         
         include.Add(x => x.RealSpace!);
+        include.Add(x => x.Pricing!);
         
         return await _parkSpaceRepo.GetListAsync(
             include.ToArray(),

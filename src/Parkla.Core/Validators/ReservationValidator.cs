@@ -9,7 +9,6 @@ public class ReservationValidator : AbstractValidator<Reservation>
         Id();
         UserId();
         SpaceId();
-        PricingId();
         StartTime();
         EndTime();
      
@@ -20,8 +19,6 @@ public class ReservationValidator : AbstractValidator<Reservation>
     private void UserId() => RuleFor(x => x.UserId)
         .NotNull();
     private void SpaceId() => RuleFor(x => x.SpaceId)
-        .NotNull();
-    private void PricingId() => RuleFor(x => x.PricingId)
         .NotNull();
     private void StartTime() => RuleFor(x => x.StartTime)
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)

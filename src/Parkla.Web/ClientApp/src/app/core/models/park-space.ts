@@ -1,6 +1,7 @@
 import { SpaceStatus } from "../enums/SpaceStatus";
 import { Point } from "../types/parkmap";
 import { ParkSpaceReal } from "./park-space-real";
+import { Pricing } from "./pricing";
 import { SpaceReservation } from "./space-reservation";
 
 export interface ParkSpace {
@@ -9,6 +10,8 @@ export interface ParkSpace {
   name: string;
   realSpaceId: number;
   realSpace?: ParkSpaceReal;
+  pricingId: number;
+  pricing: Pricing;
   statusUpdateTime: Date;
   status: SpaceStatus;
   templatePath: SpacePath;

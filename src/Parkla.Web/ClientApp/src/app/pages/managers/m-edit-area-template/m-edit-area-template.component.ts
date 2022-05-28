@@ -91,10 +91,28 @@ export class MEditAreaTemplateComponent implements OnInit {
       });
       return;
     }
+    let valErrMsg = {
+      life:5000,
+      severity:"error",
+      summary: "Space Validation",
+      detail: "Spaces must have a name(0-30) and realspace. One of the spaces is not validated.",
+      icon: "pi-lock"
+    };
+
     for(let i=0; i < this.area.spaces.length; i++) {
       let space = this.area.spaces[i];
-      if(!space.name || !space.realSpace || space.name.length == 0 || space.name.length > 30) {
+      if(
+        !space.name ||
+        !space.realSpace ||
+        space.name.length == 0 ||
+        space.name.length > 30
+      ) {
+        this.messageService.add(valErrMsg);
         return;
+      }
+
+      if(space.pricing) {
+        space.pricingId = space.pricing.id;
       }
     }
 
@@ -107,8 +125,8 @@ export class MEditAreaTemplateComponent implements OnInit {
         this.area = area;
         this.area.parkId = this.getParkId();
 
-        this.messageService.add(
-          {life:1500,
+        this.messageService.add({
+          life:1500,
           severity:'success',
           summary: 'Template Update',
           detail: 'Area template and spaces has been updated successfully'

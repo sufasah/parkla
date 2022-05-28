@@ -138,13 +138,10 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
         }
       }
     );
-    console.log("start stream");
-
   }
 
   stopReservedCountStream() {
     this.parkReservationStreamSubscription?.dispose();
-    console.log("stop stream");
   }
 
   registerParkAreaChanges() {

@@ -12,6 +12,7 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
         Name();
         StatusUpdateTime();
         Status();
+        PricingId();
         SpacePath();
 
         RuleSet("id", Id);
@@ -33,6 +34,7 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
     private void Status() => RuleFor(x => x.Status)
         .NotNull()
         .IsInEnum();
+    private void PricingId() => RuleFor(x => x.PricingId);
     private void SpacePath() => RuleFor(x => x.TemplatePath)
         .NotNull()
         .Must(x => x!.Length == 4 && x.Aggregate(true, (prev, y) => y.Length == 2 && prev));
@@ -41,6 +43,7 @@ public class ParkSpaceValidator : AbstractValidator<ParkSpace>
         AreaId();
         RealSpaceId();
         Name();
+        PricingId();
         SpacePath();
     }
 }

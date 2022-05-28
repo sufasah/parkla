@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
-import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkSpace } from '@app/core/models/park-space';
 import { SpaceReservation } from '@app/core/models/space-reservation';
 import { MenuItem } from 'primeng/api';
@@ -29,8 +28,6 @@ export class ReservationModalComponent implements OnInit {
 
   @Output()
   reserveClick = new EventEmitter<void>();
-
-  SpaceStatusEnum = SpaceStatus;
 
   dialogVisible = false;
 
@@ -93,7 +90,7 @@ export class ReservationModalComponent implements OnInit {
     this.generateSpaceReservationTable(this.weekDays[0]);
 
     const now = new Date();
-    if(this.selectedSpace!.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+    if(this.selectedSpace!.status.toUpperCase() == "OCCUPIED" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
       this.reservationsOfDay[0].isReserved = true;
 
     this.dialogVisible = true;
@@ -104,7 +101,7 @@ export class ReservationModalComponent implements OnInit {
     this.generateSpaceReservationTable(item);
 
     const now = new Date();
-    if(this.selectedSpace!.status == SpaceStatus.OCCUPIED && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
+    if(this.selectedSpace!.status.toUpperCase() == "OCCUPIED" && this.reservationsOfDay[0].startTime <= now && this.reservationsOfDay[0].endTime >= now)
       this.reservationsOfDay[0].isReserved = true;
   }
 

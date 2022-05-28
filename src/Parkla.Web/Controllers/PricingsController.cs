@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
 using Parkla.Web.Models;
@@ -17,6 +18,4 @@ public class PricingsController : EntityControllerBase<Pricing, PricingDto>
         _service = service;
         _mapper = mapper;
     }
-
-
 }
