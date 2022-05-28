@@ -3,17 +3,22 @@ using Parkla.Core.Entities;
 namespace Parkla.Business.Abstract;
 public interface IParklaHubService
 {
-    public Task ParkChangesAsync(
+    Task ParkChangesAsync(
         Park park, 
         bool isDelete
     );
 
-    public Task ParkSpaceChangesAsync(
+    Task ReservationChangesAsync(
+        Reservation reservation, 
+        bool isDelete
+    );
+
+    Task ParkSpaceChangesAsync(
         ParkSpace space,
         bool isDelete
     );
 
-    public Task ParkAreaChangesAsync(
+    Task ParkAreaChangesAsync(
         ParkArea space,
         bool isDelete
     );

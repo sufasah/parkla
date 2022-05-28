@@ -17,6 +17,7 @@
   #parkTemplate
   [parkArea]="selectedArea"
   (spaceClicked)="spaceClicked($event)"
+  (reservationChanges)="reservationChanges($event.reservation,$event.isDelete)"
   >
 </app-area-template>
 

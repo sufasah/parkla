@@ -29,7 +29,7 @@ namespace Parkla.Core.Helpers
             var tokenDescriptor = new SecurityTokenDescriptor {
                 Claims = GetUserClaimsIdentity(user),
                 IssuedAt = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(1), // this will be changed later
+                Expires = DateTime.UtcNow.AddHours(2), // this will be changed later
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(SecretKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = TokenHandler.CreateJwtSecurityToken(tokenDescriptor);

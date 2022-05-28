@@ -1,8 +1,12 @@
+import { AppUser } from "./app-user";
+import { ParkSpace } from "./park-space";
+
 export interface Reservation {
   id: number;
-  parkId: string;
-  parkName: string;
-  areaName: string;
-  timeFrom: Date;
-  timeTo: Date;
+  userId: number;
+  user: AppUser;
+  spaceId: number;
+  space: ParkSpace;
+  startTime: Date;
+  endTime: Date;
 }

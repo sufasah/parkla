@@ -53,6 +53,9 @@
               Username
             </th>
             <th>
+              Name & Surname
+            </th>
+            <th>
               Start Time
             </th>
             <th>
@@ -71,7 +74,11 @@
           <tr [ngStyle]="{'background-color': reservation.isReserved ? 'rgba(255, 153, 51, 0.125)' : 'rgba(0, 255, 0, 0.125)'}">
             <td>
               <span class="p-column-title">Username</span>
-              {{reservation.username}}
+              {{reservation.user?.username}}
+            </td>
+            <td>
+              <span class="p-column-title">Name & Surname</span>
+              {{reservation.user?.name}} {{reservation.user?.surname}}
             </td>
             <td>
               <span class="p-column-title">Start Time</span>
@@ -110,9 +117,8 @@
         type="button"
         icon="pi pi-calendar"
         label="Reserve"
-        [loading]="reserveLoading"
         (onClick)="reserveSpace()"
-        [disabled]="selectedSpace!.status.toUpperCase() == 'OCCUPIED' || selectedSpace!.isReserved"
+        [disabled]="selectedSpace!.status.toUpperCase() != 'EMPTY' || selectedSpace!.isReserved || !selectedSpace!.pricing"
         >
       </p-button>
       <p-button

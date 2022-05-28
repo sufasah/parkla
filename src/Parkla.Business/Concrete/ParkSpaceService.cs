@@ -25,17 +25,10 @@ public class ParkSpaceService : EntityServiceBase<ParkSpace>, IParkSpaceService
         bool includeReservations,
         CancellationToken cancellationToken = default
     ) {
-        var include = new List<Expression<Func<ParkSpace,object>>>();
-
-        if(includeReservations)
-            include.Add(x => x.Reservations!);
-        
-        include.Add(x => x.RealSpace!);
-        include.Add(x => x.Pricing!);
         
         return await _parkSpaceRepo.GetListAsync(
-            include.ToArray(),
-            areaId == null ? null : (ParkSpace x) => x.AreaId == areaId,
+            areaId,
+            includeReservations,
             cancellationToken
         ).ConfigureAwait(false);
     }

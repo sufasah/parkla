@@ -3,6 +3,7 @@ import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
+import { Reservation } from '@app/core/models/reservation';
 import { SignalrService } from '@app/core/services/signalr.service';
 import { Point } from '@app/core/types/parkmap';
 import { BaseType, select, Selection } from 'd3-selection';
@@ -35,6 +36,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output()
   spaceClicked = new EventEmitter<ParkSpace>();
 
+  @Output()
+  reservationChanges = new EventEmitter<{reservation:Reservation, isDelete:boolean}>();
+
   canvas!:HTMLCanvasElement;
 
   ctx!:any;
@@ -52,6 +56,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
   parkAreaChangedAtLeastOnce = false;
 
   spaceChangesSubscription?: Subscription;
+  reservationChangesSubscription?: Subscription;
 
   selectedSpace?: ParkSpace;
 
@@ -83,10 +88,12 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.signalrService.connectedEvent.subscribe(() => {
       this.registerSpaceChanges();
+      this.registerReservationChanges();
     });
 
     this.signalrService.disconnectedEvent.subscribe(() => {
       this.unregisterSpaceChanges();
+      this.unregisterReservationChanges();
     });
   }
 
@@ -115,6 +122,45 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   unregisterSpaceChanges() {
     this.spaceChangesSubscription?.unsubscribe();
+  }
+
+  registerReservationChanges() {
+    this.reservationChangesSubscription = this.signalrService.registerReservationChanges(this.parkArea.id,(reservation, isDelete) => {
+      reservation.startTime = new Date(reservation.startTime);
+      reservation.endTime = new Date(reservation.endTime);
+
+      if(isDelete) {
+        let spaceIndex = this.parkArea.spaces.findIndex(x => x.id == reservation.spaceId);
+        if (spaceIndex == -1) return;
+
+        let reservationIndex = this.parkArea.spaces[spaceIndex].reservations.findIndex(x => x.id == reservation.id);
+        if(reservationIndex == -1) return;
+
+        let deletedReservation = this.parkArea.spaces[spaceIndex].reservations.splice(reservationIndex, 1)[0];
+        deletedReservation.space = this.parkArea.spaces[spaceIndex];
+        this.reservationChanges.emit({reservation: deletedReservation, isDelete: true});
+      }
+      else {
+        let spaceIndex = this.parkArea.spaces.findIndex(x => x.id == reservation.spaceId);
+        if (spaceIndex == -1) return;
+
+        const reservations = this.parkArea.spaces[spaceIndex].reservations;
+        let newIndex = 0;
+        while(newIndex < reservations.length && reservations[newIndex].endTime <= reservation.startTime)
+          newIndex++;
+
+        reservations.splice(newIndex, 0, reservation);
+        reservation.space = this.parkArea.spaces[spaceIndex];
+
+        console.log(reservation, newIndex);
+        console.log(this.parkArea);
+        this.reservationChanges.emit({reservation: reservation, isDelete: false});
+      }
+    });
+  }
+
+  unregisterReservationChanges() {
+    this.reservationChangesSubscription?.unsubscribe();
   }
 
   ngAfterViewInit(): void {

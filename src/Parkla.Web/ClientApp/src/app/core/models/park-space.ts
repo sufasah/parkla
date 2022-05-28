@@ -2,7 +2,7 @@ import { SpaceStatus } from "../enums/SpaceStatus";
 import { Point } from "../types/parkmap";
 import { ParkSpaceReal } from "./park-space-real";
 import { Pricing } from "./pricing";
-import { SpaceReservation } from "./space-reservation";
+import { Reservation } from "./reservation";
 
 export interface ParkSpace {
   id: number;
@@ -16,7 +16,7 @@ export interface ParkSpace {
   status: SpaceStatus;
   templatePath: SpacePath;
   isReserved: boolean;
-  reservations: SpaceReservation[];
+  reservations: Reservation[];
   xmin: number;
 }
 

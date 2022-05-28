@@ -175,7 +175,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         return areaClone;
     }
 
-    public new async Task<Tuple<ParkArea, Park?>> UpdateAsync(
+    public new async Task<Tuple<ParkArea, Park?, IEnumerable<Reservation>>> UpdateAsync(
         ParkArea areaParam,
         CancellationToken cancellationToken = default
     ) {
@@ -287,7 +287,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 foreach (var pricing in area.Pricings)
                     pricing.Spaces = null!;
 
-                return new(area, area.Park);
+                return new(area, area.Park, deletingReservations);
             }
             catch(DbUpdateConcurrencyException err) {
                 var entry = err.Entries.Single();
@@ -316,10 +316,10 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             };
         }
 
-        return new(areaClone, null);
+        return new(areaClone, null, Array.Empty<Reservation>());
     }
 
-    public override async Task<Tuple<ParkArea?, Park?, IEnumerable<ParkSpace>>> DeleteAsync(ParkArea areaParam, CancellationToken cancellationToken = default)
+    public override async Task<Tuple<ParkArea?, Park?, IEnumerable<ParkSpace>, IEnumerable<Reservation>>> DeleteAsync(ParkArea areaParam, CancellationToken cancellationToken = default)
     {
         using var context = new TContext();
 
@@ -365,17 +365,17 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 }
                 
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                return new(area, area.Park, area.Spaces);
+                return new(area, area.Park, area.Spaces, deletingReservations);
             }
             catch(DbUpdateConcurrencyException err) {
                 var entry = err.Entries.Single();
                 context.ChangeTracker.Clear();
             }
         }
-        return new(null, null, Array.Empty<ParkSpace>());
+        return new(null, null, Array.Empty<ParkSpace>(), Array.Empty<Reservation>());
     }
 
-    public async Task<Tuple<ParkArea, Park?, IEnumerable<ParkSpace>>> UpdateTemplateAsync(
+    public async Task<Tuple<ParkArea, Park?, IEnumerable<ParkSpace>, IEnumerable<Reservation>>> UpdateTemplateAsync(
         ParkArea areaParam, 
         CancellationToken cancellationToken = default
     ) {
@@ -588,7 +588,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 }
                 
                 await context.SaveChangesAsync(cancellationToken);
-                return new(area, area.Park, deletingSpaces);
+                return new(area, area.Park, deletingSpaces, deletingReservations);
             }
             catch(DbUpdateConcurrencyException err) {
                 var entry = err.Entries.Single();
@@ -615,7 +615,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             }
         }
 
-        return new(areaClone, null, Array.Empty<ParkSpace>());
+        return new(areaClone, null, Array.Empty<ParkSpace>(), Array.Empty<Reservation>());
 
     }
 

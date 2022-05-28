@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
 import { ParkSpace } from '@app/core/models/park-space';
-import { SpaceReservation } from '@app/core/models/space-reservation';
+import { Reservation } from '@app/core/models/reservation';
 import { MenuItem } from 'primeng/api';
 
 @Component({
@@ -27,7 +27,7 @@ export class ReservationModalComponent implements OnInit {
   userMode = true;
 
   @Output()
-  reserveClick = new EventEmitter<void>();
+  reserveClick = new EventEmitter<ParkSpace>();
 
   dialogVisible = false;
 
@@ -70,7 +70,7 @@ export class ReservationModalComponent implements OnInit {
     return this._weekDays;
   }
 
-  reservationsOfDay: SpaceReservation[] & {isReserved: boolean}[] = [];
+  reservationsOfDay: Reservation[] & {isReserved: boolean}[] = [];
 
   constructor() { }
 
@@ -88,7 +88,7 @@ export class ReservationModalComponent implements OnInit {
 
   reserveSpace() {
     this.reserveLoading = true;
-    this.reserveClick.emit();
+    this.reserveClick.emit(this.selectedSpace);
   }
 
   showReserveModal() {
@@ -124,8 +124,8 @@ export class ReservationModalComponent implements OnInit {
 
     let dateBegin = item.state?.dateBegin;
     let dateEnd = item.state?.dateEnd;
-    let beforeFirst: SpaceReservation | null = null;
-    let afterLast: SpaceReservation | null = null;
+    let beforeFirst: Reservation | null = null;
+    let afterLast: Reservation | null = null;
 
     for(let i=0; i<spaceRes.length; i++)
       if(spaceRes[i].endTime < dateBegin)
@@ -136,8 +136,7 @@ export class ReservationModalComponent implements OnInit {
         afterLast = spaceRes[i];
 
     if(resOfDay.length == 0) {
-      this.reservationsOfDay = [{
-        username: "-",
+      this.reservationsOfDay = [<any>{
         startTime: beforeFirst ? beforeFirst.endTime : this.minDate,
         endTime: afterLast ? afterLast.startTime : this.maxDate,
         isReserved: false
@@ -152,8 +151,7 @@ export class ReservationModalComponent implements OnInit {
     let i=1;
 
     if(resOfDay[0].startTime > dateBegin) {
-      resOfDay.splice(0,0,{
-        username: "-",
+      resOfDay.splice(0,0,<any>{
         startTime: beforeFirst
           ? beforeFirst.endTime
           : this.minDate,
@@ -165,8 +163,7 @@ export class ReservationModalComponent implements OnInit {
 
     while(i < resOfDay.length){
       if(resOfDay[i-1].endTime != resOfDay[i].startTime) {
-        resOfDay.splice(i,0,{
-          username: "-",
+        resOfDay.splice(i,0,<any>{
           startTime: resOfDay[i-1].endTime,
           endTime: resOfDay[i].startTime,
           isReserved: false
@@ -177,8 +174,7 @@ export class ReservationModalComponent implements OnInit {
     }
 
     if(resOfDay[resOfDay.length-1].endTime < dateEnd) {
-      resOfDay.splice(resOfDay.length,0,{
-        username: "-",
+      resOfDay.splice(resOfDay.length,0,<any>{
         startTime: resOfDay[resOfDay.length-1].endTime,
         endTime: afterLast
           ? afterLast.startTime

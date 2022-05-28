@@ -12,17 +12,17 @@ public interface IParkAreaRepo : IEntityRepository<ParkArea>
         CancellationToken cancellationToken = default
     );
 
-    new Task<Tuple<ParkArea, Park?>> UpdateAsync(
+    new Task<Tuple<ParkArea, Park?, IEnumerable<Reservation>>> UpdateAsync(
         ParkArea area,
         CancellationToken cancellationToken = default
     );
     
-    Task<Tuple<ParkArea, Park?, IEnumerable<ParkSpace>>> UpdateTemplateAsync(
+    Task<Tuple<ParkArea, Park?, IEnumerable<ParkSpace>, IEnumerable<Reservation>>> UpdateTemplateAsync(
         ParkArea area,
         CancellationToken cancellationToken = default
     );
 
-    new Task<Tuple<ParkArea?, Park?, IEnumerable<ParkSpace>>> DeleteAsync(
+    new Task<Tuple<ParkArea?, Park?, IEnumerable<ParkSpace>, IEnumerable<Reservation>>> DeleteAsync(
         ParkArea area, 
         CancellationToken cancellationToken = default
     );

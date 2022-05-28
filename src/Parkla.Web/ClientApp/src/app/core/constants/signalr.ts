@@ -12,7 +12,7 @@ export const signalParkSpaceChanges = "ParkSpaceAddUpdateDelete";
 export const signalParkSpaceChangesRegister = "RegisterParkSpaceChanges";
 export const signalParkSpaceChangesUnRegister = "UnRegisterParkSpaceChanges";
 
-export const signalReservationChanges = "ParkSpaceReservationAddUpdateDelete";
+export const signalReservationChanges = "ReservationAddUpdateDelete";
 export const signalReservationChangesRegister = "RegisterReservationChanges";
 export const signalReservationChangesUnRegister = "UnRegisterReservationChanges";
 

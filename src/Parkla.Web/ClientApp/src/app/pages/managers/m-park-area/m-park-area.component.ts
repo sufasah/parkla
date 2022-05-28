@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace } from '@app/core/models/park-space';
+import { Reservation } from '@app/core/models/reservation';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkAreaService } from '@app/core/services/park-area.service';
 import { ParkSpaceService } from '@app/core/services/park-space.service';
@@ -70,7 +71,7 @@ export class MParkAreaComponent implements OnInit {
   getAreaSpaces() {
     this.spaceService.getAreaParkSpaces(this.getAreaId(), true).subscribe({
       next: spaces => {
-        this.selectedArea = {...this.selectedArea, spaces: spaces ?? []};
+        this.selectedArea = {...this.selectedArea, spaces: spaces};
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
@@ -96,6 +97,13 @@ export class MParkAreaComponent implements OnInit {
 
     if(this.selectedArea.reservationsEnabled)
       this.showReservationModal.emit(true);
+  }
+
+  reservationChanges(reservation: Reservation, isDelete: boolean) {
+    if(isDelete) {
+    }
+    else {
+    }
   }
 
   getParkId() {

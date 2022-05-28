@@ -13,15 +13,18 @@ public class ParklaHubService<T> : IParklaHubService
     private readonly IHubContext<T> _hub;
     private readonly IParkRepo _parkRepo;
     private readonly IParkAreaRepo _areaRepo;
+    private readonly IReservationRepo _reservationRepo;
 
     public ParklaHubService(
         IHubContext<T> hub,
         IParkRepo parkRepo,
-        IParkAreaRepo areaRepo
+        IParkAreaRepo areaRepo,
+        IReservationRepo reservationRepo
     ) {
         _hub = hub;
         _parkRepo = parkRepo;
         _areaRepo = areaRepo;
+        _reservationRepo = reservationRepo;
     }
     
     private async Task<Park?> IncludeUserAsync(Park park) {

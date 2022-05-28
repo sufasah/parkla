@@ -99,6 +99,7 @@ import { AreaTemplateFormComponent } from './shared/components/area-template-for
 import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-template/m-edit-area-template.component';
 import { UserFormComponent } from './shared/components/user-form/user-form.component';
 import { ReservationModalComponent } from './shared/components/reservation-modal/reservation-modal.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -228,6 +229,7 @@ import { ReservationModalComponent } from './shared/components/reservation-modal
     DistrictService,
     ParkAreaService,
     ParkSpaceService,
+    DatePipe,
     ParkService,
     PricingService,
     RealParkSpaceService

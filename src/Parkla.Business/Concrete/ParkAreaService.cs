@@ -48,17 +48,20 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
     public async Task DeleteAsync(ParkArea parkArea, int userId, CancellationToken cancellationToken = default)
     {
         await ThrowIfUserNotMatch((int)parkArea.Id!, userId, cancellationToken).ConfigureAwait(false);
-        var (newArea, park, deletedSpaces) = await _parkAreaRepo.DeleteAsync(parkArea, cancellationToken).ConfigureAwait(false);
+        var (newArea, park, deletedSpaces, deletedReservations) = await _parkAreaRepo.DeleteAsync(parkArea, cancellationToken).ConfigureAwait(false);
         
         if(park != null)
             _ = _parklaHubService.ParkChangesAsync(park, false); 
 
         if(newArea != null) {
             _ = _parklaHubService.ParkAreaChangesAsync(newArea, true);
-
-            foreach (var item in deletedSpaces)
-                _ = _parklaHubService.ParkSpaceChangesAsync(item, true);
         }
+
+        foreach (var item in deletedSpaces)
+            _ = _parklaHubService.ParkSpaceChangesAsync(item, true);
+        
+        foreach (var item in deletedReservations)
+            _ = _parklaHubService.ReservationChangesAsync(item, true);
     }
 
     public async Task<ParkArea> UpdateAsync(
@@ -96,7 +99,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
 
                 try {
                     parkArea.TemplateImage = fileName;
-                    var (nArea, nPark, tDeletedSpaces) = await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
+                    var (nArea, nPark, tDeletedSpaces, tDeletedReservations) = await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
 
                     if(nPark != null)
                         _ = _parklaHubService.ParkChangesAsync(nPark, false);
@@ -108,6 +111,9 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
 
                     foreach (var item in tDeletedSpaces)
                         _ = _parklaHubService.ParkSpaceChangesAsync(item, true);
+                    
+                    foreach (var item in tDeletedReservations)
+                        _ = _parklaHubService.ReservationChangesAsync(item, true);
 
                     return nArea;
                 }
@@ -117,7 +123,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
                 }
             }
 
-            var (newArea, newPark, deletedSpaces) = await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
+            var (newArea, newPark, deletedSpaces, deletedReservations) = await _parkAreaRepo.UpdateTemplateAsync(parkArea, cancellationToken);
 
             if(newPark != null)
                 _ = _parklaHubService.ParkChangesAsync(newPark, false);
@@ -129,12 +135,15 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
 
             foreach (var item in deletedSpaces)
                 _ = _parklaHubService.ParkSpaceChangesAsync(item, true);
+            
+            foreach (var item in deletedReservations)
+                _ = _parklaHubService.ReservationChangesAsync(item, true);
 
             return newArea;
         }
         else
         {
-            var (areaResult, parkResult) = await _parkAreaRepo.UpdateAsync(parkArea, cancellationToken).ConfigureAwait(false);
+            var (areaResult, parkResult, deletedReservations) = await _parkAreaRepo.UpdateAsync(parkArea, cancellationToken).ConfigureAwait(false);
 
             if(parkResult != null)
                 _ = _parklaHubService.ParkChangesAsync(parkResult, false);
@@ -143,6 +152,9 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
 
             foreach (var item in areaResult.Spaces)
                 _ = _parklaHubService.ParkSpaceChangesAsync(item, false);
+            
+            foreach (var item in deletedReservations)
+                _ = _parklaHubService.ReservationChangesAsync(item, true);
 
             return areaResult;
         }

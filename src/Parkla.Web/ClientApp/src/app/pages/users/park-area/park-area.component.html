@@ -22,6 +22,7 @@
   #parkTemplate
   [parkArea]="selectedArea"
   (spaceClicked)="spaceClicked($event)"
+  (reservationChanges)="reservationChanges($event.reservation,$event.isDelete)"
   >
 </app-area-template>
 
@@ -30,7 +31,7 @@
   [minDate]="minDate"
   [maxDate]="maxDate"
   [showReservationModal]="showReservationModal"
-  (reserveClick)="reserveSpace()"
+  (reserveClick)="reserveSpace($event)"
   >
 </app-reservation-modal>
 

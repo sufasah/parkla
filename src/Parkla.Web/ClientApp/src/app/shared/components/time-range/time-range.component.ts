@@ -27,6 +27,7 @@ export class TimeRangeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    this.onChange.emit(this.timeRange);
   }
 
   timeRangeChange(timeRange:any) {

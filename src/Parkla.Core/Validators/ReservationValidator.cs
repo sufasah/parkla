@@ -13,6 +13,7 @@ public class ReservationValidator : AbstractValidator<Reservation>
         EndTime();
      
         RuleSet("id", Id);
+        RuleSet("add", RsAdd);
     }
     private void Id() => RuleFor(x => x.Id)
         .NotNull();
@@ -26,6 +27,12 @@ public class ReservationValidator : AbstractValidator<Reservation>
         .Must((y, x) => x < y.EndTime);
     private void EndTime() => RuleFor(x => x.EndTime)
         .Must(x => x!.Value.Kind == DateTimeKind.Utc)
-        .GreaterThan(DateTime.UtcNow.Add(new TimeSpan(0,15,0)))
+        .GreaterThan(DateTime.UtcNow)
         .NotNull();
+    private void RsAdd() {
+        UserId();
+        SpaceId();
+        StartTime();
+        EndTime();
+    }
 }
