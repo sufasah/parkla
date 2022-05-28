@@ -342,9 +342,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 var deletingPricingSpaceIds = area.Pricings.SelectMany(y => y.Spaces).Select(y => y.Id);
                 var deletingReservations = await context.Set<Reservation>()
                     .Include(x => x.User)
+                    .Include(x => x.Space)
+                    .ThenInclude(x => x!.Pricing)
                     .Where(x => 
                         x.EndTime > deletionTime && (
-                            area.Spaces.Select(y => y.Id).Contains(x.SpaceId) ||
+                            (area.Spaces.Select(y => y.Id).Contains(x.SpaceId) && x.Space!.Pricing != null)  ||
                             deletingPricingSpaceIds.Contains(x.SpaceId)))
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
@@ -424,6 +426,8 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
 
+                var spacesPricingSetNul = new List<ParkSpace>();
+
                 foreach (var item in userSpaces) {
                     var dbitem = someOrAllOfUserSpaces.Where(x => x.Id == item.Id).FirstOrDefault(); 
                     if(dbitem != null)
@@ -443,8 +447,13 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                         //IT IS SUPPOSED TO BE MODIFIED BUT EVERYTHING IS SAME SO EXPECTED 1 ROW EFFECTED BUT NO EFFECT. COMPARE PROPERTIES AND IF ALL EQUALS MAKE UNCHANGED STATE
                         if(item.Equals(dbitem))
                             eItem.State = EntityState.Unchanged;
-                        else
+                        else {
                             eItem.State = EntityState.Modified;
+
+                            if(dbitem.PricingId != null && item.PricingId == null) {
+                                spacesPricingSetNul.Add(item);
+                            }
+                        }
                     }
                     else {
                         item.Id = null; // database does not have these items because they are not in someorallofuserspaces retrieved from database
@@ -576,11 +585,14 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 // some spaces will be deleted also reservations will be deleted. So give the money of the user which paid for reservation.
                 var deletionTime = DateTime.UtcNow;
                 var deletingReservations = await context.Set<Reservation>()
+                    .AsNoTracking()
                     .Include(x => x.User)
                     .Include(x => x.Space)
+                    .ThenInclude(x => x!.Pricing)
                     .Where(x => 
                         x.EndTime > deletionTime && 
-                        deletingSpaces.Select(y => y.Id).Contains(x.SpaceId))
+                        (deletingSpaces.Select(y => y.Id).Contains(x.SpaceId) 
+                         || spacesPricingSetNul.Select(y => y.Id).Contains(x.SpaceId)))
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
 
@@ -588,6 +600,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     context.Entry(reservation).State = EntityState.Deleted;
                     var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
+                    context.Entry(reservation.User).State = EntityState.Modified;
                 }
                 
                 await context.SaveChangesAsync(cancellationToken);
