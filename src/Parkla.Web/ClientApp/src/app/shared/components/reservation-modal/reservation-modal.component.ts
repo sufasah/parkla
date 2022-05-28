@@ -21,7 +21,7 @@ export class ReservationModalComponent implements OnInit {
   maxDate = new Date(Date.now()+1000*60*60*24*6);
 
   @Input()
-  showReservationModal!: EventEmitter<void>;
+  showReservationModal!: EventEmitter<boolean>;
 
   @Input()
   userMode = true;
@@ -75,9 +75,14 @@ export class ReservationModalComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.showReservationModal.subscribe(() => {
+    this.showReservationModal.subscribe((show) => {
       this.reserveLoading = false;
-      this.showReserveModal();
+      if(show) {
+        this.showReserveModal();
+      }
+      else {
+        this.dialogVisible = false;
+      }
     });
   }
 

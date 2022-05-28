@@ -38,7 +38,6 @@ public class ParkSpace : IEntity {
             && RealSpace == space.RealSpace
             && Name == space.Name
             && xmin == space.xmin
-            && Pricing == space.Pricing
             && PricingId == space.PricingId
             && StatusUpdateTime == space.StatusUpdateTime
             && Status == space.Status;

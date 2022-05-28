@@ -14,6 +14,11 @@
     <div>
       <h3>{{selectedSpace!.name}}</h3>
       <h4>{{selectedSpace!.status}}</h4>
+      <h4 *ngIf="selectedSpace!.pricing; else noPricing">{{selectedSpace!.pricing.type}} - {{selectedSpace!.pricing.amount}} - {{selectedSpace!.pricing.unit}}(s) - {{selectedSpace!.pricing.price}}</h4>
+      <ng-template #noPricing>
+        <h4>Pricing Undefined</h4>
+      </ng-template>
+
     </div>
   </ng-template>
 

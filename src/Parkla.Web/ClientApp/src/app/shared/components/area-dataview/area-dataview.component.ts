@@ -114,7 +114,6 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
     const sub2 = this.signalrService.disconnectedEvent.subscribe(() => {
       this.stopReservedCountStream();
-      this.unregisterParkAreaChanges();
     })
 
     this.unsubscribe.push(sub,sub2);

@@ -29,7 +29,7 @@ export class ParkAreaComponent implements OnInit {
 
   selectedSpace?: ParkSpace;
 
-  showReservationModal = new EventEmitter<void>(true);
+  showReservationModal = new EventEmitter<boolean>(true);
 
   minDate = new Date();
 
@@ -115,8 +115,11 @@ export class ParkAreaComponent implements OnInit {
   spaceClicked(space: ParkSpace) {
     this.selectedSpace = space;
 
+    if(!this.selectedSpace)
+      this.showReservationModal.emit(false)
+
     if(this.selectedArea.reservationsEnabled)
-        this.showReservationModal.emit();
+      this.showReservationModal.emit(true);
   }
 
   reserveSpace() {

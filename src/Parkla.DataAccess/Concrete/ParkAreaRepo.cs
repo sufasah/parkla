@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 using Parkla.Core.Exceptions;
@@ -206,8 +205,10 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ConfigureAwait(false);
                 
                 var deletingPricings = allPricings.Except(userPricings);
-                foreach (var item in deletingPricings)
-                    context.Remove(item); // updated park area doesn't have these db entities so they will be deleted. User wins strategy applied
+                foreach (var item in deletingPricings) {
+                    var dpEntry = context.Entry(item);
+                    dpEntry.State = EntityState.Deleted; // updated park area doesn't have these db entities so they will be deleted. User wins strategy applied
+                }
 
                 foreach (var item in userPricings)
                     context.Entry(item).State = EntityState.Detached;
@@ -240,7 +241,6 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
 
-                
                 var (newAreaMin, newAreaAvarage, newAreaMax, newAreaCount) = FindPricingsMinAvgMaxCount(spaces.Select(x => x.Pricing!));
                 area.MinPrice = newAreaMin;
                 area.AvaragePrice = newAreaAvarage;
@@ -262,8 +262,13 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     cancellationToken
                 ).ConfigureAwait(false);
 
+                var deletingSpaces = await context.Set<ParkSpace>()
+                    .Where(x => x.AreaId == area.Id && deletingPricings.Select(y => y.Id).Contains(x.PricingId))
+                    .ToListAsync(cancellationToken)
+                    .ConfigureAwait(false);
+
                 var deletionTime = DateTime.UtcNow;
-                var deletingSpaceIds = deletingPricings.SelectMany(y => y.Spaces).Select(y => y.Id);
+                var deletingSpaceIds = deletingSpaces.Select(y => y.Id);
                 var deletingReservations = await context.Set<Reservation>()
                     .Include(x => x.User)
                     .Where(x => 
@@ -314,7 +319,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         return new(areaClone, null);
     }
 
-    public override async Task<Tuple<ParkArea?,Park?>> DeleteAsync(ParkArea areaParam, CancellationToken cancellationToken = default)
+    public override async Task<Tuple<ParkArea?, Park?, IEnumerable<ParkSpace>>> DeleteAsync(ParkArea areaParam, CancellationToken cancellationToken = default)
     {
         using var context = new TContext();
 
@@ -360,17 +365,17 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 }
                 
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                return new(area, area.Park);
+                return new(area, area.Park, area.Spaces);
             }
             catch(DbUpdateConcurrencyException err) {
                 var entry = err.Entries.Single();
                 context.ChangeTracker.Clear();
             }
         }
-        return new(null, null);
+        return new(null, null, Array.Empty<ParkSpace>());
     }
 
-    public async Task<Tuple<ParkArea,Park?>> UpdateTemplateAsync(
+    public async Task<Tuple<ParkArea, Park?, IEnumerable<ParkSpace>>> UpdateTemplateAsync(
         ParkArea areaParam, 
         CancellationToken cancellationToken = default
     ) {
@@ -428,7 +433,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                             eDbPricingItem.State = EntityState.Detached;
                         }
                         //context.Update(item); dont use update. Same thing with context.add below or above
-                        var eItem = context.Attach(item); 
+                        var eItem = context.Entry(item); 
                         item.xmin = dbitem.xmin; // this is overridden because last in wins for spaces.
                         // in catch all of the user spaces can be reloaded and xmin values can be updated but they are loaded right here already.
 
@@ -452,6 +457,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .Where(x => area.Spaces.Select(y => y.PricingId).Contains(x.Id))
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
+                
+                foreach(var item in area.Spaces) {
+                    if(item.PricingId != null && item.Pricing == null)
+                        throw new ParklaConcurrentDeletionException($"One of the spaces with '{item.Name}' name has a pricing which was deleted by another user. Please select the pricing again.");
+                }
 
                 var (newAreaMin, newAreaAvarage, newAreaMax, newAreaCount) = FindPricingsMinAvgMaxCount(userSpacePricings);
                 area.MinPrice = newAreaMin;
@@ -578,7 +588,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 }
                 
                 await context.SaveChangesAsync(cancellationToken);
-                return new(area, area.Park);
+                return new(area, area.Park, deletingSpaces);
             }
             catch(DbUpdateConcurrencyException err) {
                 var entry = err.Entries.Single();
@@ -605,7 +615,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             }
         }
 
-        return new(areaClone, null);
+        return new(areaClone, null, Array.Empty<ParkSpace>());
 
     }
 

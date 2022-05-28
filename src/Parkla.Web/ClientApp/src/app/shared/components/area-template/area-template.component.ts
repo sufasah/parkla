@@ -53,6 +53,8 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   spaceChangesSubscription?: Subscription;
 
+  selectedSpace?: ParkSpace;
+
   constructor(
     private signalrService: SignalrService
   ) { }
@@ -90,17 +92,21 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   registerSpaceChanges() {
     this.spaceChangesSubscription = this.signalrService.registerParkSpaceChanges(this.parkArea.id,(space, isDelete) => {
+      console.log(space, isDelete);
       const index = this.parkArea.spaces.findIndex(x => x.id == space.id);
       const oldSpace = this.parkArea.spaces[index];
       if(index == -1) return;
 
       space.status = <any>space.status.toUpperCase();
 
+
       if(isDelete) {
         this.parkArea.spaces.splice(index, 1);
+        if(this.selectedSpace && this.selectedSpace.id == space.id) this.spaceClicked.emit(undefined);
       }
-      else if(oldSpace.statusUpdateTime == null || oldSpace.statusUpdateTime < space.statusUpdateTime) {
+      else if(oldSpace.statusUpdateTime == null || oldSpace.statusUpdateTime <= space.statusUpdateTime) {
         this.parkArea.spaces[index] = space;
+        if(this.selectedSpace && this.selectedSpace.id == space.id) this.spaceClicked.emit(space);
       }
 
       this.drawCanvas();
@@ -240,14 +246,14 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   canvasOnClick(e:any) {
-    let selectedSpace = this.parkArea.spaces.find(space => this.isPointInSpace(
+    this.selectedSpace = this.parkArea.spaces.find(space => this.isPointInSpace(
       space.templatePath,
       [e.offsetX, e.offsetY]
     ));
 
-    if(!selectedSpace) return;
+    if(!this.selectedSpace) return;
 
-    this.spaceClicked.emit(selectedSpace);
+    this.spaceClicked.emit(this.selectedSpace);
   }
 
   parkAreaChanges(value: ParkArea) {
