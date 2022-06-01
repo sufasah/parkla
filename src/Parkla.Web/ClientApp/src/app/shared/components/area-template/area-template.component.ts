@@ -152,8 +152,6 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
         reservations.splice(newIndex, 0, reservation);
         reservation.space = this.parkArea.spaces[spaceIndex];
 
-        console.log(reservation, newIndex);
-        console.log(this.parkArea);
         this.reservationChanges.emit({reservation: reservation, isDelete: false});
       }
     });
