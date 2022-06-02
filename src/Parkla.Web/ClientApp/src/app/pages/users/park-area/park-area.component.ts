@@ -135,6 +135,7 @@ export class ParkAreaComponent implements OnInit {
 
     if(isDelete) {
       if(isIntercept) {
+        reservation.space.isReserved = false;
         this.findSpaceReserved(reservation.space, this.selectedTime);
         this.parkTemlate?.drawCanvas();
       }

@@ -48,9 +48,6 @@ export class ReservationsComponent implements OnInit {
         });
         var resIndex = this.reservations.indexOf(reservation);
         this.reservations.splice(resIndex, 1);
-
-        console.log(this.reservations);
-
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
