@@ -252,7 +252,7 @@
 
 <div style="width: 800px;">
   <p-table
-    [value]="model2.weekData"
+    [value]="model.spaceUsageTimePercentagesPerWeekday"
     responsiveLayout="scroll"
     [scrollable]="true"
     scrollHeight="600px"
@@ -263,25 +263,25 @@
     <ng-template pTemplate="header">
       <tr>
         <th style="min-width:100px;"></th>
+        <th style="min-width:150px;">Sunday</th>
         <th style="min-width:150px;">Monday</th>
         <th style="min-width:150px;">Tuesday</th>
         <th style="min-width:150px;">Wednesday</th>
         <th style="min-width:150px;">Thursday</th>
         <th style="min-width:150px;">Friday</th>
         <th style="min-width:150px;">Saturday</th>
-        <th style="min-width:150px;">Sunday</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-data let-index="rowIndex">
       <tr>
-        <td style="min-width:100px">{{(index < 10 ? "0" : "")+index+":00"}}</td>
-        <td style="min-width:150px">{{data[0]+"%"}}</td>
-        <td style="min-width:150px">{{data[1]+"%"}}</td>
-        <td style="min-width:150px">{{data[2]+"%"}}</td>
-        <td style="min-width:150px">{{data[3]+"%"}}</td>
-        <td style="min-width:150px">{{data[4]+"%"}}</td>
-        <td style="min-width:150px">{{data[5]+"%"}}</td>
-        <td style="min-width:150px">{{data[6]+"%"}}</td>
+        <td style="min-width:100px" class="fw-bolder">{{(index < 10 ? "0" : "")+index+":00"}}</td>
+        <td style="min-width:150px">{{data[0].toFixed(6)}}<b>%</b></td>
+        <td style="min-width:150px">{{data[1].toFixed(6)}}<b>%</b></td>
+        <td style="min-width:150px">{{data[2].toFixed(6)}}<b>%</b></td>
+        <td style="min-width:150px">{{data[3].toFixed(6)}}<b>%</b></td>
+        <td style="min-width:150px">{{data[4].toFixed(6)}}<b>%</b></td>
+        <td style="min-width:150px">{{data[5].toFixed(6)}}<b>%</b></td>
+        <td style="min-width:150px">{{data[6].toFixed(6)}}<b>%</b></td>
       </tr>
     </ng-template>
   </p-table>

@@ -20,4 +20,13 @@ export interface Dashboard {
   averageStatusDataTransferDelayInSeconds: number;
   maxStatusDataTransferDelayInSeconds: number;
   totalCarsUsedSpaces: number;
+  totalEarningPerDay: TimeSeriesData[];
+  carCountUsedSpacePerDay: TimeSeriesData[];
+  spaceUsageTimePerDay: TimeSeriesData[];
+  spaceUsageTimePercentagesPerWeekday: number[][];
+}
+
+export interface TimeSeriesData {
+  x: Date;
+  y: any;
 }

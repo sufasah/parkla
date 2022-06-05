@@ -25,6 +25,7 @@ namespace Parkla.Core.DTOs
         public List<TimeSeriesData> TotalEarningPerDay { get; set; }
         public List<TimeSeriesData> CarCountUsedSpacePerDay { get; set; }
         public List<TimeSeriesData> SpaceUsageTimePerDay { get; set; }
+        public List<List<double>> SpaceUsageTimePercentagesPerWeekday { get; set; }
         public DashboardDto()
         {
             TopPopularParks = new List<Park>();
@@ -32,6 +33,13 @@ namespace Parkla.Core.DTOs
             TotalEarningPerDay = new List<TimeSeriesData>();
             CarCountUsedSpacePerDay = new List<TimeSeriesData>();
             SpaceUsageTimePerDay = new List<TimeSeriesData>();
+
+            SpaceUsageTimePercentagesPerWeekday = new List<List<double>>();
+            
+            for(var i = 0; i < 24; i++) SpaceUsageTimePercentagesPerWeekday.Add(new());
+            SpaceUsageTimePercentagesPerWeekday.ForEach(x => {
+                for(var i = 0; i < 7; i++) x.Add(0);
+            });
         }
     }
 

@@ -15,45 +15,6 @@ import { MessageService } from 'primeng/api';
   styleUrls: ['./m-dashboard.component.scss']
 })
 export class MDashboardComponent implements OnInit {
-  model2 = {
-    freeSpace: 300,
-    occupiedSpace: 200,
-    reservedSpace: 500,
-    weekData: [
-      [5,5,5,5,5,5,5],
-      [5,5,5,5,5,5,5],
-      [1,1,1,1,1,1,1],
-      [2,2,2,2,2,2,2],
-      [2,2,2,2,2,2,2],
-      [5,5,5,5,5,5,5],
-      [2,2,2,2,2,2,2],
-      [3,3,3,3,3,3,3],
-      [15,15,15,15,15,15,15],
-      [20,20,20,20,20,20,20],
-      [10,10,10,10,10,10,10],
-      [3,3,3,3,3,3,3],
-      [3,3,3,3,3,3,3],
-      [3,3,3,3,3,3,3],
-      [1,1,1,1,1,1,1],
-      [10,10,10,10,10,10,10],
-      [1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1],
-      [2,2,2,2,2,2,2],
-      [1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1],
-      [2,2,2,2,2,2,2],
-      [1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1],
-    ],
-    countryParks: [
-      {name: "Turkey", count: 30},
-      {name: "United States", count: 10},
-      {name: "England", count: 5},
-      {name: "Azerbaijan", count: 20},
-      {name: "Germany", count: 15},
-    ]
-  }
-
   model: Dashboard = <any>{};
 
   spacesPieData: ChartData<"pie"> = {
