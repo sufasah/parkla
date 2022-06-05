@@ -85,4 +85,67 @@ public class ReservationRepo<TContext> : EntityRepoBase<Reservation, TContext>, 
         }
         return reservationClone;
     }
+
+    public async Task<Reservation?> DeleteReservationAsync(
+        Reservation reservationParam,
+        CancellationToken cancellationToken = default
+    ) {
+        using var context = new TContext();
+
+        while(!cancellationToken.IsCancellationRequested) {
+            var reservation = await context.Set<Reservation>()
+                .Where(x => x.Id == reservationParam.Id)
+                .Include(x => x.Space!)
+                .ThenInclude(x => x.Pricing)
+                .Include(x => x.User)
+                .SingleOrDefaultAsync(cancellationToken)
+                .ConfigureAwait(false);
+
+            if(reservation == null)
+                throw new ParklaConcurrentDeletionException("The reservation has already been deleted by another user");
+            
+            if(reservation.EndTime <= DateTime.UtcNow)
+                throw new ParklaException("Only reservations which are not ended can be deleted", HttpStatusCode.BadRequest);
+            
+            var entry = context.Entry(reservation);
+            entry.State = EntityState.Deleted;
+
+            if(reservation.EndTime > DateTime.UtcNow) {
+                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(DateTime.UtcNow > reservation.StartTime ? DateTime.UtcNow : reservation.StartTime!.Value).TotalHours;
+                reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
+                context.Entry(reservation.User).State = EntityState.Modified;
+            }
+
+            try {
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                return reservation;
+            }
+            catch(DbUpdateConcurrencyException) {
+                context.ChangeTracker.Clear();
+            }
+        }
+        return null;
+    }
+
+    public async Task<List<Reservation>> UserReservationListAsync(
+        int userId, 
+        CancellationToken cancellationToken
+    ) {
+        using var context = new TContext();
+        var result = await context.Set<Reservation>()
+            .AsNoTracking()
+            .Include(x => x.Space!)
+            .ThenInclude(x => x.Area!)
+            .ThenInclude(x => x.Park)
+            .Include(x => x.User)
+            .Include(x => x.Space!)
+            .ThenInclude(x => x.Pricing)
+            .Where(x => x.UserId == userId)
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+        
+        return result;
+    }
+
+
 }

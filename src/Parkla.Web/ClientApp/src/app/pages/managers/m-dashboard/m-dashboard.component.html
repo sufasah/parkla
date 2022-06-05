@@ -8,6 +8,13 @@
   </app-user-avatar>
 </p-toolbar>
 
+<app-spinner
+  [blockSpinner]="true"
+  [blocked]="dashboardLoading"
+  [cancellable]="false"
+  >
+</app-spinner>
+
 <p-chart
   type="pie"
   [data]="spacesPieData"
@@ -16,14 +23,6 @@
   >
 </p-chart>
 
-<p-chart
-  type="line"
-  [data]="avgSpaceUsageLineData"
-  [options]="avgSpaceUsageLineOptions"
-  width="600px"
-  >
-</p-chart>
-<!--Total Reservations-->
 <p-chart
   type="line"
   [data]="avgSpaceUsageLineData"
@@ -50,23 +49,156 @@
   >
 </p-chart>
 
-<p-chart
-  type="line"
-  [data]="avgSpaceUsageLineData"
-  [options]="avgSpaceUsageLineOptions"
-  width="600px"
-  >
-</p-chart>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-map-marker"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Parks</h3>
+    <span>{{model.totalParks}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-table" style="background-color: var(--yellow-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Park Minimum Price</h3>
+    <span>{{model.minParkPrice?.toFixed(2)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Park Average Price</h3>
+    <span>{{model.averageParkPrice?.toFixed(2)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Park Maximum Price</h3>
+    <span>{{model.maxParkPrice?.toFixed(2)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Park Areas</h3>
+    <span>{{model.totalAreas}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Reservation Enabled Areas</h3>
+    <span>{{model.totalReservationEnabledAreas}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Park Spaces</h3>
+    <span>{{model.totalSpaces}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Reserved Spaces</h3>
+    <span>{{model.totalReservedSpaces}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Reservations</h3>
+    <span>{{model.totalReservations}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Earning</h3>
+    <span>{{model.totalEarning?.toFixed(2)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Minimum Status Data Transfer Delay In Seconds</h3>
+    <span>{{model.minStatusDataTransferDelayInSeconds?.toFixed(6)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Average Status Data Transfer Delay In Seconds</h3>
+    <span>{{model.averageStatusDataTransferDelayInSeconds?.toFixed(6)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Maximum Status Data Transfer Delay In Seconds</h3>
+    <span>{{model.maxStatusDataTransferDelayInSeconds?.toFixed(6)}}</span>
+  </div>
+</div>
+
+<div class="metric-card">
+  <div class="metric-card-icon">
+    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  </div>
+  <div class="metric-card-body">
+    <h3>Total Cars Used Park Spaces</h3>
+    <span>{{model.totalCarsUsedSpaces}}</span>
+  </div>
+</div>
 
 <div style="width: 800px;">
   <p-table
-    [value]="model.topData"
+    [value]="model.topPopularParks"
     responsiveLayout="scroll"
     [scrollable]="true"
     scrollHeight="600px"
     >
     <ng-template pTemplate="caption">
-      <h3>Top {{model.topData.length}} Popular Parks</h3>
+      <h3>Top 10 Popular Parks</h3>
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
@@ -87,13 +219,46 @@
 
 <div style="width: 800px;">
   <p-table
-    [value]="model.weekData"
+    [value]="model.mostActiveUsers"
     responsiveLayout="scroll"
     [scrollable]="true"
     scrollHeight="600px"
     >
     <ng-template pTemplate="caption">
-      <h3>Avarage Usage Time For Weekdays</h3>
+      <h3>Most Active 10 Users</h3>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="max-width:60px"></th>
+        <th style="min-width:200px">Username</th>
+        <th style="min-width:200px">Name</th>
+        <th style="min-width:200px">Surname</th>
+        <th style="min-width:200px">City</th>
+        <th style="min-width:600px">E-Mail</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-data let-index="rowIndex">
+      <tr>
+        <td style="max-width:60px">{{index+1}}</td>
+        <td style="min-width:200px">{{data.username}}</td>
+        <td style="min-width:200px">{{data.name}}</td>
+        <td style="min-width:200px">{{data.surname}}</td>
+        <td style="min-width:200px">{{data.city.name}}</td>
+        <td style="min-width:600px">{{data.email}}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div style="width: 800px;">
+  <p-table
+    [value]="model2.weekData"
+    responsiveLayout="scroll"
+    [scrollable]="true"
+    scrollHeight="600px"
+    >
+    <ng-template pTemplate="caption">
+      <h3>Space Usage Percentage On WeekDays</h3>
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
@@ -122,52 +287,4 @@
   </p-table>
 </div>
 
-<div style="width: 800px;">
-  <p-table
-    [value]="model.countryParks"
-    responsiveLayout="scroll"
-    [scrollable]="true"
-    scrollHeight="300px"
-    >
-    <ng-template pTemplate="caption">
-      <h3>Park Count Per Country</h3>
-    </ng-template>
-    <ng-template pTemplate="body" let-data let-index="rowIndex">
-      <tr>
-        <td style="min-width:200px">{{data.name}}</td>
-        <td style="min-width:200px">{{data.count}}</td>
-      </tr>
-    </ng-template>
-  </p-table>
-</div>
-
-
-<div class="metric-card">
-  <div class="metric-card-icon">
-    <i class="pi pi-map-marker"></i>
-  </div>
-  <div class="metric-card-body">
-    <h3>Park Count</h3>
-    <span>{{model.parkCount}}</span>
-  </div>
-</div>
-
-<div class="metric-card">
-  <div class="metric-card-icon">
-    <i class="pi pi-table" style="background-color: var(--yellow-400);"></i>
-  </div>
-  <div class="metric-card-body">
-    <h3>Area Count</h3>
-    <span>{{model.areaCount}}</span>
-  </div>
-</div>
-
-<div class="metric-card">
-  <div class="metric-card-icon">
-    <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-  </div>
-  <div class="metric-card-body">
-    <h3>Park Space Count</h3>
-    <span>{{model.freeSpace + model.occupiedSpace + model.reservedSpace}}</span>
-  </div>
-</div>
+<p-toast></p-toast>

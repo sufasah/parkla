@@ -279,7 +279,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
                 foreach (var reservation in deletingReservations) {
                     context.Entry(reservation).State = EntityState.Deleted;
-                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
+                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime > reservation.StartTime ? deletionTime : reservation.StartTime!.Value).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
                 }
 
@@ -353,7 +353,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
                 foreach (var reservation in deletingReservations) {
                     context.Entry(reservation).State = EntityState.Deleted;
-                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
+                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime > reservation.StartTime ? deletionTime : reservation.StartTime!.Value).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
                 }
 
@@ -598,9 +598,13 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
 
                 foreach (var reservation in deletingReservations) {
                     context.Entry(reservation).State = EntityState.Deleted;
-                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime).TotalHours;
+                    
+                    var lUser = context.Set<User>().Local.FirstOrDefault(x => x.Id == reservation.User!.Id);
+                    if(lUser != null) reservation.User = lUser;
+                    else context.Entry(reservation.User!).State = EntityState.Modified;
+                    
+                    var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(deletionTime > reservation.StartTime ? deletionTime : reservation.StartTime!.Value).TotalHours;
                     reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
-                    context.Entry(reservation.User).State = EntityState.Modified;
                 }
                 
                 await context.SaveChangesAsync(cancellationToken);

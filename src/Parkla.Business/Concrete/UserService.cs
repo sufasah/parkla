@@ -3,6 +3,7 @@ using System.Net;
 using FluentValidation;
 using Parkla.Business.Abstract;
 using Parkla.Business.Bases;
+using Parkla.Core.DTOs;
 using Parkla.Core.Entities;
 using Parkla.Core.Exceptions;
 using Parkla.DataAccess.Abstract;
@@ -20,6 +21,10 @@ public class UserService : EntityServiceBase<User>, IUserService
     {
         _userRepo = userRepo;
         _validator = validator;
+    }
+
+    public async Task<DashboardDto> GetDashboardAsync(int id, CancellationToken cancellationToken) {
+        return await _userRepo.GetDashboardAsync(id, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<User?> LoadMoneyAsync(int id, float amount, CancellationToken cancellationToken)

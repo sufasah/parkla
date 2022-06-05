@@ -102,10 +102,13 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log(space, isDelete);
       const index = this.parkArea.spaces.findIndex(x => x.id == space.id);
       const oldSpace = this.parkArea.spaces[index];
-      if(index == -1) return;
+      if(index == -1) {
+        this.parkArea.spaces.push(space);
+        this.drawCanvas();
+        return;
+      }
 
       space.status = <any>space.status.toUpperCase();
-
 
       if(isDelete) {
         this.parkArea.spaces.splice(index, 1);

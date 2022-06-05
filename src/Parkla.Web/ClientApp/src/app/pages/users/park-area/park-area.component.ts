@@ -124,9 +124,8 @@ export class ParkAreaComponent implements OnInit {
     this.selectedSpace = space;
 
     if(!this.selectedSpace)
-      this.showReservationModal.emit(false)
-
-    if(this.selectedArea.reservationsEnabled)
+      this.showReservationModal.emit(false);
+    else if(this.selectedArea.reservationsEnabled)
       this.showReservationModal.emit(true);
   }
 

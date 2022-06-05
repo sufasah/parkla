@@ -46,5 +46,12 @@ public class UsersController : EntityControllerBase<User, UserDto>
         return Ok(result);
     }
 
-    
+    [HttpGet("dashboard/{id}")]
+    public async Task<IActionResult> GetDashboardAsync(
+        int id, //user id
+        CancellationToken cancellationToken
+    ) {
+        var result = await _service.GetDashboardAsync(id, cancellationToken).ConfigureAwait(false);
+        return Ok(result);
+    }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { of, tap } from 'rxjs';
 import { apiUrl, apiUsers } from '../constants/http';
 import { AppUser } from '../models/app-user';
+import { Dashboard } from '../models/dashboard';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +27,9 @@ export class UserService {
       id: userId,
       wallet: amount
     });
+  }
+
+  getDashboard(id: number) {
+    return this.httpClient.get<Dashboard>(apiUsers+`/dashboard/${id}`);
   }
 }

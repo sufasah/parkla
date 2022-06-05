@@ -18,6 +18,7 @@
       [styleClass]="'p-button-info p-button-sm p-button-rounded mt-2'"
       label="Cancel"
       (onClick)="cancelClick()"
+      *ngIf="cancellable"
       ></p-button>
   </div>
 </p-blockUI>

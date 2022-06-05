@@ -47,5 +47,4 @@ public class RealParkSpacesController : EntityControllerBase<RealParkSpace, Real
         Response.Headers.Add("X-Total-Records", result.TotalRecords.ToString());
         return Ok(result);
     }
-    
 }

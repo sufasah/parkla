@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Reservation } from '@app/core/models/reservation';
 import { AuthService } from '@app/core/services/auth.service';
@@ -47,7 +47,10 @@ export class ReservationsComponent implements OnInit {
           icon:"pi-save",
         });
         var resIndex = this.reservations.indexOf(reservation);
-        this.reservations.splice(resIndex, 1);
+        this.reservations = [
+          ...this.reservations.slice(0, resIndex),
+          ...this.reservations.slice(resIndex+1, this.reservations.length)
+        ];
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({

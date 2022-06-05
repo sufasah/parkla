@@ -1,6 +1,8 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Parkla.Business.Abstract;
 using Parkla.Core.Entities;
+using Parkla.Core.Helpers;
 using Parkla.Web.Models;
 
 namespace Parkla.Web.Controllers;
@@ -18,5 +20,12 @@ public class ReservationsController : EntityControllerBase<Reservation, Reservat
         _mapper = mapper;
     }
 
-    
+    [HttpGet("user/{id}")]
+    public async Task<IActionResult> GetUserReservationsAsync(
+        int id, // userId
+        CancellationToken cancellationToken
+    ) {
+        var result = await _service.GetUserReservationsAsync(id, cancellationToken).ConfigureAwait(false);
+        return Ok(result);
+    }
 }

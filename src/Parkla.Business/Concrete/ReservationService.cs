@@ -40,4 +40,18 @@ public class ReservationService : EntityServiceBase<Reservation>, IReservationSe
 
         return newReservation;
     }
+
+    public override async Task DeleteAsync(Reservation reservation, CancellationToken cancellationToken = default)
+    {
+        var deletedReservation = await _repo.DeleteReservationAsync(reservation,cancellationToken).ConfigureAwait(false);
+        if(deletedReservation != null)
+            _ = _parklaHubService.ReservationChangesAsync(deletedReservation, true);
+    }
+
+    public async Task<List<Reservation>> GetUserReservationsAsync(
+        int userId,
+        CancellationToken cancellationToken
+    ) {
+        return await _repo.UserReservationListAsync(userId, cancellationToken).ConfigureAwait(false);
+    }
 }

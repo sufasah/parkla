@@ -16,6 +16,9 @@ export class SpinnerComponent implements OnInit {
   @Input()
   blocked: boolean = false;
 
+  @Input()
+  cancellable: boolean = true;
+
   @Output()
   blockedChange = new EventEmitter<boolean>();
 

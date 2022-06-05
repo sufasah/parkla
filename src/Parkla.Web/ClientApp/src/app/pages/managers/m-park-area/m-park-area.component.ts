@@ -94,16 +94,15 @@ export class MParkAreaComponent implements OnInit {
 
     if(!this.selectedSpace)
       this.showReservationModal.emit(false)
-
-    if(this.selectedArea.reservationsEnabled)
+    else if(this.selectedArea.reservationsEnabled)
       this.showReservationModal.emit(true);
+
+    this.showReservationModal.emit(false)
   }
 
   reservationChanges(reservation: Reservation, isDelete: boolean) {
-    if(isDelete) {
-    }
-    else {
-    }
+    if(isDelete) {}
+    else {}
   }
 
   getParkId() {

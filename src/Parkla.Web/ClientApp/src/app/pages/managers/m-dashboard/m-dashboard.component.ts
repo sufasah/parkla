@@ -1,10 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Park } from '@app/core/models/park';
+import { Dashboard } from '@app/core/models/dashboard';
+import { AuthService } from '@app/core/services/auth.service';
+import { UserService } from '@app/core/services/user.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { ChartData, ChartOptions } from 'chart.js';
 import * as moment from 'moment';
-import { UIChart } from 'primeng/chart';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-m-dashboard',
@@ -12,34 +15,10 @@ import { UIChart } from 'primeng/chart';
   styleUrls: ['./m-dashboard.component.scss']
 })
 export class MDashboardComponent implements OnInit {
-  model = {
+  model2 = {
     freeSpace: 300,
     occupiedSpace: 200,
     reservedSpace: 500,
-    parkCount: 63,
-    areaCount: 241,
-    topData: <Park[]>[
-      {name: "name", location: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
-      {name: "name2", location: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},
-      {name: "name3", location: "cccccccccccccccccccccccccccccc"},
-      {name: "name4", location: "dddddddddddddddddddddddddddddd"},
-      {name: "name5", location: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeee"},
-      {name: "name6", location: "ffffffffffffffffffffffffffffff"},
-      {name: "name7", location: "gggggggggggggggggggggggggggggg"},
-      {name: "name8", location: "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"},
-      {name: "name9", location: "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"},
-      {name: "name10", location: "iiiiiiiiiiiiiiiiiiiiiiiiiiiiii"},
-      {name: "name11", location: "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"},
-      {name: "name12", location: "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"},
-      {name: "name13", location: "llllllllllllllllllllllllllllll"},
-      {name: "name14", location: "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"},
-      {name: "name15", location: "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"},
-      {name: "name16", location: "oooooooooooooooooooooooooooooo"},
-      {name: "name17", location: "pppppppppppppppppppppppppppppp"},
-      {name: "name18", location: "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"},
-      {name: "name19", location: "ssssssssssssssssssssssssssssss"},
-      {name: "name20", location: "tttttttttttttttttttttttttttttt"},
-    ],
     weekData: [
       [5,5,5,5,5,5,5],
       [5,5,5,5,5,5,5],
@@ -75,16 +54,14 @@ export class MDashboardComponent implements OnInit {
     ]
   }
 
+  model: Dashboard = <any>{};
+
   spacesPieData: ChartData<"pie"> = {
-    labels: ["Free", "Occupied", "Reserved"],
+    labels: ["Empty", "Occupied", "Unknown"],
     datasets: [
       {
-        data: [
-          this.model.freeSpace,
-          this.model.occupiedSpace,
-          this.model.reservedSpace
-        ],
-        backgroundColor: ["#151D3B","#D82148","#6EBF8B"],
+        data: [-1,-1,-1],
+        backgroundColor: ["#6EBF8B","#D82148","#151D3B"],
         hoverBackgroundColor: ["#DADBBD","#DADBBD","#DADBBD"]
       }
     ]
@@ -188,9 +165,40 @@ export class MDashboardComponent implements OnInit {
     }
   }
 
-  constructor(private router: Router) { }
+  dashboardLoading = true;
+
+  constructor(
+    private router: Router,
+    private userService: UserService,
+    private authService: AuthService,
+    private messageService: MessageService
+  ) { }
 
   ngOnInit(): void {
+    this.userService.getDashboard(Number(this.authService.accessToken?.sub!)).subscribe({
+      next: model => {
+        this.model = model;
+        this.dashboardLoading = false;
+
+        this.spacesPieData.datasets[0].data = [
+          this.model.totalEmptySpaces,
+          this.model.totalOccupiedSpaces,
+          this.model.totalSpaces - this.model.totalEmptySpaces - this.model.totalOccupiedSpaces
+        ];
+        this.spacesPieData = {...this.spacesPieData};
+
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          summary: "Fetch Dashboard Data",
+          closable: true,
+          severity: "error",
+          life:5000,
+          detail: err.error.message
+        });
+        this.dashboardLoading = false;
+      }
+    })
   }
 
   goMap() {

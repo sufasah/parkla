@@ -17,6 +17,4 @@ public class ReceivedSpaceStasussesController : EntityControllerBase<ReceivedSpa
         _service = service;
         _mapper = mapper;
     }
-
-    
 }
