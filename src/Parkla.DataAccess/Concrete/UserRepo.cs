@@ -270,9 +270,9 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                     .AsEnumerable(),
                 EarningSeries = g.SelectMany(x => x.Reservations!)
                     .Where(x => x.StartTime < DateTime.UtcNow && x.StartTime >= aMonthAgo)
-                    .GroupBy(x => new DateTime(x.StartTime!.Value.Year, x.StartTime.Value.Month, x.StartTime.Value.Day, 0,0,0, DateTimeKind.Utc))
+                    .GroupBy(x => new { Year = x.StartTime!.Value.Year, Month = x.StartTime!.Value.Month, Day = x.StartTime!.Value.Day })
                     .Select(g2 => new {
-                        X = g2.Key,
+                        X = new DateTime(g2.Key.Year, g2.Key.Month, g2.Key.Day, 0,0,0,0, DateTimeKind.Utc),
                         Y = g2.Sum(x => (x.EndTime!.Value - x.StartTime!.Value).TotalHours * x.Space!.Pricing!.Price
                             * (TimeUnit.MINUTE == x.Space!.Pricing!.Unit ? 60 : 1)
                             / (TimeUnit.DAY == x.Space!.Pricing!.Unit ? 24 : 1)
@@ -281,17 +281,19 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                     }),
                 CarCountUsedSpaceSeries = g.SelectMany(x => x.ReceivedSpaceStatusses)
                     .Where(x => x.StatusDataTime > aMonthAgo && x.OldRealSpaceStatus != SpaceStatus.OCCUPIED && x.NewRealSpaceStatus == SpaceStatus.OCCUPIED)
-                    .GroupBy(x => new DateTime(x.StatusDataTime!.Value.Year, x.StatusDataTime.Value.Month, x.StatusDataTime.Value.Day, 0,0,0, DateTimeKind.Utc))
+                    .GroupBy(x => new { Year = x.StatusDataTime!.Value.Year, Month = x.StatusDataTime!.Value.Month, Day = x.StatusDataTime!.Value.Day })
                     .Select(g2 => new {
-                        X = g2.Key,
+                        X = new DateTime(g2.Key.Year, g2.Key.Month, g2.Key.Day, 0,0,0,0, DateTimeKind.Utc),
                         Y = g2.Count()
-                    }),
-                                
+                    }),        
             })
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
         
         if(seriesResult != null) {
+            dto.CarCountUsedSpacePerDay = seriesResult.CarCountUsedSpaceSeries.Select(x => new TimeSeriesData(x.X, x.Y)).ToList();
+            dto.TotalEarningPerDay = seriesResult.EarningSeries.Select(x => new TimeSeriesData(x.X, x.Y ?? 0)).ToList();
+            
             var pairedSet = new HashSet<ReceivedSpaceStatus>();
 
             var pairs = seriesResult.SpaceUsageSeriesRaw
