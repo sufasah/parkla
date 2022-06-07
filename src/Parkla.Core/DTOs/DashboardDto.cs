@@ -26,13 +26,25 @@ namespace Parkla.Core.DTOs
         public List<TimeSeriesData> CarCountUsedSpacePerDay { get; set; }
         public List<TimeSeriesData> SpaceUsageTimePerDay { get; set; }
         public List<List<double>> SpaceUsageTimePercentagesPerWeekday { get; set; }
-        public DashboardDto()
+        public DashboardDto(DateTime? timeSeriesStart = null)
         {
             TopPopularParks = new List<Park>();
             MostActiveUsers = new List<User>();
+
             TotalEarningPerDay = new List<TimeSeriesData>();
             CarCountUsedSpacePerDay = new List<TimeSeriesData>();
             SpaceUsageTimePerDay = new List<TimeSeriesData>();
+
+            if(timeSeriesStart != null) {
+                var iter = timeSeriesStart.Value.Date;
+                var end = DateTime.UtcNow.Date;
+                while(iter <= end) {
+                    TotalEarningPerDay.Add(new(iter, 0));
+                    CarCountUsedSpacePerDay.Add(new(iter, 0));
+                    SpaceUsageTimePerDay.Add(new(iter, new MinAvgMaxSum()));
+                    iter = iter.AddDays(1);
+                }
+            }
 
             SpaceUsageTimePercentagesPerWeekday = new List<List<double>>();
             
@@ -52,5 +64,13 @@ namespace Parkla.Core.DTOs
             X = x;
             Y = y;
         }
+    }
+
+    public class MinAvgMaxSum {
+        public double Min { get; set; } = double.MaxValue;
+        public double Avg { get; set; } = 0;
+        public double Max { get; set; } = double.MinValue;
+        public double Sum { get; set; } = 0;
+        public double Count { get; set; } = 0;
     }
 }

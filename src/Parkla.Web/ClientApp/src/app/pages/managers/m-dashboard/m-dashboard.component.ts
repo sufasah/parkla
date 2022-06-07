@@ -56,6 +56,7 @@ export class MDashboardComponent implements OnInit {
       }
     }
   }
+
   getDayLabels() {
     const result = [];
 
@@ -68,7 +69,21 @@ export class MDashboardComponent implements OnInit {
     return result;
   }
 
-  avgSpaceUsageLineData: ChartData<"line"> = {
+  spaceUsageLineData: ChartData<"line"> = {
+    labels: this.getDayLabels(),
+    datasets: [
+      {
+        label: "Avarage Space Usage Time",
+        fill: false,
+        borderColor: '#333',
+        yAxisID: 'y',
+        tension: .4,
+        data: [1],
+      }
+    ]
+  }
+
+  carCountUsedSpaceLineData: ChartData<"line"> = {
     labels: this.getDayLabels(),
     datasets: [
       {
@@ -82,7 +97,21 @@ export class MDashboardComponent implements OnInit {
     ]
   }
 
-  avgSpaceUsageLineOptions: ChartOptions<"line"> = {
+  totalEarningLineData: ChartData<"line"> = {
+    labels: this.getDayLabels(),
+    datasets: [
+      {
+        label: "Avarage Space Usage Time",
+        fill: false,
+        borderColor: '#333',
+        yAxisID: 'y',
+        tension: .4,
+        data: [1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10],
+      }
+    ]
+  }
+
+  lineOptions: ChartOptions<"line"> = {
     plugins: {
       legend: {
         labels: {
@@ -148,6 +177,7 @@ export class MDashboardComponent implements OnInit {
         ];
         this.spacesPieData = {...this.spacesPieData};
 
+        this.spaceUsageLineData
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
