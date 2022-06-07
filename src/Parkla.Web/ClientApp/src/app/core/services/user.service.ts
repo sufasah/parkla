@@ -30,6 +30,11 @@ export class UserService {
   }
 
   getDashboard(id: number) {
-    return this.httpClient.get<Dashboard>(apiUsers+`/dashboard/${id}`);
+    return this.httpClient.get<Dashboard>(apiUsers+`/dashboard/${id}`)
+      .pipe(tap(dash => {
+        dash.totalEarningPerDay.forEach(x => x.x = new Date(x.x));
+        dash.spaceUsageTimePerDay.forEach(x => x.x = new Date(x.x));
+        dash.carCountUsedSpacePerDay.forEach(x => x.x = new Date(x.x));
+      }));
   }
 }

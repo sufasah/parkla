@@ -375,7 +375,14 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
 
             dto.SpaceUsageTimePerDay.ForEach(x => {
                 var mams = (MinAvgMaxSum)x.Y;
-                mams.Avg = mams.Count > 0 ? mams.Sum / mams.Count : 0;
+                if(mams.Count > 0) {
+                    mams.Avg = mams.Sum / mams.Count;
+                }
+                else {
+                    mams.Min = 0;
+                    mams.Avg = 0;
+                    mams.Max = 0;
+                }
             });
         }
 

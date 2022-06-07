@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -6,7 +7,6 @@ import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { ChartData, ChartOptions } from 'chart.js';
-import * as moment from 'moment';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -16,6 +16,19 @@ import { MessageService } from 'primeng/api';
 })
 export class MDashboardComponent implements OnInit {
   model: Dashboard = <any>{};
+
+  spaceUsageMinColor(opacity: number) {
+    return `rgba(255, 198, 0, ${opacity})`;
+  }
+  spaceUsageAvgColor(opacity: number) {
+    return `rgba(95, 208, 104, ${opacity})`;
+  }
+  spaceUsageMaxColor(opacity: number) {
+    return `rgba(38, 120, 163, ${opacity})`;
+  }
+  spaceUsageSumColor(opacity: number) {
+    return `rgba(5, 55, 66, ${opacity})`;
+  }
 
   spacesPieData: ChartData<"pie"> = {
     labels: ["Empty", "Occupied", "Unknown"],
@@ -57,56 +70,82 @@ export class MDashboardComponent implements OnInit {
     }
   }
 
-  getDayLabels() {
-    const result = [];
-
-    for(let i=0; i<90; i++){
-      const m = moment().subtract(90-i,"days");
-      const val = m.format("DD.MM.YYYY")
-      result.push(val);
-    }
-
-    return result;
+  dateToLabel(date: Date) {
+    return this.datePipe.transform(date, "yyyy-MM-dd");
   }
 
   spaceUsageLineData: ChartData<"line"> = {
-    labels: this.getDayLabels(),
+    labels: [],
     datasets: [
       {
-        label: "Avarage Space Usage Time",
+        label: "Average",
         fill: false,
-        borderColor: '#333',
         yAxisID: 'y',
         tension: .4,
-        data: [1],
+        data: [],
+        borderColor: this.spaceUsageAvgColor(1),
+        backgroundColor: this.spaceUsageAvgColor(.5),
+        borderDash: [2,2]
+      },
+      {
+        label: "Min",
+        fill: false,
+        yAxisID: 'y',
+        tension: .4,
+        data: [],
+        borderColor: this.spaceUsageMinColor(1),
+        backgroundColor: this.spaceUsageMinColor(.5),
+        borderDash: [2,2]
+      },
+      {
+        label: "Max",
+        fill: false,
+        yAxisID: 'y',
+        tension: .4,
+        data: [],
+        borderColor: this.spaceUsageMaxColor(1),
+        backgroundColor: this.spaceUsageMaxColor(.5),
+        borderDash: [2,2]
+      },
+      {
+        label: "Sum",
+        fill: false,
+        yAxisID: 'y',
+        tension: .4,
+        data: [],
+        borderColor: this.spaceUsageSumColor(1),
+        backgroundColor: this.spaceUsageSumColor(.5),
+        borderDash: [2,2]
       }
     ]
   }
 
   carCountUsedSpaceLineData: ChartData<"line"> = {
-    labels: this.getDayLabels(),
+    labels: [],
     datasets: [
       {
-        label: "Avarage Space Usage Time",
-        fill: false,
-        borderColor: '#333',
+        label: "Car Count",
+        fill: true,
         yAxisID: 'y',
         tension: .4,
-        data: [1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10],
-      }
+        data: [],
+        borderColor: this.spaceUsageSumColor(1),
+        backgroundColor: this.spaceUsageSumColor(.5),
+      },
     ]
   }
 
-  totalEarningLineData: ChartData<"line"> = {
-    labels: this.getDayLabels(),
+  earningLineData: ChartData<"line"> = {
+    labels: [],
     datasets: [
       {
-        label: "Avarage Space Usage Time",
-        fill: false,
-        borderColor: '#333',
+        label: "Earning",
+        fill: true,
         yAxisID: 'y',
         tension: .4,
-        data: [1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10],
+        data: [],
+        borderColor: this.spaceUsageAvgColor(1),
+        backgroundColor: this.spaceUsageAvgColor(.5),
       }
     ]
   }
@@ -115,7 +154,7 @@ export class MDashboardComponent implements OnInit {
     plugins: {
       legend: {
         labels: {
-          color: '#000',
+          color: '#333',
           font: {
             size: 16
           }
@@ -139,6 +178,14 @@ export class MDashboardComponent implements OnInit {
         grid: {
           drawOnChartArea: false,
           color: '#ebedef'
+        },
+        title: {
+          display: true,
+          font: {
+            size: 16,
+            weight: "700"
+          },
+          text: "Days"
         }
       },
       y: {
@@ -150,10 +197,21 @@ export class MDashboardComponent implements OnInit {
         },
         grid: {
           color: '#ebedef'
+        },
+        title: {
+          display: true,
+          font: {
+            size: 16,
+            weight: "700"
+          }
         }
       }
     }
   }
+
+  spaceUsageLineOptions: ChartOptions<"line"> = {...this.lineOptions};
+  earningLineOptions: ChartOptions<"line"> = {...this.lineOptions};
+  carCountUsedSpaceLineOptions: ChartOptions<"line"> = {...this.lineOptions};
 
   dashboardLoading = true;
 
@@ -161,10 +219,70 @@ export class MDashboardComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
+    this.initSpaceUsageChart();
+    this.initCarCountUsedSpaceChart();
+    this.initEarningChart();
+
+    this.fetchDashboard();
+  }
+
+  initSpaceUsageChart() {
+    const o = this.spaceUsageLineOptions;
+
+    o.scales! = {
+      ...o.scales!,
+      y: {
+        ...o.scales!.y!,
+        title: {
+          ...o.scales!.y!.title!,
+          text: "Space Usage Time in Minutes"
+        }
+      }
+    }
+
+    this.spaceUsageLineOptions = {...o};
+  }
+
+  initCarCountUsedSpaceChart() {
+    const o = this.carCountUsedSpaceLineOptions;
+
+    o.scales = {
+      ...o.scales!,
+      y: {
+        ...o.scales!.y!,
+        title: {
+          ...o.scales!.y!.title!,
+          text: "Car Count Used Space"
+        }
+      }
+    }
+
+    this.carCountUsedSpaceLineOptions = {...o};
+  }
+
+  initEarningChart() {
+    const o = this.earningLineOptions!;
+
+    o.scales = {
+      ...o.scales!,
+      y: {
+        ...o.scales!.y!,
+        title: {
+          ...o.scales!.y!.title!,
+          text: "Turkish Liras (TL)"
+        }
+      }
+    }
+
+    this.earningLineOptions = {...o};
+  }
+
+  fetchDashboard() {
     this.userService.getDashboard(Number(this.authService.accessToken?.sub!)).subscribe({
       next: model => {
         this.model = model;
@@ -177,7 +295,22 @@ export class MDashboardComponent implements OnInit {
         ];
         this.spacesPieData = {...this.spacesPieData};
 
-        this.spaceUsageLineData
+        model.spaceUsageTimePerDay.forEach(data => {
+          this.spaceUsageLineData.labels?.push(this.dateToLabel(data.x));
+          this.spaceUsageLineData.datasets[1].data.push(data.y.min);
+          this.spaceUsageLineData.datasets[0].data.push(data.y.avg);
+          this.spaceUsageLineData.datasets[2].data.push(data.y.max);
+          this.spaceUsageLineData.datasets[3].data.push(data.y.sum);
+        });
+        this.spaceUsageLineData = {...this.spaceUsageLineData};
+
+        this.earningLineData.labels = model.totalEarningPerDay.map(x => this.dateToLabel(x.x))
+        this.earningLineData.datasets[0].data = model.totalEarningPerDay.map(x => x.y);
+        this.earningLineData = {...this.earningLineData};
+
+        this.carCountUsedSpaceLineData.labels = model.carCountUsedSpacePerDay.map(x => this.dateToLabel(x.x));
+        this.carCountUsedSpaceLineData.datasets[0].data = model.carCountUsedSpacePerDay.map(x => x.y);
+        this.carCountUsedSpaceLineData = {...this.carCountUsedSpaceLineData};
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
@@ -189,7 +322,7 @@ export class MDashboardComponent implements OnInit {
         });
         this.dashboardLoading = false;
       }
-    })
+    });
   }
 
   goMap() {
