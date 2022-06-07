@@ -1,18 +1,53 @@
-<app-verify
-  [username]="verifyUsername"
-  [password]="verifyPassword"
-  (onCancel)="cancelVerify()"
-  (onLogin)="onLogin($event)"
-  *ngIf="verification"
-></app-verify>
+<div class="d-flex align-items-center m-5">
+  <div class="container p-4 shadow-lg">
+    <div class="text-center mb-3">
+      <img src="assets/images/logo.png" alt="Image" height="150">
+      <div *ngIf="!verification; else verifyHeader">
+        <div
+          class="fs-1 fw-normal"
+          style="font-family: Verdana;"
+          >
+          Registeration
+        </div>
+        <span
+          style="color: var(--gray-600)"
+          >
+          Have an account already?
+        </span>
+        <a
+          style="text-decoration: none; font-family: monospace;"
+          [routerLink]="['/login']"
+          >
+          Let's Sign In!
+        </a>
+      </div>
+      <ng-template #verifyHeader>
+        <div
+          class="fs-1 fw-normal"
+          style="font-family: Verdana;"
+          >
+          Verification
+        </div>
+      </ng-template>
+    </div>
 
-<app-user-form
-  *ngIf="!verification"
-  (formSubmit)="register($event)"
-  [isEdit]="false"
-  [loading]="registering"
-  submitLabel="Register"
-  >
-</app-user-form>
+    <app-verify
+      [username]="verifyUsername"
+      [password]="verifyPassword"
+      (onCancel)="cancelVerify()"
+      (onLogin)="onLogin($event)"
+      *ngIf="verification"
+    ></app-verify>
+
+    <app-user-form
+      *ngIf="!verification"
+      (formSubmit)="register($event)"
+      [isEdit]="false"
+      [loading]="registering"
+      submitLabel="Register"
+      >
+    </app-user-form>
+  </div>
+</div>
 
 <p-toast (onClose)="messageClose($event.message)"></p-toast>

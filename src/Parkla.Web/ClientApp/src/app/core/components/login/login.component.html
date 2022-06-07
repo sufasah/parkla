@@ -1,77 +1,117 @@
-<app-verify
-  [username]="verifyUsername"
-  [password]="verifyPassword"
-  (onCancel)="cancelVerify()"
-  (onLogin)="onLogin($event)"
-  *ngIf="verification"
-></app-verify>
+<div class="d-flex align-items-center h-75 m-5">
+  <div class="container p-4 shadow-lg">
+    <div class="text-center mb-5">
+      <img src="assets/images/logo.png" alt="Image" height="150">
+      <div *ngIf="!verification; else verifyHeader">
+        <div
+          class="fs-1 fw-normal"
+          style="font-family: Verdana;"
+          >
+          Welcome Back
+        </div>
+        <span
+          style="color: var(--gray-600)"
+          >
+          Don't have an account?
+        </span>
+        <a
+          style="text-decoration: none; font-family: monospace;"
+          [routerLink]="['/register']"
+          >
+          Register today!
+        </a>
+      </div>
+      <ng-template #verifyHeader>
+        <div
+          class="fs-1 fw-normal"
+          style="font-family: Verdana;"
+          >
+          Verification
+        </div>
+      </ng-template>
+    </div>
 
-<form
-  #loginForm="ngForm"
-  (ngSubmit)="login(loginForm)"
-  *ngIf="!verification"
-  >
-  <div class="p-inputgroup">
-    <label
-      for="username"
-      class="p-inputgroup-addon"
+    <app-verify
+      [username]="verifyUsername"
+      [password]="verifyPassword"
+      (onCancel)="cancelVerify()"
+      (onLogin)="onLogin($event)"
+      *ngIf="verification"
+    ></app-verify>
+
+    <form
+      #loginForm="ngForm"
+      (ngSubmit)="login(loginForm)"
+      *ngIf="!verification"
       >
-      <i class="pi pi-user"></i>
-    </label>
+      <div>
+        <h6>
+          <label for="username">Username</label>
+        </h6>
+        <div class="p-inputgroup">
+          <label
+            for="username"
+            class="p-inputgroup-addon"
+            >
+            <i class="pi pi-user"></i>
+          </label>
 
-    <input
-      #model="ngModel"
-      type="text"
-      name="username"
-      required
-      maxlength="30"
-      [(ngModel)]="username"
-      pInputText
-      placeholder="Username"
-      pattern="[a-zA-Z0-9]+"
-      >
+          <input
+            #model="ngModel"
+            type="text"
+            name="username"
+            required
+            maxlength="30"
+            [(ngModel)]="username"
+            pInputText
+            pattern="[a-zA-Z0-9]+"
+            />
+        </div>
+
+        <h6 class="mt-4">
+          <label for="password">Password</label>
+        </h6>
+        <div class="p-inputgroup mb-4">
+          <label
+            for="username"
+            class="p-inputgroup-addon"
+            >
+            <i class="pi pi-lock"></i>
+          </label>
+          <p-password
+            name="password"
+            [(ngModel)]="password"
+            required
+            minlength="6"
+            maxlength="20"
+            [feedback]="false"
+            [toggleMask]="true"
+            >
+          </p-password>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <p-inputSwitch
+            name="asManager"
+            [(ngModel)]="asManager"
+            class="me-2"
+            >
+          </p-inputSwitch>
+          <h6>Login As Manager</h6>
+        </div>
+
+        <button
+          type="submit"
+          class="p-button-raised w-100 mt-1 mb-3"
+          pButton
+          pRipple
+          [loading]="logging"
+          label="Sign In"
+          >
+        </button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <div>
-    <p-password
-      name="password"
-      [(ngModel)]="password"
-      required
-      minlength="6"
-      maxlength="20"
-      [feedback]="false"
-      [placeholder]="'Enter your password'"
-      [toggleMask]="true"
-      styleClass="p-password p-component p-inputwrapper p-input-icon-right">
-    </p-password>
-  </div>
-
-  <div>
-    <h5>Login As Manager</h5>
-    <p-inputSwitch name="asManager" [(ngModel)]="asManager">
-
-    </p-inputSwitch>
-  </div>
-
-  <div class="p-buttonset">
-    <button
-      type="submit"
-      class="p-button-raised"
-      pButton
-      pRipple
-      [loading]="logging"
-      label="Login"
-      >
-    </button>
-
-    <button
-      type="button"
-      class="p-button-raised p-button-text"
-      pButton
-      pRipple
-      [routerLink]="['/register']"
-      label="Register">
-    </button>
-  </div>
-</form>
 <p-toast (onClose)="messageClose($event.message)"></p-toast>

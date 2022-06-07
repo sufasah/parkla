@@ -124,7 +124,7 @@ export class MDashboardComponent implements OnInit {
     labels: [],
     datasets: [
       {
-        label: "Car Count",
+        label: "Cars Used Space",
         fill: true,
         yAxisID: 'y',
         tension: .4,
@@ -257,7 +257,7 @@ export class MDashboardComponent implements OnInit {
         ...o.scales!.y!,
         title: {
           ...o.scales!.y!.title!,
-          text: "Car Count Used Space"
+          text: "Count"
         }
       }
     }

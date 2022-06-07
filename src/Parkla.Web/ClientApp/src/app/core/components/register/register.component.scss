@@ -8,9 +8,7 @@
           color: var(--green-600);
       }
   }
-}
 
-:host ::ng-deep {
   .p-toast-message-register-error {
     background: #ffe7e6;
     border: solid #ff5757;
@@ -19,5 +17,9 @@
     .p-toast-icon-close {
         color: #fc4949;
     }
+  }
+
+  p-password > div {
+    width: 100%!important;
   }
 }
