@@ -100,6 +100,7 @@ import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-templat
 import { UserFormComponent } from './shared/components/user-form/user-form.component';
 import { ReservationModalComponent } from './shared/components/reservation-modal/reservation-modal.component';
 import { DatePipe } from '@angular/common';
+import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
 
 @NgModule({
   declarations: [
@@ -137,7 +138,8 @@ import { DatePipe } from '@angular/common';
     ParkAreaFormComponent,
     AreaTemplateFormComponent,
     UserFormComponent,
-    ReservationModalComponent
+    ReservationModalComponent,
+    MapDialogComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

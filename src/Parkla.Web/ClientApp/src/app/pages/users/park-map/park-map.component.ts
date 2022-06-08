@@ -4,6 +4,7 @@ import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
+import { MapDialogComponent } from '@app/shared/components/map-dialog/map-dialog.component';
 import { MapMarkerComponent } from '@app/shared/components/map-marker/map-marker.component';
 import { Subscription } from 'rxjs';
 
@@ -12,28 +13,19 @@ import { Subscription } from 'rxjs';
   templateUrl: './park-map.component.html',
   styleUrls: ['./park-map.component.scss']
 })
-export class ParkMapComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ParkMapComponent implements OnInit, OnDestroy {
 
   parks = [];
 
-  dialogVisible = false;
-
-  selectedPark: Park | null = null;
+  @ViewChild(MapDialogComponent)
+  mapDialog?: MapDialogComponent;
 
   unsubscribe: Subscription[] = [];
 
-  get spaceCount() {
-    let total = this.selectedPark!.emptySpace +
-      this.selectedPark!.reservedSpace +
-      this.selectedPark!.occupiedSpace;
-
-    return total == 0 ? 1 : total;
-  }
-
   constructor(
     private router: Router,
-    private authService: AuthService,
-    private parkService: ParkService) {
+    private authService: AuthService
+  ) {
 
   }
 
@@ -41,28 +33,15 @@ export class ParkMapComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  ngAfterViewInit(): void {
-
-  }
-
   navigateGoogleMaps(lat: number, lng: number) {
     window.location.href = `https://www.google.com/maps/place/${lat.toFixed(20)}+${lng.toFixed(20)}/@${lat.toFixed(20)},${lng.toFixed(20)},12z`;
-  }
-
-  navigateToParkAreas(park:Park) {
-    this.router.navigateByUrl(this.authService.asManager
-      ? RouteUrl.mParkAreas(park.id)
-      : RouteUrl.parkAreas(park.id)
-    );
   }
 
   markerClick(event:{event:any; element:MapMarkerComponent}) {
     let element = event.element;
     event = event.event;
 
-    this.selectedPark = element.park;
-    this.dialogVisible = true;
-
+    this.mapDialog?.showDialog(element.park);
     $("#appMap div.mapboxgl-ctrl-top-right button.mapboxgl-ctrl-shrink").trigger("click");
   }
 
