@@ -1,20 +1,23 @@
-<p-toolbar>
-  <div
-    #searchBox
-    class="p-toolbar-group-left"
-    >
-  </div>
-  <app-user-avatar
-    class="p-toolbar-group-right"
-    >
-  </app-user-avatar>
-</p-toolbar>
+<div class="d-flex flex-column h-100">
+  <p-toolbar>
+    <div
+      #searchBox
+      class="p-toolbar-group-left search-box-parent"
+      >
+    </div>
+    <app-user-avatar
+      class="p-toolbar-group-right"
+      >
+    </app-user-avatar>
+  </p-toolbar>
 
-<app-map
-  [searchBoxParent]="searchBox"
-  (markerOnClick)="markerClick($event)"
-  >
-</app-map>
+  <app-map
+    [searchBoxParent]="searchBox"
+    (markerOnClick)="markerClick($event)"
+    ngClass="flex-grow-1"
+    >
+  </app-map>
+</div>
 
 <p-dialog
   #cd
