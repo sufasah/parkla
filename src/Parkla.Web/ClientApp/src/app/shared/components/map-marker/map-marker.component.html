@@ -19,16 +19,16 @@
     <div style="font-size:12px;">
       <div
         class="d-flex align-items-center justify-content-evenly fw-bold"
-        *ngIf="park.minPrice != undefined && park.minPrice != null && park.avaragePrice != undefined && park.avaragePrice != null && park.maxPrice != undefined && park.maxPrice != null; else noPrice"
+        *ngIf="park.minPrice != undefined && park.minPrice != null && park.averagePrice != undefined && park.averagePrice != null && park.maxPrice != undefined && park.maxPrice != null; else noPrice"
         >
         <span class="min-price">
-          {{park.minPrice | currency : "TRY" : "symbol" : "0.2-2"}}
+          {{park.minPrice | currency : "TRY" : "code" : "0.2-2"}}
         </span> -
         <span class="avg-price">
-          {{park.avaragePrice | currency : "TRY" : "symbol" : "0.2-2"}}
+          {{park.averagePrice | currency : "TRY" : "code" : "0.2-2"}}
         </span> -
         <span class="max-price">
-          {{park.maxPrice | currency : "TRY" : "symbol" : "0.2-2"}}
+          {{park.maxPrice | currency : "TRY" : "code" : "0.2-2"}}
         </span>
       </div>
       <ng-template #noPrice>

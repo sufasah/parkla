@@ -40,8 +40,8 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
             .HasColumnName("min_price")
             .HasPrecision(30,2)
             .HasDefaultValue(null);
-        b.Property(x => x.AvaragePrice)
-            .HasColumnName("avarage_price")
+        b.Property(x => x.AveragePrice)
+            .HasColumnName("average_price")
             .HasPrecision(30,2)
             .HasDefaultValue(null);
         b.Property(x => x.MaxPrice)
@@ -54,6 +54,6 @@ public class ParkAreaMap : IEntityTypeConfiguration<ParkArea> {
         b.HasOne(x => x.Park).WithMany(x => x.Areas).HasForeignKey(x => x.ParkId).OnDelete(DeleteBehavior.Cascade);
 
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_OR_EQUAL_NOW","status_update_time <= now()");
-        b.HasCheckConstraint("CK_PRICES_VALID","min_price <= avarage_price and avarage_price <= max_price");
+        b.HasCheckConstraint("CK_PRICES_VALID","min_price <= average_price and average_price <= max_price");
     }
 }

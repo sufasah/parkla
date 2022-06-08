@@ -48,8 +48,8 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
             .HasColumnName("min_price")
             .HasDefaultValue(null)
             .HasPrecision(30,2);
-        b.Property(x => x.AvaragePrice)
-            .HasColumnName("avarage_price")
+        b.Property(x => x.AveragePrice)
+            .HasColumnName("average_price")
             .HasDefaultValue(null)
             .HasPrecision(30,2);
         b.Property(x => x.MaxPrice)
@@ -63,6 +63,6 @@ public class ParkMap : IEntityTypeConfiguration<Park> {
         
         b.HasCheckConstraint("CK_UPDATE_TIME_LESS_THAN_OR_EQUAL_NOW","status_update_time <= now()");
         b.HasCheckConstraint("CK_LATITUDE_AND_LONGITUDE_ARE_VALID","latitude >= -90 and latitude <= 90 and longitude >= -180 and longitude <= 180");
-        b.HasCheckConstraint("CK_PRICES_VALID","min_price <= avarage_price and avarage_price <= max_price");
+        b.HasCheckConstraint("CK_PRICES_VALID","min_price <= average_price and average_price <= max_price");
     }
 }

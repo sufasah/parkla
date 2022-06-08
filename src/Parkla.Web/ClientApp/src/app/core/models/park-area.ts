@@ -17,7 +17,7 @@ export interface ParkArea {
   spaces: ParkSpace[];
   pricings: Pricing[];
   minPrice: number;
-  avaragePrice: number;
+  averagePrice: number;
   maxPrice: number;
   xmin: number;
 }

@@ -19,7 +19,7 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
         EmptySpace();
         OccupiedSpace();
         MinPrice();
-        AvaragePrice();
+        AveragePrice();
         MaxPrice();
         Pricings();
 
@@ -54,8 +54,8 @@ public class ParkAreaValidator : AbstractValidator<ParkArea>
     private void MinPrice() => RuleFor(x => x.MinPrice)
         .NotNull()
         .InclusiveBetween(0, precision30)
-        .Must((y, x) => x <= y.AvaragePrice);
-    private void AvaragePrice() => RuleFor(x => x.AvaragePrice)
+        .Must((y, x) => x <= y.AveragePrice);
+    private void AveragePrice() => RuleFor(x => x.AveragePrice)
         .NotNull()
         .InclusiveBetween(0, precision30)
         .Must((y, x) => x <= y.MaxPrice);

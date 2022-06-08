@@ -21,10 +21,10 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
             .GroupBy(x => x.Id)
             .Select(g => new {
                 Park = g.First(x => x.Id == g.Key),
-                ReservationCount = g.Sum(
+                ReservedSpaceCount = g.Sum(
                     x => x.Areas.Sum(
                         y => y.Spaces.Sum(
-                            z => z.Reservations!.Where(t => t.EndTime > DateTime.UtcNow).Count())))
+                            z => z.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0)))
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -33,7 +33,7 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
             x.Park.Areas = null!;
             return new InstantParkReservedSpace(
                 x.Park,
-                x.ReservationCount
+                x.ReservedSpaceCount
             );
         }).ToList();
     }
@@ -48,17 +48,17 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
             .GroupBy(x => x.Id)
             .Select(g => new {
                 ParkId = g.Key,
-                ReservationCount = g.Sum(
+                ReservedSpaceCount = g.Sum(
                     x => x.Areas.Sum(
                         y => y.Spaces.Sum(
-                            z => z.Reservations!.Where(t => t.EndTime > DateTime.UtcNow).Count())))
+                            z => z.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0)))
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return result.Select(x => new InstantParkIdReservedSpace(
             x.ParkId!.Value,
-            x.ReservationCount
+            x.ReservedSpaceCount
         )).ToList();
     }
 

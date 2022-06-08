@@ -1,0 +1,95 @@
+:host ::ng-deep {
+
+  p-knob .p-knob-text {
+    font-size: 1.6rem;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+  p-knob .p-knob-range {
+    stroke-width: 3;
+  }
+  p-knob .p-knob-value {
+    stroke-width: 10;
+  }
+
+  .empty {
+    .p-knob-text {
+      fill: var(--parkla-green);
+      font-weight: bold;
+    }
+
+    .p-knob-value {
+      stroke: var(--parkla-green);
+    }
+  }
+
+  .reserved {
+    .p-knob-text {
+      fill: var(--orange-500);
+      font-weight: bold;
+    }
+    .p-knob-value {
+      stroke: var(--orange-500);
+    }
+  }
+
+  .occupied {
+    .p-knob-text {
+      fill: var(--red-500);
+      font-weight: bold;
+    }
+    .p-knob-value {
+      stroke: var(--red-500);
+    }
+  }
+
+  .min-price {
+    color: var(--parkla-green);
+    font-weight: 600;
+  }
+
+  .avg-price {
+    color:var(--orange-500);
+    font-weight: 600;
+  }
+
+  .max-price {
+    color: var(--red-500);
+    font-weight: 600;
+  }
+
+  .p-datatable .price-title {
+    background-color: var(--surface-0);
+  }
+
+  .p-datatable .status-title {
+    background-color: var(--surface-0);
+  }
+
+  .p-datatable table {
+    width: 100%;
+  }
+
+  .p-dialog .icon-button button {
+    width: 2.357rem;
+  }
+
+  .p-dialog .p-dialog-content {
+    padding: 0;
+  }
+
+  .extras-list-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .extras-list-li {
+    font-family: "system-ui";
+  }
+
+  .extras-list-style {
+    width: 5px;
+    border-radius: 10px;
+  }
+}
+

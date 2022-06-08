@@ -44,12 +44,12 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
       value: "minPrice"
     },
     {
-      label: "Avarage Price Low to High",
-      value: "!avaragePrice"
+      label: "Average Price Low to High",
+      value: "!averagePrice"
     },
     {
-      label: "Avarage Price High to Low",
-      value: "avaragePrice"
+      label: "Average Price High to Low",
+      value: "averagePrice"
     },
     {
       label: "Max Price Low to High",

@@ -15,6 +15,8 @@ import { RippleModule } from 'primeng/ripple';
 import { ConfirmationService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PasswordModule } from 'primeng/password';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { FieldsetModule } from 'primeng/fieldset';
 import { BadgeModule } from 'primeng/badge';
 import { InputMaskModule } from 'primeng/inputmask';
 import { AvatarModule } from 'primeng/avatar';
@@ -153,6 +155,8 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
     KnobModule,
     BadgeModule,
     TableModule,
+    FieldsetModule,
+    ScrollPanelModule,
     SlideMenuModule,
     SkeletonModule,
     DataViewModule,

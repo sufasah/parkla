@@ -274,7 +274,7 @@ export class MDashboardComponent implements OnInit {
         ...o.scales!.y!,
         title: {
           ...o.scales!.y!.title!,
-          text: "Turkish Liras (TL)"
+          text: "Turkish Lira (TRY)"
         }
       }
     }

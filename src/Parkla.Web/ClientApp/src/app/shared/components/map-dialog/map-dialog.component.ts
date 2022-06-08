@@ -22,6 +22,10 @@ export class MapDialogComponent implements OnInit {
 
   park!: Park;
 
+  extraStyleColors = [
+    "--green-500","--yellow-500","--indigo-500","--cyan-600","--red-500","--teal-500","--blue-500","--purple-500","--gray-900","--orange-600"
+  ];
+
   get spaceCount() {
     let total = this.park.emptySpace +
       this.park.occupiedSpace;

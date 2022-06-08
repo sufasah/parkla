@@ -176,7 +176,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                             .FirstOrDefault(),
                         Count = g2.Count(),
                         MinPrice = g2.Min(x => x.MinPrice),
-                        AvaragePrice = g2.Average(x => x.AvaragePrice),
+                        AveragePrice = g2.Average(x => x.AveragePrice),
                         MaxPrice = g2.Max(x => x.MaxPrice),
                         EmptySpaceCount = g2.Sum(x => (long?)x.EmptySpace),
                         OccupiedSpaceCount = g2.Sum(x => (long?)x.OccupiedSpace),
@@ -207,7 +207,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
 
                 dto.TotalParks = parksGroup.Count;
                 dto.MinParkPrice = parksGroup.MinPrice;
-                dto.AverageParkPrice = parksGroup.AvaragePrice;
+                dto.AverageParkPrice = parksGroup.AveragePrice;
                 dto.MaxParkPrice = parksGroup.MaxPrice;
                 dto.TotalEmptySpaces = parksGroup.EmptySpaceCount ?? 0;
                 dto.TotalOccupiedSpaces = parksGroup.OccupiedSpaceCount ?? 0;

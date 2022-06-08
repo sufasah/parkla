@@ -71,7 +71,7 @@
       [(ngModel)]="park.location"
       pInputText
       placeholder="Location information"
-      pattern="[a-zA-Z0-9 ]+"
+      pattern="[a-zA-Z0-9 ,/'-#@%&]+"
       />
   </div>
 
@@ -113,7 +113,7 @@
       pInputText
       placeholder="Extra benefits"
       required
-      maxlength="50"
+      maxlength="100"
       [(ngModel)]="park.extras[i]"
       >
 

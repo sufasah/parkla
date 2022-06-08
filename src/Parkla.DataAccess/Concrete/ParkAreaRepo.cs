@@ -45,16 +45,16 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             .GroupBy(x => x.Id)
             .Select(g => new {
                 ParkArea = g.First(x => x.Id == g.Key),
-                ReservationCount = g.Sum(
+                ReservedSpaceCount = g.Sum(
                     x => x.Spaces.Sum(
-                        y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
+                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
             
         var result = items.Select(x => {
             x.ParkArea.Spaces = null!;
-            return new InstantParkAreaReservedSpace(x.ParkArea, x.ReservationCount);
+            return new InstantParkAreaReservedSpace(x.ParkArea, x.ReservedSpaceCount);
         }).ToList();
 
         return new PagedList<InstantParkAreaReservedSpace>(result, nextRecord, pageSize, count);
@@ -65,7 +65,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
         Guid parkId,
         int areaId,
         float? newAreaMin,
-        float? newAreaAvarage,
+        float? newAreaAverage,
         float? newAreaMax,
         float newAreaCount,
         CancellationToken cancellationToken = default
@@ -85,7 +85,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     / (TimeUnit.MONTH == y.Pricing!.Unit ? 720 : 1)
                     / y.Pricing!.Amount
                 ),
-                Avarage = x.Average(
+                Average = x.Average(
                     y => y.Pricing!.Price
                     * (TimeUnit.MINUTE == y.Pricing!.Unit ? 60 : 1)
                     / (TimeUnit.DAY == y.Pricing!.Unit ? 24 : 1)
@@ -104,17 +104,17 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             .ConfigureAwait(false);
 
         if(mmaResult == null)
-            return new(newAreaMin, newAreaAvarage, newAreaMax);
+            return new(newAreaMin, newAreaAverage, newAreaMax);
             
         var newMin = mmaResult.Min;
-        var newAvarage = mmaResult.Avarage;
+        var newAverage = mmaResult.Average;
         var newMax = mmaResult.Max;
         var count = (float) mmaResult.Count;
         
-        if(newAreaAvarage != null)
-        newAvarage = count > 0 && newAvarage != null 
-            ? newAvarage * (count / (count + newAreaCount)) + newAreaAvarage * (newAreaCount / (count + newAreaCount))
-            : newAreaAvarage;
+        if(newAreaAverage != null)
+        newAverage = count > 0 && newAverage != null 
+            ? newAverage * (count / (count + newAreaCount)) + newAreaAverage * (newAreaCount / (count + newAreaCount))
+            : newAreaAverage;
                 
         if(newAreaMin != null)
         newMin = newMin != null
@@ -126,7 +126,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             ? Math.Max((float)newMax, (float)newAreaMax)
             : newAreaMax;
         
-        return new(newMin, newAvarage, newMax);
+        return new(newMin, newAverage, newMax);
     }
     
     private static Tuple<float?,float?,float?,float> FindPricingsMinAvgMaxCount(
@@ -136,7 +136,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             .Select(x => new {
                 Count = x.Count(),
                 Min = x.Min(y => Pricing.GetPricePerHour(y)),
-                Avarage = x.Average(y => Pricing.GetPricePerHour(y)),
+                Average = x.Average(y => Pricing.GetPricePerHour(y)),
                 Max = x.Max(y => Pricing.GetPricePerHour(y))
             })
             .FirstOrDefault();
@@ -146,11 +146,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             return new(null, null, null, 0f);
             
         var newMin = mmaResult.Min;
-        var newAvarage = mmaResult.Avarage;
+        var newAverage = mmaResult.Average;
         var newMax = mmaResult.Max;
         var newCount = (float) mmaResult.Count;
         
-        return new(newMin, newAvarage, newMax, newCount);
+        return new(newMin, newAverage, newMax, newCount);
     }
 
     public new async Task<ParkArea> AddAsync(ParkArea area, CancellationToken cancellationToken = default) {
@@ -194,7 +194,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 result.Property(x => x.Description).IsModified = true;
                 result.Property(x => x.ReservationsEnabled).IsModified = true;
                 result.Property(x => x.MinPrice).IsModified = true;
-                result.Property(x => x.AvaragePrice).IsModified = true;
+                result.Property(x => x.AveragePrice).IsModified = true;
                 result.Property(x => x.MaxPrice).IsModified = true;
 
                 var userPricings = new List<Pricing>(area.Pricings);
@@ -241,9 +241,9 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     .ToListAsync(cancellationToken)
                     .ConfigureAwait(false);
 
-                var (newAreaMin, newAreaAvarage, newAreaMax, newAreaCount) = FindPricingsMinAvgMaxCount(spaces.Select(x => x.Pricing!));
+                var (newAreaMin, newAreaAverage, newAreaMax, newAreaCount) = FindPricingsMinAvgMaxCount(spaces.Select(x => x.Pricing!));
                 area.MinPrice = newAreaMin;
-                area.AvaragePrice = newAreaAvarage;
+                area.AveragePrice = newAreaAverage;
                 area.MaxPrice = newAreaMax;
                 
                 var park = await context.FindAsync<Park>(new object[]{area.ParkId!}, cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -251,12 +251,12 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 if(park == null)
                     throw _parkNotFound;
 
-                (area.Park!.MinPrice, area.Park.AvaragePrice, area.Park.MaxPrice) = await FindNewParkMinAvgMaxAsync(
+                (area.Park!.MinPrice, area.Park.AveragePrice, area.Park.MaxPrice) = await FindNewParkMinAvgMaxAsync(
                     context,
                     area.ParkId!.Value,
                     area.Id!.Value,
                     newAreaMin,
-                    newAreaAvarage,
+                    newAreaAverage,
                     newAreaMax,
                     newAreaCount,
                     cancellationToken
@@ -474,24 +474,24 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                         throw new ParklaConcurrentDeletionException($"One of the spaces with '{item.Name}' name has a pricing which was deleted by another user. Please select the pricing again.");
                 }
 
-                var (newAreaMin, newAreaAvarage, newAreaMax, newAreaCount) = FindPricingsMinAvgMaxCount(userSpacePricings);
+                var (newAreaMin, newAreaAverage, newAreaMax, newAreaCount) = FindPricingsMinAvgMaxCount(userSpacePricings);
                 area.MinPrice = newAreaMin;
-                area.AvaragePrice = newAreaAvarage;
+                area.AveragePrice = newAreaAverage;
                 area.MaxPrice = newAreaMax;
                 
-                result.Property(x => x.MinPrice).IsModified = result.Property(x => x.AvaragePrice).IsModified = result.Property(x => x.MaxPrice).IsModified = true;
+                result.Property(x => x.MinPrice).IsModified = result.Property(x => x.AveragePrice).IsModified = result.Property(x => x.MaxPrice).IsModified = true;
                 
                 var park = await context.FindAsync<Park>(new object[]{area.ParkId!}, cancellationToken: cancellationToken).ConfigureAwait(false);
 
                 if(park == null)
                     throw _parkNotFound;
 
-                (area.Park!.MinPrice, area.Park.AvaragePrice, area.Park.MaxPrice) = await FindNewParkMinAvgMaxAsync(
+                (area.Park!.MinPrice, area.Park.AveragePrice, area.Park.MaxPrice) = await FindNewParkMinAvgMaxAsync(
                     context,
                     area.ParkId!.Value,
                     area.Id!.Value,
                     newAreaMin,
-                    newAreaAvarage,
+                    newAreaAverage,
                     newAreaMax,
                     newAreaCount,
                     cancellationToken
@@ -648,15 +648,15 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             .GroupBy(x => x.Id)
             .Select(g => new {
                 AreaId = g.Key,
-                ReservationCount = g.Sum(
+                ReservedSpaceCount = g.Sum(
                     x => x.Spaces.Sum(
-                        y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
+                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
             })
             .Where(x => ids.Any(y => y == x.AreaId!.Value))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        return result.Select(x => new InstantParkAreaIdReservedSpace(x.AreaId!.Value,x.ReservationCount)).ToList();
+        return result.Select(x => new InstantParkAreaIdReservedSpace(x.AreaId!.Value,x.ReservedSpaceCount)).ToList();
     }
 
     public async Task<InstantParkAreaReservedSpace?> GetParkAreaAsync(
@@ -677,15 +677,15 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
             .GroupBy(x => x.Id)
             .Select(g => new {
                 ParkArea = g.First(x => x.Id == g.Key),
-                ReservationCount = g.Sum(
+                ReservedSpaceCount = g.Sum(
                     x => x.Spaces.Sum(
-                        y => y.Reservations!.Where(z => z.EndTime > DateTime.UtcNow).Count()))
+                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
             })
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
         
         if(item == null || item.ParkArea == null) return null;
         item.ParkArea.Spaces = null!;
-        return new InstantParkAreaReservedSpace(item.ParkArea, item.ReservationCount);
+        return new InstantParkAreaReservedSpace(item.ParkArea, item.ReservedSpaceCount);
     }
 }

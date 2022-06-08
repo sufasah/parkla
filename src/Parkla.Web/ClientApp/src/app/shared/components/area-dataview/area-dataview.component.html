@@ -49,7 +49,7 @@
               <i class="pi pi-tag area-category-icon"></i><span class="area-category">{{area.emptySpace}}-{{area.reservedSpace}}-{{area.occupiedSpace}}</span>
           </div>
           <div class="area-list-action">
-              <span class="area-price">{{area.minPrice.balance}}-{{area.avaragePrice.balance}}-{{area.maxPrice.balance}}</span>
+              <span class="area-price">{{area.minPrice.balance}}-{{area.averagePrice.balance}}-{{area.maxPrice.balance}}</span>
               <p-button icon="pi pi-car" label="Go Area" (click)="goArea(area)"></p-button>
 
               <ng-container
@@ -71,7 +71,7 @@
                   <i class="pi pi-tag area-category-icon"></i>
                   <span class="area-category">{{area.statusUpdateTime}}-{{area.emptySpace}}-{{area.reservedSpace}}-{{area.occupiedSpace}}</span>
               </div>
-              <span class="area-price">{{area.minPrice}}-{{area.avaragePrice}}-{{area.maxPrice}}</span>
+              <span class="area-price">{{area.minPrice}}-{{area.averagePrice}}-{{area.maxPrice}}</span>
           </div>
           <div class="area-grid-item-content">
               <img #img2 [src]="getImageUrl(area)" onerror="onImageError(img2)"/>

@@ -19,7 +19,7 @@ public class ParkArea : IEntity {
     public int? EmptySpace { get; set; }
     public int? OccupiedSpace { get; set; }
     public float? MinPrice { get; set; }
-    public float? AvaragePrice { get; set; }
+    public float? AveragePrice { get; set; }
     public float? MaxPrice { get; set; }
     public virtual ICollection<ParkSpace> Spaces { get; set; }
     public virtual ICollection<Pricing> Pricings { get; set; }

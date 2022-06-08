@@ -41,7 +41,7 @@ public class ParkService : EntityServiceBase<Park>, IParkService
         entity.EmptySpace = 0;
         entity.OccupiedSpace = 0;
         entity.MinPrice = null;
-        entity.AvaragePrice = null;
+        entity.AveragePrice = null;
         entity.MaxPrice = null;
         
 

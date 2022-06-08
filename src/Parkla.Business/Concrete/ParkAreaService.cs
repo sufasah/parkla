@@ -172,7 +172,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
         entity.EmptySpace = 0;
         entity.OccupiedSpace = 0;
         entity.MinPrice = null;
-        entity.AvaragePrice = null;
+        entity.AveragePrice = null;
         entity.MaxPrice = null;
         entity.Spaces = null!;
 
@@ -211,7 +211,7 @@ public class ParkAreaService : EntityServiceBase<ParkArea>, IParkAreaService
             eFilter = (ParkArea x) => (
                 x.Name!.ToLower().Contains(search) ||
                 x.MinPrice.ToString()!.ToLower().Contains(search) ||
-                x.AvaragePrice.ToString()!.ToLower().Contains(search) ||
+                x.AveragePrice.ToString()!.ToLower().Contains(search) ||
                 x.MaxPrice.ToString()!.ToLower().Contains(search) ||
                 x.EmptySpace.ToString()!.ToLower().Contains(search) ||
                 x.OccupiedSpace.ToString()!.ToLower().Contains(search) ||

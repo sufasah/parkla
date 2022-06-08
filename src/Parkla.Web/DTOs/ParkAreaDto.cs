@@ -15,7 +15,7 @@ public class ParkAreaDto
     public int? ReservedSpace { get; set; }
     public int? OccupiedSpace { get; set; }
     public float? MinPrice { get; set; }
-    public float? AvaragePrice { get; set; }
+    public float? AveragePrice { get; set; }
     public float? MaxPrice { get; set; }
     public ICollection<ParkSpace>? Spaces { get; set; }
     public ICollection<Pricing>? Pricings { get; set; }
