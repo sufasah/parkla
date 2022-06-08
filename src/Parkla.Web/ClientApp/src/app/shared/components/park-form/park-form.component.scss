@@ -9,11 +9,12 @@
 
 .remove-extra {
   background-color: rgb(253, 70, 70);
-  border: 2px solid lightgray;
+  border: none;
   cursor: pointer;
 
   &:hover {
     background-color: #ff0000;
+    border-color: #ff0000;
   }
 }
 
@@ -27,6 +28,10 @@
   bottom: 0;
   z-index: 100;
   background-color: white;
+
+  .p-button {
+    width: 200px;
+  }
 }
 
 #selectLatLngMap {

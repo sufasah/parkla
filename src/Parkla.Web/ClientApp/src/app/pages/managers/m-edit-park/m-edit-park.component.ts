@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Park } from '@app/core/models/park';
 import { RouteUrl } from '@app/core/utils/route';
 import { Map, Marker } from '@tomtom-international/web-sdk-maps';
-import { Message, MessageService } from 'primeng/api';
+import { MenuItem, Message, MessageService } from 'primeng/api';
 import { ParkService } from '@app/core/services/park.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '@app/core/services/auth.service';
@@ -16,6 +16,11 @@ import { AuthService } from '@app/core/services/auth.service';
 })
 export class MEditParkComponent implements OnInit, AfterViewInit {
   park: Park = <any>{extras: []};
+
+  bcModel: MenuItem[] = [
+    {icon: 'pi pi-map', routerLink: "/"+RouteUrl.mParkMap()},
+    {label: `Edit Park`, styleClass: "last-item"},
+  ];
 
   editing = false;
 

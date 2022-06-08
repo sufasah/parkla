@@ -58,7 +58,8 @@ export class ParkFormComponent implements OnInit {
   }
 
   addExtra() {
-    this.park.extras.push("");
+    if(this.park.extras.length < 10)
+      this.park.extras.push("");
   }
 
   removeExtra(index: number) {

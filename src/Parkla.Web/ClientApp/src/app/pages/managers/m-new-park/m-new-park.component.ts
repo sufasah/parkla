@@ -6,7 +6,7 @@ import { Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { Message, MessageService } from 'primeng/api';
+import { MenuItem, Message, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-m-new-park',
@@ -18,6 +18,11 @@ export class MNewParkComponent implements OnInit, AfterViewInit {
   park: Park = <any>{extras: []};
 
   adding = false;
+
+  bcModel: MenuItem[] = [
+    {icon: 'pi pi-map', routerLink: "/"+RouteUrl.mParkMap()},
+    {label: `New Park`, styleClass: "last-item"},
+  ];
 
   constructor(
     private router: Router,

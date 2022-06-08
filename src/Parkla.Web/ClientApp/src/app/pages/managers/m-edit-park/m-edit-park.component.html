@@ -1,6 +1,6 @@
 <p-toolbar>
   <div>
-    <button pButton pRipple (click)="goMap()">Go Map</button>
+    <p-button pRipple icon="pi pi-map" label="Map" (click)="goMap()"></p-button>
   </div>
   <app-user-avatar
     class="p-toolbar-group-right"
@@ -8,12 +8,18 @@
   </app-user-avatar>
 </p-toolbar>
 
-<app-park-form
-  (formSubmit)="editPark($event)"
-  [(park)]="park"
-  [loading]="editing"
-  submitLabel="Edit"
-  >
-</app-park-form>
+<div class="container mt-5 p-0">
+  <p-breadcrumb class="page-breadcrumb" [model]="bcModel">
+  </p-breadcrumb>
+</div>
+<div class="container mb-5 p-3 shadow-lg card">
+  <app-park-form
+    (formSubmit)="editPark($event)"
+    [(park)]="park"
+    [loading]="editing"
+    submitLabel="Save"
+    >
+  </app-park-form>
+</div>
 
 <p-toast (onClose)="messageClose($event.message)"></p-toast>

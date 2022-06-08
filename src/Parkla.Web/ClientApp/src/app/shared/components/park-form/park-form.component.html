@@ -3,20 +3,26 @@
 
   </div>
   <div class="d-flex justify-content-between" style="height: 80px;">
-
     <button
       type="button"
       pButton
       pRipple
-      class="p-button-sm p-button-success rounded-0"
+      class="p-button-sm p-button-success rounded-0 h-100"
       (click)="mapModalSelect()"
-      style="height: 100%;"
       label="Select"
-      ></button>
+      >
+    </button>
 
-    <span style="height: 100%;">Latitude: {{park.latitude}}</span>
-
-    <span style="height: 100%;">Longitude: {{park.longitude}}</span>
+    <div class="d-flex w-100" style="background-color: var(--surface-100); font-family: monospace;">
+      <div class="flex-grow-1 text-center d-flex flex-column justify-content-center">
+        <div class="fs-5 fw-bolder">Latitude</div>
+        <div>{{park.latitude}}</div>
+      </div>
+      <div class="flex-grow-1 text-center d-flex flex-column justify-content-center">
+        <div class="fs-5 fw-bolder">Longitude</div>
+        <div>{{park.longitude}}</div>
+      </div>
+    </div>
 
     <button
       type="button"
@@ -35,47 +41,38 @@
   (ngSubmit)="submit(addParkForm)"
   >
 
-  <div class="p-inputgroup">
-    <label
-      for="name"
-      class="p-inputgroup-addon"
-      >
-      <i class="pi pi-user"></i>
-    </label>
+  <h6>
+    <label for="name">Park Name</label>
+  </h6>
+  <input
+    type="text"
+    name="name"
+    required
+    [(ngModel)]="park.name"
+    pInputText
+    pattern="[a-zA-Z0-9 ]+"
+    minlength="3"
+    maxlength="50"
+    class="w-100"
+    />
 
-    <input
-      type="text"
-      name="name"
-      required
-      [(ngModel)]="park.name"
-      pInputText
-      placeholder="Park name"
-      pattern="[a-zA-Z0-9 ]+"
-      minlength="3"
-      maxlength="50"
-      />
-  </div>
+  <h6 class="mt-3">
+    <label for="location">Park Address</label>
+  </h6>
+  <input
+    type="text"
+    name="location"
+    maxlength="200"
+    [(ngModel)]="park.location"
+    pInputText
+    pattern="[a-zA-Z0-9 ,\/'\-#@%&.]+"
+    class="w-100"
+    />
 
-  <div class="p-inputgroup">
-    <label
-      for="location"
-      class="p-inputgroup-addon"
-      >
-      <i class="pi pi-user"></i>
-    </label>
-
-    <input
-      type="text"
-      name="location"
-      maxlength="200"
-      [(ngModel)]="park.location"
-      pInputText
-      placeholder="Location information"
-      pattern="[a-zA-Z0-9 ,/'-#@%&]+"
-      />
-  </div>
-
-  <div>
+  <h6 class="mt-3">
+    <label for="latitude">Latitude & Longitude</label>
+  </h6>
+  <div class="p-buttonset">
     <input
       name="latitude"
       pInputText
@@ -83,7 +80,6 @@
       [ngModel]="park.latitude"
       readonly
       placeholder="Latitude"
-      class="me-1"
       required
       >
     <input
@@ -93,7 +89,6 @@
       type="number"
       readonly
       placeholder="Longitude"
-      class="me-1"
       required
       >
 
@@ -101,17 +96,19 @@
       type="button"
       pButton
       pRipple
-      label="Select on Map"
+      icon="pi pi-map-marker"
       (click)="showMapModal()"
       ></button>
   </div>
 
-  <div *ngFor="let extra of park.extras; let i=index; trackBy:track" class="p-inputgroup">
+  <p-divider type="dotted" align="center">
+    <h6 class="extras-header px-3 py-2 border rounded">Extras</h6>
+  </p-divider>
+  <div *ngFor="let extra of park.extras; let i=index; trackBy:track" class="p-inputgroup mt-2">
     <input
       [name]='"extra"+i'
       type="text"
       pInputText
-      placeholder="Extra benefits"
       required
       maxlength="100"
       [(ngModel)]="park.extras[i]"
@@ -130,23 +127,23 @@
   <div class="d-flex justify-content-end mt-1 mb-2">
     <button
       pButton
-      pRipple
       type="button"
-      class="add-extra"
+      class="add-extra mt-3"
       (click)="addExtra()"
       icon="pi pi-plus"
-      [style]="park.extras.length == 0 ? '' : 'width: 63px;'"
+      [style]="park.extras.length == 0 ? '' : 'width: 54px; height:42px;'"
       [label]="park.extras.length == 0 ? 'Add Extra Information' : ''"
+      [hidden]="park.extras.length >= 10"
       >
     </button>
   </div>
 
-  <div>
+  <div class="d-flex justify-content-center">
     <button
       type="submit"
       pButton
       pRipple
-      class="p-button-raised p-button-primary"
+      class="p-button-raised mt-5 w-50"
       [label]="submitLabel"
       [loading]="loading"
       >

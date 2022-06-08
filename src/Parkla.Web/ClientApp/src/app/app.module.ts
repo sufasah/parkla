@@ -26,6 +26,7 @@ import { TableModule } from 'primeng/table';
 import { TabViewModule } from 'primeng/tabview';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -141,7 +142,7 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
     AreaTemplateFormComponent,
     UserFormComponent,
     ReservationModalComponent,
-    MapDialogComponent
+    MapDialogComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -162,6 +163,7 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
     DataViewModule,
     ToolbarModule,
     TabViewModule,
+    BreadcrumbModule,
     AppRoutingModule,
     AvatarModule,
     InputTextModule,
