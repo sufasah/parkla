@@ -23,10 +23,11 @@ export class MapMarkerComponent implements OnInit, OnChanges {
 
     this.spaceCount = park.emptySpace + park.occupiedSpace;
     this.spaceCount = this.spaceCount == 0 ? 1 : this.spaceCount;
-
   }
 
   ngOnInit(): void {
+    this.spaceCount = this.park.emptySpace + this.park.occupiedSpace;
+    this.spaceCount = this.spaceCount == 0 ? 1 : this.spaceCount;
   }
 
   markerClick(event:any) {

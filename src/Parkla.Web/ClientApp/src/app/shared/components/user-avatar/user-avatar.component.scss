@@ -1,5 +1,30 @@
-::ng-deep .p-avatar {
-  background-color: orangered;
-  color: #fff;
-  cursor: pointer;
+:host ::ng-deep {
+  .p-avatar {
+    background-color: var(--blue-700);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .p-slidemenu .p-menuitem-link {
+    &:focus {
+      border-left: none!important;
+
+      & > * {
+        color: var(--blue-500);
+      }
+    }
+
+    &:not(.p-disabled):hover {
+      background: var(--gray-50);
+      border-left: 3px solid var(--blue-500);
+      color: var(--blue-500);
+
+      & > * {
+        color: var(--blue-500);
+      }
+    }
+  }
+
+
 }
+

@@ -1,4 +1,10 @@
 .p-toolbar {
-  height: 80px;
+  height: 70px;
   padding: 0 20px;
+}
+
+:root {
+  --parkla-green: rgba(22, 200, 0, 1);
+  --parkla-green-light: rgba(70, 230, 55, 1);
+  --parkla-green-lightest: rgba(0, 255, 0, 1);
 }

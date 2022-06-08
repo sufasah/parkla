@@ -20,8 +20,9 @@ $infoHeight: 100px;
   width: 250px;
   height: fit-content;
   box-shadow: 0px 0px 16px rgb(0 0 0 / 25%);
-  background-color: rgba(240, 240, 240, 0.9);
-  padding: 5px 10px;
+  background-color: var(--surface-200);
+  padding: 10px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .floating {
@@ -41,6 +42,7 @@ $infoHeight: 100px;
 
   p-knob .p-knob-text {
     font-size: 1.6rem;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   }
   p-knob .p-knob-range {
     stroke-width: 3;
@@ -49,38 +51,48 @@ $infoHeight: 100px;
     stroke-width: 10;
   }
 
+
   .empty {
     .p-knob-text {
-      fill: #0f0;
+      fill: var(--parkla-green);
       font-weight: bold;
+    }
+
+    .p-knob-value {
+      stroke: var(--parkla-green);
     }
   }
 
   .reserved {
     .p-knob-text {
-      fill: #f7b060;
+      fill: var(--orange-500);
       font-weight: bold;
+    }
+    .p-knob-value {
+      stroke: var(--orange-500);
     }
   }
 
   .occupied {
     .p-knob-text {
-      fill: #f00;
+      fill: var(--red-500);
       font-weight: bold;
     }
-
+    .p-knob-value {
+      stroke: var(--red-500);
+    }
   }
 
   .min-price {
-    color:#0f0;
+    color: var(--parkla-green);
   }
 
   .avg-price {
-    color:#00f;
+    color:var(--orange-500);
   }
 
   .max-price {
-    color: #f00;
+    color: var(--red-500);
   }
 }
 

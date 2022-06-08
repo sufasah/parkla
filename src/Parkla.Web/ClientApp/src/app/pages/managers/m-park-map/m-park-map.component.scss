@@ -1,0 +1,14 @@
+.search-box-parent ::ng-deep div.tt-search-box{
+  margin-top: 0;
+}
+
+.new-park-button {
+  width: 2.5rem;
+  background-color: var(--parkla-green-light);
+  border-color: var(--parkla-green-light);
+
+  &:hover {
+    background-color: var(--parkla-green-lightest);
+    border-color: var(--parkla-green-lightest);
+  }
+}

@@ -69,7 +69,7 @@ export class ParkFormComponent implements OnInit {
     this.mapModalVisible = true;
     if(!this.selectLatLngMap) {
       setTimeout(() => {
-        this.selectLatLngMap = makeTomTomMap();
+        this.selectLatLngMap = makeTomTomMap("selectLatLngMap");
         this.selectLatLngMap.on("click",(event) => {
           this.setLatLng(event.lngLat.lat,event.lngLat.lng);
         });

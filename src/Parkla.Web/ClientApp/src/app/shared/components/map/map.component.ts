@@ -9,6 +9,7 @@ import { services } from "@tomtom-international/web-sdk-services";
 import SearchBox from '@tomtom-international/web-sdk-plugin-searchbox';
 import { InformerItem, ParkService } from '@app/core/services/park.service';
 import { Subscription } from 'rxjs';
+import { makeTomTomMap } from '@app/core/utils/tomtom';
 
 interface MapMarker {
   marker: Marker,
@@ -145,28 +146,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   loadMap() {
-    this.appMap = map({
-      key: ttkey,
-      container: "appMap",
-      zoom: 12,
-      language: "tr-TR",
-      center: {
-        lat: 41.015137,
-        lng: 28.979530,
-      },
-    });
-
-    this.appMap.addControl(new NavigationControl());
-    this.appMap.addControl(new FullscreenControl());
-    this.appMap.addControl(new GeolocateControl({
-      trackUserLocation: true,
-      showUserLocation: true,
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      showAccuracyCircle: true
-    }));
-
+    this.appMap = makeTomTomMap("appMap");
 
     this.addSearchBoxToMap();
 

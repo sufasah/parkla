@@ -1,6 +1,6 @@
 #appMap {
   width: 100%;
-  height: 800px;
+  height: 100%;
 }
 
 :host ::ng-deep {
@@ -36,4 +36,8 @@
     }
 
   }
+}
+
+.search-box-parent ::ng-deep div.tt-search-box{
+  margin-top: 0;
 }

@@ -1,10 +1,10 @@
 import { FullscreenControl, GeolocateControl, map, NavigationControl } from "@tomtom-international/web-sdk-maps";
 import { ttkey } from "../constants/private";
 
-export const makeTomTomMap = () => {
+export const makeTomTomMap = (container: string) => {
   let rmap = map({
     key: ttkey,
-    container: "selectLatLngMap",
+    container: container,
     zoom: 12,
     language: "tr-TR",
     center: {

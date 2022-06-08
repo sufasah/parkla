@@ -7,17 +7,12 @@
   <div
     class="marker-info floating"
     >
-    <div
-      class="text-dark
-      text-center
-      mb-1
-      fw-bolder"
-      >
-      <span *ngIf="park.statusUpdateTime; else noStatusUpdateTime">
+    <div class="text-dark text-center mb-1">
+      <span *ngIf="park.statusUpdateTime; else noStatusUpdateTime" class="fw-bolder">
           {{park.statusUpdateTime | date : "yyyy-MM-dd HH:mm:ss"}}
       </span>
       <ng-template #noStatusUpdateTime>
-        <span>Never Updated</span>
+        <small>Never Updated</small>
       </ng-template>
     </div>
 
@@ -37,9 +32,9 @@
         </span>
       </div>
       <ng-template #noPrice>
-        <div class="d-flex align-items-center justify-content-evenly fw-bold">
+        <small class="d-flex align-items-center justify-content-evenly">
           Undefined Pricing
-        </div>
+        </small>
       </ng-template>
     </div>
     <div
@@ -51,7 +46,6 @@
         <p-knob
           [ngModel]="park.emptySpace"
           styleClass="empty"
-          valueColor="#0f0"
           rangeColor="#777"
           [max]="spaceCount"
           [size]="50"
@@ -63,7 +57,6 @@
         <p-knob
           [ngModel]="park.reservedSpace"
           styleClass="reserved"
-          valueColor="#f7b060"
           rangeColor="#777"
           [max]="spaceCount"
           [size]="50"
@@ -75,7 +68,6 @@
         <p-knob
           [ngModel]="park.occupiedSpace"
           styleClass="occupied"
-          valueColor="#f00"
           rangeColor="#777"
           [max]="spaceCount"
           [size]="50"
