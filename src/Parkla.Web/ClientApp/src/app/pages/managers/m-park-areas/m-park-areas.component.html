@@ -1,45 +1,25 @@
 <p-toolbar>
-  <div>
-    <button pButton pRipple (click)="goMap()">Go Map</button>
-  </div>
-  <div>
+  <div class="p-toolbar-group-left">
     <button
       pButton
       pRipple
-      label="New Area"
-      (click)="newArea()"
+      icon="pi pi-map"
+      (click)="goMap()"
+      label="Map"
       >
-
     </button>
   </div>
-  <app-user-avatar
-    class="p-toolbar-group-right"
-    >
+
+  <app-user-avatar class="p-toolbar-group-right">
   </app-user-avatar>
 </p-toolbar>
+
 <app-area-dataView
   [pageSize]="pageSize"
   (onFetchError)="onError($event)"
   [loading]="loading"
+  [managerMode]="true"
   >
-  <ng-template let-area>
-    <p-button
-      icon="pi pi-car"
-      label="Edit Area"
-      (click)="editArea(area)"
-      >
-    </p-button>
-    <p-button
-      icon="pi pi-car"
-      label="Delete Area"
-      (click)="deleteArea(area)"
-      >
-    </p-button>
-  </ng-template>
 </app-area-dataView>
 
 <p-toast></p-toast>
-
-<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
-  Content
-</p-confirmDialog>

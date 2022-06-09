@@ -23,6 +23,8 @@ export class MapDialogComponent implements OnInit {
 
   park!: Park;
 
+  deleteParkVisible = false;
+
   parkChangeSubscription?: Subscription;
 
   extraStyleColors = [
@@ -39,7 +41,6 @@ export class MapDialogComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private confirmService: ConfirmationService,
     private messageService: MessageService,
     private parkService: ParkService
   ) { }
@@ -70,33 +71,36 @@ export class MapDialogComponent implements OnInit {
     this.router.navigateByUrl(RouteUrl.mEditPark(park.id));
   }
 
-  deletePark(park: Park) {
-    this.confirmService.confirm({
-      message: `Are you sure to delete the park with '${park.name}' name?`,
-      accept: () => {
-        this.parkService.deletePark(park).subscribe({
-          next: () => {
-            this.messageService.add({
-              summary: "Park Deletion",
-              closable: true,
-              severity: "success",
-              life:1500,
-              detail: `The park with '${park.name}' name is deleted.`
-            });
-          },
-          error: (err: HttpErrorResponse) => {
-            this.messageService.add({
-              summary: "Park Deletion",
-              closable: true,
-              severity: "error",
-              life:5000,
-              detail: err.error.message
-            });
-          }
-        })
+  deletePark() {
+    this.deleteParkVisible = true;
+  }
+
+  deleteConfirm() {
+    this.parkService.deletePark(this.park).subscribe({
+      next: () => {
+        this.messageService.add({
+          summary: "Park Deletion",
+          closable: true,
+          severity: "success",
+          life:1500,
+          detail: `The park with '${this.park.name}' name is deleted.`
+        });
 
         this.visible = false;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          summary: "Park Deletion",
+          closable: true,
+          severity: "error",
+          life:5000,
+          detail: err.error.message
+        });
       }
-    });
+    })
+  }
+
+  cancelConfirm() {
+    this.deleteParkVisible = false;
   }
 }

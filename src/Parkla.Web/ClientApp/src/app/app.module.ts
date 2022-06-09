@@ -57,6 +57,7 @@ import { MessageService } from 'primeng/api';
 import { ImageModule } from 'primeng/image';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ChipModule } from 'primeng/chip';
 import { DataViewModule } from 'primeng/dataview';
 import { ParkMapComponent } from '@app/pages/users/park-map/park-map.component';
 import { ParkAreaComponent } from '@app/pages/users/park-area/park-area.component';
@@ -104,6 +105,7 @@ import { UserFormComponent } from './shared/components/user-form/user-form.compo
 import { ReservationModalComponent } from './shared/components/reservation-modal/reservation-modal.component';
 import { DatePipe } from '@angular/common';
 import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
+import { ParklaDialogComponent } from './shared/components/parkla-dialog/parkla-dialog.component';
 
 @NgModule({
   declarations: [
@@ -143,6 +145,7 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
     UserFormComponent,
     ReservationModalComponent,
     MapDialogComponent,
+    ParklaDialogComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -152,6 +155,7 @@ import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.co
     QRCodeModule,
     FormsModule,
     DropdownModule,
+    ChipModule,
     TabMenuModule,
     KnobModule,
     BadgeModule,

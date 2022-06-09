@@ -2,7 +2,7 @@
   #cd
   [modal]="true"
   [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
-  [closeOnEscape]="true"
+  [closeOnEscape]="false"
   [closable]="true"
   [(visible)]="visible"
   [maximizable]="true"
@@ -114,7 +114,7 @@
       </p-table>
     </div>
 
-    <p-fieldset legend="Extras" styleClass="mt-5">
+    <p-fieldset legend="Extras" styleClass="mt-5 mb-2">
       <div class="text-center" *ngIf="!park.extras || park.extras.length == 0">
         <h6 class="text-muted">
           Park has no extras.
@@ -133,13 +133,25 @@
     <div class="mt-3">
       <span *ngIf="managerMode">
         <p-button icon="pi pi-pencil" class="icon-button" (onClick)="editPark(park)" ></p-button>
-        <p-button icon="pi pi-trash" class="icon-button" styleClass="p-button-danger" (onClick)="deletePark(park)" ></p-button>
+        <p-button icon="pi pi-trash" class="icon-button" styleClass="p-button-danger" (onClick)="deletePark()" ></p-button>
       </span>
       <p-button icon="pi pi-car" label="Go Park" styleClass="p-button-success" (onClick)="navigateToParkAreas(park)" ></p-button>
     </div>
   </ng-template>
 </p-dialog>
 
-<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}" [style]="{width: '50vw'}">
-  Content
-</p-confirmDialog>
+<app-parkla-dialog
+  [visible]="deleteParkVisible"
+  rightButtonStyleClass="p-button-danger"
+  rightButtonLabel="Delete"
+  rightButtonIcon="pi pi-trash"
+  (rightButtonClick)="deleteConfirm()"
+  (leftButtonClick)="cancelConfirm()"
+  title="Park Deletion"
+  >
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <h6 class="my-1">{{park?.id}}</h6>
+    <h6 class="my-1">{{park?.name}}</h6>
+    <h6 class="my-1">{{park?.location}}</h6>
+  </div>
+</app-parkla-dialog>

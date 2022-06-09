@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ContentChild, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
 import { ParkArea } from '@app/core/models/park-area';
@@ -8,7 +8,7 @@ import { ParkAreaService } from '@app/core/services/park-area.service';
 import { SignalrService } from '@app/core/services/signalr.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { ISubscription } from '@microsoft/signalr';
-import { LazyLoadEvent, SelectItem } from 'primeng/api';
+import { LazyLoadEvent, MessageService, SelectItem } from 'primeng/api';
 import { DataView } from 'primeng/dataview';
 import { Subscription } from 'rxjs';
 
@@ -19,20 +19,25 @@ import { Subscription } from 'rxjs';
 })
 export class AreaDataViewComponent implements OnInit, OnDestroy {
 
-  areas!: ParkArea[];
-
-  totalRecords = 0;
-
   @Input()
   pageSize = 10;
-
-  nextRecord = 0;
 
   @Input()
   loading = false;
 
+  @Input()
+  managerMode = false;
+
   @Output()
   onFetchError = new EventEmitter<string>();
+
+  areas!: ParkArea[];
+
+  totalRecords = 0;
+
+  nextRecord = 0;
+
+  areaDeleteVisible = false;
 
   sortOptions: SelectItem[] = [
     {
@@ -68,9 +73,6 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
   @ViewChild("dv")
   dataView!: DataView;
 
-  @ContentChild(TemplateRef,{static:false})
-  testTemplateRef!: TemplateRef<any>;
-
   searchTOID?: NodeJS.Timeout;
   lastSearchSeconds = -10;
   lastSearchInput: string | null = null;
@@ -82,15 +84,23 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
   parkReservationStreamSubscription?: ISubscription<any>;
   parkAreaChangesSubscription?: Subscription;
 
+  deletingArea?: ParkArea;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private parkAreaService: ParkAreaService,
     private authService: AuthService,
-    private signalrService: SignalrService
+    private signalrService: SignalrService,
+    private messageService: MessageService
   ) {
 
   }
+
+  newArea() {
+    this.router.navigateByUrl(RouteUrl.mNewParkArea(this.getParkId()))
+  }
+
   ngOnDestroy(): void {
     this.unsubscribe.forEach(x => x.unsubscribe());
     this.stopReservedCountStream();
@@ -167,6 +177,7 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   onSortChange(event:any) {
     let value = event.value;
+
     if (value.indexOf('!') === 0) {
       this.sortOrder = 1;
       this.sortField = value.substring(1, value.length);
@@ -295,5 +306,42 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   onImageError(image: HTMLImageElement) {
     image.src = templateNoImageUrl;
+  }
+
+  editArea(area: ParkArea) {
+    this.router.navigateByUrl(RouteUrl.mEditParkArea(this.getParkId(), area.id))
+  }
+
+  deleteArea(area: ParkArea) {
+    this.deletingArea = area;
+    this.areaDeleteVisible = true;
+  }
+
+  deleteConfirm() {
+    this.areaDeleteVisible = false;
+    this.parkAreaService.deleteArea(this.deletingArea!).subscribe({
+      next: () => {
+        this.messageService.add({
+          summary: "Park Area Deletion",
+          closable: true,
+          severity: "success",
+          life: 1500,
+          detail: `The park area with '${this.deletingArea!.name}' is deleted`
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.messageService.add({
+          summary: "Park Area Deletion",
+          closable: true,
+          severity: "error",
+          life:5000,
+          detail: err.error.message
+        });
+      }
+    });
+  }
+
+  cancelConfirm() {
+    this.areaDeleteVisible = false;
   }
 }

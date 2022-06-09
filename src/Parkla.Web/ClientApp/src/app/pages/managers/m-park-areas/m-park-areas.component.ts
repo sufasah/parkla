@@ -45,44 +45,6 @@ export class MParkAreasComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(RouteUrl.mParkMap());
   }
 
-  newArea() {
-    this.router.navigateByUrl(RouteUrl.mNewParkArea(this.parkid))
-  }
-
-  editArea(area: ParkArea) {
-    this.router.navigateByUrl(RouteUrl.mEditParkArea(this.parkid,area.id))
-  }
-
-  deleteArea(area: ParkArea) {
-    this.confirmService.confirm({
-      message: `Are you sure to delete the park area with '${area.name}'?`,
-      accept: () => {
-        this.parkAreaService.deleteArea(area).subscribe({
-          next: () => {
-            this.messageService.add({
-              summary: "Park Area Deletion",
-              closable: true,
-              severity: "success",
-              life: 1500,
-              detail: `The park area with '${area.name}' is deleted`
-            });
-            this.dataView.refresh();
-          },
-          error: (err: HttpErrorResponse) => {
-            this.messageService.add({
-              summary: "Park Area Deletion",
-              closable: true,
-              severity: "error",
-              life:5000,
-              detail: err.error.message
-            });
-          }
-        });
-
-      }
-    });
-  }
-
   onError(error: string) {
     this.messageService.add({
       summary: "Fetch Park Areas",

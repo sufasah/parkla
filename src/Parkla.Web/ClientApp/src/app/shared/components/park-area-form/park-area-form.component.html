@@ -18,7 +18,7 @@
       [(ngModel)]="area.name"
       pInputText
       placeholder="Area name"
-      pattern="[a-zA-Z0-9 ]+"
+      pattern="[a-zA-Z0-9 \-_]+"
       maxlength="50"
       />
   </div>
@@ -38,7 +38,7 @@
       [(ngModel)]="area.description"
       pInputText
       placeholder="Area description"
-      pattern="[a-zA-Z0-9 ]+"
+      pattern="[a-zA-Z0-9 \.\-\/_*#$!?,'^+-]+"
       />
   </div>
 

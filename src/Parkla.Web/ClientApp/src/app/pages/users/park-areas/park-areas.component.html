@@ -1,18 +1,25 @@
 <p-toolbar>
   <div>
-    <button pButton pRipple (click)="goMap()">Go Map</button>
+    <button
+      pButton
+      pRipple
+      icon="pi pi-map"
+      label="Map"
+      (click)="goMap()"
+      >
+    </button>
   </div>
   <app-user-avatar
     class="p-toolbar-group-right"
     >
   </app-user-avatar>
 </p-toolbar>
+
 <app-area-dataView
   [pageSize]="pageSize"
   (onFetchError)="onError($event)"
   [loading]="loading"
   >
-
 </app-area-dataView>
 
 <p-toast></p-toast>
