@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { Message, MessageService } from 'primeng/api';
+import { MenuItem, Message, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-m-new-park-area',
@@ -20,6 +20,12 @@ export class MNewParkAreaComponent implements OnInit {
   };
 
   adding = false;
+
+  bcModel: MenuItem[] = [
+    {icon: 'pi pi-map', routerLink: "/"+RouteUrl.mParkMap()},
+    {label: 'Park Areas', routerLink: "/"+RouteUrl.mParkAreas(this.getParkId())},
+    {label: `New Park Area`, styleClass: "last-item"},
+  ];
 
   constructor(
     private router: Router,

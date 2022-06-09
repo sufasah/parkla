@@ -86,20 +86,22 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ParkImage.src = templateNoImageUrl;
     }
 
-    this.signalrService.connectedEvent.subscribe(() => {
-      this.registerSpaceChanges();
-      this.registerReservationChanges();
-    });
+    this.signalrService.connectedEvent.subscribe((connected) => {
+      if(connected === null) return;
 
-    this.signalrService.disconnectedEvent.subscribe(() => {
-      this.unregisterSpaceChanges();
-      this.unregisterReservationChanges();
+      if(connected) {
+        this.registerSpaceChanges();
+        this.registerReservationChanges();
+      }
+      else {
+        this.unregisterSpaceChanges();
+        this.unregisterReservationChanges();
+      }
     });
   }
 
   registerSpaceChanges() {
     this.spaceChangesSubscription = this.signalrService.registerParkSpaceChanges(this.parkArea.id,(space, isDelete) => {
-      console.log(space, isDelete);
       const index = this.parkArea.spaces.findIndex(x => x.id == space.id);
       const oldSpace = this.parkArea.spaces[index];
       if(index == -1) {

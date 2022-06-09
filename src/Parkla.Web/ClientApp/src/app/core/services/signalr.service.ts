@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState, IStreamSubscriber } from '@microsoft/signalr';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { signalAllParks, signalAllParksReservedSpaceCount, signalConnectionUrl, signalParkAreaChanges, signalParkAreaChangesRegister, signalParkAreaChangesUnRegister, signalParkAreasReservedSpaceCount, signalParkChanges, signalParkChangesRegister, signalParkChangesUnRegister, signalParkSpaceChanges, signalParkSpaceChangesRegister, signalParkSpaceChangesUnRegister, signalReservationChanges, signalReservationChangesRegister, signalReservationChangesUnRegister } from '../constants/signalr';
 import { Park } from '../models/park';
 import { ParkArea } from '../models/park-area';
@@ -24,9 +24,7 @@ export class SignalrService {
   private _subscription?: Subscription;
   private _startProimse!: Promise<void>;
 
-  connectedEvent = new EventEmitter<void>(true)
-  disconnectedEvent = new EventEmitter<void>(true)
-
+  connectedEvent = new BehaviorSubject<boolean | null>(null)
 
   get isConnected() {
     return this._connection.state == HubConnectionState.Connected;
@@ -45,7 +43,7 @@ export class SignalrService {
 
     this._connection.onclose(() => {
       this._subscription?.unsubscribe();
-      this.disconnectedEvent.emit();
+      this.connectedEvent.next(false);
       this.startConnection();
     });
 
@@ -69,7 +67,7 @@ export class SignalrService {
       this._connection.invoke(params.name, ...params.args);
     });
     this.handleQueue();
-    this.connectedEvent.emit();
+    this.connectedEvent.next(true);
   }
 
   private handleQueue() {

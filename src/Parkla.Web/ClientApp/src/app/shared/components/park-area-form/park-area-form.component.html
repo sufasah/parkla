@@ -3,122 +3,139 @@
   (ngSubmit)="submit(addAreaForm)"
   >
 
-  <div class="p-inputgroup">
-    <label
-      for="name"
-      class="p-inputgroup-addon"
-      >
-      <i class="pi pi-user"></i>
-    </label>
+  <h6>
+    <label for="name">Area Name</label>
+  </h6>
+  <input
+    type="text"
+    name="name"
+    required
+    [(ngModel)]="area.name"
+    pInputText
+    pattern="[a-zA-Z0-9 \-_]+"
+    maxlength="50"
+    class="w-100"
+    />
 
-    <input
-      type="text"
-      name="name"
-      required
-      [(ngModel)]="area.name"
-      pInputText
-      placeholder="Area name"
-      pattern="[a-zA-Z0-9 \-_]+"
-      maxlength="50"
-      />
+  <h6 class="mt-3">
+    <label for="description">Area Description</label>
+  </h6>
+  <input
+    type="text"
+    name="description"
+    maxlength="200"
+    [(ngModel)]="area.description"
+    pInputText
+    pattern="[a-zA-Z0-9 \.\-\/_*#$!?,'^+-]+"
+    class="w-100"
+    />
+
+  <h6 class="mt-3">
+    <label for="reservationsEnabled">Reservations</label>
+  </h6>
+  <p-selectButton
+    name="reservationsEnabled"
+    [options]="[{label:'Enabled',value:true},{label:'Disabled',value:false}]"
+    [(ngModel)]="area.reservationsEnabled"
+    optionLabel="label"
+    optionValue="value"
+    [required]="true"
+    >
+  </p-selectButton>
+
+  <p-divider type="dotted" align="center">
+    <h6 class="pricings-header px-3 py-2 border rounded">Pricings</h6>
+  </p-divider>
+
+  <div class="mt-5" *ngFor="let pricing of area.pricings; let i=index">
+    <div class="row">
+      <div class="col-6">
+        <h6>
+          <label for="pricing{{i}}">Pricing Type</label>
+        </h6>
+        <input
+          [name]='"pricing"+i'
+          type="text"
+          pInputText
+          required
+          maxlength="30"
+          [(ngModel)]="pricing.type"
+          class="w-100"
+          />
+      </div>
+      <div class="col-6">
+        <h6>
+          <label for="pricing{{i}}-unit">Time Unit</label>
+        </h6>
+        <p-dropdown
+          [name]="'pricing'+i+'-unit'"
+          [options]="timeUnitOptions"
+          [(ngModel)]="pricing.unit"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-dropdown>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-6">
+        <h6>
+          <label for="pricing{{i}}-price">Price</label>
+        </h6>
+        <p-inputNumber
+          [name]="'pricing'+i+'-price'"
+          [(ngModel)]="pricing.price"
+          [max]="999999999999999999999999999999"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-inputNumber>
+      </div>
+      <div class="col-6">
+        <h6>
+          <label for="pricing{{i}}-amount">Time Amount</label>
+        </h6>
+        <div class="p-inputgroup">
+          <p-inputNumber
+            [name]="'pricing'+i+'-amount'"
+            [(ngModel)]="pricing.amount"
+            [max]="999"
+            [required]="true"
+            class="w-100"
+            styleClass="w-100"
+            >
+          </p-inputNumber>
+          <button
+            pButton
+            pRipple
+            type="button"
+            class="p-inputgroup-addon remove-pricing"
+            (click)="removePricing(i)"
+            >
+            <i class="pi pi-minus" style="line-height: 1.25;color:white"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="p-inputgroup">
-    <label
-      for="location"
-      class="p-inputgroup-addon"
-      >
-      <i class="pi pi-user"></i>
-    </label>
-
-    <input
-      type="text"
-      name="description"
-      maxlength="200"
-      [(ngModel)]="area.description"
-      pInputText
-      placeholder="Area description"
-      pattern="[a-zA-Z0-9 \.\-\/_*#$!?,'^+-]+"
-      />
-  </div>
-
-  <div>
-    <h5>Reservations</h5>
-    <p-selectButton
-      name="reservationsEnabled"
-      [options]="[{label:'Enabled',value:true},{label:'Disabled',value:false}]"
-      [(ngModel)]="area.reservationsEnabled"
-      optionLabel="label"
-      optionValue="value"
-      [required]="true"
-      >
-    </p-selectButton>
-  </div>
-
-  <div *ngFor="let pricing of area.pricings; let i=index" class="p-inputgroup" >
-    <input
-      [name]='"pricing"+i'
-      type="text"
-      pInputText
-      placeholder="Pricing type"
-      required
-      maxlength="30"
-      [(ngModel)]="pricing.type"
-      />
-
-    <p-inputNumber
-      [name]="'pricing'+i+'-amount'"
-      [(ngModel)]="pricing.amount"
-      [max]="999"
-      [required]="true"
-      placeholder="Time amount"
-      >
-    </p-inputNumber>
-
-    <p-dropdown
-      [name]="'pricing'+i+'-unit'"
-      [options]="timeUnitOptions"
-      [(ngModel)]="pricing.unit"
-      placeholder="Time unit"
-      [required]="true"
-      >
-    </p-dropdown>
-
-    <p-inputNumber
-      [name]="'pricing'+i+'-price'"
-      [(ngModel)]="pricing.price"
-      [max]="999999999999999999999999999999"
-      [required]="true"
-      placeholder="Price"
-      >
-    </p-inputNumber>
-
-
-    <button
-      pButton
-      pRipple
-      type="button"
-      class="p-inputgroup-addon remove-pricing"
-      (click)="removePricing(i)"
-      >
-      <i class="pi pi-minus" style="line-height: 1.25;color:white"></i>
-    </button>
-  </div>
-
-  <div class="d-flex justify-content-end mt-1 mb-2">
+  <div class="d-flex justify-content-end mt-3 mb-2">
     <button
       pButton
       type="button"
       class="add-pricing"
       (click)="addPricing()"
       icon="pi pi-plus"
-      [style]="area.pricings && area.pricings!.length > 0 ? 'width: 63px;':''"
+      [style]="area.pricings && area.pricings!.length > 0 ? 'width: 54px; height:42px;':''"
       [label]="area.pricings && area.pricings!.length > 0 ? '' : 'Add Pricing'"
       >
     </button>
   </div>
 
-  <div>
+  <div class="d-flex justify-content-center mt-3">
     <button
       type="submit"
       pButton
@@ -126,6 +143,7 @@
       class="p-button-raised p-button-primary"
       [label]="submitLabel"
       [loading]="loading"
+      class="w-50"
       >
     </button>
   </div>

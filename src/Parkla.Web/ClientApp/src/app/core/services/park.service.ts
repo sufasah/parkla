@@ -44,7 +44,9 @@ export class ParkService implements OnDestroy {
         this.setOrAddMemoryPark(park);
     });
 
-    const sub2 = this.signalrService.connectedEvent.subscribe(() => {
+    const sub2 = this.signalrService.connectedEvent.subscribe((connected) => {
+      if(!connected) return;
+
       const sub3 = this.signalrService.GetAllParksAsStream({
         next: (park: Park) => {
           if(park && park.id)

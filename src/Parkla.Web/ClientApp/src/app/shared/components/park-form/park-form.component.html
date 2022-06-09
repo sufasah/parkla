@@ -100,8 +100,9 @@
   </div>
 
   <p-divider type="dotted" align="center">
-    <h6 class="extras-header px-3 py-2 border rounded">Extras</h6>
+    <h6 class="px-3 py-2 border rounded">Extras</h6>
   </p-divider>
+
   <div *ngFor="let extra of park.extras; let i=index; trackBy:track" class="p-inputgroup mt-2">
     <input
       [name]='"extra"+i'

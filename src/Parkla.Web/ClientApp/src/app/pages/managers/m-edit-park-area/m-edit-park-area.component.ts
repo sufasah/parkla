@@ -6,7 +6,7 @@ import { ParkArea } from '@app/core/models/park-area';
 import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { EditAreaTemplateComponent } from '@app/shared/components/edit-area-template/edit-area-template.component';
-import { Message, MessageService } from 'primeng/api';
+import { MenuItem, Message, MessageService } from 'primeng/api';
 @Component({
   selector: 'app-m-edit-park-area',
   templateUrl: './m-edit-park-area.component.html',
@@ -25,6 +25,13 @@ export class MEditParkAreaComponent implements OnInit {
   };
 
   editing = false;
+
+  bcModel: MenuItem[] = [
+    {icon: 'pi pi-map', routerLink: "/"+RouteUrl.mParkMap()},
+    {label: 'Park Areas', routerLink: "/"+RouteUrl.mParkAreas(this.getParkId())},
+    {label: '' + this.getAreaId(), routerLink: "/"+RouteUrl.mParkArea(this.getParkId(), this.getAreaId())},
+    {label: `Edit Park Area`, styleClass: "last-item"},
+  ];
 
   constructor(
     private router: Router,

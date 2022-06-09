@@ -86,6 +86,8 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   deletingArea?: ParkArea;
 
+  signalrSubscribed = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -115,21 +117,10 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
       if(page > 1)
         this.nextRecord = page * this.pageSize - this.pageSize;
     }
-
-    const sub = this.signalrService.connectedEvent.subscribe(() => {
-      if(this.areas)
-        this.startReservedCountStream(this.areas.map(x => x.id));
-        this.registerParkAreaChanges();
-    });
-
-    const sub2 = this.signalrService.disconnectedEvent.subscribe(() => {
-      this.stopReservedCountStream();
-    })
-
-    this.unsubscribe.push(sub,sub2);
   }
 
   startReservedCountStream(areaIds:number[]) {
+    this.stopReservedCountStream();
     this.parkReservationStreamSubscription = this.signalrService.getParkAreasReservedSpaceCountAsStream(
       areaIds,
       {
@@ -155,7 +146,6 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
 
   registerParkAreaChanges() {
     this.parkAreaChangesSubscription = this.signalrService.registerParkAreaChanges(this.getParkId(), (area, isDelete) => {
-      console.log(area, isDelete);
 
       const oldAreaIndex = this.areas.findIndex(x => x.id == area.id);
       if(oldAreaIndex != -1) {
@@ -276,6 +266,24 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
       next: response => {
 
         this.areas = response.body!;
+
+        if(!this.signalrSubscribed) {
+          this.signalrSubscribed = true;
+
+          const sub = this.signalrService.connectedEvent.subscribe((connected) => {
+            if(connected === null) return;
+
+            if(connected) {
+              this.startReservedCountStream(this.areas.map(x => x.id));
+              this.registerParkAreaChanges();
+            }
+            else {
+              this.stopReservedCountStream();
+            }
+          });
+
+          this.unsubscribe.push(sub);
+        }
 
         if(response.headers.has("x-total-records")) {
           this.totalRecords = Number(response.headers.get("x-total-records"));
