@@ -36,7 +36,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
   appMap!: Map;
 
   @Output()
-  markerOnClick = new EventEmitter<{event:any; element:MapMarkerComponent}>();
+  markerOnClick = new EventEmitter<{event:any; changablePark: ChangablePark}>();
 
   markersOnTheMap = new Map<string, MapMarker>();
   searchMarker?: Marker;
@@ -269,13 +269,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy{
     this.searchBoxParent?.appendChild(this.searchBox.getSearchBoxHTML());
   }
 
-  makeMarkerElement(park: Park): [HTMLElement, ComponentRef<MapMarkerComponent>] {
+  makeMarkerElement(park: ChangablePark): [HTMLElement, ComponentRef<MapMarkerComponent>] {
     let componentRef = this.viewRef.createComponent(MapMarkerComponent);
     componentRef.instance.onClick
       .subscribe((event:any) => {
         this.markerOnClick.emit({
           event: event,
-          element: componentRef.instance
+          changablePark: park
         });
       });
 

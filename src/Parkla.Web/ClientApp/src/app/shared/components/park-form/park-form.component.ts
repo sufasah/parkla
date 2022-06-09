@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Park } from '@app/core/models/park';
-import { makeTomTomMap } from '@app/core/utils/tomtom';
+import { makeTomTomMap, TomTomDefaultLat, TomTomDefaultLng, TomTomDefaultZoom } from '@app/core/utils/tomtom';
 import { Map, Marker } from '@tomtom-international/web-sdk-maps';
 
 @Component({
@@ -66,15 +66,44 @@ export class ParkFormComponent implements OnInit {
     this.park.extras.splice(index,1);
   }
 
+  jumpOnShow() {
+    if(this.park.latitude && this.park.longitude) {
+      this.selectLatLngMap.jumpTo({
+        center: {
+          lat: this.park.latitude,
+          lng: this.park.longitude,
+        },
+        zoom: 16
+      });
+
+      this.latLngMarker = new Marker()
+        .setLngLat([this.park.longitude, this.park.latitude])
+        .addTo(this.selectLatLngMap);
+    }
+    else {
+      this.selectLatLngMap.jumpTo({
+        center: {
+          lat: TomTomDefaultLat,
+          lng: TomTomDefaultLng,
+        },
+        zoom: TomTomDefaultZoom
+      });
+    }
+  }
+
   showMapModal() {
     this.mapModalVisible = true;
     if(!this.selectLatLngMap) {
       setTimeout(() => {
         this.selectLatLngMap = makeTomTomMap("selectLatLngMap");
+        this.jumpOnShow();
         this.selectLatLngMap.on("click",(event) => {
           this.setLatLng(event.lngLat.lat,event.lngLat.lng);
         });
       }, 0);
+    }
+    else {
+      this.jumpOnShow();
     }
   }
 

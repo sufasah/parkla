@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Park } from '@app/core/models/park';
+import { ChangablePark, Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-map-dialog',
@@ -21,6 +22,8 @@ export class MapDialogComponent implements OnInit {
   managerMode = false;
 
   park!: Park;
+
+  parkChangeSubscription?: Subscription;
 
   extraStyleColors = [
     "--green-500","--yellow-500","--indigo-500","--cyan-600","--red-500","--teal-500","--blue-500","--purple-500","--gray-900","--orange-600"
@@ -45,8 +48,13 @@ export class MapDialogComponent implements OnInit {
 
   }
 
-  showDialog(park: Park) {
+  showDialog(park: ChangablePark) {
+    this.parkChangeSubscription?.unsubscribe();
     this.park = park;
+
+    this.parkChangeSubscription = park.subject.subscribe(() => {
+      this.park = {...park};
+    });
     this.visible = true;
   }
 

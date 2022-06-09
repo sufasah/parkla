@@ -6,7 +6,7 @@ import { AppUser } from '@app/core/models/app-user';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { Message, MessageService } from 'primeng/api';
+import { MenuItem, Message, MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 
 @Component({
@@ -18,6 +18,11 @@ export class MProfileComponent implements OnInit {
   appUser!: AppUser;
 
   updating = false;
+
+  bcModel: MenuItem[] = [
+    {icon: 'pi pi-map', routerLink: "/"+RouteUrl.mParkMap()},
+    {label: `Profile`, styleClass: "last-item"},
+  ];
 
   constructor(
     private authService: AuthService,

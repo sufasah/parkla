@@ -136,7 +136,7 @@ export class UserFormComponent implements OnInit {
   }
 
   searchDistrict(evt: any) {
-    this.districtService.search(evt.query).subscribe({
+    this.districtService.search(this.city!.id, evt.query).subscribe({
       next: districts => {
         this.districtSuggestions = districts;
         this.districtEmptyMessage = "No city found"
@@ -146,6 +146,11 @@ export class UserFormComponent implements OnInit {
         this.districtEmptyMessage = err.error.message;
       }
     });
+  }
+
+  cityChange(value: City | null) {
+    this.district = null;
+    this.city = value;
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Park } from '@app/core/models/park';
+import { ChangablePark, Park } from '@app/core/models/park';
 import { AuthService } from '@app/core/services/auth.service';
 import { ParkService } from '@app/core/services/park.service';
 import { RouteUrl } from '@app/core/utils/route';
@@ -35,11 +35,8 @@ export class MParkMapComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(RouteUrl.mNewPark());
   }
 
-  markerClick(event:{event:any; element:MapMarkerComponent}) {
-    let element = event.element;
-    event = event.event;
-
-    this.mapDialog?.showDialog(element.park);
+  markerClick(event:{event:any; changablePark: ChangablePark}) {
+    this.mapDialog?.showDialog(event.changablePark);
     $("#appMap div.mapboxgl-ctrl-top-right button.mapboxgl-ctrl-shrink").trigger("click");
   }
 

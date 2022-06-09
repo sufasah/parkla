@@ -10,9 +10,10 @@ export class DistrictService {
 
   constructor(private httpClient: HttpClient) { }
 
-  search(search: string) {
+  search(cityId: number, search: string) {
     return this.httpClient.get<District[]>(apiDistricts+"/search", {
       params: {
+        cityId,
         s: search
       }
     });

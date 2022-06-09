@@ -18,8 +18,8 @@ public class DistrictService : EntityServiceBase<District>, IDistrictService
         _repo = districtRepo;
         _validator = validator;
     }
-    public async Task<List<District>> SearchAsync(string search, CancellationToken cancellationToken = default)
+    public async Task<List<District>> SearchAsync(int cityId, string search, CancellationToken cancellationToken = default)
     {
-        return await _repo.GetListAsync(x =>  x.Name!.ToLower().Contains(search.ToLower()), cancellationToken);
+        return await _repo.GetListAsync(x =>  x.Name!.ToLower().Contains(search.ToLower()) && x.CityId == cityId, cancellationToken);
     }
 }

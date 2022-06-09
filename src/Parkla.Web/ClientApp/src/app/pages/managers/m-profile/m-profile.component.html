@@ -8,13 +8,19 @@
   </app-user-avatar>
 </p-toolbar>
 
-<app-user-form
-  [appUser]="appUser"
-  (formSubmit)="save($event)"
-  [isEdit]="true"
-  [loading]="updating"
-  submitLabel="Save"
-  >
-</app-user-form>
+<div class="container mt-5 p-0">
+  <p-breadcrumb class="page-breadcrumb" [model]="bcModel">
+  </p-breadcrumb>
+</div>
+<div class="container mb-5 p-3 shadow-lg card">
+  <app-user-form
+    [appUser]="appUser"
+    (formSubmit)="save($event)"
+    [isEdit]="true"
+    [loading]="updating"
+    submitLabel="Save"
+    >
+  </app-user-form>
+</div>
 
 <p-toast (onClose)="messageClose($event.message)"></p-toast>

@@ -22,13 +22,19 @@ public class DistrictsController : EntityControllerBase<District, DistrictDto>
 
     [HttpGet("search")]
     [AllowAnonymous]
-    public async Task<List<District>> Search(
-        [FromQuery] string s,
+    public async Task<IActionResult> Search(
+        [FromQuery] int? cityId,
+        [FromQuery] string? s,
         CancellationToken cancellationToken
     ) {
         if(string.IsNullOrWhiteSpace(s)) s = "";
         s = s.Trim();
-        return await _service.SearchAsync(s, cancellationToken);
+
+        if(!cityId.HasValue)
+            return BadRequest("City id must be given");
+        
+        var result = await _service.SearchAsync(cityId.Value, s, cancellationToken);
+        return Ok(result);
     }
     
 }
