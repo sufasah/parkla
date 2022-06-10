@@ -14,29 +14,26 @@
     >
   </p-calendar>
 
-  <button
-    pButton
+  <p-button
     pRipple
     type="button"
-    class="p-button-warning me-2"
+    class="me-2"
+    icon="pi pi-calendar"
     (click)="showCalendar()"
     >
-    <i class="pi pi-calendar" style="line-height: 1.25;color:white"></i>
-  </button>
+  </p-button>
 
-  <p-chip
-    label="{{timeRange[0] | date : 'yyyy-MM-dd HH:mm'}}"
-    >
-  </p-chip>
+  <div class="datetime border rounded fw-bold">
+    {{timeRange[0] | date : 'yyyy-MM-dd HH:mm'}}
+  </div>
 
   <div>
-    <span class="block rounded-circle d-flex align-items-center justify-content-center mx-2" style="width: 30px; height: 30px; background-color: var(--yellow-300); color: var(--yellow-900);">
-      <i class="pi pi-arrow-right fs-6"></i>
+    <span class="block rounded-circle d-flex align-items-center justify-content-center mx-2" style="width: 25px; height: 25px; background-color: var(--primary-500); color: var(--surface-0);">
+      <i class="pi pi-arrow-right fw-bolder" style="font-size: 12px;"></i>
     </span>
   </div>
 
-  <p-chip
-    label="{{timeRange[1] | date : 'yyyy-MM-dd HH:mm'}}"
-    >
-  </p-chip>
+  <div class="datetime border rounded fw-bold">
+    {{timeRange[1] | date : 'yyyy-MM-dd HH:mm'}}
+  </div>
 </div>

@@ -1,11 +1,22 @@
 :host ::ng-deep {
-  .invisible-calendar *{
+  .invisible-calendar input{
     &:focus,
-    &:hover,
+    &:hover
     &:active {
       border: none;
       outline: none;
       box-shadow: none;
     }
   }
+}
+
+.datetime {
+  border-color: var(--surface-400)!important;
+  background-color: var(--primary-50);
+  padding: 10px;
+  box-shadow: 3px 4px 8px rgba(0,0,0,0.03);
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: var(--primary-900);
+  width: 170px;
+  height: 50px;
 }
