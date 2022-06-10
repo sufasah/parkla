@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { templatesUrl, templateNoImageUrl } from '@app/core/constants/http';
-import { SpaceStatus } from '@app/core/enums/SpaceStatus';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { Reservation } from '@app/core/models/reservation';

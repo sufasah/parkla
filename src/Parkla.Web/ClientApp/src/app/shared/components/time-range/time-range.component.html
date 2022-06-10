@@ -1,31 +1,42 @@
-<p-calendar
-  *ngIf="enabled"
-  [ngModel]="timeRange"
-  (ngModelChange)="timeRangeChange($event)"
-  [minDate]="minDate!"
-  [maxDate]="maxDate!"
-  selectionMode="range"
-  [showTime]="true"
-  inputId="time"
-  >
-</p-calendar>
+<div class="d-flex align-items-center">
 
-from
-<input
-  *ngIf="enabled"
-  type="text"
-  pInputText
-  [ngModel]="timeRange[0]?.toLocaleString()"
-  [disabled]="true"
-  style="opacity: 1;"
-  />
+  <p-calendar
+    *ngIf="enabled"
+    [ngModel]="timeRange"
+    (ngModelChange)="timeRangeChange($event)"
+    [minDate]="minDate!"
+    [maxDate]="maxDate!"
+    selectionMode="range"
+    [showTime]="true"
+    inputId="time"
+    style="width: 0;"
+    styleClass="invisible-calendar"
+    >
+  </p-calendar>
 
-to
-<input
-  *ngIf="enabled"
-  type="text"
-  pInputText
-  [ngModel]="timeRange[1]?.toLocaleString()"
-  [disabled]="true"
-  style="opacity: 1;"
-  />
+  <button
+    pButton
+    pRipple
+    type="button"
+    class="p-button-warning me-2"
+    (click)="showCalendar()"
+    >
+    <i class="pi pi-calendar" style="line-height: 1.25;color:white"></i>
+  </button>
+
+  <p-chip
+    label="{{timeRange[0] | date : 'yyyy-MM-dd HH:mm'}}"
+    >
+  </p-chip>
+
+  <div>
+    <span class="block rounded-circle d-flex align-items-center justify-content-center mx-2" style="width: 30px; height: 30px; background-color: var(--yellow-300); color: var(--yellow-900);">
+      <i class="pi pi-arrow-right fs-6"></i>
+    </span>
+  </div>
+
+  <p-chip
+    label="{{timeRange[1] | date : 'yyyy-MM-dd HH:mm'}}"
+    >
+  </p-chip>
+</div>

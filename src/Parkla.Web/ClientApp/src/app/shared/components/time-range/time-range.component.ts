@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Calendar } from 'primeng/calendar';
 
 @Component({
   selector: 'app-time-range',
@@ -19,6 +20,9 @@ export class TimeRangeComponent implements OnInit {
   @Output()
   onChange = new EventEmitter<[Date?, Date?]>();
 
+  @ViewChild(Calendar)
+  calendar!: Calendar;
+
   timeRange:[Date?, Date?] = [
     new Date(),
     new Date(Date.now()+60000*15)
@@ -34,5 +38,9 @@ export class TimeRangeComponent implements OnInit {
     this.timeRange = timeRange;
     if(!this.timeRange[0] || !this.timeRange[1]) return;
     this.onChange.emit(this.timeRange);
+  }
+
+  showCalendar() {
+    this.calendar.toggle();
   }
 }

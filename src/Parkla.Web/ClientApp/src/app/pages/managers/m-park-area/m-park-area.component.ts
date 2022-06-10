@@ -96,8 +96,6 @@ export class MParkAreaComponent implements OnInit {
       this.showReservationModal.emit(false)
     else if(this.selectedArea.reservationsEnabled)
       this.showReservationModal.emit(true);
-
-    this.showReservationModal.emit(false)
   }
 
   reservationChanges(reservation: Reservation, isDelete: boolean) {

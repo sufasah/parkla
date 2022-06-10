@@ -1,6 +1,15 @@
-<p-toolbar>
-  <div #parkHeader class="park-header">
-    <button pButton pRipple (click)="goAreas()" label="Go Areas"></button>
+<div class="d-flex flex-column h-100">
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <button
+        pButton
+        pRipple
+        (click)="goAreas()"
+        label="Areas"
+        icon="pi pi-arrow-left"
+        >
+      </button>
+    </div>
 
     <app-time-range
       (onChange)="timeRangeChange($event)"
@@ -10,21 +19,21 @@
       >
     </app-time-range>
 
-  </div>
+    <app-user-avatar
+      class="p-toolbar-group-right"
+      >
+    </app-user-avatar>
+  </p-toolbar>
 
-  <app-user-avatar
-    class="p-toolbar-group-right"
+  <app-area-template
+    #parkTemplate
+    [parkArea]="selectedArea"
+    (spaceClicked)="spaceClicked($event)"
+    (reservationChanges)="reservationChanges($event.reservation,$event.isDelete)"
+    ngClass="flex-grow-1"
     >
-  </app-user-avatar>
-</p-toolbar>
-
-<app-area-template
-  #parkTemplate
-  [parkArea]="selectedArea"
-  (spaceClicked)="spaceClicked($event)"
-  (reservationChanges)="reservationChanges($event.reservation,$event.isDelete)"
-  >
-</app-area-template>
+  </app-area-template>
+</div>
 
 <app-reservation-modal
   [selectedSpace]="selectedSpace"
