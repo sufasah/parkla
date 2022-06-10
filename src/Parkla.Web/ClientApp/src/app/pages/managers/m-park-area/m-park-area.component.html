@@ -31,6 +31,7 @@
     [parkArea]="selectedArea"
     (spaceClicked)="spaceClicked($event)"
     (reservationChanges)="reservationChanges($event.reservation,$event.isDelete)"
+    (spaceChanges)="spaceChanges($event.space,$event.isDelete)"
     ngClass="flex-grow-1"
     >
   </app-area-template>

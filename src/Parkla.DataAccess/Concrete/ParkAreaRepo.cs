@@ -404,6 +404,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                     return clone;
                 }).ToList();
                 
+                var park = await context.FindAsync<Park>(new object[]{area.ParkId!}, cancellationToken: cancellationToken).ConfigureAwait(false);
+                
+                if(park == null)
+                    throw _parkNotFound;
+
                 var userSpaces = new List<ParkSpace>(area.Spaces); // every round it is userSpaces because in catch block whole state cleared like function started
                 
                 var allSpaces = await result.Collection(x => x.Spaces!)
@@ -415,6 +420,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 foreach (var item in deletingSpaces) {
                     var dsEntry = context.Entry(item);
                     dsEntry.State = EntityState.Deleted;
+                    
+                    if(item.Status == SpaceStatus.EMPTY)
+                        park.EmptySpace--;
+                    else if(item.Status == SpaceStatus.OCCUPIED)
+                        park.OccupiedSpace--;
                 }
                 
                 foreach (var item in userSpaces)
@@ -481,10 +491,10 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 
                 result.Property(x => x.MinPrice).IsModified = result.Property(x => x.AveragePrice).IsModified = result.Property(x => x.MaxPrice).IsModified = true;
                 
-                var park = await context.FindAsync<Park>(new object[]{area.ParkId!}, cancellationToken: cancellationToken).ConfigureAwait(false);
+                //var park = await context.FindAsync<Park>(new object[]{area.ParkId!}, cancellationToken: cancellationToken).ConfigureAwait(false);
 
-                if(park == null)
-                    throw _parkNotFound;
+                //if(park == null)
+                //    throw _parkNotFound;
 
                 (area.Park!.MinPrice, area.Park.AveragePrice, area.Park.MaxPrice) = await FindNewParkMinAvgMaxAsync(
                     context,
@@ -547,14 +557,11 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                             else throw new ParklaException($"One of the spaces with {item.Name} name has had binded to RealSpace which has already binded to another space. Please select another one again", HttpStatusCode.BadRequest);
                         }
                     } else {
-                        // SPACES WANT TO BINDED TO REALSPACEID ONES WHICH IS DIFFERENT FROM REALSPACE PROP
+                        // SPACES WANT TO BE BINDED TO REALSPACEID ONES WHICH IS DIFFERENT FROM REALSPACE PROP
                         // SO THIS ALGORITHM CAN BE LIKE THAT FIND NEXT ONE ASSIGN IT TO REALSPACE
                         item.RealSpace = await context.FindAsync<RealParkSpace>(new object[]{item.RealSpaceId!}, cancellationToken: cancellationToken).ConfigureAwait(false);
                         if(item.RealSpace == null)
                             throw new ParklaException($"One of the spaces with {item.Name} name has not binded to any RealSpace", HttpStatusCode.BadRequest);
-                        
-                        item.Status = item.RealSpace!.Status;
-                        item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
                     }
 
                     if(item.Status != item.RealSpace.Status) {
@@ -580,6 +587,9 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                                 break;
                         }
                     }
+
+                    item.Status = item.RealSpace!.Status;
+                    item.StatusUpdateTime = item.RealSpace.StatusUpdateTime;
                 }
 
                 // some spaces will be deleted also reservations will be deleted. So give the money of the user which paid for reservation.

@@ -26,6 +26,8 @@ public class CollectorRepo<TContext> : ICollectorRepo
                     .ThenInclude(x => x!.Area)
                     .ThenInclude(x => x!.Park)
                     .ThenInclude(x => x!.User)
+                    .Include(x => x.Space)
+                    .ThenInclude(x => x!.Pricing)
                     .Where(x => x.Id == dto.SpaceId && x.ParkId == dto.ParkId)
                     .SingleOrDefaultAsync()
                     .ConfigureAwait(false);

@@ -32,19 +32,19 @@ public class SimulateController : ControllerBase
     public static readonly string ParkId = "e23ca377-3f5e-4064-9de1-e23ccae372d9";
 
     public static readonly List<Tuple<int,string>> RealSpaces = new() {
-        new(12, "rs12"),
-        new(13, "rs13"),
-        new(14, "rs14"),
-        new(15, "rs15"),
-        new(16, "rs16"),
-        new(17, "rs17"),
-        new(18, "rs18"),
-        new(19, "rs19"),
-        new(20, "rs20"),
-        new(21, "rs21"),
-        new(23, "rs23"),
-        new(24, "rs24"),
-        new(25, "rs25"),
+        new(80, "rs176"),
+        new(81, "rs177"),
+        new(82, "rs178"),
+        new(83, "rs179"),
+        new(84, "rs180"),
+        new(85, "rs181"),
+        new(86, "rs182"),
+        new(87, "rs183"),
+        new(88, "rs184"),
+        new(89, "rs185"),
+        new(90, "rs186"),
+        new(91, "rs187"),
+        new(92, "rs188"),
     };
     private static readonly string _collectorEndpoint = "https://localhost:7071"; 
     private static readonly HttpClient httpClient = new(); // to collector http endpoint

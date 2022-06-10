@@ -99,8 +99,10 @@ export class MParkAreaComponent implements OnInit {
   }
 
   reservationChanges(reservation: Reservation, isDelete: boolean) {
-    if(isDelete) {}
-    else {}
+  }
+
+  spaceChanges(space: ParkSpace, isDelete: boolean) {
+
   }
 
   getParkId() {

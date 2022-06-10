@@ -129,7 +129,21 @@ export class ParkAreaComponent implements OnInit {
       this.showReservationModal.emit(true);
   }
 
+  spaceChanges(space: ParkSpace, isDelete: boolean) {
+    this.findSpaceReserved(space, this.selectedTime);
+
+    if(this.selectedSpace && this.selectedSpace.id == space.id) {
+      if(isDelete) {
+        this.showReservationModal.emit(false);
+      }
+      else {
+        this.selectedSpace = space;
+      }
+    }
+  }
+
   reservationChanges(reservation: Reservation, isDelete: boolean) {
+    debugger;
     var isIntercept = this.isTimeRangesIntercept(this.selectedTime[0]!, this.selectedTime[1]!, reservation.startTime, reservation.endTime);
 
     if(isDelete) {

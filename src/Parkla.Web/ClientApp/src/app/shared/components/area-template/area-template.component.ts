@@ -38,6 +38,9 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
   @Output()
   reservationChanges = new EventEmitter<{reservation:Reservation, isDelete:boolean}>();
 
+  @Output()
+  spaceChanges = new EventEmitter<{space:ParkSpace, isDelete:boolean}>();
+
   canvas!:HTMLCanvasElement;
 
   ctx!:any;
@@ -110,16 +113,15 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       space.status = <any>space.status.toUpperCase();
+      space.reservations = oldSpace.reservations;
 
       if(isDelete) {
         this.parkArea.spaces.splice(index, 1);
-        if(this.selectedSpace && this.selectedSpace.id == space.id) this.spaceClicked.emit(undefined);
       }
       else if(oldSpace.statusUpdateTime == null || oldSpace.statusUpdateTime <= space.statusUpdateTime) {
         this.parkArea.spaces[index] = space;
-        if(this.selectedSpace && this.selectedSpace.id == space.id) this.spaceClicked.emit(space);
       }
-
+      this.spaceChanges.emit({space: space, isDelete: isDelete});
       this.drawCanvas();
     });
   }
@@ -130,6 +132,7 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   registerReservationChanges() {
     this.reservationChangesSubscription = this.signalrService.registerReservationChanges(this.parkArea.id,(reservation, isDelete) => {
+      debugger;
       reservation.startTime = new Date(reservation.startTime);
       reservation.endTime = new Date(reservation.endTime);
 
@@ -239,26 +242,26 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   drawEmptySpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(0,255,0,0.25)";
-    this.ctx.strokeStyle = "rgba(0,255,0,0.75)";
+    this.ctx.fillStyle = "rgba(64,230,68,0.4)";
+    this.ctx.strokeStyle = "rgba(64,230,68,0.8)";
     this.drawSpace(path);
   }
 
   drawOccupiedSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(255,0,0,0.25)";
-    this.ctx.strokeStyle = "rgba(255,0,0,0.75)";
+    this.ctx.fillStyle = "rgba(217,54,43,0.4)";
+    this.ctx.strokeStyle = "rgba(217,54,43,0.8)";
     this.drawSpace(path);
   }
 
   drawEmptyReservedSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(255, 255, 102, 0.40)";
-    this.ctx.strokeStyle = "rgba(255, 255, 102, 0.80)";
+    this.ctx.fillStyle = "rgba(251, 230, 45, 0.40)";
+    this.ctx.strokeStyle = "rgba(251, 230, 45, 0.80)";
     this.drawSpace(path);
   }
 
   drawOccupiedReservedSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(255, 153, 51, 0.40)";
-    this.ctx.strokeStyle = "rgba(255, 153, 51, 0.80)";
+    this.ctx.fillStyle = "rgba(230, 124, 0, 0.40)";
+    this.ctx.strokeStyle = "rgba(230, 124, 0, 0.80)";
     this.drawSpace(path);
   }
 
