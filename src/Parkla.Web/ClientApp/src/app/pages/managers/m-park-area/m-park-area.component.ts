@@ -118,6 +118,10 @@ export class MParkAreaComponent implements OnInit {
     );
   }
 
+  goQRCode() {
+    this.router.navigateByUrl(RouteUrl.mParkAreaQR(this.getParkId(), this.getAreaId()));
+  }
+
   goEditTemplate() {
     const parkid = this.getParkId();
     const areaid = this.getAreaId();

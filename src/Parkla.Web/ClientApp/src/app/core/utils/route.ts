@@ -66,7 +66,7 @@ export namespace RouteUrl {
   };
 
   export const mParkAreaQR = (parkid: string, areaid:number) => {
-    return `manager/park/${parkid}/area/${areaid}`;
+    return `manager/park/${parkid}/area/${areaid}/QR`;
   };
 
   export const mParkAreas = (parkid: string) => {

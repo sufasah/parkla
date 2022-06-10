@@ -1,8 +1,8 @@
-<div class="qr-container">
+<div #container class="qr-container">
   <qrcode
     [qrdata]="url"
     [errorCorrectionLevel]="'H'"
-    [scale]="20"
+    [width]="Math.min(container.clientWidth, container.clientHeight)"
     >
 
   </qrcode>

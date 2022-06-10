@@ -10,6 +10,8 @@ export class MParkAreaQRComponent implements OnInit {
 
   url="";
 
+  Math = Math;
+
   constructor(private router: Router) { }
 
   ngOnInit(): void {

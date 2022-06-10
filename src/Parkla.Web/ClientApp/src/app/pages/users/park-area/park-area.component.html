@@ -12,6 +12,7 @@
     </div>
 
     <app-time-range
+      *ngIf="selectedArea.reservationsEnabled"
       (onChange)="timeRangeChange($event)"
       [enabled]="selectedArea.reservationsEnabled"
       [minDate]="minDate"
@@ -41,7 +42,8 @@
   [minDate]="minDate"
   [maxDate]="maxDate"
   [showReservationModal]="showReservationModal"
-  (reserveClick)="reserveSpace($event)"
+  (reserveSpace)="reserveSpace($event.space, $event.timeRange)"
+  [selectedTime]="selectedTime"
   >
 </app-reservation-modal>
 

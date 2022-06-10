@@ -132,7 +132,6 @@ export class ParkTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   registerReservationChanges() {
     this.reservationChangesSubscription = this.signalrService.registerReservationChanges(this.parkArea.id,(reservation, isDelete) => {
-      debugger;
       reservation.startTime = new Date(reservation.startTime);
       reservation.endTime = new Date(reservation.endTime);
 

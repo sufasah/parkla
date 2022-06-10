@@ -18,7 +18,7 @@ export class TimeRangeComponent implements OnInit {
   maxDate?: Date;
 
   @Output()
-  onChange = new EventEmitter<[Date?, Date?]>();
+  onChange = new EventEmitter<[Date, Date]>();
 
   @ViewChild(Calendar)
   calendar!: Calendar;
@@ -31,13 +31,15 @@ export class TimeRangeComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.onChange.emit(this.timeRange);
+    setTimeout(() => {
+      this.onChange.emit(<any>this.timeRange);
+    }, 0);
   }
 
   timeRangeChange(timeRange:any) {
     this.timeRange = timeRange;
     if(!this.timeRange[0] || !this.timeRange[1]) return;
-    this.onChange.emit(this.timeRange);
+    this.onChange.emit(<any>this.timeRange);
   }
 
   showCalendar() {

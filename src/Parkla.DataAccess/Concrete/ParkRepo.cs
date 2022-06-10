@@ -24,7 +24,7 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
                 ReservedSpaceCount = g.Sum(
                     x => x.Areas.Sum(
                         y => y.Spaces.Sum(
-                            z => z.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0)))
+                            z => z.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.StartTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0)))
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -51,7 +51,7 @@ public class ParkRepo<TContext> : EntityRepoBase<Park, TContext>, IParkRepo
                 ReservedSpaceCount = g.Sum(
                     x => x.Areas.Sum(
                         y => y.Spaces.Sum(
-                            z => z.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0)))
+                            z => z.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.StartTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0)))
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

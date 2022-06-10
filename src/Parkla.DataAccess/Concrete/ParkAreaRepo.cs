@@ -47,7 +47,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 ParkArea = g.First(x => x.Id == g.Key),
                 ReservedSpaceCount = g.Sum(
                     x => x.Spaces.Sum(
-                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
+                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.StartTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
             })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -660,7 +660,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 AreaId = g.Key,
                 ReservedSpaceCount = g.Sum(
                     x => x.Spaces.Sum(
-                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
+                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.StartTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
             })
             .Where(x => ids.Any(y => y == x.AreaId!.Value))
             .ToListAsync(cancellationToken)
@@ -689,7 +689,7 @@ public class ParkAreaRepo<TContext> : EntityRepoBase<ParkArea, TContext>, IParkA
                 ParkArea = g.First(x => x.Id == g.Key),
                 ReservedSpaceCount = g.Sum(
                     x => x.Spaces.Sum(
-                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.EndTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
+                        y => y.Reservations!.Any(t => t.EndTime > DateTime.UtcNow && t.StartTime < DateTime.UtcNow.AddDays(1).Date) ? 1 : 0))
             })
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);

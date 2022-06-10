@@ -1,15 +1,16 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { DAY, HOUR, MINUTE, SECOND } from '@app/core/constants/time';
 import { ParkSpace } from '@app/core/models/park-space';
+import { getPricePerHour } from '@app/core/models/pricing';
 import { Reservation } from '@app/core/models/reservation';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-reservation-modal',
   templateUrl: './reservation-modal.component.html',
   styleUrls: ['./reservation-modal.component.scss']
 })
-export class ReservationModalComponent implements OnInit {
+export class ReservationModalComponent implements OnInit, OnChanges {
 
   @Input()
   selectedSpace?: ParkSpace;
@@ -26,19 +27,20 @@ export class ReservationModalComponent implements OnInit {
   @Input()
   userMode = true;
 
+  @Input()
+  selectedTime: [Date?, Date?] = [undefined, undefined]
+
   @Output()
-  reserveClick = new EventEmitter<ParkSpace>();
+  reserveSpace = new EventEmitter<{space: ParkSpace, timeRange: [Date, Date]}>();
 
   dialogVisible = false;
 
   dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  timeRange:[Date?, Date?] = [
-    new Date(),
-    new Date(Date.now()+60000*15)
-  ];
-
   reserveLoading = false;
+
+  reserveConfirmationVisible = false;
+  payment?: number;
 
   _weekDays: MenuItem[] = [{label:"x"}];
   get weekDays() {
@@ -72,7 +74,9 @@ export class ReservationModalComponent implements OnInit {
 
   reservationsOfDay: Reservation[] & {isReserved: boolean}[] = [];
 
-  constructor() { }
+  constructor(
+    private messageService: MessageService
+  ) { }
 
   ngOnInit(): void {
     this.showReservationModal.subscribe((show) => {
@@ -86,9 +90,48 @@ export class ReservationModalComponent implements OnInit {
     });
   }
 
-  reserveSpace() {
-    this.reserveLoading = true;
-    this.reserveClick.emit(this.selectedSpace);
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.selectedSpace || changes.selectedTime) {
+      const selectedSpace = changes.selectedSpace?.currentValue ?? this.selectedSpace;
+      const selectedTime = changes.selectedTime?.currentValue ?? this.selectedTime;
+
+      this.calculatePayment(selectedSpace, selectedTime)
+    }
+  }
+
+  calculatePayment(space?: ParkSpace, timeRange?: [Date?, Date?]) {
+    if(!space || !timeRange || !timeRange[0] || !timeRange[1] || !space.pricing) {
+      this.payment = undefined;
+    }
+    else {
+      const pricePerHour = getPricePerHour(space.pricing);
+      const hourDiff = (timeRange[1].getTime()-timeRange[0].getTime()) / 36e5;
+      this.payment = pricePerHour * hourDiff;
+    }
+  }
+
+  reserveClick() {
+    if(!this.selectedTime || !this.selectedTime[0] || !this.selectedTime[1]) {
+      this.messageService.add({
+        summary: "Reservation",
+        closable: true,
+        severity: "error",
+        life:5000,
+        detail: "Invalid Time Range. Select a time interval."
+      });
+      return;
+    }
+
+    this.reserveConfirmationVisible = true;
+  }
+
+  reserveConfirm() {
+    this.reserveConfirmationVisible = false;
+    this.reserveSpace.emit({space: this.selectedSpace!, timeRange: [this.selectedTime[0]!, this.selectedTime[1]!]});
+  }
+
+  reserveCancel() {
+    this.reserveConfirmationVisible = false;
   }
 
   showReserveModal() {

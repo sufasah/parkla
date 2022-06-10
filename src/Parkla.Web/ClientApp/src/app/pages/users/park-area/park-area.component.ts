@@ -46,8 +46,6 @@ export class ParkAreaComponent implements OnInit {
     private areaService: ParkAreaService,
     private spaceService: ParkSpaceService,
     private reservationService: ReservationService,
-    private confirmationService: ConfirmationService,
-    private datePipe: DatePipe,
     private authService: AuthService) { }
 
 
@@ -77,7 +75,12 @@ export class ParkAreaComponent implements OnInit {
     this.spaceService.getAreaParkSpaces(this.getAreaId(), true).subscribe({
       next: spaces => {
         this.selectedArea = {...this.selectedArea, spaces: spaces};
-        this.timeRangeChange(this.selectedTime);
+
+        this.selectedArea.spaces.forEach(space => {
+          if(this.selectedArea.reservationsEnabled && space.reservations) {
+            this.findSpaceReserved(space, this.selectedTime);
+          }
+        });
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
@@ -95,6 +98,10 @@ export class ParkAreaComponent implements OnInit {
     return Number(this.route.snapshot.paramMap.get("areaid"));
   }
 
+  getParkId() {
+    return this.route.snapshot.paramMap.get("parkid")!;
+  }
+
   findSpaceReserved(space: ParkSpace, timeRange: [Date?, Date?]) {
     for(let i=0; i<space.reservations.length; i++) {
       let reservation = space.reservations[i];
@@ -109,7 +116,7 @@ export class ParkAreaComponent implements OnInit {
     }
   }
 
-  timeRangeChange(timeRange: [Date?, Date?]) {
+  timeRangeChange(timeRange: [Date, Date]) {
     this.selectedArea.spaces.forEach(space => {
       if(this.selectedArea.reservationsEnabled && space.reservations) {
         this.findSpaceReserved(space, timeRange);
@@ -143,7 +150,6 @@ export class ParkAreaComponent implements OnInit {
   }
 
   reservationChanges(reservation: Reservation, isDelete: boolean) {
-    debugger;
     var isIntercept = this.isTimeRangesIntercept(this.selectedTime[0]!, this.selectedTime[1]!, reservation.startTime, reservation.endTime);
 
     if(isDelete) {
@@ -161,29 +167,8 @@ export class ParkAreaComponent implements OnInit {
     }
   }
 
-  reserveSpace(space: ParkSpace) {
-    if(!this.selectedTime || !this.selectedTime[0] || !this.selectedTime[1]) {
-      this.messageService.add({
-        summary: "Reservation",
-        closable: true,
-        severity: "error",
-        life:5000,
-        detail: "Invalid Time Range. Select a time interval."
-      });
-      return;
-    }
-
-    const pricePerHour = getPricePerHour(space.pricing);
-    const timeRange: [Date, Date] = [this.selectedTime[0], this.selectedTime[1]];
-    const hourDiff = (timeRange[1].getTime()-timeRange[0].getTime()) / 36e5;
-    const payment = pricePerHour * hourDiff;
-
-    this.confirmationService.confirm({
-      message: `Are you sure to reserve the space with '${space.name}' name for ${payment} TL from ${this.datePipe.transform(timeRange[0], "MM-dd HH:mm")} to ${this.datePipe.transform(timeRange[1], "MM-dd HH:mm")} ?`,
-      accept: () => {
-        this.addReservation(space, timeRange);
-      }
-    });
+  reserveSpace(space: ParkSpace, timeRange: [Date, Date]) {
+    this.addReservation(space, timeRange);
   }
 
   addReservation(space: ParkSpace, timeRange: [Date, Date]) {
@@ -219,7 +204,7 @@ export class ParkAreaComponent implements OnInit {
   }
 
   goAreas() {
-    let parkid = this.route.snapshot.paramMap.get("parkid")!;
+    const parkid = this.getParkId();
 
     this.router.navigateByUrl(this.authService.asManager
       ? RouteUrl.mParkAreas(parkid)
