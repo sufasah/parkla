@@ -1,234 +1,241 @@
-<app-edit-area-template
-  #editAreaTemplateRef
-  [parkArea]="area"
-  (spaceClicked)="spaceClicked($event)"
-  (spaceRightClicked)="spaceRightClicked($event)"
-  [(selectingSpacePath)]="spaceAdding"
-  (spacePathSelected)="addTemplateSpaceDone($event)"
-  >
-</app-edit-area-template>
-
-<form
-  #editTemplateForm="ngForm"
-  (ngSubmit)="submit(editTemplateForm)"
-  >
-
-  <div class="d-flex justify-content-between p-3">
-    <button
-      type="submit"
-      pButton
-      pRipple
-      label="Edit"
-      [loading]="loading"
-      [disabled]="spaceAdding"
+<div class="d-flex flex-column h-100">
+  <div class="flex-grow-1">
+    <app-edit-area-template
+      #editAreaTemplateRef
+      [parkArea]="area"
+      (spaceClicked)="spaceClicked($event)"
+      (spaceRightClicked)="spaceRightClicked($event)"
+      [(selectingSpacePath)]="spaceAdding"
+      (spacePathSelected)="addTemplateSpaceDone($event)"
       >
-    </button>
-    <div class="p-buttonset d-inline-block">
-      <button
-        type="button"
-        pButton
-        pRipple
-        [icon]="'pi ' + (spaceAdding ? 'pi-times' : 'pi-plus')"
-        [ngClass]="'p-button ' + (spaceAdding ? 'p-button-danger': 'p-button-success')"
-        (click)="addTemplateSpace()"
-        >
-      </button>
-      <button
-        type="button"
-        pButton
-        pRipple
-        icon="pi pi-image"
-        (click)="setTemplateImageButton($event)"
-        [disabled]="spaceAdding"
-        >
-      </button>
-
-      <input
-        type="file"
-        hidden="true"
-        accept="image/*"
-        (change)="setTemplateImage($event)"
-        class="d-none"
-        />
-
-      <button
-        type="button"
-        pButton
-        pRipple
-        icon="pi pi-trash"
-        class="p-button p-button-danger"
-        (click)="clearTemplateSpace()"
-        [disabled]="spaceAdding"
-        >
-      </button>
-    </div>
+    </app-edit-area-template>
   </div>
 
-  <div
-    *ngIf="spaceModalVisible"
-    class="fullscreen-modal"
+  <form
+    #editTemplateForm="ngForm"
+    (ngSubmit)="submit(editTemplateForm)"
+    style="background-color: var(--surface-100);"
+    class="border"
     >
-    <div
-      class="p-2 d-flex"
-      style="height: 80px; border-bottom: 1px solid black;"
-      >
+
+    <div class="d-flex justify-content-between p-3">
       <button
-        type="button"
+        type="submit"
         pButton
         pRipple
-        [label]="(editingSpace.id ? editingSpace.id + ' - ' : '') + 'Done'"
-        (click)="spaceModalDone()"
-        class="me-1"
+        label="Edit"
+        [loading]="loading"
+        [disabled]="spaceAdding"
         >
       </button>
-      <input
-        pInputText
-        name="name"
-        type="text"
-        maxlength="30"
-        [(ngModel)]="editingSpace.name"
-        required
-        class="flex-grow-1"
-        placeholder="Space name"
-        />
-      <p-autoComplete
-        name="pricing"
-        [(ngModel)]="editingSpace.pricing"
-        [suggestions]="pricingSuggestions"
-        placeholder="Pricing"
-        (completeMethod)="searchPricing($event)"
-        [dropdown]="true"
-        [showEmptyMessage]="true"
-        [emptyMessage]="pricingEmptyMessage"
-        field="type"
-        [dropdown]="true"
-        [forceSelection]="true"
-        >
-        <ng-template let-group pTemplate="item">
-          <div class="flex align-items-center">
-              <span *ngIf="group; else empty">{{group.type}} - {{group.amount}} - {{group.unit}}(s) - {{group.price}}</span>
-              <ng-template #empty>
-                <span>- Empty -</span>
-              </ng-template>
+      <div class="p-buttonset d-inline-block">
+        <button
+          type="button"
+          pButton
+          pRipple
+          [icon]="'pi ' + (spaceAdding ? 'pi-times' : 'pi-plus')"
+          [ngClass]="'p-button ' + (spaceAdding ? 'p-button-danger': 'p-button-success')"
+          (click)="addTemplateSpace()"
+          >
+        </button>
+        <button
+          type="button"
+          pButton
+          pRipple
+          icon="pi pi-image"
+          (click)="setTemplateImageButton($event)"
+          [disabled]="spaceAdding"
+          class="p-button-warning"
+          >
+        </button>
 
-          </div>
-        </ng-template>
-      </p-autoComplete>
-      <div
-        *ngIf="editingSpace.realSpace"
-        style="background-color: var(--gray-100); height:100%; border-radius: 5px; padding:5px"
-        class="mx-1 text-center align-self-center fw-bold"
-        >
-        <div>Selected Real Space</div>
-        <div>{{editingSpace.realSpace.id}} - {{editingSpace.realSpace.name}}</div>
+        <input
+          type="file"
+          hidden="true"
+          accept="image/*"
+          (change)="setTemplateImage($event)"
+          class="d-none"
+          />
+
+        <button
+          type="button"
+          pButton
+          pRipple
+          icon="pi pi-trash"
+          class="p-button p-button-danger"
+          (click)="clearTemplateSpace()"
+          [disabled]="spaceAdding"
+          >
+        </button>
       </div>
     </div>
+
     <div
-      style="height: calc( 100vh - 80px );"
-      class="overflow-auto"
+      *ngIf="spaceModalVisible"
+      class="fullscreen-modal"
       >
-      <p-table
-        #dt
-        [value]="realSpaces"
-        [paginator]="true"
-        [rows]="realSpacesPageSize"
-        [first]="nextRecord"
-        [totalRecords]="totalRecords"
-        [showCurrentPageReport]="true"
-        [showPageLinks]="true"
-        [lazy]="true"
-        [loading]="realSpacesLoading"
-        (onLazyLoad)="loadRealSpaces($event)"
-        selectionMode="single"
-        [selection]="getSelectedRealSpace()"
-        (selectionChange)="setSelectedRealSpace($event)"
-        dataKey="id"
-        responsiveLayout="scroll"
+      <div
+        class="p-2 d-flex"
+        style="height: 80px; border-bottom: 1px solid black;"
         >
-        <ng-template pTemplate="caption">
-          <div class="d-flex justify-content-between">
-              <button
-                type="button"
-                pButton
-                label="Clear"
-                class="p-button-outlined"
-                icon="pi pi-filter-slash"
-                (click)="clearTable(dt,searchInput)"
-                >
-              </button>
-              <span class="p-input-icon-left ml-auto">
-                  <i class="pi pi-search"></i>
-                  <input
-                    #searchInput
-                    pInputText
-                    type="search"
-                    (input)="onSearchInput($event)"
-                    placeholder="Search" />
-              </span>
-          </div>
-      </ng-template>
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Real Space Id</th>
-            <th>Real Space Name</th>
-            <th>Space Id</th>
-            <th></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-space>
-          <tr [pSelectableRow]="space" [pContextMenuRow]="space" [style]="isRealSpaceSelected(space) ? 'background-color: #e0fee0;' : space.id && space.spaceId === editingSpace.id ? 'background-color: #fee0e0;' : ''">
-            <td>
-              {{space.id}}
-            </td>
-            <td>
-              {{space.name}}
-            </td>
-            <td>
-              {{space.spaceId ?? '-'}}
-            </td>
-            <td>
-              <button
-                type="button"
-                pButton
-                class="p-button-outlined"
-                icon="pi pi-times"
-                (click)="deleteRealSpace(space)"
-                style="width: 30px; height: 30px;"
-                >
-              </button>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="footer" let-columns>
-          <tr>
-            <td colspan="4">
-              <div class="d-flex">
-                <input
-                  pInputText
-                  name="realSpaceName"
-                  type="text"
-                  maxlength="30"
-                  [(ngModel)]="newRealSpaceName"
-                  novalidate
-                  class="flex-grow-1"
-                  placeholder="New real space name"
-                  />
+        <button
+          type="button"
+          pButton
+          pRipple
+          [label]="(editingSpace.id ? editingSpace.id + ' - ' : '') + 'Done'"
+          (click)="spaceModalDone()"
+          class="me-1"
+          >
+        </button>
+        <input
+          pInputText
+          name="name"
+          type="text"
+          maxlength="30"
+          [(ngModel)]="editingSpace.name"
+          required
+          class="flex-grow-1"
+          placeholder="Space name"
+          />
+        <p-autoComplete
+          name="pricing"
+          [(ngModel)]="editingSpace.pricing"
+          [suggestions]="pricingSuggestions"
+          placeholder="Pricing"
+          (completeMethod)="searchPricing($event)"
+          [dropdown]="true"
+          [showEmptyMessage]="true"
+          [emptyMessage]="pricingEmptyMessage"
+          field="type"
+          [dropdown]="true"
+          [forceSelection]="true"
+          >
+          <ng-template let-group pTemplate="item">
+            <div class="flex align-items-center">
+                <span *ngIf="group; else empty">{{group.type}} - {{group.amount}} - {{group.unit}}(s) - {{group.price}}</span>
+                <ng-template #empty>
+                  <span>- Empty -</span>
+                </ng-template>
+
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        <div
+          *ngIf="editingSpace.realSpace"
+          style="background-color: var(--gray-100); height:100%; border-radius: 5px; padding:5px"
+          class="mx-1 text-center align-self-center fw-bold"
+          >
+          <div>Selected Real Space</div>
+          <div>{{editingSpace.realSpace.id}} - {{editingSpace.realSpace.name}}</div>
+        </div>
+      </div>
+      <div
+        style="height: calc( 100vh - 80px );"
+        class="overflow-auto"
+        >
+        <p-table
+          #dt
+          [value]="realSpaces"
+          [paginator]="true"
+          [rows]="realSpacesPageSize"
+          [first]="nextRecord"
+          [totalRecords]="totalRecords"
+          [showCurrentPageReport]="true"
+          [showPageLinks]="true"
+          [lazy]="true"
+          [loading]="realSpacesLoading"
+          (onLazyLoad)="loadRealSpaces($event)"
+          selectionMode="single"
+          [selection]="getSelectedRealSpace()"
+          (selectionChange)="setSelectedRealSpace($event)"
+          dataKey="id"
+          responsiveLayout="scroll"
+          >
+          <ng-template pTemplate="caption">
+            <div class="d-flex justify-content-between">
                 <button
                   type="button"
                   pButton
-                  pRipple
-                  label="Add"
-                  (click)="addRealSpace()"
-                  class="mx-3"
+                  label="Clear"
+                  class="p-button-outlined"
+                  icon="pi pi-filter-slash"
+                  (click)="clearTable(dt,searchInput)"
                   >
                 </button>
-              </div>
-            </td>
-          </tr>
-      </ng-template>
-      </p-table>
+                <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input
+                      #searchInput
+                      pInputText
+                      type="search"
+                      (input)="onSearchInput($event)"
+                      placeholder="Search" />
+                </span>
+            </div>
+        </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Real Space Id</th>
+              <th>Real Space Name</th>
+              <th>Space Id</th>
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-space>
+            <tr [pSelectableRow]="space" [pContextMenuRow]="space" [style]="isRealSpaceSelected(space) ? 'background-color: #e0fee0;' : space.id && space.spaceId === editingSpace.id ? 'background-color: #fee0e0;' : ''">
+              <td>
+                {{space.id}}
+              </td>
+              <td>
+                {{space.name}}
+              </td>
+              <td>
+                {{space.spaceId ?? '-'}}
+              </td>
+              <td>
+                <button
+                  type="button"
+                  pButton
+                  class="p-button-outlined"
+                  icon="pi pi-times"
+                  (click)="deleteRealSpace(space)"
+                  style="width: 30px; height: 30px;"
+                  >
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer" let-columns>
+            <tr>
+              <td colspan="4">
+                <div class="d-flex">
+                  <input
+                    pInputText
+                    name="realSpaceName"
+                    type="text"
+                    maxlength="30"
+                    [(ngModel)]="newRealSpaceName"
+                    novalidate
+                    class="flex-grow-1"
+                    placeholder="New real space name"
+                    />
+                  <button
+                    type="button"
+                    pButton
+                    pRipple
+                    label="Add"
+                    (click)="addRealSpace()"
+                    class="mx-3"
+                    >
+                  </button>
+                </div>
+              </td>
+            </tr>
+        </ng-template>
+        </p-table>
+      </div>
     </div>
-  </div>
-</form>
+  </form>
+</div>
 
 <p-confirmDialog></p-confirmDialog>

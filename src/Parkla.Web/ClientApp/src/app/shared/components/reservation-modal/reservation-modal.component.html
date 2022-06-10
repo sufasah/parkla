@@ -86,7 +86,7 @@
           pTemplate="body"
           let-reservation
           let-rowIndex="rowIndex">
-          <tr [ngStyle]="{'background-color': reservation.isReserved ? 'rgba(255, 153, 51, 0.125)' : 'rgba(0, 255, 0, 0.125)'}">
+          <tr [ngStyle]="{'background-color': reservation.isReserved ? 'var(--orange-100)' : 'var(--green-100)'}">
             <td>
               <span class="p-column-title">Username</span>
               {{reservation.user?.username}}

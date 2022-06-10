@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { UserService } from '@app/core/services/user.service';
 import { RouteUrl } from '@app/core/utils/route';
-import { MessageService } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-load-money',
@@ -22,6 +22,12 @@ export class LoadMoneyComponent implements OnInit {
   amount: number = 0;
 
   loading = false;
+
+  bcModel: MenuItem[] = [
+    {icon: 'pi pi-map', routerLink: "/"+RouteUrl.parkMap()},
+    {label: `Profile`, routerLink: "/"+RouteUrl.profile()},
+    {label: `Load Money`, styleClass: "last-item"},
+  ];
 
   constructor(
     private router: Router,

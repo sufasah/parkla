@@ -182,8 +182,8 @@ export class EditAreaTemplateComponent implements OnInit, AfterViewInit {
   }
 
   drawInvalidSpace(path: SpacePath){
-    this.ctx.fillStyle = "rgba(0,0,255,0.25)";
-    this.ctx.strokeStyle = "rgba(0,0,255,0.75)";
+    this.ctx.fillStyle = "rgba(253,80,20,0.4)";
+    this.ctx.strokeStyle = "rgba(253,80,20,0.8)";
     this.drawSpace(path);
   }
 

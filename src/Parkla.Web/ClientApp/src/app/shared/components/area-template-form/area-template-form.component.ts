@@ -205,8 +205,10 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   fetchRealSpaces(nextRecord: number, search: string | null = null) {
     this.realSpaceService.getPage(this.area.parkId, nextRecord, this.realSpacesPageSize, search).subscribe({
       next: response => {
-        if(response.headers.has("x-total-records"))
+        if(response.headers.has("x-total-records")) {
           this.totalRecords = Number(response.headers.get("x-total-records"));
+          this.nextRecord = nextRecord;
+        }
 
         this.realSpaces = response.body!;
         this.realSpacesLoading = false;
@@ -227,7 +229,7 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
 
     this.searchTOID = setTimeout(() => {
       this.fetchRealSpaces(
-        this.nextRecord,
+        0,
         data,
       );
     }, 1000);

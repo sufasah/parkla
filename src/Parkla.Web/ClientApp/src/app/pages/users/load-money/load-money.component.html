@@ -1,6 +1,13 @@
 <p-toolbar>
   <div>
-    <button pButton pRipple (click)="goProfile()">Go Profile</button>
+    <button
+      pButton
+      pRipple
+      (click)="goProfile()"
+      icon="pi pi-arrow-left"
+      label="Profile"
+      >
+    </button>
   </div>
   <app-user-avatar
     class="p-toolbar-group-right"
@@ -8,82 +15,112 @@
   </app-user-avatar>
 </p-toolbar>
 
-<form
-  #payForm="ngForm"
-  (ngSubmit)="pay(payForm)"
-  >
-  <div>
-    <label for="cardNumber">Credit Card Number</label>
-    <p-inputMask
-      name="cardNumber"
-      [(ngModel)]="cardNumber"
-      mask="9999 9999 9999 9999"
-      slotChar="•"
-      [autoClear]="false"
-      [required]="true"
-      >
-    </p-inputMask>
-  </div>
-
-  <div>
-    <label for="expireMonth">Expires Month</label>
-    <p-inputNumber
-      name="expireMonth"
-      [(ngModel)]="expireMonth"
-      mode="decimal"
-      placeholder="MM"
-      [min]="1"
-      [max]="12"
-      [maxlength]="2"
-      [required]="true"
-      >
-    </p-inputNumber>
-  </div>
-
-  <div>
-    <label for="expireYear">Expires Year</label>
-    <p-inputNumber
-      name="expireYear"
-      [(ngModel)]="expireYear"
-      mode="decimal"
-      placeholder="YY"
-      [min]="0"
-      [max]="99"
-      [maxlength]="2"
-      [required]="true"
-      >
-    </p-inputNumber>
-  </div>
-
-  <div>
-    <label for="cvc">CVC</label>
-    <p-inputMask
-      name="cvc"
-      [(ngModel)]="cvc"
-      mask="999"
-      slotChar=" "
-      [autoClear]="false"
-      [required]="true"
-      >
-    </p-inputMask>
-  </div>
-
-  <p-inputNumber
-    name="amount"
-    [(ngModel)]="amount"
-    [max]="999999999999999999999999999999"
-    [required]="true"
-    placeholder="Amount"
+<div class="container mt-5 p-0">
+  <p-breadcrumb class="page-breadcrumb" [model]="bcModel">
+  </p-breadcrumb>
+</div>
+<div class="container mb-5 p-3 shadow-lg card">
+  <form
+    #payForm="ngForm"
+    (ngSubmit)="pay(payForm)"
     >
-  </p-inputNumber>
 
-  <button
-    type="submit"
-    pButton
-    pRipple
-    label="Pay"
-    >
-  </button>
-</form>
+    <div class="row">
+      <div class="col-md-3">
+        <h6>
+          <label for="cardNumber">Credit Card Number</label>
+        </h6>
+        <p-inputMask
+          name="cardNumber"
+          [(ngModel)]="cardNumber"
+          mask="9999 9999 9999 9999"
+          slotChar="•"
+          [autoClear]="false"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-inputMask>
+      </div>
+      <div class="col-md-2">
+        <h6>
+          <label for="expireMonth">Expires Month</label>
+        </h6>
+        <p-inputNumber
+          name="expireMonth"
+          [(ngModel)]="expireMonth"
+          mode="decimal"
+          placeholder="MM"
+          [min]="1"
+          [max]="12"
+          [maxlength]="2"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-inputNumber>
+      </div>
+      <div class="col-md-2">
+        <h6>
+          <label for="expireYear">Expires Year</label>
+        </h6>
+        <p-inputNumber
+          name="expireYear"
+          [(ngModel)]="expireYear"
+          mode="decimal"
+          placeholder="YY"
+          [min]="0"
+          [max]="99"
+          [maxlength]="2"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-inputNumber>
+      </div>
+      <div class="col-md-2">
+        <h6>
+          <label for="cvc">CVC</label>
+        </h6>
+        <p-inputMask
+          name="cvc"
+          [(ngModel)]="cvc"
+          mask="999"
+          slotChar=" "
+          [autoClear]="false"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-inputMask>
+      </div>
+      <div class="col-md-3">
+        <h6>
+          <label for="amount">Amount</label>
+        </h6>
+        <p-inputNumber
+          name="amount"
+          [(ngModel)]="amount"
+          [max]="999999999999999999999999999999"
+          [required]="true"
+          class="w-100"
+          styleClass="w-100"
+          >
+        </p-inputNumber>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <button
+        type="submit"
+        pButton
+        pRipple
+        label="Confirm Payment"
+        class="mt-4 w-50"
+        >
+      </button>
+    </div>
+  </form>
+</div>
 
 <p-toast (onClose)="messageClose()"></p-toast>
