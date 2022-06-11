@@ -41,21 +41,21 @@
           </div>
           <div class="col-md-3 my-4 p-4 border-end">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-indigo);"></i>
+              <i class="pi pi-sitemap fs-4" style="color: var(--bs-indigo);"></i>
               <h6 class="text-muted m-0 ms-2">Total Park Areas</h6>
             </div>
             <h3 class="mt-3">{{model.totalAreas}}</h3>
           </div>
           <div class="col-md-3 my-4 p-4 border-end">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-purple);"></i>
+              <i class="pi pi-sitemap fs-4" style="color: var(--bs-purple);"></i>
               <h6 class="text-muted m-0 ms-2">Total Areas Reservations Enabled</h6>
             </div>
             <h3 class="mt-3">{{model.totalReservationEnabledAreas}}</h3>
           </div>
           <div class="col-md-3 my-4 p-4">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-pink);"></i>
+              <i class="pi pi-car fs-4" style="color: var(--bs-pink);"></i>
               <h6 class="text-muted m-0 ms-2">Total Park Spaces</h6>
             </div>
             <h3 class="mt-3">{{model.totalSpaces}}</h3>
@@ -66,28 +66,28 @@
         <div class="row m-0 p-0">
           <div class="col-md-3 my-4 p-4 border-end">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+              <i class="pi pi-car fs-4" style="color: var(--bs-red);"></i>
               <h6 class="text-muted m-0 ms-2 mb-3">Total Reserved Spaces</h6>
             </div>
             <h3 class="mt-3">{{model.totalReservedSpaces}}</h3>
           </div>
           <div class="col-md-3 my-4 p-4 border-end">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
+              <i class="pi pi-calendar-minus fs-4" style="color: var(--bs-green);"></i>
               <h6 class="text-muted m-0 ms-2">Minimum Status Data Transfer Delay In Seconds</h6>
             </div>
             <h3 class="mt-3">{{model.minStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
           </div>
           <div class="col-md-3 my-4 p-4 border-end">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-yellow);"></i>
+              <i class="pi pi-calendar-minus fs-4" style="color: var(--bs-yellow);"></i>
               <h6 class="text-muted m-0 ms-2">Average Status Data Transfer Delay In Seconds</h6>
             </div>
             <h3 class="mt-3">{{model.averageStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
           </div>
           <div class="col-md-3 my-4 p-4">
             <div class="d-flex">
-              <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+              <i class="pi pi-calendar-minus fs-4" style="color: var(--bs-red);"></i>
               <h6 class="text-muted m-0 ms-2">Maximum Status Data Transfer Delay In Seconds</h6>
             </div>
             <h3 class="mt-3">{{model.maxStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
@@ -101,21 +101,21 @@
     <div class="card d-flex m-3 p-3 d-inline-block shadow-sm">
       <div class="flex-grow-1 my-2 mx-5 py-4 border-bottom">
         <div class="d-flex align-items-center">
-          <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
+          <i class="pi pi-dollar fs-4" style="color: var(--bs-green);"></i>
           <h6 class="text-muted m-0 ms-2">Park Minimum Price Per Hour</h6>
         </div>
         <h3 class="mt-3">₺{{model.minParkPrice?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
       </div>
       <div class="flex-grow-1 my-2 mx-5 py-4 border-bottom">
         <div class="d-flex align-items-center">
-          <i class="pi pi-map-marker fs-4" style="color: var(--bs-orange);"></i>
+          <i class="pi pi-dollar fs-4" style="color: var(--bs-orange);"></i>
           <h6 class="text-muted m-0 ms-2">Park Average Price Per Hour</h6>
         </div>
         <h3 class="mt-3">₺{{model.averageParkPrice?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
       </div>
       <div class="flex-grow-1 my-2 mx-5 py-4">
         <div class="d-flex align-items-center">
-          <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+          <i class="pi pi-dollar fs-4" style="color: var(--bs-red);"></i>
           <h6 class="text-muted m-0 ms-2">Park Maxmimum Price Per Hour</h6>
         </div>
         <h3 class="mt-3">₺{{model.maxParkPrice?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
@@ -134,21 +134,21 @@
     <div class="card d-flex m-3 p-3 d-inline-block shadow-sm">
       <div class="flex-grow-1 my-2 mx-5 p-2 py-4 border-bottom">
         <div class="d-flex align-items-center">
-          <i class="pi pi-map-marker fs-4" style="color: var(--bs-teal);"></i>
+          <i class="pi pi-money-bill fs-4" style="color: var(--bs-teal);"></i>
           <h6 class="text-muted m-0 ms-2">Total Revenue</h6>
         </div>
         <h3 class="mt-3">₺{{model.totalEarning?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
       </div>
       <div class="flex-grow-1 my-2 mx-5 p-2 py-4 border-bottom">
         <div class="d-flex align-items-center">
-          <i class="pi pi-map-marker fs-4" style="color: var(--bs-cyan);"></i>
+          <i class="pi pi-clock fs-4" style="color: var(--bs-cyan);"></i>
           <h6 class="text-muted m-0 ms-2">Total Reservations</h6>
         </div>
         <h3 class="mt-3">{{model.totalReservations}}</h3>
       </div>
       <div class="flex-grow-1 my-2 mx-5 p-2 py-4">
         <div class="d-flex align-items-center">
-          <i class="pi pi-map-marker fs-4" style="color: var(--bs-gray);"></i>
+          <i class="pi pi-car fs-4" style="color: var(--bs-gray);"></i>
           <h6 class="text-muted m-0 ms-2">Total Cars Used Park Spaces</h6>
         </div>
         <h3 class="mt-3">{{model.totalCarsUsedSpaces}}</h3>
@@ -186,7 +186,7 @@
         [value]="model.topPopularParks"
         responsiveLayout="scroll"
         [scrollable]="true"
-        scrollHeight="600px"
+        scrollHeight="300px"
         styleClass="mt-4 border"
         >
         <ng-template pTemplate="header">
@@ -211,7 +211,7 @@
         [value]="model.mostActiveUsers"
         responsiveLayout="scroll"
         [scrollable]="true"
-        scrollHeight="600px"
+        scrollHeight="300px"
         styleClass="mt-4 border"
         >
         <ng-template pTemplate="header">

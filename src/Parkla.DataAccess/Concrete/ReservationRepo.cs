@@ -107,11 +107,18 @@ public class ReservationRepo<TContext> : EntityRepoBase<Reservation, TContext>, 
             if(reservation.EndTime <= DateTime.UtcNow)
                 throw new ParklaException("Only reservations which are not ended can be deleted", HttpStatusCode.BadRequest);
             
+
+            var fromTime = DateTime.UtcNow > reservation.StartTime ? DateTime.UtcNow : reservation.StartTime!.Value;
             var entry = context.Entry(reservation);
-            entry.State = EntityState.Deleted;
+
+            if(reservation.StartTime!.Value == fromTime)
+                entry.State = EntityState.Deleted;
+            else {
+                reservation.EndTime = fromTime;
+            }
 
             if(reservation.EndTime > DateTime.UtcNow) {
-                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(DateTime.UtcNow > reservation.StartTime ? DateTime.UtcNow : reservation.StartTime!.Value).TotalHours;
+                var timeIntervalAsHour = reservation.EndTime!.Value.Subtract(fromTime).TotalHours;
                 reservation.User!.Wallet += Pricing.GetPricePerHour(reservation.Space!.Pricing!) * (float)timeIntervalAsHour;
                 context.Entry(reservation.User).State = EntityState.Modified;
             }
