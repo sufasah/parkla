@@ -108,11 +108,11 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
         else
           this.pricingSuggestions = pricings;
 
-        //this.pricingSuggestions.unshift(<any>null);
+        if(this.pricingSuggestions.length > 0)
+          this.pricingSuggestions.unshift(<any>{type: null});
         this.pricingEmptyMessage = "No Pricing Found"
       },
       error: (err: HttpErrorResponse) => {
-        //this.pricingSuggestions = [null!];
         this.pricingEmptyMessage = err.error.message;
       }
     });
