@@ -15,187 +15,163 @@
   >
 </app-spinner>
 
-<div class="p-5 mx-5">
-  <div class="card m-3 p-3 d-inline-block shadow-sm">
-    <h5>Spaces</h5>
-    <p-chart
-      type="pie"
-      [data]="spacesPieData"
-      [options]="spacesPieOptions"
-      width="320px"
-      class="m-3"
-      >
-    </p-chart>
-  </div>
+<div class="p-5 pt-0 mx-5">
+  <div class="d-flex">
+    <div class="card m-3 p-3 d-inline-block shadow-sm">
+      <h5>Spaces</h5>
+      <p-chart
+        type="pie"
+        [data]="spacesPieData"
+        [options]="spacesPieOptions"
+        width="328px"
+        class="m-3"
+        >
+      </p-chart>
+    </div>
 
-  <div class="card m-3 p-3 d-inline-block shadow-sm">
-    <h5>Space Usage Times</h5>
-    <p-chart
-      type="line"
-      [data]="spaceUsageLineData"
-      [options]="spaceUsageLineOptions"
-      width="700px"
-      >
-    </p-chart>
-  </div>
-  <div class="card m-3 p-3 d-inline-block shadow-sm">
-    <h5>Car Count Used Space</h5>
-    <p-chart
-      type="line"
-      [data]="carCountUsedSpaceLineData"
-      [options]="carCountUsedSpaceLineOptions"
-      width="700px"
-      >
-    </p-chart>
-  </div>
-  <div class="card m-3 p-3 d-inline-block shadow-sm">
-    <h5>Revenue</h5>
-    <p-chart
-      type="line"
-      [data]="earningLineData"
-      [options]="earningLineOptions"
-      width="700px"
-      >
-    </p-chart>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-map-marker"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Parks</h3>
-      <span>{{model.totalParks}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-table" style="background-color: var(--yellow-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Park Minimum Price</h3>
-      <span>{{model.minParkPrice?.toFixed(2)}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Park Average Price</h3>
-      <span>{{model.averageParkPrice?.toFixed(2)}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Park Maximum Price</h3>
-      <span>{{model.maxParkPrice?.toFixed(2)}}</span>
+    <div class="d-flex flex-column flex-grow-1">
+      <div class="card d-flex flex-row h-50 m-3 p-3 flex-grow-1 shadow-sm">
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-blue);"></i>
+            <h6 class="text-muted m-0 ms-2">Total Parks</h6>
+          </div>
+          <h3 class="mt-3">{{model.totalParks}}</h3>
+        </div>
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-indigo);"></i>
+            <h6 class="text-muted m-0 ms-2">Total Park Areas</h6>
+          </div>
+          <h3 class="mt-3">{{model.totalAreas}}</h3>
+        </div>
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-purple);"></i>
+            <h6 class="text-muted m-0 ms-2">Total Areas Reservations Enabled</h6>
+          </div>
+          <h3 class="mt-3">{{model.totalReservationEnabledAreas}}</h3>
+        </div>
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-pink);"></i>
+            <h6 class="text-muted m-0 ms-2">Total Park Spaces</h6>
+          </div>
+          <h3 class="mt-3">{{model.totalSpaces}}</h3>
+        </div>
+      </div>
+      <div class="card d-flex flex-row h-50 m-3 p-3 flex-grow-1 shadow-sm">
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+            <h6 class="text-muted m-0 ms-2">Total Reserved Spaces</h6>
+          </div>
+          <h3 class="mt-3">{{model.totalReservedSpaces}}</h3>
+        </div>
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-yellow);"></i>
+            <h6 class="text-muted m-0 ms-2">Minimum Status Data Transfer Delay In Seconds</h6>
+          </div>
+          <h3 class="mt-3">{{model.minStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
+        </div>
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
+            <h6 class="text-muted m-0 ms-2">Average Status Data Transfer Delay In Seconds</h6>
+          </div>
+          <h3 class="mt-3">{{model.averageStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
+        </div>
+        <div class="flex-grow-1 my-4 mx-2 p-2 py-4">
+          <div class="d-flex align-items-center">
+            <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
+            <h6 class="text-muted m-0 ms-2">Maximum Status Data Transfer Delay In Seconds</h6>
+          </div>
+          <h3 class="mt-3">{{model.maxStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  <div class="d-flex">
+    <div class="card d-flex m-3 p-3 d-inline-block shadow-sm">
+      <div class="flex-grow-1 my-2 mx-5 py-4 border-bottom">
+        <div class="d-flex align-items-center">
+          <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
+          <h6 class="text-muted m-0 ms-2">Park Minimum Price Per Hour</h6>
+        </div>
+        <h3 class="mt-3">₺{{model.minParkPrice?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
+      </div>
+      <div class="flex-grow-1 my-2 mx-5 py-4 border-bottom">
+        <div class="d-flex align-items-center">
+          <i class="pi pi-map-marker fs-4" style="color: var(--bs-orange);"></i>
+          <h6 class="text-muted m-0 ms-2">Park Average Price Per Hour</h6>
+        </div>
+        <h3 class="mt-3">₺{{model.averageParkPrice?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
+      </div>
+      <div class="flex-grow-1 my-2 mx-5 py-4">
+        <div class="d-flex align-items-center">
+          <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+          <h6 class="text-muted m-0 ms-2">Park Maxmimum Price Per Hour</h6>
+        </div>
+        <h3 class="mt-3">₺{{model.maxParkPrice?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
+      </div>
     </div>
-    <div class="metric-card-body">
-      <h3>Total Park Areas</h3>
-      <span>{{model.totalAreas}}</span>
+    <div class="card m-3 p-3 flex-grow-1 d-inline-block shadow-sm">
+      <h5>Revenue</h5>
+      <p-chart
+        type="line"
+        [data]="earningLineData"
+        [options]="earningLineOptions"
+        width="810px"
+        >
+      </p-chart>
     </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Reservation Enabled Areas</h3>
-      <span>{{model.totalReservationEnabledAreas}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Park Spaces</h3>
-      <span>{{model.totalSpaces}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Reserved Spaces</h3>
-      <span>{{model.totalReservedSpaces}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Reservations</h3>
-      <span>{{model.totalReservations}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Revenue</h3>
-      <span>{{model.totalEarning?.toFixed(2)}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Minimum Status Data Transfer Delay In Seconds</h3>
-      <span>{{model.minStatusDataTransferDelayInSeconds?.toFixed(6)}}</span>
+    <div class="card d-flex m-3 p-3 d-inline-block shadow-sm">
+      <div class="flex-grow-1 my-2 mx-5 p-2 py-4 border-bottom">
+        <div class="d-flex align-items-center">
+          <i class="pi pi-map-marker fs-4" style="color: var(--bs-teal);"></i>
+          <h6 class="text-muted m-0 ms-2">Total Revenue</h6>
+        </div>
+        <h3 class="mt-3">₺{{model.totalEarning?.toFixed(2) | number : "1.0" : "en-US"}}</h3>
+      </div>
+      <div class="flex-grow-1 my-2 mx-5 p-2 py-4 border-bottom">
+        <div class="d-flex align-items-center">
+          <i class="pi pi-map-marker fs-4" style="color: var(--bs-cyan);"></i>
+          <h6 class="text-muted m-0 ms-2">Total Reservations</h6>
+        </div>
+        <h3 class="mt-3">{{model.totalReservations}}</h3>
+      </div>
+      <div class="flex-grow-1 my-2 mx-5 p-2 py-4">
+        <div class="d-flex align-items-center">
+          <i class="pi pi-map-marker fs-4" style="color: var(--bs-gray);"></i>
+          <h6 class="text-muted m-0 ms-2">Total Cars Used Park Spaces</h6>
+        </div>
+        <h3 class="mt-3">{{model.totalCarsUsedSpaces}}</h3>
+      </div>
     </div>
   </div>
 
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
+  <div class="d-flex justify-content-center">
+    <div class="card m-3 p-3 d-inline-block shadow-sm">
+      <h5>Space Usage Times</h5>
+      <p-chart
+        type="line"
+        [data]="spaceUsageLineData"
+        [options]="spaceUsageLineOptions"
+        width="810px"
+        >
+      </p-chart>
     </div>
-    <div class="metric-card-body">
-      <h3>Average Status Data Transfer Delay In Seconds</h3>
-      <span>{{model.averageStatusDataTransferDelayInSeconds?.toFixed(6)}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Maximum Status Data Transfer Delay In Seconds</h3>
-      <span>{{model.maxStatusDataTransferDelayInSeconds?.toFixed(6)}}</span>
-    </div>
-  </div>
-
-  <div class="metric-card">
-    <div class="metric-card-icon">
-      <i class="pi pi-car" style="background-color: var(--blue-400);"></i>
-    </div>
-    <div class="metric-card-body">
-      <h3>Total Cars Used Park Spaces</h3>
-      <span>{{model.totalCarsUsedSpaces}}</span>
+    <div class="card m-3 p-3 d-inline-block shadow-sm">
+      <h5>Car Count Used Space</h5>
+      <p-chart
+        type="line"
+        [data]="carCountUsedSpaceLineData"
+        [options]="carCountUsedSpaceLineOptions"
+        width="810px"
+        >
+      </p-chart>
     </div>
   </div>
 
