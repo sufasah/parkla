@@ -17,7 +17,7 @@
 
 <div class="p-5 pt-0 mx-5">
   <div class="d-flex">
-    <div class="card m-3 p-3 d-inline-block shadow-sm">
+    <div class="card m-3 p-3 d-inline-block shadow-sm" style="min-width: fit-content;">
       <h5>Spaces</h5>
       <p-chart
         type="pie"
@@ -29,65 +29,69 @@
       </p-chart>
     </div>
 
-    <div class="d-flex flex-column flex-grow-1">
-      <div class="card d-flex flex-row h-50 m-3 p-3 flex-grow-1 shadow-sm">
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-blue);"></i>
-            <h6 class="text-muted m-0 ms-2">Total Parks</h6>
+    <div class="d-flex flex-column">
+      <div class="card h-50 m-3 p-3 shadow-sm">
+        <div class="row m-0 p-0">
+          <div class="col-md-3 my-4 p-4 border-end">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-blue);"></i>
+              <h6 class="text-muted m-0 ms-2">Total Parks</h6>
+            </div>
+            <h3 class="mt-3">{{model.totalParks}}</h3>
           </div>
-          <h3 class="mt-3">{{model.totalParks}}</h3>
-        </div>
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-indigo);"></i>
-            <h6 class="text-muted m-0 ms-2">Total Park Areas</h6>
+          <div class="col-md-3 my-4 p-4 border-end">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-indigo);"></i>
+              <h6 class="text-muted m-0 ms-2">Total Park Areas</h6>
+            </div>
+            <h3 class="mt-3">{{model.totalAreas}}</h3>
           </div>
-          <h3 class="mt-3">{{model.totalAreas}}</h3>
-        </div>
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-purple);"></i>
-            <h6 class="text-muted m-0 ms-2">Total Areas Reservations Enabled</h6>
+          <div class="col-md-3 my-4 p-4 border-end">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-purple);"></i>
+              <h6 class="text-muted m-0 ms-2">Total Areas Reservations Enabled</h6>
+            </div>
+            <h3 class="mt-3">{{model.totalReservationEnabledAreas}}</h3>
           </div>
-          <h3 class="mt-3">{{model.totalReservationEnabledAreas}}</h3>
-        </div>
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-pink);"></i>
-            <h6 class="text-muted m-0 ms-2">Total Park Spaces</h6>
+          <div class="col-md-3 my-4 p-4">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-pink);"></i>
+              <h6 class="text-muted m-0 ms-2">Total Park Spaces</h6>
+            </div>
+            <h3 class="mt-3">{{model.totalSpaces}}</h3>
           </div>
-          <h3 class="mt-3">{{model.totalSpaces}}</h3>
         </div>
       </div>
-      <div class="card d-flex flex-row h-50 m-3 p-3 flex-grow-1 shadow-sm">
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
-            <h6 class="text-muted m-0 ms-2">Total Reserved Spaces</h6>
+      <div class="card h-50 m-3 p-3 shadow-sm">
+        <div class="row m-0 p-0">
+          <div class="col-md-3 my-4 p-4 border-end">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+              <h6 class="text-muted m-0 ms-2 mb-3">Total Reserved Spaces</h6>
+            </div>
+            <h3 class="mt-3">{{model.totalReservedSpaces}}</h3>
           </div>
-          <h3 class="mt-3">{{model.totalReservedSpaces}}</h3>
-        </div>
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-yellow);"></i>
-            <h6 class="text-muted m-0 ms-2">Minimum Status Data Transfer Delay In Seconds</h6>
+          <div class="col-md-3 my-4 p-4 border-end">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
+              <h6 class="text-muted m-0 ms-2">Minimum Status Data Transfer Delay In Seconds</h6>
+            </div>
+            <h3 class="mt-3">{{model.minStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
           </div>
-          <h3 class="mt-3">{{model.minStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
-        </div>
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4 border-end">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
-            <h6 class="text-muted m-0 ms-2">Average Status Data Transfer Delay In Seconds</h6>
+          <div class="col-md-3 my-4 p-4 border-end">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-yellow);"></i>
+              <h6 class="text-muted m-0 ms-2">Average Status Data Transfer Delay In Seconds</h6>
+            </div>
+            <h3 class="mt-3">{{model.averageStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
           </div>
-          <h3 class="mt-3">{{model.averageStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
-        </div>
-        <div class="flex-grow-1 my-4 mx-2 p-2 py-4">
-          <div class="d-flex align-items-center">
-            <i class="pi pi-map-marker fs-4" style="color: var(--bs-green);"></i>
-            <h6 class="text-muted m-0 ms-2">Maximum Status Data Transfer Delay In Seconds</h6>
+          <div class="col-md-3 my-4 p-4">
+            <div class="d-flex">
+              <i class="pi pi-map-marker fs-4" style="color: var(--bs-red);"></i>
+              <h6 class="text-muted m-0 ms-2">Maximum Status Data Transfer Delay In Seconds</h6>
+            </div>
+            <h3 class="mt-3">{{model.maxStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
           </div>
-          <h3 class="mt-3">{{model.maxStatusDataTransferDelayInSeconds?.toFixed(6)}}</h3>
         </div>
       </div>
     </div>
