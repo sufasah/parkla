@@ -21,6 +21,7 @@ import { MDashboardComponent } from './pages/managers/m-dashboard/m-dashboard.co
 import { NoAuthGuard } from './core/guards/no-auth.guard';
 import { MNewParkComponent } from './pages/managers/m-new-park/m-new-park.component';
 import { MEditAreaTemplateComponent } from './pages/managers/m-edit-area-template/m-edit-area-template.component';
+import { NotFound404Component } from './core/components/not-found404/not-found404.component';
 
 const routes: Routes = [
   {
@@ -166,6 +167,11 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       }
     ]
+  },
+  {
+    path: "**",
+    pathMatch: "full",
+    component: NotFound404Component
   }
 ];
 

@@ -106,6 +106,7 @@ import { ReservationModalComponent } from './shared/components/reservation-modal
 import { DatePipe } from '@angular/common';
 import { MapDialogComponent } from './shared/components/map-dialog/map-dialog.component';
 import { ParklaDialogComponent } from './shared/components/parkla-dialog/parkla-dialog.component';
+import { NotFound404Component } from './core/components/not-found404/not-found404.component';
 
 @NgModule({
   declarations: [
@@ -146,6 +147,7 @@ import { ParklaDialogComponent } from './shared/components/parkla-dialog/parkla-
     ReservationModalComponent,
     MapDialogComponent,
     ParklaDialogComponent,
+    NotFound404Component,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
