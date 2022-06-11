@@ -1,16 +1,25 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { TimeUnit } from '@app/core/enums/TimeUnit';
 import { ParkArea } from '@app/core/models/park-area';
 import { ParkSpace, SpacePath } from '@app/core/models/park-space';
 import { ParkSpaceReal } from '@app/core/models/park-space-real';
 import { Pricing } from '@app/core/models/pricing';
 import { ParkAreaService } from '@app/core/services/park-area.service';
 import { RealParkSpaceService } from '@app/core/services/real-park-space.service';
-import { ConfirmationService, LazyLoadEvent } from 'primeng/api';
+import { LazyLoadEvent } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { EditAreaTemplateComponent } from '../edit-area-template/edit-area-template.component';
+
+interface ParklaDialogModel {
+  rightButtonLabel: string;
+  title: string;
+  text1: string;
+  text2: string;
+  confirm: () => void;
+  cancel: () => void;
+  data: any;
+}
 
 @Component({
   selector: 'app-area-template-form',
@@ -71,8 +80,10 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   pricingSuggestions: Pricing[] = [];
   pricingEmptyMessage = "";
 
+  deleteDialogVisible = false;
+  parklaDialog?: ParklaDialogModel;
+
   constructor(
-    private confirmationService: ConfirmationService,
     private realSpaceService: RealParkSpaceService,
     private areaService: ParkAreaService
   ) { }
@@ -97,11 +108,11 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
         else
           this.pricingSuggestions = pricings;
 
-        this.pricingSuggestions.unshift(<any>null);
+        //this.pricingSuggestions.unshift(<any>null);
         this.pricingEmptyMessage = "No Pricing Found"
       },
       error: (err: HttpErrorResponse) => {
-        this.pricingSuggestions = [null!];
+        //this.pricingSuggestions = [null!];
         this.pricingEmptyMessage = err.error.message;
       }
     });
@@ -148,17 +159,24 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
     };
   }
 
-  clearTemplateSpace() {
+  clearTemplateSpaces() {
     this.spaceAdding = false;
-    this.confirmationService.confirm({
-      header: "Clear",
-      message: "Are you sure to clear all spaces on park area?",
-      accept: () => {
-        this.area.spaces = [];
-        this.editAreaTemplateRef.drawCanvas();
-      },
-      icon: "pi pi-trash"
-    })
+    this.deleteDialogVisible = true;
+    this.parklaDialog = {
+      title: "Clear Park Spaces",
+      text1: "Are you sure to clear all spaces of the park area?",
+      text2: "",
+      data: undefined,
+      rightButtonLabel: "Clear",
+      confirm: this.clearTemplateSpacesConfirm.bind(this),
+      cancel: this.cancelDeleteDialog.bind(this)
+    };
+  }
+
+  clearTemplateSpacesConfirm() {
+    this.area.spaces = [];
+    this.editAreaTemplateRef.drawCanvas();
+    this.deleteDialogVisible = false;
   }
 
   spaceClicked(space: ParkSpace) {
@@ -168,19 +186,27 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   }
 
   spaceRightClicked(space: ParkSpace) {
-    this.confirmationService.confirm({
-      header: "Delete Space",
-      icon: "pi pi-trash",
-      message: "Are you sure to delete the selected space?",
-      accept: () => {
-        let index = this.area.spaces.indexOf(space);
-        if(index != -1) {
-          this.area.spaces.splice(index,1);
-          this.editAreaTemplateRef.drawCanvas();
-        }
-        this.spaceModalVisible = false;
-      }
-    });
+    this.deleteDialogVisible = true;
+    this.parklaDialog = {
+      title: "Park Space Deletion",
+      text1: space.id.toString(),
+      text2: space.name,
+      data: space,
+      rightButtonLabel: "Delete",
+      confirm: this.deleteSpaceConfirm.bind(this),
+      cancel: this.cancelDeleteDialog.bind(this)
+    };
+  }
+
+  deleteSpaceConfirm() {
+    const space: ParkSpace = this.parklaDialog?.data;
+    const index = this.area.spaces.indexOf(space);
+    if(index != -1) {
+      this.area.spaces.splice(index,1);
+      this.editAreaTemplateRef.drawCanvas();
+    }
+    this.spaceModalVisible = false;
+    this.deleteDialogVisible = false;
   }
 
   clearTable(table: Table, searchInput: HTMLInputElement) {
@@ -253,26 +279,38 @@ export class AreaTemplateFormComponent implements OnInit, AfterViewInit {
   }
 
   deleteRealSpace(realSpace: ParkSpaceReal) {
-    this.confirmationService.confirm({
-      header: "Real Space Deletion",
-      message: `Are you sure to delete the realspace with '${realSpace.id}' id and '${realSpace.name}' name ?`,
-      accept: () => {
-        this.realSpaceService.deleteRealSpace(realSpace.id).subscribe({
-          next: () => {
-            this.realSpacesLoading = true;
-            this.area.spaces.forEach(space => {
-              if(space.realSpace && space.realSpace.id == realSpace.id)
-                space.realSpace = undefined;
-            });
-            this.fetchRealSpaces(this.nextRecord, this.lastSearchInput);
-          },
-          error: (err:HttpErrorResponse) => {
-            this.onRealSpaceDeleteError.emit(err);
-          }
+    this.deleteDialogVisible = true;
+    this.parklaDialog = {
+      title: "Real Space Deletion",
+      text1: realSpace.id.toString(),
+      text2: realSpace.name,
+      data: realSpace,
+      rightButtonLabel: "Delete",
+      confirm: this.deleteRealSpaceConfirm.bind(this),
+      cancel: this.cancelDeleteDialog.bind(this)
+    };
+  }
+
+  deleteRealSpaceConfirm() {
+    const realSpace: ParkSpaceReal = this.parklaDialog!.data;
+    this.deleteDialogVisible = false;
+    this.realSpaceService.deleteRealSpace(realSpace.id).subscribe({
+      next: () => {
+        this.realSpacesLoading = true;
+        this.area.spaces.forEach(space => {
+          if(space.realSpace && space.realSpace.id == realSpace.id)
+            space.realSpace = undefined;
         });
+        this.fetchRealSpaces(this.nextRecord, this.lastSearchInput);
       },
-      icon: "pi pi-trash"
-    })
+      error: (err:HttpErrorResponse) => {
+        this.onRealSpaceDeleteError.emit(err);
+      }
+    });
+  }
+
+  cancelDeleteDialog() {
+    this.deleteDialogVisible = false;
   }
 
   setSelectedRealSpace(realSpace: ParkSpaceReal) {
