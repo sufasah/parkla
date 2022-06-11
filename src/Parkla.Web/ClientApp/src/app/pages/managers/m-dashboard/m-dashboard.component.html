@@ -179,101 +179,101 @@
     </div>
   </div>
 
-  <div style="width: 800px;">
-    <p-table
-      [value]="model.topPopularParks"
-      responsiveLayout="scroll"
-      [scrollable]="true"
-      scrollHeight="600px"
-      >
-      <ng-template pTemplate="caption">
-        <h3>Top 10 Popular Parks</h3>
-      </ng-template>
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="max-width:60px"></th>
-          <th style="min-width:200px">Name</th>
-          <th style="min-width:600px">location</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-data let-index="rowIndex">
-        <tr>
-          <td style="max-width:60px">{{index+1}}</td>
-          <td style="min-width:200px">{{data.name}}</td>
-          <td style="min-width:600px">{{data.location}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <div class="d-flex">
+    <div class="card m-3 p-3 d-inline-block shadow-sm">
+      <h5>Top 10 Popular Parks</h5>
+      <p-table
+        [value]="model.topPopularParks"
+        responsiveLayout="scroll"
+        [scrollable]="true"
+        scrollHeight="600px"
+        styleClass="mt-4 border"
+        >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="max-width:60px"></th>
+            <th style="min-width:200px">Name</th>
+            <th style="min-width:600px">location</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data let-index="rowIndex">
+          <tr>
+            <td style="max-width:60px">{{index+1}}</td>
+            <td style="min-width:200px">{{data.name}}</td>
+            <td style="min-width:600px">{{data.location}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="card m-3 p-3 d-inline-block shadow-sm">
+      <h5>Most Active 10 Users</h5>
+      <p-table
+        [value]="model.mostActiveUsers"
+        responsiveLayout="scroll"
+        [scrollable]="true"
+        scrollHeight="600px"
+        styleClass="mt-4 border"
+        >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="max-width:60px"></th>
+            <th style="min-width:200px">Username</th>
+            <th style="min-width:200px">Name</th>
+            <th style="min-width:200px">Surname</th>
+            <th style="min-width:200px">City</th>
+            <th style="min-width:600px">E-Mail</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data let-index="rowIndex">
+          <tr>
+            <td style="max-width:60px">{{index+1}}</td>
+            <td style="min-width:200px">{{data.username}}</td>
+            <td style="min-width:200px">{{data.name}}</td>
+            <td style="min-width:200px">{{data.surname}}</td>
+            <td style="min-width:200px">{{data.city?.name}}</td>
+            <td style="min-width:600px">{{data.email}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 
-  <div style="width: 800px;">
-    <p-table
-      [value]="model.mostActiveUsers"
-      responsiveLayout="scroll"
-      [scrollable]="true"
-      scrollHeight="600px"
-      >
-      <ng-template pTemplate="caption">
-        <h3>Most Active 10 Users</h3>
-      </ng-template>
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="max-width:60px"></th>
-          <th style="min-width:200px">Username</th>
-          <th style="min-width:200px">Name</th>
-          <th style="min-width:200px">Surname</th>
-          <th style="min-width:200px">City</th>
-          <th style="min-width:600px">E-Mail</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-data let-index="rowIndex">
-        <tr>
-          <td style="max-width:60px">{{index+1}}</td>
-          <td style="min-width:200px">{{data.username}}</td>
-          <td style="min-width:200px">{{data.name}}</td>
-          <td style="min-width:200px">{{data.surname}}</td>
-          <td style="min-width:200px">{{data.city.name}}</td>
-          <td style="min-width:600px">{{data.email}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
-
-  <div style="width: 800px;">
-    <p-table
-      [value]="model.spaceUsageTimePercentagesPerWeekday"
-      responsiveLayout="scroll"
-      [scrollable]="true"
-      scrollHeight="600px"
-      >
-      <ng-template pTemplate="caption">
-        <h3>Space Usage Percentage On WeekDays</h3>
-      </ng-template>
-      <ng-template pTemplate="header">
-        <tr>
-          <th style="min-width:100px;"></th>
-          <th style="min-width:150px;">Sunday</th>
-          <th style="min-width:150px;">Monday</th>
-          <th style="min-width:150px;">Tuesday</th>
-          <th style="min-width:150px;">Wednesday</th>
-          <th style="min-width:150px;">Thursday</th>
-          <th style="min-width:150px;">Friday</th>
-          <th style="min-width:150px;">Saturday</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-data let-index="rowIndex">
-        <tr>
-          <td style="min-width:100px" class="fw-bolder">{{(index < 10 ? "0" : "")+index+":00"}}</td>
-          <td style="min-width:150px">{{data[0].toFixed(6)}}<b>%</b></td>
-          <td style="min-width:150px">{{data[1].toFixed(6)}}<b>%</b></td>
-          <td style="min-width:150px">{{data[2].toFixed(6)}}<b>%</b></td>
-          <td style="min-width:150px">{{data[3].toFixed(6)}}<b>%</b></td>
-          <td style="min-width:150px">{{data[4].toFixed(6)}}<b>%</b></td>
-          <td style="min-width:150px">{{data[5].toFixed(6)}}<b>%</b></td>
-          <td style="min-width:150px">{{data[6].toFixed(6)}}<b>%</b></td>
-        </tr>
-      </ng-template>
-    </p-table>
+  <div class="p-3">
+    <div class="card w-100 p-3 d-inline-block shadow-sm">
+      <h5>Space Usage Percentage On WeekDays</h5>
+      <p-table
+        [value]="model.spaceUsageTimePercentagesPerWeekday"
+        responsiveLayout="scroll"
+        [scrollable]="true"
+        scrollHeight="600px"
+        styleClass="mt-4 border"
+        >
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width:100px;"></th>
+            <th style="min-width:150px;">Sunday</th>
+            <th style="min-width:150px;">Monday</th>
+            <th style="min-width:150px;">Tuesday</th>
+            <th style="min-width:150px;">Wednesday</th>
+            <th style="min-width:150px;">Thursday</th>
+            <th style="min-width:150px;">Friday</th>
+            <th style="min-width:150px;">Saturday</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data let-index="rowIndex">
+          <tr>
+            <td style="min-width:100px" class="fw-bolder">{{(index < 10 ? "0" : "")+index+":00"}}</td>
+            <td style="min-width:150px">{{data[0].toFixed(6)}}<b>%</b></td>
+            <td style="min-width:150px">{{data[1].toFixed(6)}}<b>%</b></td>
+            <td style="min-width:150px">{{data[2].toFixed(6)}}<b>%</b></td>
+            <td style="min-width:150px">{{data[3].toFixed(6)}}<b>%</b></td>
+            <td style="min-width:150px">{{data[4].toFixed(6)}}<b>%</b></td>
+            <td style="min-width:150px">{{data[5].toFixed(6)}}<b>%</b></td>
+            <td style="min-width:150px">{{data[6].toFixed(6)}}<b>%</b></td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
   </div>
 </div>
 

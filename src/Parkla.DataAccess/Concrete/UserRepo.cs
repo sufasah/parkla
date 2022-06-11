@@ -141,7 +141,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                                             .Select(g5 => new {
                                                 ReservationCount = g5.Count(),
                                                 
-                                                TotalEarning = g5.Where(x => x.EndTime < DateTime.UtcNow)
+                                                TotalEarning = g5.Where(x => x.StartTime < DateTime.UtcNow.AddDays(1).Date)
                                                     .Sum(x => (x.EndTime!.Value - x.StartTime!.Value).TotalHours * x.Space!.Pricing!.Price
                                                         * (TimeUnit.MINUTE == x.Space!.Pricing!.Unit ? 60 : 1)
                                                         / (TimeUnit.DAY == x.Space!.Pricing!.Unit ? 24 : 1)
@@ -265,7 +265,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
         
         var earningSeries = await seriesQuery.Select(g => 
                 g.SelectMany(x => x.Reservations!)
-                    .Where(x => x.StartTime < DateTime.UtcNow && x.StartTime >= aMonthAgo && x.Space!.PricingId != null)
+                    .Where(x => x.StartTime < DateTime.UtcNow.AddDays(1).Date && x.StartTime >= aMonthAgo && x.Space!.PricingId != null)
                     .Select(x => new {
                         Reservation = x,
                         Pricing = x.Space!.Pricing!
@@ -276,7 +276,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
 
         var carCountUsedSpaceSeries = await seriesQuery.Select(g => 
                 g.SelectMany(x => x.ReceivedSpaceStatusses)
-                    .Where(x => x.StatusDataTime > aMonthAgo && x.OldRealSpaceStatus != SpaceStatus.OCCUPIED && x.NewRealSpaceStatus == SpaceStatus.OCCUPIED)
+                    .Where(x => x.StatusDataTime > aMonthAgo && x.OldRealSpaceStatus == SpaceStatus.OCCUPIED && x.NewRealSpaceStatus == SpaceStatus.EMPTY)
                     .ToList())
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);

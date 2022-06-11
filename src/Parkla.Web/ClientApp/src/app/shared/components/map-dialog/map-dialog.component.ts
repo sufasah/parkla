@@ -85,8 +85,8 @@ export class MapDialogComponent implements OnInit {
           life:1500,
           detail: `The park with '${this.park.name}' name is deleted.`
         });
-
         this.visible = false;
+        this.deleteParkVisible = false;
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({
@@ -96,6 +96,7 @@ export class MapDialogComponent implements OnInit {
           life:5000,
           detail: err.error.message
         });
+        this.deleteParkVisible = false;
       }
     })
   }
