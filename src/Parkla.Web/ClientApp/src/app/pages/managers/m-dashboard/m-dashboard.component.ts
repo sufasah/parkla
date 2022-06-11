@@ -139,7 +139,7 @@ export class MDashboardComponent implements OnInit {
     labels: [],
     datasets: [
       {
-        label: "Earning",
+        label: "Revenue",
         fill: true,
         yAxisID: 'y',
         tension: .4,

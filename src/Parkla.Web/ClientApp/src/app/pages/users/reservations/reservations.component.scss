@@ -1,0 +1,7 @@
+:host ::ng-deep {
+  .header-chip {
+    background-color: var(--blue-500);
+    color: white;
+    padding: .5rem 6rem;
+  }
+}

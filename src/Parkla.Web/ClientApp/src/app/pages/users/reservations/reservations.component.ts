@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Reservation } from '@app/core/models/reservation';
 import { AuthService } from '@app/core/services/auth.service';
@@ -12,7 +12,7 @@ import { Table } from 'primeng/table';
   templateUrl: './reservations.component.html',
   styleUrls: ['./reservations.component.scss']
 })
-export class ReservationsComponent implements OnInit {
+export class ReservationsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(Table)
   table!: Table;
@@ -30,6 +30,20 @@ export class ReservationsComponent implements OnInit {
     this.reservationService.getUserReservations(Number(this.authService.accessToken?.sub)).subscribe(reservations => {
       this.reservations = reservations;
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.table.globalFilterFields = [
+      "space.area.park.name",
+      "space.area.name",
+      "space.name",
+      "startTime",
+      "endTime",
+      "space.pricing.type",
+      "space.pricing.unit",
+      "space.pricing.amount",
+      "space.pricing.price"
+    ];
   }
 
   goMap() {
@@ -62,6 +76,11 @@ export class ReservationsComponent implements OnInit {
         });
       }
     });
+  }
+
+  filterReservations(event: Event) {
+    const inputElement = <HTMLInputElement> event.target;
+    this.table.filterGlobal(inputElement.value, "contains");
   }
 
 }

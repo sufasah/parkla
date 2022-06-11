@@ -1,11 +1,9 @@
 using System.Linq.Expressions;
-using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Parkla.Core.DTOs;
 using Parkla.Core.Entities;
 using Parkla.Core.Enums;
 using Parkla.Core.Exceptions;
-using Parkla.Core.Helpers;
 using Parkla.DataAccess.Abstract;
 using Parkla.DataAccess.Bases;
 
@@ -95,14 +93,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
 
     public async Task<DashboardDto> GetDashboardAsync(int id, CancellationToken cancellationToken) {
         using var context = new TContext();
-        var aMonthAgo = DateTime.UtcNow.Subtract(new TimeSpan(30,0,0,0));
-        aMonthAgo = new DateTime(
-            aMonthAgo.Year,
-            aMonthAgo.Month,
-            aMonthAgo.Day,
-            0,0,0,0,
-            DateTimeKind.Utc
-        );
+        var aMonthAgo = DateTime.UtcNow.Subtract(new TimeSpan(30,0,0,0)).Date;
 
         var result = await context.Set<User>()
             .AsNoTracking()
@@ -254,7 +245,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
             }
         }
 
-        var seriesResult = await context.Set<ParkSpace>()
+        var seriesQuery = context.Set<ParkSpace>()
             .AsNoTracking()
             .Include(x => x.Area!)
             .ThenInclude(x => x.Park)
@@ -262,45 +253,55 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
             .Include(x => x.ReceivedSpaceStatusses)
             .Include(x => x.Reservations)
             .Where(x => x.Area!.Park!.UserId == id)
-            .GroupBy(x => 1)
-            .Select(g => new {
-                SpaceUsageSeriesRaw = g.SelectMany(x => x.ReceivedSpaceStatusses)
+            .GroupBy(x => 1);
+
+        var spaceUsageSeriesRaw = await seriesQuery.Select(g =>
+                g.SelectMany(x => x.ReceivedSpaceStatusses)
                     .Where(x => x.StatusDataTime > aMonthAgo && (x.NewRealSpaceStatus == SpaceStatus.OCCUPIED || (x.OldRealSpaceStatus == SpaceStatus.OCCUPIED && x.NewRealSpaceStatus == SpaceStatus.EMPTY)))
                     .OrderBy(x => x.StatusDataTime)
-                    .AsEnumerable(),
-                EarningSeries = g.SelectMany(x => x.Reservations!)
+                    .ToList())
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+        
+        var earningSeries = await seriesQuery.Select(g => 
+                g.SelectMany(x => x.Reservations!)
                     .Where(x => x.StartTime < DateTime.UtcNow && x.StartTime >= aMonthAgo && x.Space!.PricingId != null)
                     .Select(x => new {
                         Reservation = x,
                         Pricing = x.Space!.Pricing!
                     })
-                    .ToList(),
-                CarCountUsedSpaceSeries = g.SelectMany(x => x.ReceivedSpaceStatusses)
+                    .ToList())
+            .FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var carCountUsedSpaceSeries = await seriesQuery.Select(g => 
+                g.SelectMany(x => x.ReceivedSpaceStatusses)
                     .Where(x => x.StatusDataTime > aMonthAgo && x.OldRealSpaceStatus != SpaceStatus.OCCUPIED && x.NewRealSpaceStatus == SpaceStatus.OCCUPIED)
-                    .ToList()       
-            })
+                    .ToList())
             .FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
         
-        if(seriesResult != null) {
-            seriesResult.EarningSeries
+        if(earningSeries != null)
+            earningSeries
                 .GroupBy(x => x.Reservation.StartTime!.Value.Date)
                 .Select(g => new TimeSeriesData(g.Key, g.Sum(x => Pricing.GetPricePerHour(x.Pricing) * (x.Reservation.EndTime!.Value - x.Reservation.StartTime!.Value).TotalHours)))
                 .ToList()
                 .ForEach(x => dto.TotalEarningPerDay[(int)(x.X-aMonthAgo).TotalDays].Y = x.Y);
-
-            seriesResult.CarCountUsedSpaceSeries
+        
+        if(carCountUsedSpaceSeries != null)
+            carCountUsedSpaceSeries
                 .GroupBy(x => x.StatusDataTime!.Value.Date)
                 .Select(g => new TimeSeriesData(g.Key, g.Count()))
                 .ToList()
                 .ForEach(x => dto.CarCountUsedSpacePerDay[(int)(x.X-aMonthAgo).TotalDays].Y = x.Y);
-            
+        
+        if(spaceUsageSeriesRaw != null ) {
             var pairedSet = new HashSet<ReceivedSpaceStatus>();
 
-            var pairs = seriesResult.SpaceUsageSeriesRaw
+            var pairs = spaceUsageSeriesRaw
                 .Where(x => x.NewRealSpaceStatus == SpaceStatus.EMPTY && x.OldRealSpaceStatus == SpaceStatus.OCCUPIED)
                 .Select((x,i) => {
-                    var found = seriesResult.SpaceUsageSeriesRaw
+                    var found = spaceUsageSeriesRaw
                         .Where((y,i2) => y.SpaceId == x.SpaceId && y.NewRealSpaceStatus == SpaceStatus.OCCUPIED && i2 < i && !pairedSet.Contains(y))
                         //.Max(Comparer<ReceivedSpaceStatus>.Create((v1,v2) => v1.StatusDataTime!.Value.CompareTo(v2.StatusDataTime!.Value)));
                         .LastOrDefault();
