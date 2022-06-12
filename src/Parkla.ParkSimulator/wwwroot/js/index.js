@@ -1,8 +1,12 @@
 ﻿var randomIID;
 var server = "https://localhost:7072"
+
 const EMPTY_STATUS = "EMPTY";
 const OCCUPIED_STATUS = "OCCUPIED";
 const UNKNOWN_STATUS = "UNKNOWN";
+const HTTP_PROTOCOL = "HTTP";
+const GRPC_PROTOCOL = "GRPC";
+const SERIAL_PROTOCOL = "SERIAL";
 
 var spaces;
 
@@ -83,6 +87,7 @@ function randomClick(event) {
     if(randomIID) {
         elem.innerHTML = "Start Simulation"
         clearInterval(randomIID);
+        randomIID = undefined;
     }
     else {
         elem.innerHTML = "Stop Simulation"
@@ -90,6 +95,18 @@ function randomClick(event) {
             SetRandom();
         }, 100);
     }
+}
+
+function setProtocol(protocol) {
+    const req = new XMLHttpRequest();
+    req.open( "GET", server+`/SetProtocol?protocol=${protocol}`);
+    setHeaders(req);
+
+    req.send();
+
+    req.addEventListener("load", () => {
+       document.querySelector("#protocolText").innerHTML = protocol;
+    });
 }
 
 (function () {
@@ -104,4 +121,7 @@ function randomClick(event) {
     })
 
     document.querySelector("#simulateButton").addEventListener("click", randomClick);
+    document.querySelector("#httpProtocolButton").addEventListener("click", () => setProtocol(HTTP_PROTOCOL));
+    document.querySelector("#grpcProtocolButton").addEventListener("click", () => setProtocol(GRPC_PROTOCOL));
+    document.querySelector("#serialProtocolButton").addEventListener("click", () => setProtocol(SERIAL_PROTOCOL));
 })();

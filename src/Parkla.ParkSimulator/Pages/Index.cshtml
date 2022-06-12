@@ -5,10 +5,20 @@
 }
 <div class="menu">
     <div class="menu-item">
-        ParkId: @Model.GetParkId
+        <div>
+            ParkId: @Model.GetParkId
+        </div>
+        <div>
+            Protocol: <span id="protocolText">@Model.GetProtocol</span>
+        </div>
     </div>
     <div class="menu-item">
         <button id="simulateButton">Start Simulation</button>
+    </div>
+    <div class="menu-item">
+        <button id="httpProtocolButton">HTTP</button>
+        <button id="grpcProtocolButton">GRPC</button>
+        <button id="serialProtocolButton">SERIAL</button>
     </div>
 </div>
 <div class="template-body">
@@ -19,7 +29,14 @@
             string spaceName = space.Item2;
 
             <div class="space" data-id="@spaceId">
-                @Html.Raw(spaceId +" "+ spaceName)
+                <div>
+                    <div class="space-id">
+                        @Html.Raw(spaceId) 
+                    </div>
+                    <div class="space-name">   
+                        @Html.Raw(spaceName)
+                    </div>
+                </div>
             </div>
         }
     </div>

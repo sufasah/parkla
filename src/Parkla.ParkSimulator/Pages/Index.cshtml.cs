@@ -1,11 +1,4 @@
-﻿using System.IO.Ports;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Net.Client;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Parkla.Core.DTOs;
-using Parkla.Core.Enums;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 using Parkla.Web.Controllers;
 
 namespace Parkla.ParkSimulator.Pages;
@@ -19,6 +12,7 @@ public class IndexModel : PageModel
 
     public List<Tuple<int,string>> GetRealSpaces => SimulateController.RealSpaces;
     
+    public string GetProtocol => SimulateController.InitialProtocol.ToString();
 
     public IndexModel(ILogger<IndexModel> logger)
     {

@@ -151,13 +151,14 @@ export class AreaDataViewComponent implements OnInit, OnDestroy {
       if(oldAreaIndex != -1) {
         if(isDelete) {
           this.areas.splice(oldAreaIndex, 1);
+          this.dataView.cd.detectChanges();
         }
         else {
           if(this.areas[oldAreaIndex].xmin <= area.xmin)
-            this.areas[oldAreaIndex] = {...area};
+            Object.assign(this.areas[oldAreaIndex], area);
         }
+
       }
-      this.dataView.cd.detectChanges();
     });
   }
 

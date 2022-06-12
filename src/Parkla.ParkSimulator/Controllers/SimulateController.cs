@@ -16,7 +16,7 @@ namespace Parkla.Web.Controllers;
 [Route("/")]
 public class SimulateController : ControllerBase
 {
-    private enum ExportType {
+    public enum ExportType {
         SERIAL,
         HTTP,
         GRPC
@@ -48,12 +48,14 @@ public class SimulateController : ControllerBase
     };
     private static readonly string _collectorEndpoint = "https://localhost:7071"; 
     private static readonly HttpClient httpClient = new(); // to collector http endpoint
-    private static readonly SerialPort serialPort = new("COM1", 9600); // to COM2 which is reciever of collector
+    private static readonly SerialPort serialPort = new("COM3", 9600); // to COM2 which is reciever of collector
     private static readonly CollectorClient grpcClient = new(
         GrpcChannel.ForAddress(_collectorEndpoint) // to collector
     );
     
-    private ExportType Protocol = ExportType.HTTP;
+    public readonly static ExportType InitialProtocol = ExportType.HTTP;
+
+    private static ExportType Protocol = InitialProtocol;
 
     [HttpGet("/ResetServer")]
     public async Task<IActionResult> ResetServerState() {
