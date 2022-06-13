@@ -1,31 +1,31 @@
-<div class="d-flex flex-column h-100">
-  <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <button
-        pButton
-        pRipple
-        (click)="goAreas()"
-        label="Areas"
-        icon="pi pi-arrow-left"
-        >
-      </button>
-    </div>
-
-    <app-time-range
-      *ngIf="selectedArea.reservationsEnabled"
-      (onChange)="timeRangeChange($event)"
-      [enabled]="selectedArea.reservationsEnabled"
-      [minDate]="minDate"
-      [maxDate]="maxDate"
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <button
+      pButton
+      pRipple
+      (click)="goAreas()"
+      label="Areas"
+      icon="pi pi-arrow-left"
       >
-    </app-time-range>
+    </button>
+  </div>
 
-    <app-user-avatar
-      class="p-toolbar-group-right"
-      >
-    </app-user-avatar>
-  </p-toolbar>
+  <app-time-range
+    *ngIf="selectedArea.reservationsEnabled"
+    (onChange)="timeRangeChange($event)"
+    [enabled]="selectedArea.reservationsEnabled"
+    [minDate]="minDate"
+    [maxDate]="maxDate"
+    >
+  </app-time-range>
 
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<div style="height: calc( 100% - 70px );">
   <app-area-template
     #parkTemplate
     [parkArea]="selectedArea"

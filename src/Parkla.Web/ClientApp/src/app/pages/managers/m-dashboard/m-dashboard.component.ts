@@ -36,7 +36,9 @@ export class MDashboardComponent implements OnInit {
       {
         data: [-1,-1,-1],
         backgroundColor: ["#6EBF8B","#D82148","#151D3B"],
-        hoverBackgroundColor: ["#DADBBD","#DADBBD","#DADBBD"]
+        hoverBackgroundColor: ["#DADBBD","#DADBBD","#DADBBD"],
+        borderColor: ["black", "black", "black"],
+        borderWidth: 1
       }
     ]
   }

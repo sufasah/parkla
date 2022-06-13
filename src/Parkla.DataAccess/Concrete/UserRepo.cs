@@ -373,19 +373,19 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                     iter = next;
                 } while(iter < end);
             }
-
-            dto.SpaceUsageTimePerDay.ForEach(x => {
-                var mams = (MinAvgMaxSum)x.Y;
-                if(mams.Count > 0) {
-                    mams.Avg = mams.Sum / mams.Count;
-                }
-                else {
-                    mams.Min = 0;
-                    mams.Avg = 0;
-                    mams.Max = 0;
-                }
-            });
         }
+        
+        dto.SpaceUsageTimePerDay.ForEach(x => {
+            var mams = (MinAvgMaxSum)x.Y;
+            if(mams.Count > 0) {
+                mams.Avg = mams.Sum / mams.Count;
+            }
+            else {
+                mams.Min = 0;
+                mams.Avg = 0;
+                mams.Max = 0;
+            }
+        });
 
         return dto;
     }

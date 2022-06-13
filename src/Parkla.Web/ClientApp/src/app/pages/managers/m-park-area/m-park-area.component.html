@@ -1,47 +1,46 @@
-<div class="d-flex flex-column h-100">
-  <p-toolbar>
-    <div class="p-toolbar-group-left">
-      <button
-        pButton
-        pRipple
-        (click)="goAreas()"
-        label="Areas"
-        icon="pi pi-arrow-left"
-        >
-      </button>
-
-      <button
-        pButton
-        pRipple
-        (click)="goQRCode()"
-        icon="pi pi-qrcode"
-        class="ms-3"
-        >
-      </button>
-
-      <button
-        pButton
-        pRipple
-        (click)="goEditTemplate()"
-        icon="pi pi-pencil"
-        class="ms-3"
-        >
-      </button>
-    </div>
-
-    <app-user-avatar
-      class="p-toolbar-group-right"
+<p-toolbar>
+  <div class="p-toolbar-group-left">
+    <button
+      pButton
+      pRipple
+      (click)="goAreas()"
+      label="Areas"
+      icon="pi pi-arrow-left"
       >
-    </app-user-avatar>
-  </p-toolbar>
+    </button>
 
+    <button
+      pButton
+      pRipple
+      (click)="goQRCode()"
+      icon="pi pi-qrcode"
+      class="ms-3"
+      >
+    </button>
+
+    <button
+      pButton
+      pRipple
+      (click)="goEditTemplate()"
+      icon="pi pi-pencil"
+      class="ms-3"
+      >
+    </button>
+  </div>
+
+  <app-user-avatar
+    class="p-toolbar-group-right"
+    >
+  </app-user-avatar>
+</p-toolbar>
+
+<div style="height: calc( 100% - 70px );">
   <app-area-template
     #parkTemplate
     [parkArea]="selectedArea"
     (spaceClicked)="spaceClicked($event)"
     (reservationChanges)="reservationChanges($event.reservation,$event.isDelete)"
     (spaceChanges)="spaceChanges($event.space,$event.isDelete)"
-    ngClass="flex-grow-1"
     >
   </app-area-template>
 </div>
