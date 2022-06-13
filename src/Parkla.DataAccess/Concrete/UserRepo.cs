@@ -95,7 +95,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
         using var context = new TContext();
         var aMonthAgo = DateTime.UtcNow.Subtract(new TimeSpan(30,0,0,0)).Date;
 
-        var result = await context.Set<User>()
+        var query = context.Set<User>()
             .AsNoTracking()
             .Where(x => x.Id == id)
             .Include(x => x.Parks)
@@ -116,133 +116,137 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                 .ThenInclude(x => x.Reservations!)
                 .ThenInclude(x => x!.User)
                 .ThenInclude(x => x!.City)
-            .GroupBy(x => 1)
-            .Select(g => new {
-                ParksGroup = g.SelectMany(x => x.Parks)
-                    .GroupBy(x => 1)
-                    .Select(g2 => new {
-                        AreasGroup = g2.SelectMany(x => x.Areas)
-                            .GroupBy(x => 1)
-                            .Select(g3 => new {
-                                SpacesGroup = g3.SelectMany(x => x.Spaces)
-                                    .GroupBy(x => 1)
-                                    .Select(g4 => new {
-                                        ReceivedSpaceStatussesGroup = g4.SelectMany(x => x.ReceivedSpaceStatusses)
-                                            .GroupBy(x => 1)
-                                            .Select(g5 => new {
-                                                MinStatusDataTransferDelayInSeconds = g5.Min(x => (x.ReceivedTime!.Value - x.StatusDataTime!.Value).TotalSeconds),
-                                                AverageStatusDataTransferDelayInSeconds = g5.Average(x => (x.ReceivedTime!.Value - x.StatusDataTime!.Value).TotalSeconds),
-                                                MaxStatusDataTransferDelayInSeconds = g5.Max(x => (x.ReceivedTime!.Value - x.StatusDataTime!.Value).TotalSeconds),
-                                                TotalCarsUsedSpaces = g5.Where(x => x.OldSpaceStatus == SpaceStatus.OCCUPIED && x.NewSpaceStatus == SpaceStatus.EMPTY).Count()
-                                            })
-                                            .FirstOrDefault(),
-                                        ReservationsGroup = g4.SelectMany(x => x.Reservations!)
-                                            .GroupBy(x => 1)
-                                            .Select(g5 => new {
-                                                ReservationCount = g5.Count(),
-                                                
-                                                TotalEarning = g5.Where(x => x.StartTime < DateTime.UtcNow.AddDays(1).Date)
-                                                    .Sum(x => (x.EndTime!.Value - x.StartTime!.Value).TotalHours * x.Space!.Pricing!.Price
-                                                        * (TimeUnit.MINUTE == x.Space!.Pricing!.Unit ? 60 : 1)
-                                                        / (TimeUnit.DAY == x.Space!.Pricing!.Unit ? 24 : 1)
-                                                        / (TimeUnit.MONTH == x.Space!.Pricing!.Unit ? 720 : 1)
-                                                        / x.Space!.Pricing!.Amount),
-                                                MostActive10User = g5.GroupBy(x => x.UserId)
-                                                    .Select(g6 => new {
-                                                        User = g6.First(x => x.UserId == g6.Key).User!,
-                                                        ReservationCount = g6.Count()
-                                                    })
-                                                    .OrderByDescending(x => x.ReservationCount)
-                                                    .Take(10)
-                                                    .ToList()
-                                            })
-                                            .FirstOrDefault(),
-                                        Count = g4.Count(),
-                                        ReservedSpaceCount = g4.Where(x => x.Reservations!.Where(y => y.EndTime > DateTime.UtcNow).Any()).Count(),
-                                    })
-                                    .FirstOrDefault(),
-                                Count = g3.Count(), 
-                                ReservationEnabledCount = g3.Where(x => x.ReservationsEnabled == true).Count()
-                            })
-                            .FirstOrDefault(),
-                        Count = g2.Count(),
-                        MinPrice = g2.Min(x => x.MinPrice),
-                        AveragePrice = g2.Average(x => x.AveragePrice),
-                        MaxPrice = g2.Max(x => x.MaxPrice),
-                        EmptySpaceCount = g2.Sum(x => (long?)x.EmptySpace),
-                        OccupiedSpaceCount = g2.Sum(x => (long?)x.OccupiedSpace),
-                    })
-                    .FirstOrDefault(),
-                Top10PopularParks = g.SelectMany(x => x.Parks)
-                    .GroupBy(x => x.Id)
-                    .Select(g2 => new {
-                        Park = g2.First(x => x.Id == g2.Key),
-                        ReservationCount = g2.SelectMany(x => x.Areas)
+            .GroupBy(x => 1);
+
+        var result = await query.Select(
+            g => new {
+                ParkCount = g.First().Parks
+                    .Count,
+                ParkMinPrice = g.First().Parks
+                    .Min(x => x.MinPrice),
+                ParkAveragePrice = g.First().Parks
+                    .Average(x => x.AveragePrice),
+                ParkMaxPrice = g.First().Parks
+                    .Max(x => x.MaxPrice),
+                ParkEmptySpaceCount = g.First().Parks
+                    .Sum(x => (long?)x.EmptySpace),
+                ParkOccupiedSpaceCount = g.First().Parks
+                    .Sum(x => (long?)x.OccupiedSpace),
+                Top10PopularParks = g.First().Parks
+                    .Select(x => new {
+                        Park = x,
+                        ReservationCount = x.Areas
                             .SelectMany(x => x.Spaces)
                             .SelectMany(x => x.Reservations!)
                             .Count()
                     })
                     .OrderByDescending(x => x.ReservationCount)
                     .Take(10)
+                    .ToList(),
+                AreaCount = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .Count(),
+                AreaReservationEnabledCount = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .Where(x => x.ReservationsEnabled == true)
+                    .Count(),
+                SpaceCount = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .Count(),
+                ReservedSpaceCount = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .Where(x => x.Reservations!.Where(y => y.EndTime > DateTime.UtcNow).Any())
+                    .Count(),
+                MinStatusDataTransferDelayInSeconds = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.ReceivedSpaceStatusses)
+                    .Min(x => (double?)(x.ReceivedTime!.Value - x.StatusDataTime!.Value).TotalSeconds),// for empty result cast nullable
+                AverageStatusDataTransferDelayInSeconds = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.ReceivedSpaceStatusses)
+                    .Average(x => (double?)(x.ReceivedTime!.Value - x.StatusDataTime!.Value).TotalSeconds),
+                MaxStatusDataTransferDelayInSeconds = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.ReceivedSpaceStatusses)
+                    .Max(x => (double?)(x.ReceivedTime!.Value - x.StatusDataTime!.Value).TotalSeconds),
+                TotalCarsUsedSpaces = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.ReceivedSpaceStatusses)
+                    .Where(x => x.OldSpaceStatus == SpaceStatus.OCCUPIED && x.NewSpaceStatus == SpaceStatus.EMPTY).Count(),
+                ReservationCount = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.Reservations!)
+                    .Count(),
+                TotalEarning = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.Reservations!)
+                    .Where(x => x.StartTime < DateTime.UtcNow.AddDays(1).Date)
+                    .Sum(x => (x.EndTime!.Value - x.StartTime!.Value).TotalHours * x.Space!.Pricing!.Price
+                        * (TimeUnit.MINUTE == x.Space!.Pricing!.Unit ? 60 : 1)
+                        / (TimeUnit.DAY == x.Space!.Pricing!.Unit ? 24 : 1)
+                        / (TimeUnit.MONTH == x.Space!.Pricing!.Unit ? 720 : 1)
+                        / x.Space!.Pricing!.Amount),
+                MostActive10User = g.First().Parks
+                    .SelectMany(x => x.Areas)
+                    .SelectMany(x => x.Spaces)
+                    .SelectMany(x => x.Reservations!)
+                    .Select(x => x.User!)
+                    .GroupBy(x => x.Id)
+                    .Select(g2 => new {
+                        User = g2.First()!,
+                        ReservationCount = g2.First()!.Reservations.Count()
+                    })
+                    .OrderByDescending(x => x.ReservationCount)
+                    .Take(10)
                     .ToList()
-            })
-            .FirstOrDefaultAsync(cancellationToken)
-            .ConfigureAwait(false);
+            }
+        )
+        .FirstOrDefaultAsync(cancellationToken)
+        .ConfigureAwait(false);
         
         var dto = new DashboardDto(aMonthAgo);
 
         if(result != null) {
             dto.TopPopularParks = result.Top10PopularParks.Select(x => x.Park).ToList();
-            if(result.ParksGroup != null) {
-                var parksGroup = result.ParksGroup;
 
-                dto.TotalParks = parksGroup.Count;
-                dto.MinParkPrice = parksGroup.MinPrice;
-                dto.AverageParkPrice = parksGroup.AveragePrice;
-                dto.MaxParkPrice = parksGroup.MaxPrice;
-                dto.TotalEmptySpaces = parksGroup.EmptySpaceCount ?? 0;
-                dto.TotalOccupiedSpaces = parksGroup.OccupiedSpaceCount ?? 0;
-                
-                if(parksGroup.AreasGroup != null) {
-                    var areasGroup = parksGroup.AreasGroup;
+            dto.TotalParks = result.ParkCount;
+            dto.MinParkPrice = result.ParkMinPrice;
+            dto.AverageParkPrice = result.ParkAveragePrice;
+            dto.MaxParkPrice = result.ParkMaxPrice;
+            dto.TotalEmptySpaces = result.ParkEmptySpaceCount ?? 0;
+            dto.TotalOccupiedSpaces = result.ParkOccupiedSpaceCount ?? 0;
 
-                    dto.TotalAreas = areasGroup.Count;
-                    dto.TotalReservationEnabledAreas = areasGroup.ReservationEnabledCount;
+            dto.TotalAreas = result.AreaCount;
+            dto.TotalReservationEnabledAreas = result.AreaReservationEnabledCount;
 
-                    if(areasGroup.SpacesGroup != null) {
-                        var spacesGroup = areasGroup.SpacesGroup;
+            dto.TotalSpaces = result.SpaceCount;
+            dto.TotalReservedSpaces = result.ReservedSpaceCount;
 
-                        dto.TotalSpaces = spacesGroup.Count;
-                        dto.TotalReservedSpaces = spacesGroup.ReservedSpaceCount;
+            dto.MinStatusDataTransferDelayInSeconds = result.MinStatusDataTransferDelayInSeconds;
+            dto.AverageStatusDataTransferDelayInSeconds = result.AverageStatusDataTransferDelayInSeconds;
+            dto.MaxStatusDataTransferDelayInSeconds = result.MaxStatusDataTransferDelayInSeconds;
+            dto.TotalCarsUsedSpaces = result.TotalCarsUsedSpaces;
 
-                        if(spacesGroup.ReceivedSpaceStatussesGroup != null) {
-                            var receivedSpaceStatussesGroup = spacesGroup.ReceivedSpaceStatussesGroup;
-
-                            dto.MinStatusDataTransferDelayInSeconds = receivedSpaceStatussesGroup.MinStatusDataTransferDelayInSeconds;
-                            dto.AverageStatusDataTransferDelayInSeconds = receivedSpaceStatussesGroup.AverageStatusDataTransferDelayInSeconds;
-                            dto.MaxStatusDataTransferDelayInSeconds = receivedSpaceStatussesGroup.MaxStatusDataTransferDelayInSeconds;
-                            dto.TotalCarsUsedSpaces = receivedSpaceStatussesGroup.TotalCarsUsedSpaces;
-                        }
-
-                        if(spacesGroup.ReservationsGroup != null) {
-                            var reservationsGroup = spacesGroup.ReservationsGroup;
-
-                            dto.MostActiveUsers = reservationsGroup.MostActive10User.Select(x => {
-                                x.User.Address = null;
-                                x.User.Birthdate = null;
-                                x.User.Phone = null;
-                                x.User.Password = null;
-                                x.User.Wallet = null;
-                                x.User.RefreshTokenSignature = null;
-                                x.User.VerificationCode = null;
-                                return x.User;
-                            }).ToList();
-                            dto.TotalReservations = reservationsGroup.ReservationCount;
-                            dto.TotalEarning = reservationsGroup.TotalEarning ?? 0;
-                        }
-                    }
-                }
-            }
+            dto.MostActiveUsers = result.MostActive10User.Select(x => {
+                x.User.Address = null;
+                x.User.Birthdate = null;
+                x.User.Phone = null;
+                x.User.Password = null;
+                x.User.Wallet = null;
+                x.User.RefreshTokenSignature = null;
+                x.User.VerificationCode = null;
+                return x.User;
+            }).ToList();
+            dto.TotalReservations = result.ReservationCount;
+            dto.TotalEarning = result.TotalEarning ?? 0;
         }
 
         var seriesQuery = context.Set<ParkSpace>()
@@ -374,7 +378,7 @@ public class UserRepo<TContext> : EntityRepoBase<User, TContext>, IUserRepo
                 } while(iter < end);
             }
         }
-        
+
         dto.SpaceUsageTimePerDay.ForEach(x => {
             var mams = (MinAvgMaxSum)x.Y;
             if(mams.Count > 0) {

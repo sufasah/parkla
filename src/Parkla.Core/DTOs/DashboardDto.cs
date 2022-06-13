@@ -18,9 +18,9 @@ namespace Parkla.Core.DTOs
         public long TotalReservations { get; set; }
         public double TotalEarning { get; set; }
         public List<User> MostActiveUsers { get; set; }
-        public double MinStatusDataTransferDelayInSeconds { get; set; }
-        public double AverageStatusDataTransferDelayInSeconds { get; set; }
-        public double MaxStatusDataTransferDelayInSeconds { get; set; }
+        public double? MinStatusDataTransferDelayInSeconds { get; set; }
+        public double? AverageStatusDataTransferDelayInSeconds { get; set; }
+        public double? MaxStatusDataTransferDelayInSeconds { get; set; }
         public long TotalCarsUsedSpaces { get; set; }
         public List<TimeSeriesData> TotalEarningPerDay { get; set; }
         public List<TimeSeriesData> CarCountUsedSpacePerDay { get; set; }

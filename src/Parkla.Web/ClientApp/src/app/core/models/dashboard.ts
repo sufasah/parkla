@@ -16,9 +16,9 @@ export interface Dashboard {
   totalReservations: number;
   totalEarning: number;
   mostActiveUsers: AppUser[];
-  minStatusDataTransferDelayInSeconds: number;
-  averageStatusDataTransferDelayInSeconds: number;
-  maxStatusDataTransferDelayInSeconds: number;
+  minStatusDataTransferDelayInSeconds: number | null;
+  averageStatusDataTransferDelayInSeconds: number | null;
+  maxStatusDataTransferDelayInSeconds: number | null;
   totalCarsUsedSpaces: number;
   totalEarningPerDay: TimeSeriesData[];
   carCountUsedSpacePerDay: TimeSeriesData[];

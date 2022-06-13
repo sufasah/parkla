@@ -181,7 +181,7 @@
 
   <div class="d-flex">
     <div class="card m-3 p-3 d-inline-block shadow-sm">
-      <h5>Top 10 Popular Parks</h5>
+      <h5>Most Popular Parks</h5>
       <p-table
         [value]="model.topPopularParks"
         responsiveLayout="scroll"
@@ -193,7 +193,7 @@
           <tr>
             <th style="max-width:60px"></th>
             <th style="min-width:200px">Name</th>
-            <th style="min-width:600px">location</th>
+            <th style="min-width:600px">Location</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-data let-index="rowIndex">
@@ -206,7 +206,7 @@
       </p-table>
     </div>
     <div class="card m-3 p-3 d-inline-block shadow-sm">
-      <h5>Most Active 10 Users</h5>
+      <h5>Most Active Users</h5>
       <p-table
         [value]="model.mostActiveUsers"
         responsiveLayout="scroll"
