@@ -10,7 +10,7 @@ public class Tester {
         SerialIn = new("COM4", 9600);
         SerialIn.DataReceived += DataReceivedHandler;
         
-        SerialOut = new("COM1", 9600);
+        SerialOut = new("COM3", 9600);
 
         SerialIn.Open();
         SerialOut.Open();

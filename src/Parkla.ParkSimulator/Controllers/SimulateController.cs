@@ -57,6 +57,10 @@ public class SimulateController : ControllerBase
 
     private static ExportType Protocol = InitialProtocol;
 
+    static SimulateController() {
+        serialPort.Open();
+    }
+
     [HttpGet("/ResetServer")]
     public async Task<IActionResult> ResetServerState() {
         foreach (var space in RealSpaces)
