@@ -30,9 +30,33 @@ ASP.NET Core 6, Angular 13, PrimeNG, HTTP, GRPC, SERIALCOM(RS-232), SignalR, web
   - [Park Simulator](#park-simulator)
 - [FINAL PRODUCT AND FEATURES](#final-product-and-features)
   - [Client and Functionalities](#client-and-functionalities)
+    - [Registeration and Authentication](#registeration-and-authentication)
+    - [User and Manager Mode](#user-and-manager-mode)
+    - [TomTom Maps and Car Parks](#tomtom-maps-and-car-parks)
+    - [Parking Lots](#parking-lots)
+    - [Parking Areas](#parking-areas)
+    - [Parking Spaces and Reservation Management](#parking-spaces-and-reservation-management)
+    - [Parking Lot Simulation](#parking-lot-simulation)
+    - [Manager Dashboard](#manager-dashboard)
+    - [QR Code Access](#qr-code-access)
   - [Web Server](#web-server)
   - [Collector Service](#collector-service-1)
+    - [Receiver Config](#receiver-config)
+    - [Exporter Config](#exporter-config)
+    - [Custom Handler](#custom-handler)
 - [LITERATURE RESEARCH AND ANALYSIS](#literature-research-and-analysis)
+  - [Parking Problems](#parking-problems)
+  - [Parking Lot Management](#parking-lot-management)
+  - [Car Parking Systems](#car-parking-systems)
+    - [Multilevel Car Parking System](#multilevel-car-parking-system)
+    - [Full or Pratially Automated Car Parking System](#full-or-pratially-automated-car-parking-system)
+    - [Smart Car Parking Systems](#smart-car-parking-systems)
+      - [Variable Message Sign (VMS) System](#variable-message-sign-vms-system)
+      - [Wireless Sensor Based System](#wireless-sensor-based-system)
+      - [RFID Based System](#rfid-based-system)
+      - [QR Code Based System](#qr-code-based-system)
+      - [Image Processing Based System](#image-processing-based-system)
+      - [E-Park System](#e-park-system)
 
 # SETUP AND RUN
 1. [Install](https://www.postgresql.org/download/) PostgreSQL database (v13 used)
@@ -81,6 +105,24 @@ Designed system consists of different components which are parking lots, collect
 
 Clients (drivers, parking lot managers, passangers etc.) communicate with web server is built using Angular and runs as a SPA on browser. A client can fetch application data using REST API, realtime data by subscribing appropriate SignalR hubs until connection lost or unsubscription. With all these data, provides graphical user interface in web pages for car parks on TomTom Map which are shown as a pinned boxes has park name, location, total occupied, empty, reserved, occupied parking space count inside and shown in a modal dialog contains other data like min average and max pricing information opened after clicking the boxes, parking areas has same information of car parks in a parking area scope and other park area data, parking spaces in a real park area building structure image modelled with rectangles colored with green, red, orange, gray and transition colors close to these according to status and reservation information, dashboard has graphics and tables about analytical data.
 
+### Registeration and Authentication
+
+### User and Manager Mode
+
+### TomTom Maps and Car Parks
+
+### Parking Lots
+
+### Parking Areas
+
+### Parking Spaces and Reservation Management
+
+### Parking Lot Simulation
+
+### Manager Dashboard
+
+### QR Code Access
+
 ## Web Server
 
 Web server is a bridge between clients, realtime parking space status data and persisted storage data in the database. Server is a backend built on N-Layered architecture. It has a web API layer to communicate with collector service, clients and external system produces parking space status data.The API has seperate receivers for each protocol to receive supported protocols, SignalR hubs perform realtime data flow, REST API to access database storage. This web api layer has a dependency to the business layer contains internal logic, validations, data layer calls. Business layer has a dependency to the data layer contains ORM framework spesific implementations, database query and access functionalities, database table mapping configurations and migrations. Core layer communicates with all other layers and contains orm entity definitions, constants and other type of cross cutting concerns. Clients can authenticate, register, perform CRUD operations for car parks, parking areas, parking spaces, reservations.
@@ -89,4 +131,34 @@ Web server is a bridge between clients, realtime parking space status data and p
 
 Collector service communicates with supported protocols. It is designed as a seperate executable application and capable to receive data come from car parks using receivers, reformat the data using handlers and transfer them using exporters. Collector service can be run on existing machines, servers, devices in parking lot building, buildings close that or other locations. Mulitple service can be configured to communicate together. In this way, very flexible(customizable format data, protocol independent), efficient(prevents transforming unnecessary data) and distributed communication structure can be set up. It is also possible not to use a collector service and transfer the correctly formatted data to the server. The difference using collector service is that the service can listen on multiple endpoints, groups, ports using multiple protocols with the capability of receiving custom formatted data but the server can listen on a single constant endpoint with single format. Custom format data support provides an advantage of increasing the integrated car park count to the software system by not forcing them to provide exact data and change their infrastructure. All data flow can be defined as pipelines. Each pipeline has a collection of receiver handler pair and exporters. Data comes to receivers, receivers give the data to its handlers, handlers deserialize the data in a format and load it to the memory as a park space status class instance and pass the data to the all exporters in the pipeline, exporters serialize the status data instance and send to other applications' protocol dependent endpoints in JSON format. Handlers also read data as JSON by default because custom format data can be received once after they are produced by a parking lot. After that the data will be vendor agnostic and simplified. Each pipeline flow is carried asynchronously not to block other flows. To make a custom handler, [src/Parkla.CollectorService.Library](src//Parkla.CollectorService.Library/) plugin project can be used. In this project, a new handler can be coded by using [HandlerBase](src/Parkla.CollectorService.Library/Bases/HandlerBase.cs) class, [ParamBase](src/Parkla.CollectorService.Library/Bases/ParamBase.cs) class, [ReceiverType](src/Parkla.CollectorService.Library/Enums/ReceiverType.cs) enum and [ExporterType](src/Parkla.CollectorService.Library/Enums/ExporterType.cs) enum declarations. After coding and building the project, generated dll file path has to be referred by pluginLibrary section in collector service configuration file. Example configuration of pipelines and plugin library is in [appsettings.json](src/Parkla.CollectorService/appsettings.json) file
 
+### Receiver Config
+
+### Exporter Config
+
+### Custom Handler
+
 # LITERATURE RESEARCH AND ANALYSIS
+
+## Parking Problems
+
+## Parking Lot Management
+
+## Car Parking Systems
+
+### Multilevel Car Parking System
+
+### Full or Pratially Automated Car Parking System
+
+### Smart Car Parking Systems
+
+#### Variable Message Sign (VMS) System
+
+#### Wireless Sensor Based System
+
+#### RFID Based System
+
+#### QR Code Based System
+
+#### Image Processing Based System
+
+#### E-Park System
