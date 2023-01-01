@@ -25,8 +25,8 @@
     <div class="spaces">
         @foreach (var space in Model.GetRealSpaces)
         {
-            int spaceId = space.Item1;
-            string spaceName = space.Item2;
+            int spaceId = space.Key;
+            string spaceName = space.Value;
 
             <div class="space" data-id="@spaceId">
                 <div>

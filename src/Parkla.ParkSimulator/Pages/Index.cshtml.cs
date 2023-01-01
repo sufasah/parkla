@@ -7,16 +7,20 @@ public class IndexModel : PageModel
 {
 
     private readonly ILogger<IndexModel> _logger;
+    private readonly IConfiguration configuration;
 
     public string GetParkId => SimulateController.ParkId;
 
-    public List<Tuple<int,string>> GetRealSpaces => SimulateController.RealSpaces;
+    public Dictionary<int,string> GetRealSpaces => configuration.GetSection("RealSpaces")
+        .GetChildren()
+        .ToDictionary(x => int.Parse(x.Key), x => x.Value) ?? new();
     
     public string GetProtocol => SimulateController.InitialProtocol.ToString();
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public IndexModel(ILogger<IndexModel> logger, IConfiguration configuration)
     {
         _logger = logger;
+        this.configuration = configuration;
     }
 
     public void OnGet()

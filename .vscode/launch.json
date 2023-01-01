@@ -59,9 +59,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build park simulator",
-            "program": "${workspaceFolder}/Parkla.ParkSimulator/bin/Debug/net6.0/Parkla.ParkSimulator.dll",
+            "program": "${workspaceFolder}/src/Parkla.ParkSimulator/bin/Debug/net6.0/Parkla.ParkSimulator.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Parkla.ParkSimulator",
+            "cwd": "${workspaceFolder}/src/Parkla.ParkSimulator",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
