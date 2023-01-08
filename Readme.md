@@ -12,7 +12,7 @@ February, 2022
 Finished, 4 Months
 
 * Project Description: <br/>
-This repository is a completed graduation project in a project management aspect with a limited time and cost, defined scope and targeted quality about parking lot management and monitoring in real time. This software is designed to show all parking lots on a map with a real time status information, get data from any parking lot that support same protocols with the web application and collector service (easily extensible if any protocol is needed and status message format is customizable using a plugin code file named 'Handler'), show exact parking lot status on a 2D image model like blueprint of the building with multiple areas have a lot of parking space inside using that data, show status of all parking spaces and make them reservable for users (drivers, passengers, ...) using a reprensentetive payment page and user wallet, make parking lots managable by a parking lot manager like adding, deleting, updating parks, park areas, parking spaces, binding real parkig spaces of their parks to parking space models that user can see in the screen and reserve. Details, explanations, how to setup and execute the application, images of working application etc. are below.
+This repository is a completed graduation project in a project management aspect with a limited time and cost, defined scope and targeted quality about parking lot management and monitoring in real time. This software is designed to show all parking lots on a map with a real time status information, get data from any parking lot that support same protocols with the web application and collector service (easily extensible if any protocol is needed and status message format is customizable using a plugin code file named 'Handler'), show exact parking lot status on a 2D image model like blueprint of the building with multiple areas have a lot of parking space inside using that data, show status of all parking spaces and make them reservable for users (drivers, passengers, ...) using a reprensentetive payment page and user wallet, make parking lots managable by a parking lot manager like adding, deleting, updating parks, parking areas, parking spaces, binding real parkig spaces of their parks to parking space models that user can see in the screen and reserve. Details, explanations, how to setup and execute the application, images of working application etc. are below.
 
 
 Used Technologies, Protocols, Libraries, Concepts etc: <br/>
@@ -100,7 +100,7 @@ Designed system consists of different components which are parking lots, collect
 
 ## Client and Functionalities
 
-Clients (drivers, parking lot managers, passangers etc.) communicate with web server is built using Angular and runs as a SPA on browser. A client can fetch application data using REST API, realtime data by subscribing appropriate SignalR hubs until connection lost or unsubscription. With all these data, provides graphical user interface in web pages for car parks on TomTom Map which are shown as a pinned boxes has park name, location, total occupied, empty, reserved, occupied parking space count inside and shown in a modal dialog contains other data like min average and max pricing information opened after clicking the boxes, parking areas has same information of car parks in a parking area scope and other park area data, parking spaces in a real park area building structure image modelled with rectangles colored with green, red, orange, gray and transition colors close to these according to status and reservation information, dashboard has graphics and tables about analytical data.
+Clients (drivers, parking lot managers, passangers etc.) communicate with web server is built using Angular and runs as a SPA on browser. A client can fetch application data using REST API, realtime data by subscribing appropriate SignalR hubs until connection lost or unsubscription. With all these data, provides graphical user interface in web pages for car parks on TomTom Map which are shown as a pinned boxes has park name, location, total occupied, empty, reserved, occupied parking space count inside and shown in a modal dialog contains other data like min average and max pricing information opened after clicking the boxes, parking areas has same information of car parks in a parking area scope and other parking area data, parking spaces in a real parking area building structure image modelled with rectangles colored with green, red, orange, gray and transition colors close to these according to status and reservation information, dashboard has graphics and tables about analytical data.
 
 ### Registeration and Authentication
 
@@ -125,11 +125,11 @@ In user mode, park space status displaying in parking lots in real time and rese
 
 ![Map Page](img/map-page.png)
 
-On the client side, TomTom Maps web sdk is used. Because of that an api token is necessary as mentioned in the setup section before. Basic map movement, zoom in & out, pan, PoI (Point of Interest) search functionalities are added. Using web sdk marker functionality, parking lots are symbolized as markers which have address, last update time, min & avg & max pricings and empty, occupied, reserved park space count of a parking lot according to latitude and longitude information. All parking lot CRUD operations and park space status changes can be seen without refreshing the page. After logging in, this map page is opened as above in image.
+On the client side, TomTom Maps web sdk is used. Because of that an api token is necessary as mentioned in the setup section before. Basic map movement, zoom in & out, pan, PoI (Point of Interest) search functionalities are added. Using web sdk marker functionality, parking lots are symbolized as markers which have address, last update time, min & avg & max pricings and empty, occupied, reserved park space count of a parking lot according to latitude and longitude information. All parking lot CRUD operations and park space status changes can be seen without refreshing the page. After logging in, this map page opens as above in image.
 
 ### Parking Lots
 
-After clicking one of the parking lots in the map, detailed information modal is opened as below.
+After clicking one of the parking lots in the map, detailed information modal opens as below.
 
 ![Parking Lot Modal](img/parking-lot-modal.png)
 
@@ -147,19 +147,46 @@ After clicking the go park button in a parking lot modal, parking areas can be s
 
 ![Parking Areas Page](img/parking-areas-page.png)
 
-Multiple parking areas can be in a parking lot. For example, Floors of multi level car park or multiple streets of street car park can be seperated as areas. Again empty, occupied, reserved park space count, min avg max pricing, last update time of a parking area is shown in realtime. Buttons for add, edit, delete parking area are only for manager mode and all changes for areas can be seen without refreshing the page. After clicking add or edit buttons, the page below is opened.
+Multiple parking areas can be in a parking lot. For example, Floors of multi level car park or multiple streets of street car park can be seperated as areas. Again empty, occupied, reserved park space count, min avg max pricing, last update time of a parking area is shown in realtime. Buttons for add, edit, delete parking area are only for manager mode and all changes for areas can be seen without refreshing the page. After clicking add or edit buttons, the page below opens.
 
 ![Add or Edit Parking Area Page](img/add-edit-parking-area-page.png)
 
-For an area pricing types can vary. Multiple pricing can be defined like above.
+For an area pricing types can vary. Multiple pricings can be defined like above.
 
 ### Parking Spaces and Reservation Management
 
+Multiple parking spaces are shown as located in an image of a parking area. This image can be real blueprint, sketch, plan or anything else that symbolizes actual parking area. This image can be uploaded in manager mode for a parking area. In this image, parking spaces can be drawn as rectangles. Zooming and panning is possible for the image and it is like below.
 
+![parking area Page](img/parking-area-page.png)
+
+Park spaces are shown with different colors. For the park space, red means occupied and a reservation interception does not exist for selected date range, green means empty and not reserved, orange means occupied also reserved and yellow means empty also reserved at the same time with the time user looks to the image exactly. A reservation can be done for any time between the users' datetime and relatively 1 week later. All reservation table can be seen after clicking one of the park spaces like image below.
+
+![Park Space Reservation Dialog](img/reservation-dialog.png)
+
+Reserved time intervals and user's username, name and surname who reserved can be seen in this table. If any reservation do not exist in a day, there is a single row that shows available time interval from what datetime to another datetime for other days. If a reservation exists, then this single row divided and is shown as a first and last row. At the top of the dialog, there is space name, status and pricing information. At the bottom of the dialog, there is actual price for selected date range of the space. Payment can be done if the user has enough money in his/her digital wallet which can be loaded before reservation.
+
+parking area image loading and defining park spaces in this image can be done in manager mode. In this mode, header bar is like below.
+
+![Manager Mode parking area Bar](img/manager-mode-parking-area-bar.png)
+
+Button with barcode icon is explained in [QR Code Access](#qr-code-access) section but button with pencil icon is again for editing the parking area image and parking spaces. After clicking that, the page below opens.
+
+![CRUD Parking Spaces](img/CRUD-parking-spaces.png)
+
+In this page new parking spaces can be added, existing ones can be updated or deleted and new parking area image can be set. In the image, already there is an image and parking spaces drawn. New image can be set with yellow button with image icon at right bottom corner. After that the image should be selected from the device. New spaces can be added using the green plus button next to the image button. After clicking this button, it switches the red cross button to cancel parking space area selection. At this selection mode, 4 corners of the parking space can be selected by clicking the image in order. Red button with trash icon can be used to remove all added parking spaces in the image. To delete one by one, parking spaces can be right clicked. After adding parking spaces, they should be configured correctly. To open configuration modal, parking spaces can be left clicked and then the modal below opens.
+
+![Parking Space Modal](img/parking-space-modal.png)
+
+In this modal, space name, pricing type inputs should be filled and one of the real spaces should be selected. If these are missing, the validation fails and invalidated parking spaces are colored as light red like edit page above else they are colored as gray. If an invalid space exists, saving the changes give an error. Real spaces can be added in this modal also using textbox and add button below. Real space rows already selected are colored as light green or not colored but has space id values and cant be selected for current parking space. If it is colored, it means the real space is selected by this parking area. Otherwise if it is not colored and has space id column value, it means the real space is selected by another parking area. Real space id values are used to match the parking space in the image with actual parking space status data. Also they can be removed by using red cross buttons at the end of the rows.
 
 ### Parking Lot Simulation
 
+
 ### Manager Dashboard
+
+Gathered data from real parking lots are saved to the database by server. These data also can be used to generate an analytical data. A dashboard page exists for manager mode users to analyze their parking lots. In this dasboard, there are graphically shown current empty, occupied, unknown parking space count, revenue day by day, min avg max parking space using time, car count that used parking spaces for last month and other things.
+
+![Dashboard Page](img/dashboard-page.png)
 
 ### QR Code Access
 
