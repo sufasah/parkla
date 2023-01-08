@@ -114,19 +114,48 @@ After clicking register and ui validation, new user is added to the database by 
 
 ![Verification Page](img/verification-page.png)
 
-After verification and login process, server generates a auth and refresh JWT Bearer token and sends to the ui. User agent stores it to the local storage. Auth tokens has an absolute expiration time but for refresh token sliding expiration method is used. When tokens are expired, user logs out. After logout, these tokens are removed from local storage. 
+After verification and login process, server generates a auth and refresh JWT Bearer token and sends to the ui. User agent stores it to the local storage. Auth tokens has an absolute expiration time but for refresh token sliding expiration method is used. When tokens are expired, user logs out. After logout, these tokens are removed from local storage.
 
 ### User and Manager Mode
 
-
+Registered users can use the UI in 2 modes that are user and manager mode.
+In user mode, park space status displaying in parking lots in real time and reservation of them can be done. In manager mode, adding, deleting and updating parking lots, areas, spaces, real parking space and application parking space mappings can be done. Also the user can view the analytical dasboard of his/her parking lots.
 
 ### TomTom Maps and Car Parks
 
+![Map Page](img/map-page.png)
+
+On the client side, TomTom Maps web sdk is used. Because of that an api token is necessary as mentioned in the setup section before. Basic map movement, zoom in & out, pan, PoI (Point of Interest) search functionalities are added. Using web sdk marker functionality, parking lots are symbolized as markers which have address, last update time, min & avg & max pricings and empty, occupied, reserved park space count of a parking lot according to latitude and longitude information. All parking lot CRUD operations and park space status changes can be seen without refreshing the page. After logging in, this map page is opened as above in image.
+
 ### Parking Lots
+
+After clicking one of the parking lots in the map, detailed information modal is opened as below.
+
+![Parking Lot Modal](img/parking-lot-modal.png)
+
+Blue button with pencil icon to edit and red button with trash icon to remove the parking lot are for only manager mode. In manager mode, only the logged in user's own parks can be seen, for user mode, all parking lots created before are shown in the map. Green button with plus icon at the left top corner of the page also can be seen in manager mode to add a parking lot. Editing and adding parking lot page is like below.
+
+![Add Edit Parking Lot Page](img/add-edit-parking-lot-page.png)
+
+Maximum extra line count is 10. Green plus button can be used to add and red minus button to remove extras. Blue button with marker icon in latitude & longitude section can be used to select location in the map like below.
+
+![Select Parking Lot Location Page](img/select-parking-lot-location-page.png)
 
 ### Parking Areas
 
+After clicking the go park button in a parking lot modal, parking areas can be seen as a searchable, paginatable, orderable tabular or grid view in a table.
+
+![Parking Areas Page](img/parking-areas-page.png)
+
+Multiple parking areas can be in a parking lot. For example, Floors of multi level car park or multiple streets of street car park can be seperated as areas. Again empty, occupied, reserved park space count, min avg max pricing, last update time of a parking area is shown in realtime. Buttons for add, edit, delete parking area are only for manager mode and all changes for areas can be seen without refreshing the page. After clicking add or edit buttons, the page below is opened.
+
+![Add or Edit Parking Area Page](img/add-edit-parking-area-page.png)
+
+For an area pricing types can vary. Multiple pricing can be defined like above.
+
 ### Parking Spaces and Reservation Management
+
+
 
 ### Parking Lot Simulation
 
