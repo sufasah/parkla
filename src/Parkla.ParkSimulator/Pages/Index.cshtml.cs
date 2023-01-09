@@ -9,7 +9,7 @@ public class IndexModel : PageModel
     private readonly ILogger<IndexModel> _logger;
     private readonly IConfiguration configuration;
 
-    public string GetParkId => SimulateController.ParkId;
+    public string GetParkId => configuration.GetSection("ParkId").Value ?? "";
 
     public Dictionary<int,string> GetRealSpaces => configuration.GetSection("RealSpaces")
         .GetChildren()

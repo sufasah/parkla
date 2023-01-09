@@ -31,26 +31,24 @@ public class SimulateController : ControllerBase
         ReadCommentHandling = JsonCommentHandling.Skip
     };
 
-    public static readonly string ParkId = "e23ca377-3f5e-4064-9de1-e23ccae372d9";
-    private static readonly string _collectorEndpoint = "https://localhost:7071";
-    private static readonly HttpClient httpClient = new(); // to collector http endpoint
-    private static readonly SerialPort serialPort = new("COM3", 9600); // to COM2 which is reciever of collector
-    private static readonly CollectorClient grpcClient = new(
-        GrpcChannel.ForAddress(_collectorEndpoint) // to collector
-    );
+    private static HttpClient httpClient; // to collector http endpoint
+    private static SerialPort serialPort; // to COM2 which is reciever of collector
+    private static CollectorClient grpcClient; // to collector
 
     public readonly static ExportType InitialProtocol = ExportType.HTTP;
     private readonly IConfiguration configuration;
     private static ExportType Protocol = InitialProtocol;
 
-    static SimulateController()
-    {
-        serialPort.Open();
-    }
-
     public SimulateController(IConfiguration configuration)
     {
         this.configuration = configuration;
+        if (serialPort == null)
+        {
+            serialPort = new(GetSerialPort(), 9600);
+            serialPort.Open();
+        }
+        httpClient ??= new();
+        grpcClient ??= new(GrpcChannel.ForAddress(GetCollectorEndpoint()));
     }
 
     private Dictionary<int, string> GetRealSpaces()
@@ -58,6 +56,24 @@ public class SimulateController : ControllerBase
         return this.configuration.GetSection("RealSpaces")
             .GetChildren()
             .ToDictionary(x => int.Parse(x.Key), x => x.Value) ?? new();
+    }
+
+    private string GetCollectorEndpoint()
+    {
+        return this.configuration.GetSection("CollectorEndpoint")
+            .Value ?? "";
+    }
+
+    private string GetSerialPort()
+    {
+        return this.configuration.GetSection("SerialPort")
+            .Value ?? "";
+    }
+
+    private string GetParkId()
+    {
+        return this.configuration.GetSection("ParkId")
+            .Value ?? "";
     }
 
     [HttpGet("/ResetServer")]
@@ -117,11 +133,11 @@ public class SimulateController : ControllerBase
     }
 
 
-    private static ParkSpaceStatusDto MakeDto(int realSpaceId, SpaceStatus status)
+    private ParkSpaceStatusDto MakeDto(int realSpaceId, SpaceStatus status)
     {
         return new ParkSpaceStatusDto()
         {
-            ParkId = Guid.Parse(ParkId),
+            ParkId = Guid.Parse(GetParkId()),
             SpaceId = realSpaceId,
             Status = status,
             DateTime = DateTime.UtcNow
@@ -144,9 +160,9 @@ public class SimulateController : ControllerBase
         }
     }
 
-    private static async Task SendHttpAsync(ParkSpaceStatusDto dto)
+    private async Task SendHttpAsync(ParkSpaceStatusDto dto)
     {
-        var response = await httpClient.PostAsJsonAsync(_collectorEndpoint, dto, jsonSerializerOptions).ConfigureAwait(false);
+        var response = await httpClient.PostAsJsonAsync(GetCollectorEndpoint(), dto, jsonSerializerOptions).ConfigureAwait(false);
         if (response.StatusCode != HttpStatusCode.OK)
             throw new Exception("New status could not send");
     }
