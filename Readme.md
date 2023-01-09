@@ -27,15 +27,15 @@ ASP.NET Core 6, Angular 13, PrimeNG, HTTP, GRPC, SERIALCOM(RS-232), SignalR, web
   - [Park Simulator](#park-simulator)
 - [FINAL PRODUCT AND FEATURES](#final-product-and-features)
   - [Client and Functionalities](#client-and-functionalities)
+    - [Parking Lot Simulation](#parking-lot-simulation)
     - [Registeration and Authentication](#registeration-and-authentication)
     - [User and Manager Mode](#user-and-manager-mode)
     - [TomTom Maps and Car Parks](#tomtom-maps-and-car-parks)
     - [Parking Lots](#parking-lots)
     - [Parking Areas](#parking-areas)
     - [Parking Spaces and Reservation Management](#parking-spaces-and-reservation-management)
-    - [Parking Lot Simulation](#parking-lot-simulation)
-    - [Manager Dashboard](#manager-dashboard)
     - [QR Code Access](#qr-code-access)
+    - [Manager Dashboard](#manager-dashboard)
   - [Web Server](#web-server)
   - [Collector Service](#collector-service-1)
     - [Receiver Config](#receiver-config)
@@ -101,6 +101,12 @@ Designed system consists of different components which are parking lots, collect
 ## Client and Functionalities
 
 Clients (drivers, parking lot managers, passangers etc.) communicate with web server is built using Angular and runs as a SPA on browser. A client can fetch application data using REST API, realtime data by subscribing appropriate SignalR hubs until connection lost or unsubscription. With all these data, provides graphical user interface in web pages for car parks on TomTom Map which are shown as a pinned boxes has park name, location, total occupied, empty, reserved, occupied parking space count inside and shown in a modal dialog contains other data like min average and max pricing information opened after clicking the boxes, parking areas has same information of car parks in a parking area scope and other parking area data, parking spaces in a real parking area building structure image modelled with rectangles colored with green, red, orange, gray and transition colors close to these according to status and reservation information, dashboard has graphics and tables about analytical data.
+
+### Parking Lot Simulation
+
+![Simulation](img/simulation.gif)
+
+Data flow is necessary to see the parking space status changes from parking lots to the client UI in real time. The system does not work integrated with any real parking lot. To see the data flow working, a simulator project was built. Normally, in integrated working system, parking lots generates park space status data. This data is sent to a collector service from a parking lot. Collector service receives the data and sends it to the web server. Then the server sends the status data to the client using SignalR and persist it to the database. In this scenario, parking lot and parking space status data generation are missing pieces. As it is said, The simulator project undertakes the duty. Fake real spaces can be configured with filling [appsettings.json](src/Parkla.ParkSimulator/appsettings.json) file as example it includes. This real space ids should match the real space ids which are different from client side parking space ids. These real spaces are in a table which is inside the parking space editing modal as it is mentioned in [Parking Areas](#parking-areas) section. Also parking lot GUID type id, collector service http endpoint and serial port are needed by the simulator. Configuration of the environment in te gif above already exists in this file. Simulator sends status data to the collector randomly after starting. Using protocol can be change and it is possible to change the parking space status data manually by clicking rectangles on the browser.
 
 ### Registeration and Authentication
 
@@ -179,16 +185,21 @@ In this page new parking spaces can be added, existing ones can be updated or de
 
 In this modal, space name, pricing type inputs should be filled and one of the real spaces should be selected. If these are missing, the validation fails and invalidated parking spaces are colored as light red like edit page above else they are colored as gray. If an invalid space exists, saving the changes give an error. Real spaces can be added in this modal also using textbox and add button below. Real space rows already selected are colored as light green or not colored but has space id values and cant be selected for current parking space. If it is colored, it means the real space is selected by this parking area. Otherwise if it is not colored and has space id column value, it means the real space is selected by another parking area. Real space id values are used to match the parking space in the image with actual parking space status data. Also they can be removed by using red cross buttons at the end of the rows.
 
-### Parking Lot Simulation
+### QR Code Access
 
+To make the system more accessible, QR code of the parking area direct access link can be shared for users in a big board, to one side of a building, on a screen of small electronical devices etc. close to the parking areas. Users can easily open the area page after scanning the shared qr code. 
+
+![Manager Mode Parking Area Bar](img/manager-mode-parking-area-bar.png)
+
+After clicking the button with QR code icon in parking area page in manager mode, QR Code relative to screen sizze and containing the url of that area page is generated on a browser page like below.
+
+![Qr Code Page](img/qr-code-page.png)
 
 ### Manager Dashboard
 
 Gathered data from real parking lots are saved to the database by server. These data also can be used to generate an analytical data. A dashboard page exists for manager mode users to analyze their parking lots. In this dasboard, there are graphically shown current empty, occupied, unknown parking space count, revenue day by day, min avg max parking space using time, car count that used parking spaces for last month and other things.
 
 ![Dashboard Page](img/dashboard-page.png)
-
-### QR Code Access
 
 ## Web Server
 
